@@ -10,7 +10,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class Feedback {
     private static volatile Feedback instance;
-   
+
     private GyroFeedback gyroFeedback;
 
     private Feedback() {
@@ -28,7 +28,6 @@ public class Feedback {
     public class GyroFeedback extends TorqueFeedback {
         private final AHRS nxGyro;
 
-        // Why do we store these variables???
         private double pitch;
         private double yaw;
         private double roll;
@@ -45,8 +44,13 @@ public class Feedback {
             roll = nxGyro.getRoll();
         }
 
-        public void resetGyro() { nxGyro.reset(); }
-        public void zeroYaw() { nxGyro.zeroYaw(); }
+        public void resetGyro() {
+            nxGyro.reset();
+        }
+
+        public void zeroYaw() {
+            nxGyro.zeroYaw();
+        }
 
         public Rotation2d getRotation2d() {
             return Rotation2d.fromDegrees(getDegrees());

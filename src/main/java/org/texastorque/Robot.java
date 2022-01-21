@@ -27,7 +27,7 @@ public class Robot extends TorqueIterative {
         feedback.smartDashboard();
         subsystems.forEach(TorqueSubsystem::updateSmartDashboard);
     }
-    
+
     @Override
     public void disabledInit() {
         state.setRobotState(RobotState.DISABLED);
@@ -63,12 +63,12 @@ public class Robot extends TorqueIterative {
     @Override
     public void endCompetition() {
         System.out.printf("     _______              _______                 \n"
-        + "    |__   __|            |__   __|                                \n"
-        + "       | | _____  ____ _ ___| | ___  _ __ __ _ _   _  ___         \n"
-        + "       | |/ _ \\ \\/ / _` / __| |/ _ \\| '__/ _` | | | |/ _ \\    \n"
-        + "       | |  __/>  < (_| \\__ \\ | (_) | | | (_| | |_| |  __/      \n"
-        + "       |_|\\___/_/\\_\\__,_|___/_|\\___/|_|  \\__, |\\__,_|\\___| \n"
-        + "                                            | |                   \n"
-        + "                                            |_|                   \n");
+                + "    |__   __|            |__   __|                                \n"
+                + "       | | _____  ____ _ ___| | ___  _ __ __ _ _   _  ___         \n"
+                + "       | |/ _ \\ \\/ / _` / __| |/ _ \\| '__/ _` | | | |/ _ \\    \n"
+                + "       | |  __/>  < (_| \\__ \\ | (_) | | | (_| | |_| |  __/      \n"
+                + "       |_|\\___/_/\\_\\__,_|___/_|\\___/|_|  \\__, |\\__,_|\\___| \n"
+                + "                                            | |                   \n"
+                + "                                            |_|                   \n");
     }
 }

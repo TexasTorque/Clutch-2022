@@ -10,35 +10,20 @@ enum MagazineState {
 public class MagazineBallManager {
     private NetworkTableInstance NT;
     private NetworkTableEntry ballColorEntry;
-    private MagazineState state;
+    private MagazineState state = MagazineState.NONE;
     private String ballColor;
-    //private NetworkTable ballColorTable;
+
     public MagazineBallManager(String magazineTableName) {
         NT = NetworkTableInstance.getDefault();
-        // not bothering to save the table, code is below if you need it (uncomment the instance variable too)
-        // ballColorTable = NT.getTable(magazineTableName);
         ballColorEntry = NT.getTable(magazineTableName).getEntry("ballColor");
     }
 
     public void update() {
         ballColor = ballColorEntry.getString("none");
-        /* SWITCH STATEMENT, use for inferior code - inferier per
-        switch(ballColor) {
-            case "red":
-                setMagState(MagazineState.RED);
-                break;
-            case "blue":
-                setMagState(MagazineState.BLUE);
-                break;
-            default:
-                setMagState(MagazineState.NONE);
-                break;
-        }
-        */
 
-        if (ballColor == "blue") {
+        if (ballColor.equals("blue")) {
             setMagState(MagazineState.BLUE);
-        } else if (ballColor == "red") {
+        } else if (ballColor.equals("red")) {
             setMagState(MagazineState.RED);
         } else {
             setMagState(MagazineState.NONE);
@@ -46,4 +31,6 @@ public class MagazineBallManager {
     }
 
     public void setMagState(MagazineState state) { this.state = state; }
+
+    public MagazineState getMagazineState() { return state; }
 }

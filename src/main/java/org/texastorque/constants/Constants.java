@@ -11,4 +11,6 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_P = 0;
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
+
+    public static final double INTAKE_ROTARY_SPEED = .7;
 }

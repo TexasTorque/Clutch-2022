@@ -4,17 +4,20 @@ import org.texastorque.torquelib.base.*;
 
 import java.util.ArrayList;
 
+import org.texastorque.auto.AutoManager;
 import org.texastorque.inputs.*;
 import org.texastorque.inputs.State.RobotState;
 import org.texastorque.subsystems.*;
 
 public class Robot extends TorqueIterative {
 
-    Input input = Input.getInstance();
-    Feedback feedback = Feedback.getInstance();
-    State state = State.getInstance();
+    private Input input = Input.getInstance();
+    private Feedback feedback = Feedback.getInstance();
+    private State state = State.getInstance();
 
-    ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
+    private ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
+
+    private AutoManager autoManager = AutoManager.getInstance();
 
     @Override
     public void robotInit() {
@@ -50,12 +53,14 @@ public class Robot extends TorqueIterative {
 
     @Override
     public void autoInit() {
+        autoManager.chooseCurrentSequence();
         state.setRobotState(RobotState.AUTONOMOUS);
         subsystems.forEach(TorqueSubsystem::initAuto);
     }
 
     @Override
     public void autoContinuous() {
+        autoManager.runCurrentSequence();
         subsystems.forEach(TorqueSubsystem::updateAuto);
         subsystems.forEach(TorqueSubsystem::output);
     }

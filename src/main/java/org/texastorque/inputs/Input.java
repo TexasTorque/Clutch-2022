@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.texastorque.constants.Constants;
 import org.texastorque.torquelib.base.TorqueInput;
+import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.base.TorqueInputModule;
 import org.texastorque.torquelib.component.TorqueSpeedSettings;
 import org.texastorque.torquelib.controlLoop.TorqueSlewLimiter;
@@ -14,7 +15,7 @@ import org.texastorque.torquelib.util.TorqueToggle;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Input {
+public class Input extends TorqueInputManager {
     private static volatile Input instance;
 
     private GenericController driver;
@@ -22,7 +23,9 @@ public class Input {
     // Modules
     private DriveBaseTranslationInput driveBaseTranslationInput;
     private DriveBaseRotationInput driveBaseRotationInput;
-    private List<TorqueInputModule> modules = new ArrayList<>();
+    private IntakeInput intakeInput;
+
+    private List<TorqueInput> modules = new ArrayList<>();
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -32,38 +35,54 @@ public class Input {
 
         driveBaseRotationInput = new DriveBaseRotationInput();
         modules.add(driveBaseRotationInput);
+
+        intakeInput = new IntakeInput();
+        modules.add(intakeInput);
     }
 
+    @Override
     public void update() {
-        modules.forEach(TorqueInputModule::update);
+        modules.forEach(TorqueInput::run); // dont ask!
     }
 
+    @Override
     public void smartDashboard() {
-        modules.forEach(TorqueInputModule::smartDashboard);
+        modules.forEach(TorqueInput::smartDashboard);
     }
 
-    public class DriveBaseTranslationInput implements TorqueInputModule {
-        private TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // two speeds, 1 and .5
-        private TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // two speeds, 1 and .5
+    public class DriveBaseTranslationInput extends TorqueInput {
+        private TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
+        private TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
 
         private double xSpeed = 0;
         private double ySpeed = 0;
-
-        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(1.2, 50);
-        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(1.2, 51);
+        
+        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(50, 1000);
+        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(50, 1000);
 
         private DriveBaseTranslationInput() {
         }
 
         @Override
         public void update() {
-            xSpeed = xLimiter.calculate(
-                    driver.getLeftYAxis()) * Constants.DRIVE_MAX_SPEED_METERS;
+            xSpeeds.update(
+                driver.getRightBumper(),
+                driver.getLeftBumper(),
+                false,
+                false
+            );
 
+            ySpeeds.update(
+                driver.getRightBumper(),
+                driver.getLeftBumper(),
+                false,
+                false
+            );
+            
+            xSpeed = xLimiter.calculate(xSpeeds.getSpeed() * driver.getLeftYAxis()) * Constants.DRIVE_MAX_SPEED_METERS;
+            
             // Negated to get positive values when going left
-            ySpeed = -yLimiter.calculate(
-                    driver.getLeftXAxis()) * Constants.DRIVE_MAX_SPEED_METERS;
-
+            ySpeed = -yLimiter.calculate(ySpeeds.getSpeed() * driver.getLeftXAxis()) * Constants.DRIVE_MAX_SPEED_METERS;
         }
 
         @Override
@@ -88,12 +107,12 @@ public class Input {
 
     }
 
-    public class DriveBaseRotationInput implements TorqueInputModule {
+    public class DriveBaseRotationInput extends TorqueInput {
         private TorqueSpeedSettings rotSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // two speeds, 1 and .5
 
         private double rot = 0;
 
-        private TorqueSlewLimiter rotLimiter = new TorqueSlewLimiter(2.2, 55);
+        private TorqueSlewLimiter rotLimiter = new TorqueSlewLimiter(50, 1000);
 
         private TorqueLock<Double> rotLock = new TorqueLock<Double>(false);
         private TorqueToggle rotLockToggle = new TorqueToggle();
@@ -103,16 +122,24 @@ public class Input {
 
         @Override
         public void update() {
+            rotSpeeds.update(
+                driver.getRightBumper(),
+                driver.getLeftBumper(),
+                false,
+                false
+            );
             rotLockToggle.calc(driver.getRightStickClick());
             rotLock.setLocked(rotLockToggle.get());
-            rot = -rotLock.calculate(rotLimiter.calculate(
-                    driver.getRightXAxis()) * Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
-
+            rot = -rotLock.calculate(rotLimiter.calculate(rotSpeeds.getSpeed() * driver.getRightXAxis()) * Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
         }
 
         @Override
         public void reset() {
             rot = 0;
+        }
+
+        public double setRot(double rot) {
+            return this.rot = rot;
         }
 
         public double getRot() {
@@ -126,9 +153,34 @@ public class Input {
 
     }
 
-    // ====
-    // Getters
-    // ====
+    public class IntakeInput extends TorqueInput {
+        private int direction = 0;
+
+        public IntakeInput() {
+
+        }
+
+        @Override
+        public void update() {
+            if (driver.getRightTrigger()) direction = 1;
+            else if (driver.getLeftTrigger()) direction = -1;
+            else direction = 0;
+        }
+
+        @Override
+        public void smartDashboard() {
+        }
+
+        public int getDirection() {
+            return direction;
+        }
+
+        @Override
+        public void reset() {}
+
+    }
+
+   
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {
         return driveBaseTranslationInput;
     }
@@ -137,6 +189,16 @@ public class Input {
         return driveBaseRotationInput;
     }
 
+    public IntakeInput getIntakeInput() {
+        return intakeInput;
+    }
+
+
+    @Override
+    public void requestRumble(double forTime) {
+        // ignore rn
+    }
+        
     /**
      * Get the Input instance
      * 
@@ -145,4 +207,5 @@ public class Input {
     public static synchronized Input getInstance() {
         return instance == null ? instance = new Input() : instance;
     }
+
 }

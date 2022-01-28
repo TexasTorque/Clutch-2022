@@ -57,6 +57,8 @@ public class RotateManager {
     public double process() {
         Optional<Pair<NetworkTableEntry, NetworkTableEntry>> opt = Stream
                 .of(frontEntry, backEntry, leftEntry, rightEntry)
+                .filter((Pair<NetworkTableEntry, NetworkTableEntry> x) -> x.getSecond().getDouble(0) != 0) // remove
+                                                                                                           // non-detections
                 .max((Pair<NetworkTableEntry, NetworkTableEntry> x, Pair<NetworkTableEntry, NetworkTableEntry> y) -> {
                     // nutshell: radius most important. Scaled by .9 if on side, .8 on back
                     double mulLeft = 1;

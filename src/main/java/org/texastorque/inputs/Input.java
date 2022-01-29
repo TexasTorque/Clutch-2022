@@ -8,8 +8,6 @@ import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateDirections;
-import org.texastorque.subsystems.Shooter.FlywheelSetpoints;
-import org.texastorque.subsystems.Shooter.HoodPosition;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.component.TorqueSpeedSettings;
@@ -220,45 +218,37 @@ public class Input extends TorqueInputManager {
     }
 
     public class ShooterInput extends TorqueInput {
-        private FlywheelSetpoints flywheel;
-        private HoodPosition hood;
+        private double flywheel; // rpm
+        private double hood; // degrees
 
         public ShooterInput() {
         }
 
         @Override
         public void update() {
-            if (operator.getYButton()) {
-                flywheel = FlywheelSetpoints.LAYUP;
-                hood = HoodPosition.LAYUP;
-            } else if (operator.getBButton()) {
-                flywheel = FlywheelSetpoints.TARMAC;
-                hood = HoodPosition.TARMAC;
-            } else if (operator.getXButton()) {
-                flywheel = FlywheelSetpoints.LAUNCHPAD;
-                hood = HoodPosition.LAUNCHPAD;
-            } else if (operator.getAButton()) {
-                flywheel = FlywheelSetpoints.AUTO;
-                hood = HoodPosition.AUTO;
-            } else {
-                flywheel = FlywheelSetpoints.OFF;
-                hood = HoodPosition.OFF;
-            }
+            // TODO :regression model
         }
 
         @Override
         public void reset() {
         }
 
-        public FlywheelSetpoints getFlywheel() {
+        /**
+         * 
+         * @return flywheel RPM
+         */
+        public double getFlywheel() {
             return flywheel;
         }
 
-        public HoodPosition getHood() {
+        /**
+         * 
+         * @return hood degrees
+         */
+        public double getHood() {
             return hood;
         }
     }
-
 
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {
         return driveBaseTranslationInput;

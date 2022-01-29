@@ -18,4 +18,7 @@ public class Constants {
 
     // Intake
     public static final double INTAKE_ROTARY_SPEED = .7;
+
+    // Climber
+    public static final double CLIMBER_SPEED = .5; 
 }

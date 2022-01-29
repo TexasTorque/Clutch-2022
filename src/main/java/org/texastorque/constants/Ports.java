@@ -19,4 +19,8 @@ public class Ports {
     // Magazine
     public static final int MAGAZINE_BELT = 11;
     public static final int MAGAZINE_GATE = 12;
+
+    // Climber
+    public static final int CLIMBER_LEFT = 16;
+    public static final int CLIMBER_RIGHT = 17;
 }

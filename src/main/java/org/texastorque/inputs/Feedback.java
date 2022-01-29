@@ -1,12 +1,10 @@
 package org.texastorque.inputs;
 
-import org.texastorque.torquelib.base.TorqueFeedback;
-
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.texastorque.torquelib.base.TorqueFeedback;
 
 public class Feedback {
     private static volatile Feedback instance;
@@ -70,11 +68,11 @@ public class Feedback {
 
         @Override
         public void smartDashboard() {
-            SmartDashboard.putNumber("[FB] Gyro Pitch", pitch);
-            SmartDashboard.putNumber("[FB] Gyro Yaw", yaw);
-            SmartDashboard.putNumber("[FB] Gyro Roll", roll);
-            SmartDashboard.putNumber("[FB] Gyro Deg", getDegrees());
-            SmartDashboard.putNumber("[FB] Gyro CCW Deg", getCCWDegrees());
+            SmartDashboard.putNumber("[FB]Gyro Pitch", pitch);
+            SmartDashboard.putNumber("[FB]Gyro Yaw", yaw);
+            SmartDashboard.putNumber("[FB]Gyro Roll", roll);
+            SmartDashboard.putNumber("[FB]Gyro Deg", getDegrees());
+            SmartDashboard.putNumber("[FB]Gyro CCW Deg", getCCWDegrees());
         }
     }
 

@@ -1,20 +1,20 @@
 package org.texastorque.subsystems;
 
 import com.revrobotics.CANSparkMax.ControlType;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public class Intake extends TorqueSubsystem {
     private volatile static Intake instance = null;
 
     public static enum IntakeDirection {
-        INTAKE(1), STOPPED(0), OUTAKE(-1);
+        INTAKE(1),
+        STOPPED(0),
+        OUTAKE(-1);
 
         private final int direction;
 
@@ -25,10 +25,11 @@ public class Intake extends TorqueSubsystem {
         public int getDirection() {
             return direction;
         }
-    } 
-    
+    }
+
     public static enum IntakePosition {
-        UP(0), DOWN(0);  // Intake setpoints
+        UP(0),
+        DOWN(0); // Intake setpoints
 
         private final double position;
 
@@ -39,7 +40,7 @@ public class Intake extends TorqueSubsystem {
         public double getPosition() {
             return position;
         }
-    } 
+    }
 
     private TorqueSparkMax rotary;
     private TorqueSparkMax roller;
@@ -57,15 +58,15 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
-        rollerSpeed = Input.getInstance().getIntakeInput().getDirection().getDirection() 
-                * Constants.INTAKE_ROTARY_SPEED;
+        rollerSpeed = Input.getInstance().getIntakeInput().getDirection().getDirection() *
+                Constants.INTAKE_ROTARY_SPEED;
     }
 
     @Override
     public void updateFeedbackTeleop() {
         rotaryPosition = rotary.getPosition();
     }
-   
+
     @Override
     public void output() {
         rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
@@ -74,9 +75,9 @@ public class Intake extends TorqueSubsystem {
 
     @Override
     public void updateSmartDashboard() {
-        SmartDashboard.putNumber("[Intake]rotarySetPoint", rotarySetPoint.getPosition());
-        SmartDashboard.putNumber("[Intake]rollerSpeed", rollerSpeed);
-        SmartDashboard.putNumber("[Intake]rotaryPosition", rotaryPosition);
+        SmartDashboard.putNumber("[Intake]Roller Speed", rollerSpeed);
+        SmartDashboard.putNumber("[Intake]Rotary Position", rotaryPosition);
+        SmartDashboard.putNumber("[Intake]Rotary Set Point", rotarySetPoint.getPosition());
     }
 
     public double getRotaryPosition() {
@@ -86,5 +87,4 @@ public class Intake extends TorqueSubsystem {
     public static synchronized Intake getInstance() {
         return instance == null ? instance = new Intake() : instance;
     }
-
 }

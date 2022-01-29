@@ -12,7 +12,5 @@ public class Example extends TorqueSequence {
 
     @Override
     protected void init() {
-         
     }
-    
 }

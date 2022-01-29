@@ -1,16 +1,14 @@
 package org.texastorque.modules;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import org.texastorque.constants.Constants;
-import org.texastorque.torquelib.util.TorqueMathUtil;
-
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import java.util.Optional;
+import java.util.stream.Stream;
+import org.texastorque.constants.Constants;
+import org.texastorque.torquelib.util.TorqueMathUtil;
 
 /**
  * Given 4 camera streams
@@ -31,7 +29,8 @@ public class RotateManager {
 
     private final PIDController rotatePID;
 
-    public RotateManager(String frontTableName, String backTableName, String leftTableName, String rightTableName) {
+    public RotateManager(String frontTableName, String backTableName, String leftTableName,
+            String rightTableName) {
         NetworkTableInstance NT = NetworkTableInstance.getDefault();
 
         NetworkTable frontTable = NT.getTable(frontTableName);
@@ -39,10 +38,14 @@ public class RotateManager {
         NetworkTable leftTable = NT.getTable(leftTableName);
         NetworkTable rightTable = NT.getTable(rightTableName);
 
-        frontEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(frontTable.getEntry("x"), frontTable.getEntry("r"));
-        backEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(backTable.getEntry("x"), backTable.getEntry("r"));
-        leftEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(leftTable.getEntry("x"), leftTable.getEntry("r"));
-        rightEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(rightTable.getEntry("x"), rightTable.getEntry("r"));
+        frontEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(frontTable.getEntry("x"),
+                frontTable.getEntry("r"));
+        backEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(backTable.getEntry("x"),
+                backTable.getEntry("r"));
+        leftEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(leftTable.getEntry("x"),
+                leftTable.getEntry("r"));
+        rightEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(rightTable.getEntry("x"),
+                rightTable.getEntry("r"));
 
         rotatePID = new PIDController(Constants.ROTATE_MANAGER_PID_P, Constants.ROTATE_MANAGER_PID_I,
                 Constants.ROTATE_MANAGER_PID_D);
@@ -51,7 +54,7 @@ public class RotateManager {
 
     /**
      * Process tables to find desired rotation
-     * 
+     *
      * @return [-1, 1] of power output to rotation
      */
     public double process() {
@@ -59,7 +62,8 @@ public class RotateManager {
                 .of(frontEntry, backEntry, leftEntry, rightEntry)
                 .filter((Pair<NetworkTableEntry, NetworkTableEntry> x) -> x.getSecond().getDouble(0) != 0) // remove
                                                                                                            // non-detections
-                .max((Pair<NetworkTableEntry, NetworkTableEntry> x, Pair<NetworkTableEntry, NetworkTableEntry> y) -> {
+                .max((Pair<NetworkTableEntry, NetworkTableEntry> x,
+                        Pair<NetworkTableEntry, NetworkTableEntry> y) -> {
                     // nutshell: radius most important. Scaled by .9 if on side, .8 on back
                     double mulLeft = 1;
                     double mulRight = 1;
@@ -76,7 +80,8 @@ public class RotateManager {
                         mulRight = .8;
                     }
 
-                    return Double.compare(x.getSecond().getDouble(0) * mulLeft, y.getSecond().getDouble(0) * mulRight);
+                    return Double.compare(x.getSecond().getDouble(0) * mulLeft,
+                            y.getSecond().getDouble(0) * mulRight);
                 });
         // if none are detected, just stop
         if (opt.isEmpty()) {
@@ -111,5 +116,4 @@ public class RotateManager {
         double ret = TorqueMathUtil.constrain(rotatePID.calculate(trueAngle, 0), -1, 1);
         return ret;
     }
-
 }

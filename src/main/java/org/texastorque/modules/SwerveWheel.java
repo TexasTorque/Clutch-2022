@@ -8,7 +8,6 @@ import org.texastorque.torquelib.component.TorqueSparkMax;
 import org.texastorque.torquelib.component.TorqueTalon;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.util.KPID;
-import org.texastorque.util.pid.PIDConfigurator;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,7 +46,7 @@ public class SwerveWheel {
     }
 
     /**
-     * 
+     *
      * @param value The value in encoder units
      * @return The value in degrees [-180,180]
      */
@@ -66,11 +65,12 @@ public class SwerveWheel {
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState(drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS), getRotation());
+        return new SwerveModuleState(drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
+                getRotation());
     }
 
     /**
-     * 
+     *
      * @param metersPerSecond Speed in meters per second
      * @return Speed in encoder per second
      */
@@ -85,13 +85,15 @@ public class SwerveWheel {
         double requestedSpeed = metersPerSecondToEncoderPerSecond(state.speedMetersPerSecond);
 
         if (DriverStation.isTeleop()) {
-            drive.set(requestedSpeed * -1 / metersPerSecondToEncoderPerSecond(Constants.DRIVE_MAX_SPEED_METERS));
+            drive.set(requestedSpeed * -1 /
+                    metersPerSecondToEncoderPerSecond(Constants.DRIVE_MAX_SPEED_METERS));
         } else {
             drive.set(requestedSpeed * -1, ControlType.kSmartVelocity);
         }
 
-        double requestedRotate = TorqueMathUtil
-                .constrain(rotatePID.calculate(fromEncoder(rotate.getPosition()), state.angle.getDegrees()), -1, 1);
+        double requestedRotate = TorqueMathUtil.constrain(
+                rotatePID.calculate(fromEncoder(rotate.getPosition()), state.angle.getDegrees()),
+                -1, 1);
         rotate.set(requestedRotate);
     }
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.texastorque.constants.Constants;
+import org.texastorque.subsystems.Intake.IntakeDirection;
+import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.base.TorqueInputModule;
@@ -154,7 +156,8 @@ public class Input extends TorqueInputManager {
     }
 
     public class IntakeInput extends TorqueInput {
-        private int direction = 0;
+        private IntakeDirection direction = IntakeDirection.STOPPED;
+        private IntakePosition intakePosition = IntakePosition.UP;
 
         public IntakeInput() {
 
@@ -162,17 +165,26 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            if (driver.getRightTrigger()) direction = 1;
-            else if (driver.getLeftTrigger()) direction = -1;
-            else direction = 0;
+            if (driver.getRightTrigger()) {
+                direction = IntakeDirection.INTAKE;
+                if (driver.getLeftTrigger())
+                    direction = IntakeDirection.OUTAKE;
+            } else direction = IntakeDirection.STOPPED;
+
+            if (driver.getRightTrigger()) intakePosition = IntakePosition.DOWN;
+            else intakePosition = IntakePosition.UP;
         }
 
         @Override
         public void smartDashboard() {
         }
 
-        public int getDirection() {
+        public IntakeDirection getDirection() {
             return direction;
+        }
+
+        public IntakePosition getPosition() {
+            return intakePosition;
         }
 
         @Override

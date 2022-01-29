@@ -27,6 +27,7 @@ public class Input extends TorqueInputManager {
     private DriveBaseRotationInput driveBaseRotationInput;
     private IntakeInput intakeInput;
     private MagazineInput magazineInput;
+    private ShooterInput shooterInput;
 
     private List<TorqueInput> modules = new ArrayList<>();
 
@@ -45,6 +46,9 @@ public class Input extends TorqueInputManager {
 
         magazineInput = new MagazineInput();
         modules.add(magazineInput);
+
+        shooterInput = new ShooterInput();
+        modules.add(shooterInput);
     }
 
     @Override
@@ -147,36 +151,6 @@ public class Input extends TorqueInputManager {
         }
     }
 
-    public class MagazineInput extends TorqueInput {
-        private GateDirections gateDirection;
-        private BeltDirections beltDirection;
-
-        public MagazineInput() {
-        }
-
-        public void update() {
-            if (operator.getLeftTrigger())
-                gateDirection = GateDirections.OPEN;
-            else
-                gateDirection = GateDirections.CLOSED;
-
-            if (operator.getRightBumper())
-                beltDirection = BeltDirections.BACKWARDS;
-            else if (operator.getRightTrigger())
-                beltDirection = BeltDirections.FORWARDS;
-            else
-                beltDirection = BeltDirections.OFF;
-        }
-
-        public BeltDirections getBeltDirection() {
-            return beltDirection;
-        }
-
-        public GateDirections getGateDirection() {
-            return gateDirection;
-        }
-    }
-
     public class IntakeInput extends TorqueInput {
         private IntakeDirection direction = IntakeDirection.STOPPED;
         private IntakePosition intakePosition = IntakePosition.UP;
@@ -184,6 +158,7 @@ public class Input extends TorqueInputManager {
         public IntakeInput() {
         }
 
+        @Override
         public void update() {
             if (driver.getRightTrigger()) {
                 direction = IntakeDirection.INTAKE;
@@ -211,6 +186,70 @@ public class Input extends TorqueInputManager {
         }
     }
 
+    public class MagazineInput extends TorqueInput {
+        private GateDirections gateDirection;
+        private BeltDirections beltDirection;
+
+        public MagazineInput() {
+        }
+
+        @Override
+        public void update() {
+            if (operator.getLeftTrigger())
+                gateDirection = GateDirections.OPEN;
+            else
+                gateDirection = GateDirections.CLOSED;
+
+            if (operator.getRightBumper())
+                beltDirection = BeltDirections.BACKWARDS;
+            else if (operator.getRightTrigger())
+                beltDirection = BeltDirections.FORWARDS;
+            else
+                beltDirection = BeltDirections.OFF;
+        }
+
+        public BeltDirections getBeltDirection() {
+            return beltDirection;
+        }
+
+        public GateDirections getGateDirection() {
+            return gateDirection;
+        }
+    }
+
+    public class ShooterInput extends TorqueInput {
+        private double flywheel; // rpm
+        private double hood; // degrees
+
+        public ShooterInput() {
+        }
+
+        @Override
+        public void update() {
+            // TODO :regression model
+        }
+
+        @Override
+        public void reset() {
+        }
+
+        /**
+         * 
+         * @return flywheel RPM
+         */
+        public double getFlywheel() {
+            return flywheel;
+        }
+
+        /**
+         * 
+         * @return hood degrees
+         */
+        public double getHood() {
+            return hood;
+        }
+    }
+
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {
         return driveBaseTranslationInput;
     }
@@ -225,6 +264,10 @@ public class Input extends TorqueInputManager {
 
     public MagazineInput getMagazineInput() {
         return magazineInput;
+    }
+
+    public ShooterInput getShooterInput() {
+        return shooterInput;
     }
 
     @Override

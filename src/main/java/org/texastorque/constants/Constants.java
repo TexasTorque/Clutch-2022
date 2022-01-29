@@ -26,4 +26,7 @@ public class Constants {
     public static final double FLYWHEEL_Kp = -1;
     public static final double FLYWHEEL_Ki = -1;
     public static final double FLYWHEEL_Kd = -1;
+
+    // Climber
+    public static final double CLIMBER_SPEED = .5;
 }

@@ -2,7 +2,7 @@ name: Build robot code
 
 on:
   pull_request:
-    types: [opened, reoponed, edited]
+    types: [opened, reoponed, synchronize]
 
 jobs:
   build:

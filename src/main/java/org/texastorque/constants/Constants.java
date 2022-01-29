@@ -15,4 +15,6 @@ public class Constants {
     //Magazine
     public static final double MAGAZINE_GATE_SPEED = 0.5;
     public static final double MAGAZINE_BELT_SPEED = 0.5;
+  
+    public static final double INTAKE_ROTARY_SPEED = .7;
 }

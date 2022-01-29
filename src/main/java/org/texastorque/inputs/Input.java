@@ -6,6 +6,8 @@ import java.util.List;
 import org.texastorque.constants.Constants;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateDirections;
+import org.texastorque.subsystems.Intake.IntakeDirection;
+import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.component.TorqueSpeedSettings;
@@ -25,6 +27,7 @@ public class Input extends TorqueInputManager {
     // Modules
     private DriveBaseTranslationInput driveBaseTranslationInput;
     private DriveBaseRotationInput driveBaseRotationInput;
+    private IntakeInput intakeInput  
     private MagazineInput magazineInput;
 
     private List<TorqueInput> modules = new ArrayList<>();
@@ -40,6 +43,9 @@ public class Input extends TorqueInputManager {
         driveBaseRotationInput = new DriveBaseRotationInput();
         modules.add(driveBaseRotationInput);
 
+        intakeInput = new IntakeInput();
+        modules.add(intakeInput);
+      
         magazineInput = new MagazineInput();
         modules.add(magazineInput);
     }
@@ -160,23 +166,24 @@ public class Input extends TorqueInputManager {
     public class MagazineInput extends TorqueInput {
         private GateDirections gateDirection;
         private BeltDirections beltDirection;
-
-        public MagazineInput() {  
+        
+        public MagazineInput() { 
         }
+        
         public void update() {
-            if (operator.getLeftTrigger()) 
-                gateDirection = GateDirections.OPEN;
-            else 
-                gateDirection = GateDirections.CLOSED;
-
-            if (operator.getRightBumper())
-                beltDirection = BeltDirections.BACKWARDS;
-            else if (operator.getRightTrigger()) 
-                beltDirection = BeltDirections.FORWARDS;
-            else
-                beltDirection = BeltDirections.OFF;
+           if (operator.getLeftTrigger()) 
+              gateDirection = GateDirections.OPEN;
+          else 
+              gateDirection = GateDirections.CLOSED; 
+          
+          if (operator.getRightBumper())
+              beltDirection = BeltDirections.BACKWARDS;
+          else if (operator.getRightTrigger()) 
+              beltDirection = BeltDirections.FORWARDS;
+          else
+              beltDirection = BeltDirections.OFF;
         }
-
+      
         public BeltDirections getBeltDirection() {
             return beltDirection;
         }
@@ -184,6 +191,37 @@ public class Input extends TorqueInputManager {
         public GateDirections getGateDirection() {
             return gateDirection;
         }
+      
+      }
+
+      
+      public class IntakeInput extends TorqueInput {
+        private IntakeDirection direction = IntakeDirection.STOPPED;
+        private IntakePosition intakePosition = IntakePosition.UP;
+
+        public IntakeInput() {
+
+        public void update() {
+            if (driver.getRightTrigger()) {
+                direction = IntakeDirection.INTAKE;
+                if (driver.getLeftTrigger())
+                    direction = IntakeDirection.OUTAKE;
+            } else direction = IntakeDirection.STOPPED;
+
+            if (driver.getRightTrigger()) intakePosition = IntakePosition.DOWN;
+            else intakePosition = IntakePosition.UP;
+        }
+
+        public IntakeDirection getDirection() {
+            return direction;
+        }
+
+        public IntakePosition getPosition() {
+            return intakePosition;
+        }
+
+        @Override
+        public void reset() {}
     }
     
 
@@ -196,6 +234,10 @@ public class Input extends TorqueInputManager {
         return driveBaseRotationInput;
     }
 
+    public IntakeInput getMagazineInput() {
+        return intakeInput;
+    }
+        
     public MagazineInput getMagazineInput() {
         return magazineInput;
     }

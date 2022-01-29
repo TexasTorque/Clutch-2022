@@ -5,12 +5,13 @@ public class State {
 
     private RobotState state;
 
-    private State() {
-        state = RobotState.DISABLED;
-    }
+    private State() { state = RobotState.DISABLED; }
 
     public static enum RobotState {
-        DISABLED, AUTONOMOUS, TELEOP, TEST;
+        DISABLED,
+        AUTONOMOUS,
+        TELEOP,
+        TEST;
     }
 
     public RobotState getRobotState() { return this.state; }

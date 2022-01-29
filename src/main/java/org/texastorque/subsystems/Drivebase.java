@@ -1,5 +1,9 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.AutoInput;
@@ -8,11 +12,6 @@ import org.texastorque.inputs.Input;
 import org.texastorque.modules.SwerveOdometry;
 import org.texastorque.modules.SwerveWheel;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class Drivebase extends TorqueSubsystem {
     private static volatile Drivebase instance;
@@ -31,13 +30,14 @@ public class Drivebase extends TorqueSubsystem {
     /**
      * Kinematics
      */
-    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(locationBackLeft, locationBackRight,
-            locationFrontLeft, locationFrontRight);
+    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+            locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
 
     /**
      * Odometry
      */
-    public final SwerveOdometry odometry = new SwerveOdometry(kinematics, feedback.getGyroFeedback().getRotation2d());
+    public final SwerveOdometry odometry =
+            new SwerveOdometry(kinematics, feedback.getGyroFeedback().getRotation2d());
 
     /**
      * Modules
@@ -87,13 +87,14 @@ public class Drivebase extends TorqueSubsystem {
         rotation = input.getDrivebaseRotationInput().getRot();
         fieldRelative = true;
 
-        swerveModuleStates = kinematics
-                .toSwerveModuleStates(fieldRelative
-                        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotation,
-                                feedback.getGyroFeedback().getRotation2d())
-                        : new ChassisSpeeds(xSpeed, ySpeed, rotation));
+        swerveModuleStates = kinematics.toSwerveModuleStates(
+                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                        xSpeed, ySpeed, rotation,
+                                        feedback.getGyroFeedback().getRotation2d())
+                              : new ChassisSpeeds(xSpeed, ySpeed, rotation));
 
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.DRIVE_MAX_SPEED_METERS);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
+                                                    Constants.DRIVE_MAX_SPEED_METERS);
     }
 
     @Override
@@ -119,8 +120,7 @@ public class Drivebase extends TorqueSubsystem {
     @Override
     public void updateFeedbackTeleop() {
         odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1), frontLeft.getState(),
-                frontRight.getState(),
-                backLeft.getState(), backRight.getState());
+                        frontRight.getState(), backLeft.getState(), backRight.getState());
     }
 
     @Override
@@ -129,9 +129,7 @@ public class Drivebase extends TorqueSubsystem {
     }
 
     @Override
-    public void updateSmartDashboard() {
-
-    }
+    public void updateSmartDashboard() {}
 
     public static synchronized Drivebase getInstance() {
         return (instance == null) ? instance = new Drivebase() : instance;

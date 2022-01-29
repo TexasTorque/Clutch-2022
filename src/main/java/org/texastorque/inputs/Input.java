@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 import org.texastorque.constants.Constants;
+import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
@@ -28,6 +29,7 @@ public class Input extends TorqueInputManager {
     private IntakeInput intakeInput;
     private MagazineInput magazineInput;
     private ShooterInput shooterInput;
+    private ClimberInput climberInput;
 
     private List<TorqueInput> modules = new ArrayList<>();
 
@@ -49,6 +51,9 @@ public class Input extends TorqueInputManager {
 
         shooterInput = new ShooterInput();
         modules.add(shooterInput);
+
+        climberInput = new ClimberInput();
+        modules.add(climberInput);
     }
 
     @Override
@@ -250,6 +255,31 @@ public class Input extends TorqueInputManager {
         }
     }
 
+    public class ClimberInput extends TorqueInput {
+        private ClimberDirection direction = ClimberDirection.STOP;
+
+        public ClimberInput() {
+        }
+
+        @Override
+        public void update() {
+            if (driver.getDPADUp())
+                direction = ClimberDirection.PUSH;
+            else if (driver.getDPADDown())
+                direction = ClimberDirection.PULL;
+            else
+                direction = ClimberDirection.STOP;
+        }
+
+        public ClimberDirection getDirection() {
+            return direction;
+        }
+
+        @Override
+        public void reset() {
+        }
+    }
+
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {
         return driveBaseTranslationInput;
     }
@@ -268,6 +298,10 @@ public class Input extends TorqueInputManager {
 
     public ShooterInput getShooterInput() {
         return shooterInput;
+    }
+
+    public ClimberInput getClimberInput() {
+        return climberInput;
     }
 
     @Override

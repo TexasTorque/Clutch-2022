@@ -29,4 +29,7 @@ public class Ports {
     // Climber
     public static final int CLIMBER_LEFT = 16;
     public static final int CLIMBER_RIGHT = 17;
+
+    // Turret
+    public static final int TURRET = 18; // CAN
 }

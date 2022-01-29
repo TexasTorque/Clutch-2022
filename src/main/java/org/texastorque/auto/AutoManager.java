@@ -1,13 +1,7 @@
 package org.texastorque.auto;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.HashMap;
-import org.texastorque.auto.sequences.*;
+import org.texastorque.auto.sequences.Example;
 import org.texastorque.torquelib.auto.TorqueAutoManager;
-import org.texastorque.torquelib.auto.TorqueSequence;
 
 public class AutoManager extends TorqueAutoManager {
     private static volatile AutoManager instance;

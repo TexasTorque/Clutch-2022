@@ -5,7 +5,9 @@ public class State {
 
     private RobotState state;
 
-    private State() { state = RobotState.DISABLED; }
+    private State() {
+        state = RobotState.DISABLED;
+    }
 
     public static enum RobotState {
         DISABLED,
@@ -14,8 +16,13 @@ public class State {
         TEST;
     }
 
-    public RobotState getRobotState() { return this.state; }
-    public void setRobotState(RobotState state) { this.state = state; }
+    public RobotState getRobotState() {
+        return this.state;
+    }
+
+    public void setRobotState(RobotState state) {
+        this.state = state;
+    }
 
     public static synchronized State getInstance() {
         return instance == null ? instance = new State() : instance;

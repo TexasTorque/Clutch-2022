@@ -15,12 +15,16 @@ public class Intake extends TorqueSubsystem {
         INTAKE(1),
         STOPPED(0),
         OUTAKE(-1);
-
+        
         private final int direction;
-
-        IntakeDirection(int direction) { this.direction = direction; }
-
-        public int getDirection() { return direction; }
+        
+        IntakeDirection(int direction) {
+            this.direction = direction;
+        }
+        
+        public int getDirection() {
+            return direction;
+        }
     }
 
     public static enum IntakePosition {
@@ -29,9 +33,13 @@ public class Intake extends TorqueSubsystem {
 
         private final double position;
 
-        IntakePosition(double position) { this.position = position; }
+        IntakePosition(double position) {
+            this.position = position;
+        }
 
-        public double getPosition() { return position; }
+        public double getPosition() {
+            return position;
+        }
     }
 
     private TorqueSparkMax rotary;
@@ -51,7 +59,7 @@ public class Intake extends TorqueSubsystem {
     public void updateTeleop() {
         rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
         rollerSpeed = Input.getInstance().getIntakeInput().getDirection().getDirection() *
-                      Constants.INTAKE_ROTARY_SPEED;
+                Constants.INTAKE_ROTARY_SPEED;
     }
 
     @Override
@@ -72,7 +80,9 @@ public class Intake extends TorqueSubsystem {
         SmartDashboard.putNumber("[Intake]Rotary Set Point", rotarySetPoint.getPosition());
     }
 
-    public double getRotaryPosition() { return rotaryPosition; }
+    public double getRotaryPosition() {
+        return rotaryPosition;
+    }
 
     public static synchronized Intake getInstance() {
         return instance == null ? instance = new Intake() : instance;

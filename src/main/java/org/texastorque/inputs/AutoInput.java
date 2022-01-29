@@ -7,12 +7,17 @@ public class AutoInput {
 
     private SwerveModuleState[] driveStates;
 
-    public SwerveModuleState[] getDriveStates() { return driveStates; }
+    public SwerveModuleState[] getDriveStates() {
+        return driveStates;
+    }
 
-    public void setDriveStates(SwerveModuleState[] states) { driveStates = states; }
+    public void setDriveStates(SwerveModuleState[] states) {
+        driveStates = states;
+    }
 
     public static AutoInput getInstance() {
-        if (instance == null) instance = new AutoInput();
+        if (instance == null)
+            instance = new AutoInput();
         return instance;
     }
 }

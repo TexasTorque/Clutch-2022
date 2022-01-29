@@ -11,11 +11,17 @@ public class Feedback {
 
     private GyroFeedback gyroFeedback;
 
-    private Feedback() { gyroFeedback = new GyroFeedback(); }
+    private Feedback() {
+        gyroFeedback = new GyroFeedback();
+    }
 
-    public void update() { gyroFeedback.update(); }
+    public void update() {
+        gyroFeedback.update();
+    }
 
-    public void smartDashboard() { gyroFeedback.smartDashboard(); }
+    public void smartDashboard() {
+        gyroFeedback.smartDashboard();
+    }
 
     public class GyroFeedback extends TorqueFeedback {
         private final AHRS nxGyro;
@@ -36,17 +42,29 @@ public class Feedback {
             roll = nxGyro.getRoll();
         }
 
-        public void resetGyro() { nxGyro.reset(); }
+        public void resetGyro() {
+            nxGyro.reset();
+        }
 
-        public void zeroYaw() { nxGyro.zeroYaw(); }
+        public void zeroYaw() {
+            nxGyro.zeroYaw();
+        }
 
-        public Rotation2d getRotation2d() { return Rotation2d.fromDegrees(getDegrees()); }
+        public Rotation2d getRotation2d() {
+            return Rotation2d.fromDegrees(getDegrees());
+        }
 
-        public Rotation2d getCCWRotation2d() { return Rotation2d.fromDegrees(getCCWDegrees()); }
+        public Rotation2d getCCWRotation2d() {
+            return Rotation2d.fromDegrees(getCCWDegrees());
+        }
 
-        private float getDegrees() { return nxGyro.getFusedHeading(); }
+        private float getDegrees() {
+            return nxGyro.getFusedHeading();
+        }
 
-        private float getCCWDegrees() { return 360.0f - nxGyro.getFusedHeading(); }
+        private float getCCWDegrees() {
+            return 360.0f - nxGyro.getFusedHeading();
+        }
 
         @Override
         public void smartDashboard() {
@@ -58,7 +76,9 @@ public class Feedback {
         }
     }
 
-    public GyroFeedback getGyroFeedback() { return gyroFeedback; }
+    public GyroFeedback getGyroFeedback() {
+        return gyroFeedback;
+    }
 
     public static synchronized Feedback getInstance() {
         return (instance == null) ? instance = new Feedback() : instance;

@@ -36,8 +36,7 @@ public class Drivebase extends TorqueSubsystem {
     /**
      * Odometry
      */
-    public final SwerveOdometry odometry =
-            new SwerveOdometry(kinematics, feedback.getGyroFeedback().getRotation2d());
+    public final SwerveOdometry odometry = new SwerveOdometry(kinematics, feedback.getGyroFeedback().getRotation2d());
 
     /**
      * Modules
@@ -89,12 +88,12 @@ public class Drivebase extends TorqueSubsystem {
 
         swerveModuleStates = kinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                        xSpeed, ySpeed, rotation,
-                                        feedback.getGyroFeedback().getRotation2d())
-                              : new ChassisSpeeds(xSpeed, ySpeed, rotation));
+                        xSpeed, ySpeed, rotation,
+                        feedback.getGyroFeedback().getRotation2d())
+                        : new ChassisSpeeds(xSpeed, ySpeed, rotation));
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
-                                                    Constants.DRIVE_MAX_SPEED_METERS);
+                Constants.DRIVE_MAX_SPEED_METERS);
     }
 
     @Override
@@ -120,7 +119,7 @@ public class Drivebase extends TorqueSubsystem {
     @Override
     public void updateFeedbackTeleop() {
         odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1), frontLeft.getState(),
-                        frontRight.getState(), backLeft.getState(), backRight.getState());
+                frontRight.getState(), backLeft.getState(), backRight.getState());
     }
 
     @Override
@@ -129,7 +128,8 @@ public class Drivebase extends TorqueSubsystem {
     }
 
     @Override
-    public void updateSmartDashboard() {}
+    public void updateSmartDashboard() {
+    }
 
     public static synchronized Drivebase getInstance() {
         return (instance == null) ? instance = new Drivebase() : instance;

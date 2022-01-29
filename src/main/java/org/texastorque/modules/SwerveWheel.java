@@ -2,16 +2,17 @@ package org.texastorque.modules;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.CANSparkMax.ControlType;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DriverStation;
+
 import org.texastorque.constants.Constants;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 import org.texastorque.torquelib.component.TorqueTalon;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.util.KPID;
-import org.texastorque.util.pid.PIDConfigurator;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class SwerveWheel {
 
@@ -65,7 +66,7 @@ public class SwerveWheel {
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
-                                     getRotation());
+                getRotation());
     }
 
     /**
@@ -85,7 +86,7 @@ public class SwerveWheel {
 
         if (DriverStation.isTeleop()) {
             drive.set(requestedSpeed * -1 /
-                      metersPerSecondToEncoderPerSecond(Constants.DRIVE_MAX_SPEED_METERS));
+                    metersPerSecondToEncoderPerSecond(Constants.DRIVE_MAX_SPEED_METERS));
         } else {
             drive.set(requestedSpeed * -1, ControlType.kSmartVelocity);
         }

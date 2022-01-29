@@ -18,4 +18,12 @@ public class Constants {
 
     // Intake
     public static final double INTAKE_ROTARY_SPEED = .7;
+
+    // Shooter
+    public static final double FLYWHEEL_Kv = -1;
+    public static final double FLYWHEEL_Ka = -1;
+    public static final double FLYWHEEL_Ks = -1;
+    public static final double FLYWHEEL_Kp = -1;
+    public static final double FLYWHEEL_Ki = -1;
+    public static final double FLYWHEEL_Kd = -1;
 }

@@ -1,9 +1,12 @@
 package org.texastorque.modules;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-enum MagazineState { NONE, BLUE, RED }
+enum MagazineState {
+    NONE, BLUE, RED
+}
 
 public class MagazineBallManager {
     private NetworkTableInstance NT;
@@ -28,7 +31,11 @@ public class MagazineBallManager {
         }
     }
 
-    public void setMagState(MagazineState state) { this.state = state; }
+    public void setMagState(MagazineState state) {
+        this.state = state;
+    }
 
-    public MagazineState getMagazineState() { return state; }
+    public MagazineState getMagazineState() {
+        return state;
+    }
 }

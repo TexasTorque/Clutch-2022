@@ -15,8 +15,13 @@ public class Magazine extends TorqueSubsystem {
 
         private final int direction;
 
-        GateDirections(int direction) { this.direction = direction; }
-        public int getDirection() { return this.direction; }
+        GateDirections(int direction) {
+            this.direction = direction;
+        }
+
+        public int getDirection() {
+            return this.direction;
+        }
     }
 
     public static enum BeltDirections {
@@ -26,8 +31,13 @@ public class Magazine extends TorqueSubsystem {
 
         private final int direction;
 
-        BeltDirections(int direction) { this.direction = direction; }
-        public int getDirection() { return this.direction; }
+        BeltDirections(int direction) {
+            this.direction = direction;
+        }
+
+        public int getDirection() {
+            return this.direction;
+        }
     }
 
     private TorqueSparkMax belt;
@@ -44,13 +54,14 @@ public class Magazine extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         gateSpeed = Input.getInstance().getMagazineInput().getGateDirection().getDirection() *
-                    Constants.MAGAZINE_GATE_SPEED;
+                Constants.MAGAZINE_GATE_SPEED;
         beltSpeed = Input.getInstance().getMagazineInput().getBeltDirection().getDirection() *
-                    Constants.MAGAZINE_BELT_SPEED;
+                Constants.MAGAZINE_BELT_SPEED;
     }
 
     @Override
-    public void updateFeedbackTeleop() {}
+    public void updateFeedbackTeleop() {
+    }
 
     @Override
     public void output() {
@@ -59,7 +70,8 @@ public class Magazine extends TorqueSubsystem {
     }
 
     @Override
-    public void updateSmartDashboard() {}
+    public void updateSmartDashboard() {
+    }
 
     public static synchronized Magazine getInstance() {
         return instance == null ? instance = new Magazine() : instance;

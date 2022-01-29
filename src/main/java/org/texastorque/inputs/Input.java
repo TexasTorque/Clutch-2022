@@ -58,10 +58,8 @@ public class Input extends TorqueInputManager {
     }
 
     public class DriveBaseTranslationInput extends TorqueInput {
-        private TorqueSpeedSettings xSpeeds =
-                new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
-        private TorqueSpeedSettings ySpeeds =
-                new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
+        private TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
+        private TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
 
         private double xSpeed = 0;
         private double ySpeed = 0;
@@ -69,7 +67,8 @@ public class Input extends TorqueInputManager {
         private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(50, 1000);
         private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(50, 1000);
 
-        private DriveBaseTranslationInput() {}
+        private DriveBaseTranslationInput() {
+        }
 
         @Override
         public void update() {
@@ -78,11 +77,11 @@ public class Input extends TorqueInputManager {
             ySpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false);
 
             xSpeed = xLimiter.calculate(xSpeeds.getSpeed() * driver.getLeftYAxis()) *
-                     Constants.DRIVE_MAX_SPEED_METERS;
+                    Constants.DRIVE_MAX_SPEED_METERS;
 
             // Negated to get positive values when going left
             ySpeed = -yLimiter.calculate(ySpeeds.getSpeed() * driver.getLeftXAxis()) *
-                     Constants.DRIVE_MAX_SPEED_METERS;
+                    Constants.DRIVE_MAX_SPEED_METERS;
         }
 
         @Override
@@ -91,9 +90,13 @@ public class Input extends TorqueInputManager {
             ySpeed = 0;
         }
 
-        public double getXSpeed() { return this.xSpeed; }
+        public double getXSpeed() {
+            return this.xSpeed;
+        }
 
-        public double getYSpeed() { return this.ySpeed; }
+        public double getYSpeed() {
+            return this.ySpeed;
+        }
 
         @Override
         public void smartDashboard() {
@@ -103,8 +106,7 @@ public class Input extends TorqueInputManager {
     }
 
     public class DriveBaseRotationInput extends TorqueInput {
-        private TorqueSpeedSettings rotSpeeds =
-                new TorqueSpeedSettings(1, 0.5, 1, .25); // two speeds, 1 and .5
+        private TorqueSpeedSettings rotSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // two speeds, 1 and .5
 
         private double rot = 0;
 
@@ -113,7 +115,8 @@ public class Input extends TorqueInputManager {
         private TorqueLock<Double> rotLock = new TorqueLock<Double>(false);
         private TorqueToggle rotLockToggle = new TorqueToggle();
 
-        private DriveBaseRotationInput() {}
+        private DriveBaseRotationInput() {
+        }
 
         @Override
         public void update() {
@@ -122,7 +125,7 @@ public class Input extends TorqueInputManager {
             rotLock.setLocked(rotLockToggle.get());
             rot = -rotLock.calculate(
                     rotLimiter.calculate(rotSpeeds.getSpeed() * driver.getRightXAxis()) *
-                    Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
+                            Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
         }
 
         @Override
@@ -130,9 +133,13 @@ public class Input extends TorqueInputManager {
             rot = 0;
         }
 
-        public double setRot(double rot) { return this.rot = rot; }
+        public double setRot(double rot) {
+            return this.rot = rot;
+        }
 
-        public double getRot() { return this.rot; }
+        public double getRot() {
+            return this.rot;
+        }
 
         @Override
         public void smartDashboard() {
@@ -144,7 +151,8 @@ public class Input extends TorqueInputManager {
         private GateDirections gateDirection;
         private BeltDirections beltDirection;
 
-        public MagazineInput() {}
+        public MagazineInput() {
+        }
 
         public void update() {
             if (operator.getLeftTrigger())
@@ -160,21 +168,27 @@ public class Input extends TorqueInputManager {
                 beltDirection = BeltDirections.OFF;
         }
 
-        public BeltDirections getBeltDirection() { return beltDirection; }
+        public BeltDirections getBeltDirection() {
+            return beltDirection;
+        }
 
-        public GateDirections getGateDirection() { return gateDirection; }
+        public GateDirections getGateDirection() {
+            return gateDirection;
+        }
     }
 
     public class IntakeInput extends TorqueInput {
         private IntakeDirection direction = IntakeDirection.STOPPED;
         private IntakePosition intakePosition = IntakePosition.UP;
 
-        public IntakeInput() {}
+        public IntakeInput() {
+        }
 
         public void update() {
             if (driver.getRightTrigger()) {
                 direction = IntakeDirection.INTAKE;
-                if (driver.getLeftTrigger()) direction = IntakeDirection.OUTAKE;
+                if (driver.getLeftTrigger())
+                    direction = IntakeDirection.OUTAKE;
             } else
                 direction = IntakeDirection.STOPPED;
 
@@ -184,23 +198,34 @@ public class Input extends TorqueInputManager {
                 intakePosition = IntakePosition.UP;
         }
 
-        public IntakeDirection getDirection() { return direction; }
+        public IntakeDirection getDirection() {
+            return direction;
+        }
 
-        public IntakePosition getPosition() { return intakePosition; }
+        public IntakePosition getPosition() {
+            return intakePosition;
+        }
 
         @Override
-        public void reset() {}
+        public void reset() {
+        }
     }
 
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {
         return driveBaseTranslationInput;
     }
 
-    public DriveBaseRotationInput getDrivebaseRotationInput() { return driveBaseRotationInput; }
+    public DriveBaseRotationInput getDrivebaseRotationInput() {
+        return driveBaseRotationInput;
+    }
 
-    public IntakeInput getIntakeInput() { return intakeInput; }
+    public IntakeInput getIntakeInput() {
+        return intakeInput;
+    }
 
-    public MagazineInput getMagazineInput() { return magazineInput; }
+    public MagazineInput getMagazineInput() {
+        return magazineInput;
+    }
 
     @Override
     public void requestRumble(double forTime) {

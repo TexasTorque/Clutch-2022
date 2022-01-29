@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.texastorque.constants.Constants;
+import org.texastorque.subsystems.Magazine.BeltDirections;
+import org.texastorque.subsystems.Magazine.GateDirections;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
-import org.texastorque.torquelib.base.TorqueInputModule;
 import org.texastorque.torquelib.component.TorqueSpeedSettings;
 import org.texastorque.torquelib.controlLoop.TorqueSlewLimiter;
 import org.texastorque.torquelib.util.GenericController;
@@ -19,16 +20,19 @@ public class Input extends TorqueInputManager {
     private static volatile Input instance;
 
     private GenericController driver;
+    private GenericController operator;
 
     // Modules
     private DriveBaseTranslationInput driveBaseTranslationInput;
     private DriveBaseRotationInput driveBaseRotationInput;
-    private IntakeInput intakeInput;
+    private MagazineInput magazineInput;
 
     private List<TorqueInput> modules = new ArrayList<>();
 
+
     private Input() {
         driver = new GenericController(0, 0.1);
+        operator = new GenericController(1, 0.1);
 
         driveBaseTranslationInput = new DriveBaseTranslationInput();
         modules.add(driveBaseTranslationInput);
@@ -36,8 +40,8 @@ public class Input extends TorqueInputManager {
         driveBaseRotationInput = new DriveBaseRotationInput();
         modules.add(driveBaseRotationInput);
 
-        intakeInput = new IntakeInput();
-        modules.add(intakeInput);
+        magazineInput = new MagazineInput();
+        modules.add(magazineInput);
     }
 
     @Override
@@ -153,32 +157,35 @@ public class Input extends TorqueInputManager {
 
     }
 
-    public class IntakeInput extends TorqueInput {
-        private int direction = 0;
+    public class MagazineInput extends TorqueInput {
+        private GateDirections gateDirection;
+        private BeltDirections beltDirection;
 
-        public IntakeInput() {
-
+        public MagazineInput() {  
         }
-
-        @Override
         public void update() {
-            if (driver.getRightTrigger()) direction = 1;
-            else if (driver.getLeftTrigger()) direction = -1;
-            else direction = 0;
+            if (operator.getLeftTrigger()) 
+                gateDirection = GateDirections.OPEN;
+            else 
+                gateDirection = GateDirections.CLOSED;
+
+            if (operator.getRightBumper())
+                beltDirection = BeltDirections.BACKWARDS;
+            else if (operator.getRightTrigger()) 
+                beltDirection = BeltDirections.FORWARDS;
+            else
+                beltDirection = BeltDirections.OFF;
         }
 
-        @Override
-        public void smartDashboard() {
+        public BeltDirections getBeltDirection() {
+            return beltDirection;
         }
 
-        public int getDirection() {
-            return direction;
+        public GateDirections getGateDirection() {
+            return gateDirection;
         }
-
-        @Override
-        public void reset() {}
-
     }
+    
 
    
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {
@@ -189,8 +196,8 @@ public class Input extends TorqueInputManager {
         return driveBaseRotationInput;
     }
 
-    public IntakeInput getIntakeInput() {
-        return intakeInput;
+    public MagazineInput getMagazineInput() {
+        return magazineInput;
     }
 
 

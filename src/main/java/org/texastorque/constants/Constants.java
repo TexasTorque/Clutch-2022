@@ -11,4 +11,8 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_P = 0;
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
+
+    //Magazine
+    public static final double MAGAZINE_GATE_SPEED = 0.5;
+    public static final double MAGAZINE_BELT_SPEED = 0.5;
 }

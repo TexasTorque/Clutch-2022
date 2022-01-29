@@ -15,13 +15,13 @@ public class Intake extends TorqueSubsystem {
         INTAKE(1),
         STOPPED(0),
         OUTAKE(-1);
-
+        
         private final int direction;
-
+        
         IntakeDirection(int direction) {
             this.direction = direction;
         }
-
+        
         public int getDirection() {
             return direction;
         }

@@ -29,4 +29,12 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = .5;
+
+    // Turret
+    public static final double TURRET_Ks = -1;
+    public static final double TURRET_Kv = -1;
+    public static final double TURRET_Ka = -1;
+    public static final double TURRET_Kp = -1;
+    public static final double TURRET_Ki = -1;
+    public static final double TURRET_Kd = -1;
 }

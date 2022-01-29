@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends TorqueSubsystem {
-    public static volatile Shooter instance;
+    private static volatile Shooter instance;
 
     private TorqueSparkMax flywheel;
     private Servo hood;

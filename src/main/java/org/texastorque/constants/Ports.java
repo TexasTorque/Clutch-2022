@@ -12,7 +12,7 @@ public class Ports {
     public static final int DRIVE_ROT_LEFT_FRONT = -1;
     public static final int DRIVE_ROT_RIGHT_FRONT = -1;
 
-    //Magazine
-    public static final int MAGAZINE_BELT = 10;
-    public static final int MAGAZINE_GATE = 11;
+    // Magazine
+    public static final int MAGAZINE_BELT = 11;
+    public static final int MAGAZINE_GATE = 12;
 }

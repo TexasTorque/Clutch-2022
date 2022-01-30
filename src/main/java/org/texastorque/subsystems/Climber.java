@@ -27,16 +27,15 @@ public class Climber extends TorqueSubsystem {
         }
     }
 
-    private TorqueSparkMax left;
-    private TorqueSparkMax right;
+    private TorqueSparkMax climb;
 
     private double climberSpeeds;
 
     private double climberPosition;
 
     private Climber() {
-        left = new TorqueSparkMax(Ports.CLIMBER_LEFT);
-        right = new TorqueSparkMax(Ports.CLIMBER_RIGHT);
+        climb = new TorqueSparkMax(Ports.CLIMBER_LEFT);
+        climb.addFollower(Ports.CLIMBER_RIGHT);
     }
 
     @Override
@@ -47,13 +46,12 @@ public class Climber extends TorqueSubsystem {
 
     @Override
     public void updateFeedbackTeleop() {
-        climberPosition = left.getPosition(); // left or right, doesnt matter
+        climberPosition = climb.getPosition(); // left or right, doesnt matter
     }
 
     @Override
     public void output() {
-        left.set(climberSpeeds);
-        right.set(climberSpeeds);
+        climb.set(climberSpeeds);
     }
 
     @Override

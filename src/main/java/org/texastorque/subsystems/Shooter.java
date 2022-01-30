@@ -5,6 +5,7 @@ import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
+import org.texastorque.torquelib.util.TorqueMathUtil;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -41,7 +42,8 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         double flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
-        double hoodPosition = Input.getInstance().getShooterInput().getHood();
+        hoodPosition = TorqueMathUtil.constrain(Input.getInstance().getShooterInput().getHood(),
+                Constants.HOOD_MIN, Constants.HOOD_MAX);
 
         // TODO: confirm getVelocity is in RPM before running!!
         flywheelSpeed = flywheelFeedforward.calculate(flywheelSetpoint)

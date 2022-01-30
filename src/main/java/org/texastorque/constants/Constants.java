@@ -26,6 +26,8 @@ public class Constants {
     public static final double FLYWHEEL_Kp = -1;
     public static final double FLYWHEEL_Ki = -1;
     public static final double FLYWHEEL_Kd = -1;
+    public static final double HOOD_MIN = 0;
+    public static final double HOOD_MAX = 0;
 
     // Climber
     public static final double CLIMBER_SPEED = .5;
@@ -37,4 +39,5 @@ public class Constants {
     public static final double TURRET_Kp = -1;
     public static final double TURRET_Ki = -1;
     public static final double TURRET_Kd = -1;
+
 }

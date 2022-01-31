@@ -1,6 +1,5 @@
 package org.texastorque.subsystems;
 
-import com.revrobotics.CANSparkMax.ControlType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;

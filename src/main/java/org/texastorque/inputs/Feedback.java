@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.torquelib.base.TorqueFeedback;
+import org.texastorque.torquelib.util.RollingMedian;
 
 public class Feedback {
     private static volatile Feedback instance;
@@ -18,20 +19,24 @@ public class Feedback {
 
     private GyroFeedback gyroFeedback;
     private LimelightFeedback limelightFeedback;
+    private ShooterFeedback shooterFeedback;
 
     private Feedback() {
         gyroFeedback = new GyroFeedback();
         limelightFeedback = new LimelightFeedback();
+        shooterFeedback = new ShooterFeedback();
     }
 
     public void update() {
         gyroFeedback.update();
         limelightFeedback.update();
+        shooterFeedback.update();
     }
 
     public void smartDashboard() {
         gyroFeedback.smartDashboard();
         limelightFeedback.smartDashboard();
+        shooterFeedback.smartDashboard();
     }
 
     public class GyroFeedback extends TorqueFeedback {
@@ -110,11 +115,19 @@ public class Feedback {
         private double vOffset;
         private double taOffset;
 
+        private RollingMedian distanceMedian;
+        private double distance;
+
+        public LimelightFeedback() {
+            distanceMedian = new RollingMedian(5);
+        }
+
         @Override
         public void update() {
             hOffset = tx.getDouble(0);
             vOffset = ty.getDouble(0);
             taOffset = ta.getDouble(0);
+            distance = distanceMedian.calculate(hOffset);
         }
 
         /**
@@ -138,12 +151,63 @@ public class Feedback {
             return taOffset;
         }
 
+        /**
+         * @return Median calculated distance to target
+         */
+        public double getDistance() {
+            return distance;
+        }
+
         public void smartDashboard() {
             SmartDashboard.putNumber("hOffset", hOffset);
             SmartDashboard.putNumber("vOffset", vOffset);
             SmartDashboard.putNumber("taOffset", taOffset);
+            SmartDashboard.putNumber("distance", distance);
         }
 
+    }
+
+    public class ShooterFeedback extends TorqueFeedback {
+
+        private double RPM;
+        private double hoodPosition;
+
+        @Override
+        public void update() {
+        }
+
+        /**
+         * @return the hoodPosition
+         */
+        public double getHoodPosition() {
+            return hoodPosition;
+        }
+
+        /**
+         * @return the RPM
+         */
+        public double getRPM() {
+            return RPM;
+        }
+
+        /**
+         * @param hoodPosition the hoodPosition to set
+         */
+        public void setHoodPosition(double hoodPosition) {
+            this.hoodPosition = hoodPosition;
+        }
+
+        /**
+         * @param RPM the RPM to set
+         */
+        public void setRPM(double RPM) {
+            this.RPM = RPM;
+        }
+
+        public void smartDashboard() {
+            SmartDashboard.putNumber("ShooterRPM", RPM);
+            SmartDashboard.putNumber("HoodPosition", hoodPosition);
+        }
     }
 
     public GyroFeedback getGyroFeedback() {
@@ -152,6 +216,10 @@ public class Feedback {
 
     public LimelightFeedback getLimelightFeedback() {
         return limelightFeedback;
+    }
+
+    public ShooterFeedback getShooterFeedback() {
+        return shooterFeedback;
     }
 
     public static synchronized Feedback getInstance() {

@@ -3,12 +3,12 @@ package org.texastorque.modules;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-enum MagazineState {
-    NONE, BLUE, RED
-}
-
 public class MagazineBallManager {
     private static MagazineBallManager instance;
+
+    public enum MagazineState {
+        NONE, BLUE, RED
+    }
 
     private final String magazineTableName = "magazineDetector"; // TODO: update with correct value;
     private NetworkTableInstance NT;

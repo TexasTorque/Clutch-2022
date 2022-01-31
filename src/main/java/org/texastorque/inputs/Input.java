@@ -270,6 +270,12 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
+            // Launchpad shoot in case of failure
+            // TODO: tune values
+            if (MagazineBallManager.getInstance().getMagazineState() == MagazineBallManager.MagazineState.NONE) {
+                flywheel = 5000;
+                hood = 10;
+            }
         }
 
         @Override

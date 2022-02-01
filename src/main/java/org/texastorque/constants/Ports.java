@@ -24,7 +24,10 @@ public class Ports {
     // Shooter
     public static final int SHOOTER_FLYWHEEL_LEFT = 14; // CAN
     public static final int SHOOTER_FLYWHEEL_RIGHT = 15; // CAN
-    public static final int SHOOTER_HOOD = 0; // PWM
+
+    public static final int SHOOTER_HOOD_LEFT = 1; // PWM
+    public static final int SHOOTER_HOOD_RIGHT = 2; // PWM
+
 
     // Climber
     public static final int CLIMBER_LEFT = 16;

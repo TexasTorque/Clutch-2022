@@ -5,6 +5,7 @@ import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.component.TorqueLinearServo;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
@@ -17,7 +18,7 @@ public class Shooter extends TorqueSubsystem {
     private static volatile Shooter instance;
 
     private TorqueSparkMax flywheel;
-    private Servo hood;
+    private TorqueLinearServo hoodLeft, hoodRight;
 
     // setpoints grabbed from input
     private double flywheelSpeed;
@@ -33,7 +34,8 @@ public class Shooter extends TorqueSubsystem {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
 
-        hood = new Servo(Ports.SHOOTER_HOOD);
+        hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 0, 0);
+        hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 0, 0);
     }
 
     @Override
@@ -51,12 +53,13 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(flywheel.getVelocity());
-        Feedback.getInstance().getShooterFeedback().setHoodPosition(hood.get());
+        Feedback.getInstance().getShooterFeedback().setHoodPosition(hoodRight.getPosition());
     }
 
     @Override
     public void output() {
-        hood.set(hoodPosition);
+        hoodRight.set(hoodPosition);
+        hoodLeft.set(hoodPosition);
         // TODO: check initial voltage before output
         flywheel.setVoltage(flywheelSpeed);
     }

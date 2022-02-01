@@ -25,7 +25,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class Pathplanner extends TorqueCommand{
 
-    private PathPlannerTrajectory trajectory;
+        private PathPlannerTrajectory trajectory;
         private final PIDController xController = new PIDController(1.5, 0, 0);
         private final PIDController yController = new PIDController(1.5, 0, 0);
         private final TrapezoidProfile.Constraints tConstraints = new TrapezoidProfile.Constraints(

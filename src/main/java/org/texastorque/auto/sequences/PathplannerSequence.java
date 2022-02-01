@@ -1,9 +1,5 @@
 package org.texastorque.auto.sequences;
 
-import java.util.ArrayList;
-
-import org.texastorque.auto.commands.*;
-import org.texastorque.auto.sequences.*;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.auto.commands.Pathplanner;

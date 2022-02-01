@@ -30,7 +30,7 @@ public class Drivebase extends TorqueSubsystem {
     /**
      * Kinematics
      */
-    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+    public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
             locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
 
     /**

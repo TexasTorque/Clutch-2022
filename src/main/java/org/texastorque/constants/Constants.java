@@ -40,4 +40,12 @@ public class Constants {
     public static final double TURRET_Ki = -1;
     public static final double TURRET_Kd = -1;
 
+
+    public static final double FOOT_TO_METER = 0.3048;
+    public static final double TOP_SPEED_FEET = 16.52;
+    public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
+    public static final double TOP_ACCELERATION_METERS = 1; 
+    public static final double MAX_ANGULAR_SPEED = 2 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI;
+
 }

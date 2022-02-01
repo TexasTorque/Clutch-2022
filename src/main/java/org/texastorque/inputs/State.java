@@ -4,6 +4,7 @@ public class State {
     private static volatile State instance;
 
     private RobotState state;
+    private AutomaticMagazineState automaticMagazineState = AutomaticMagazineState.OFF;
 
     private State() {
         state = RobotState.DISABLED;
@@ -16,12 +17,24 @@ public class State {
         TEST;
     }
 
+    public static enum AutomaticMagazineState {
+        OFF, SHOOTING, REFLECTING
+    }
+
     public RobotState getRobotState() {
         return this.state;
     }
 
+    public AutomaticMagazineState getAutomaticMagazineState() {
+        return automaticMagazineState;
+    }
+
     public void setRobotState(RobotState state) {
         this.state = state;
+    }
+
+    public void setAutomaticMagazineState(AutomaticMagazineState state) {
+        this.automaticMagazineState = state;
     }
 
     public static synchronized State getInstance() {

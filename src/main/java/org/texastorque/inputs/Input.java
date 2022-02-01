@@ -3,12 +3,18 @@ package org.texastorque.inputs;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.texastorque.auto.sequences.AutoLaunch;
+import org.texastorque.auto.sequences.AutoReflect;
 import org.texastorque.constants.Constants;
+import org.texastorque.inputs.State.AutomaticMagazineState;
+import org.texastorque.modules.MagazineBallManager;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateDirections;
+import org.texastorque.torquelib.auto.TorqueAssist;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.component.TorqueSpeedSettings;
@@ -32,6 +38,10 @@ public class Input extends TorqueInputManager {
     private ClimberInput climberInput;
 
     private List<TorqueInput> modules = new ArrayList<>();
+
+    // Assists
+    private TorqueAssist autoLaunch = new TorqueAssist(new AutoLaunch(), magazineInput, shooterInput);
+    private TorqueAssist autoReflect = new TorqueAssist(new AutoReflect(), magazineInput, shooterInput);
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -58,7 +68,22 @@ public class Input extends TorqueInputManager {
 
     @Override
     public void update() {
-        modules.forEach(TorqueInput::run); // dont ask!
+
+        // If detect our alliance, shoot.
+        // If detect enemy, shoot badly
+        // Otherwise, do nothin
+        if (MagazineBallManager.getInstance().isOurAlliance()) {
+            State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
+        } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
+            State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
+        } else {
+            State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.OFF);
+        }
+
+        autoLaunch.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.SHOOTING);
+        autoReflect.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.REFLECTING);
+
+        modules.forEach(TorqueInput::run);
     }
 
     @Override
@@ -220,6 +245,20 @@ public class Input extends TorqueInputManager {
         public GateDirections getGateDirection() {
             return gateDirection;
         }
+
+        /**
+         * @param beltDirection the beltDirection to set
+         */
+        public void setBeltDirection(BeltDirections beltDirection) {
+            this.beltDirection = beltDirection;
+        }
+
+        /**
+         * @param gateDirection the gateDirection to set
+         */
+        public void setGateDirection(GateDirections gateDirection) {
+            this.gateDirection = gateDirection;
+        }
     }
 
     public class ShooterInput extends TorqueInput {
@@ -231,7 +270,12 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            // TODO :regression model
+            // Launchpad shoot in case of failure
+            // TODO: tune values
+            if (MagazineBallManager.getInstance().getMagazineState() == MagazineBallManager.MagazineState.NONE) {
+                flywheel = 5000;
+                hood = 10;
+            }
         }
 
         @Override
@@ -252,6 +296,15 @@ public class Input extends TorqueInputManager {
          */
         public double getHood() {
             return hood;
+        }
+
+        /**
+         * Set the speed of the flywheel
+         * 
+         * @param speed RPM
+         */
+        public void setFlywheelSpeed(double speed) {
+            this.flywheel = speed;
         }
     }
 

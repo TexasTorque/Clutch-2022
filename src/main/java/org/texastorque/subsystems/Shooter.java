@@ -2,6 +2,7 @@ package org.texastorque.subsystems;
 
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
+import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
@@ -28,10 +29,6 @@ public class Shooter extends TorqueSubsystem {
     private PIDController flywheelPIDController = new PIDController(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,
             Constants.FLYWHEEL_Kd);
 
-    // grabbed from encoders
-    private double flywheelActual;
-    private double hoodActual;
-
     public Shooter() {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
@@ -53,8 +50,8 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void updateFeedbackTeleop() {
-        flywheelActual = flywheel.getPosition();
-        hoodActual = hood.get();
+        Feedback.getInstance().getShooterFeedback().setRPM(flywheel.getVelocity());
+        Feedback.getInstance().getShooterFeedback().setHoodPosition(hood.get());
     }
 
     @Override
@@ -67,9 +64,7 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Shooter]Hood SetPoint", this.hoodPosition);
-        SmartDashboard.putNumber("[Shooter]Hood Position", this.hoodActual);
         SmartDashboard.putNumber("[Shooter]Flywheel SetPoint", this.flywheelSpeed);
-        SmartDashboard.putNumber("[Shooter]Flywheel Speed", this.flywheelActual);
     }
 
     public static synchronized Shooter getInstance() {

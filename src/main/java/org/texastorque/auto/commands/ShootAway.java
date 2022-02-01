@@ -1,6 +1,8 @@
 package org.texastorque.auto.commands;
 
 import org.texastorque.inputs.Input;
+import org.texastorque.inputs.State;
+import org.texastorque.inputs.State.AutomaticMagazineState;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateDirections;
 import org.texastorque.torquelib.auto.TorqueCommand;
@@ -35,7 +37,7 @@ public class ShootAway extends TorqueCommand {
         Input.getInstance().getShooterInput().setFlywheelSpeed(0);
         Input.getInstance().getMagazineInput().setBeltDirection(BeltDirections.OFF);
         Input.getInstance().getMagazineInput().setGateDirection(GateDirections.CLOSED);
-
+        State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.OFF);
     }
 
 }

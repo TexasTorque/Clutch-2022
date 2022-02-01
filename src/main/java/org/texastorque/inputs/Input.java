@@ -18,6 +18,7 @@ import org.texastorque.torquelib.auto.TorqueAssist;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.component.TorqueSpeedSettings;
+import org.texastorque.torquelib.controlLoop.TimedTruthy;
 import org.texastorque.torquelib.controlLoop.TorqueSlewLimiter;
 import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueLock;
@@ -42,6 +43,9 @@ public class Input extends TorqueInputManager {
     // Assists
     private TorqueAssist autoLaunch = new TorqueAssist(new AutoLaunch(), magazineInput, shooterInput);
     private TorqueAssist autoReflect = new TorqueAssist(new AutoReflect(), magazineInput, shooterInput);
+
+    // Etc.
+    private TimedTruthy operatorRumble = new TimedTruthy();
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -69,19 +73,27 @@ public class Input extends TorqueInputManager {
     @Override
     public void update() {
 
-        // If detect our alliance, shoot.
-        // If detect enemy, shoot badly
-        // Otherwise, do nothin
-        if (MagazineBallManager.getInstance().isOurAlliance()) {
-            State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
-        } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-            State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
-        } else {
-            State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.OFF);
-        }
+        if (operator.getBButtonPressed()) {
+            // If detect our alliance, shoot.
+            // If detect enemy, shoot badly
+            // Otherwise, do nothin
 
+            // if not currently auto
+            if (State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.OFF) {
+                if (MagazineBallManager.getInstance().isOurAlliance()) {
+                    State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
+                } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
+                    State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
+                } else {
+                    // if no ball is detected, alert driver for 1 sec with rumble
+                    operatorRumble.setTime(1);
+                }
+            }
+        }
         autoLaunch.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.SHOOTING);
         autoReflect.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.REFLECTING);
+
+        driver.setRumble(operatorRumble.calc());
 
         modules.forEach(TorqueInput::run);
     }
@@ -190,11 +202,11 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            if (driver.getRightTrigger()) {
+            if (driver.getRightTrigger())
                 direction = IntakeDirection.INTAKE;
-                if (driver.getLeftTrigger())
-                    direction = IntakeDirection.OUTAKE;
-            } else
+            else if (driver.getLeftTrigger())
+                direction = IntakeDirection.OUTAKE;
+            else
                 direction = IntakeDirection.STOPPED;
 
             if (driver.getRightTrigger())
@@ -272,7 +284,7 @@ public class Input extends TorqueInputManager {
         public void update() {
             // Launchpad shoot in case of failure
             // TODO: tune values
-            if (MagazineBallManager.getInstance().getMagazineState() == MagazineBallManager.MagazineState.NONE) {
+            if (driver.getXButton()) {
                 flywheel = 5000;
                 hood = 10;
             }

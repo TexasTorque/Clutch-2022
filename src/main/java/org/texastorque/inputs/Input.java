@@ -7,7 +7,7 @@ import java.util.List;
 import org.texastorque.auto.sequences.AutoLaunch;
 import org.texastorque.auto.sequences.AutoReflect;
 import org.texastorque.constants.Constants;
-import org.texastorque.inputs.State.AutomaticMagazineState;
+import org.texastorque.inputs.State.*;
 import org.texastorque.modules.MagazineBallManager;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
@@ -276,6 +276,7 @@ public class Input extends TorqueInputManager {
     public class ShooterInput extends TorqueInput {
         private double flywheel; // rpm
         private double hood; // degrees
+        private TorqueToggle turretOn = new TorqueToggle();
 
         public ShooterInput() {
         }
@@ -288,6 +289,10 @@ public class Input extends TorqueInputManager {
                 flywheel = 5000;
                 hood = 10;
             }
+
+            // Set turret on or off
+            turretOn.calc(operator.getAButton());
+            if (turretOn.get()) State.getInstance().setTurretState(TurretState.ON); else State.getInstance().setTurretState(TurretState.OFF); 
         }
 
         @Override

@@ -4,6 +4,7 @@ public class State {
     private static volatile State instance;
 
     private RobotState state;
+    private TurretState turretState;
     private AutomaticMagazineState automaticMagazineState = AutomaticMagazineState.OFF;
 
     private State() {
@@ -17,6 +18,10 @@ public class State {
         TEST;
     }
 
+    public static enum TurretState {
+        OFF, ON
+    }
+
     public static enum AutomaticMagazineState {
         OFF, SHOOTING, REFLECTING
     }
@@ -25,12 +30,20 @@ public class State {
         return this.state;
     }
 
-    public AutomaticMagazineState getAutomaticMagazineState() {
-        return automaticMagazineState;
-    }
-
     public void setRobotState(RobotState state) {
         this.state = state;
+    }
+
+    public TurretState getTurretState() {
+        return turretState;
+    }
+
+    public void setTurretState(TurretState turretState) {
+        this.turretState = turretState;
+    }
+
+    public AutomaticMagazineState getAutomaticMagazineState() {
+        return automaticMagazineState;
     }
 
     public void setAutomaticMagazineState(AutomaticMagazineState state) {

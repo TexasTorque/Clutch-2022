@@ -3,6 +3,8 @@ package org.texastorque.subsystems;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Feedback;
+import org.texastorque.inputs.State;
+import org.texastorque.inputs.State.TurretState;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 
@@ -82,38 +84,41 @@ public class Turret extends TorqueSubsystem {
     }
 
     public void updateTeleop() {
+        if (State.getInstance().getTurretState() == TurretState.ON) {
+            if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
+                if (!checkOver() && !checkHoming()) {
+                    // calculate pid controller with goal at 0
+                    // change request (power) updates continously
+                    double reqVelocity = Feedback.getInstance().getLimelightFeedback().gethOffset() * 20; // one/twenty sec
 
-        if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
-            if (!checkOver() && !checkHoming()) {
-                // calculate pid controller with goal at 0
-                // change request (power) updates continously
-                double reqVelocity = Feedback.getInstance().getLimelightFeedback().gethOffset() * 20; // one/twenty sec
+                    changeRequest = -1 * simpleMotorFeedforward.calculate(reqVelocity)
+                            + pidController.calculate(reqVelocity,
+                                    rotator.getVelocityDegrees());
+                }
 
-                changeRequest = -1 * simpleMotorFeedforward.calculate(reqVelocity)
-                        + pidController.calculate(reqVelocity,
-                                rotator.getVelocityDegrees());
-            }
+            } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target :( .. let's find it!
+                if (!checkOver() && checkHoming()) {
+                    if (Feedback.getInstance().getGyroFeedback().getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
+                        changeRequest = .1;
+                    } else if (Feedback.getInstance().getGyroFeedback()
+                            .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
+                        changeRequest = -.1;
+                    }
+                }
+            } else {
+                // if good get out of encodercorrecting
+                if (encoderOverStatus.atPosition(rotator.getDegrees())) {
+                    encoderOverStatus = EncoderOverStatus.OFF;
+                } else {
+                    // set approp changeReq using pid
+                    double reqVelocity = (encoderOverStatus.getToPosition() - rotator.getDegrees()) * 4; // one sec
 
-        } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target :( .. let's find it!
-            if (!checkOver() && checkHoming()) {
-                if (Feedback.getInstance().getGyroFeedback().getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
-                    changeRequest = .1;
-                } else if (Feedback.getInstance().getGyroFeedback()
-                        .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
-                    changeRequest = -.1;
+                    changeRequest = simpleMotorFeedforward.calculate(reqVelocity)
+                            + pidController.calculate(reqVelocity, rotator.getVelocityDegrees());
                 }
             }
         } else {
-            // if good get out of encodercorrecting
-            if (encoderOverStatus.atPosition(rotator.getDegrees())) {
-                encoderOverStatus = EncoderOverStatus.OFF;
-            } else {
-                // set approp changeReq using pid
-                double reqVelocity = (encoderOverStatus.getToPosition() - rotator.getDegrees()) * 4; // one sec
-
-                changeRequest = simpleMotorFeedforward.calculate(reqVelocity)
-                        + pidController.calculate(reqVelocity, rotator.getVelocityDegrees());
-            }
+            changeRequest = 0;
         }
 
     }

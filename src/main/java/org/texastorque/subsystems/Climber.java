@@ -5,7 +5,7 @@ import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.component.TorqueSparkMax;
+import org.texastorque.torquelib.component.TorqueFalcon;
 
 public class Climber extends TorqueSubsystem {
     private volatile static Climber instance = null;
@@ -26,16 +26,16 @@ public class Climber extends TorqueSubsystem {
         }
     }
 
-    private TorqueSparkMax left;
-    private TorqueSparkMax right;
+    private TorqueFalcon left;
+    private TorqueFalcon right;
 
     private double climberSpeeds;
 
     private double climberPosition;
 
     private Climber() {
-        left = new TorqueSparkMax(Ports.CLIMBER_LEFT);
-        right = new TorqueSparkMax(Ports.CLIMBER_RIGHT);
+        left = new TorqueFalcon(Ports.CLIMBER_LEFT);
+        right = new TorqueFalcon(Ports.CLIMBER_RIGHT);
     }
 
     @Override

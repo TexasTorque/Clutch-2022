@@ -2,11 +2,17 @@ package org.texastorque.constants;
 
 public class Constants {
     // Conversions
+    public static final double FOOT_TO_METER = 0.3048;
+    public static final double INCH_TO_FOOT = 1. / 12.;
 
     // Drivebase
-    public static final double DRIVE_WHEEL_RADIUS_METERS = -1;
-    public static final double DRIVE_MAX_SPEED_METERS = -1;
-    public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS = -1;
+    public static final double DRIVE_WHEEL_RADIUS_METERS = 1.788 * INCH_TO_FOOT * FOOT_TO_METER; // 1.788 is width with
+                                                                                                 // wear
+    public static final double DRIVE_MAX_SPEED_METERS = 5;
+    public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS = 4 * Math.PI;
+
+    public static final double DISTANCE_TO_CENTER_X = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
+    public static final double DISTANCE_TO_CENTER_Y = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
 
     public static final double ROTATE_MANAGER_PID_P = 0;
     public static final double ROTATE_MANAGER_PID_I = 0;
@@ -40,8 +46,7 @@ public class Constants {
     public static final double TURRET_Ki = -1;
     public static final double TURRET_Kd = -1;
 
-    // Conversions
-    public static final double FOOT_TO_METER = 0.3048;
+    // Information
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
     public static final double TOP_ACCELERATION_METERS = 1;

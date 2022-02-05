@@ -7,6 +7,7 @@ import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
+import org.texastorque.util.KPID;
 
 public class Intake extends TorqueSubsystem {
     private volatile static Intake instance = null;
@@ -29,7 +30,8 @@ public class Intake extends TorqueSubsystem {
 
     public static enum IntakePosition {
         UP(0),
-        DOWN(0); // Intake setpoints
+        PRIME(-5),
+        DOWN(-9.5); // Intake setpoints
 
         private final double position;
 
@@ -45,20 +47,22 @@ public class Intake extends TorqueSubsystem {
     private TorqueSparkMax rotary;
     private TorqueSparkMax roller;
 
-    private IntakePosition rotarySetPoint;
+    private IntakePosition rotarySetPoint = IntakePosition.UP;
     private double rollerSpeed;
 
     private double rotaryPosition;
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
+        rotary.configurePID(new KPID(0.05, 0.00005, .00002, 0, -.25, .25));
+        rotary.tareEncoder();
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
     }
 
     @Override
     public void updateTeleop() {
         rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
-        rollerSpeed = Input.getInstance().getIntakeInput().getDirection().getDirection() *
+        rollerSpeed = -Input.getInstance().getIntakeInput().getDirection().getDirection() *
                 Constants.INTAKE_ROTARY_SPEED;
     }
 
@@ -76,7 +80,7 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Intake]Roller Speed", rollerSpeed);
-        SmartDashboard.putNumber("[Intake]Rotary Position", rotaryPosition);
+        SmartDashboard.putNumber("[Intake]Rotary Position", rotary.getPosition());
         SmartDashboard.putNumber("[Intake]Rotary Set Point", rotarySetPoint.getPosition());
     }
 

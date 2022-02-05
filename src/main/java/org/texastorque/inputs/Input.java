@@ -212,7 +212,7 @@ public class Input extends TorqueInputManager {
             if (driver.getRightTrigger())
                 intakePosition = IntakePosition.DOWN;
             else
-                intakePosition = IntakePosition.UP;
+                intakePosition = IntakePosition.PRIME;
         }
 
         public IntakeDirection getDirection() {

@@ -14,7 +14,7 @@ public class Constants {
     public static final double DISTANCE_TO_CENTER_X = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double DISTANCE_TO_CENTER_Y = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
 
-    public static final double ROTATE_MANAGER_PID_P = 0;
+    public static final double ROTATE_MANAGER_PID_P = .6;
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
 

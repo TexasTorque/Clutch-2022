@@ -23,13 +23,13 @@ public class Drivebase extends TorqueSubsystem {
      * Locations of wheel modules
      */
     private final Translation2d locationBackLeft = new Translation2d(Constants.DISTANCE_TO_CENTER_X,
-            Constants.DISTANCE_TO_CENTER_Y);
+            -Constants.DISTANCE_TO_CENTER_Y);
     private final Translation2d locationBackRight = new Translation2d(Constants.DISTANCE_TO_CENTER_X,
-            -Constants.DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationFrontLeft = new Translation2d(-Constants.DISTANCE_TO_CENTER_X,
             Constants.DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationFrontRight = new Translation2d(-Constants.DISTANCE_TO_CENTER_X,
+    private final Translation2d locationFrontLeft = new Translation2d(-Constants.DISTANCE_TO_CENTER_X,
             -Constants.DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationFrontRight = new Translation2d(-Constants.DISTANCE_TO_CENTER_X,
+            Constants.DISTANCE_TO_CENTER_Y);
 
     /**
      * Kinematics

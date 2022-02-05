@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveWheel {
 
@@ -22,11 +23,11 @@ public class SwerveWheel {
 
     // Values
     private final int id;
-    private static final double m = 5734.4;
+    private static final double m = 4096;
 
     // PID
     private static final KPID drivePID = new KPID(0.0001, 0, 0, 0.0003, -1, 1);
-    private static final PIDController rotatePID = new PIDController(.005, 0, 0);
+    private static final PIDController rotatePID = new PIDController(.008, 0, 0);
 
     // Convertions
     private static final double degreeToEncoder = m / 180.0;
@@ -79,7 +80,7 @@ public class SwerveWheel {
     }
 
     public void setDesiredState(SwerveModuleState desiredState) {
-        desiredState.angle.times(-1);
+        // desiredState.angle.times(-1);
         SwerveModuleState state = SwerveModuleState.optimize(desiredState, getRotation());
 
         double requestedSpeed = metersPerSecondToEncoderPerSecond(state.speedMetersPerSecond);
@@ -94,6 +95,9 @@ public class SwerveWheel {
         double requestedRotate = TorqueMathUtil.constrain(
                 rotatePID.calculate(fromEncoder(rotate.getPosition()), state.angle.getDegrees()),
                 -1, 1);
+        SmartDashboard.putNumber("Req Rot: " + id, requestedRotate);
+        SmartDashboard.putNumber("Req Deg: " + id, state.angle.getDegrees());
+        SmartDashboard.putNumber("Req Pos: " + id, fromEncoder(rotate.getPosition()));
         rotate.set(requestedRotate);
     }
 }

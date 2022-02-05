@@ -48,7 +48,7 @@ public class Magazine extends TorqueSubsystem {
 
     private Magazine() {
         belt = new TorqueSparkMax(Ports.MAGAZINE_BELT);
-        gate = new TorqueSparkMax(Ports.MAGAZINE_BELT);
+        gate = new TorqueSparkMax(Ports.MAGAZINE_GATE);
     }
 
     @Override

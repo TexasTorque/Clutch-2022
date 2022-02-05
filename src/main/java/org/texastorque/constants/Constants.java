@@ -19,11 +19,11 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_D = 0;
 
     // Magazine
-    public static final double MAGAZINE_GATE_SPEED = 0.5;
-    public static final double MAGAZINE_BELT_SPEED = 0.5;
+    public static final double MAGAZINE_GATE_SPEED = 1.;
+    public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROTARY_SPEED = .7;
+    public static final double INTAKE_ROTARY_SPEED = 1.;
 
     // Shooter
     public static final double FLYWHEEL_Kv = -1;

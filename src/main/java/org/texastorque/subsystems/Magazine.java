@@ -11,15 +11,15 @@ public class Magazine extends TorqueSubsystem {
 
     public static enum GateDirections {
         OPEN(1),
-        CLOSED(0);
+        CLOSED(-.05);
 
-        private final int direction;
+        private final double direction;
 
-        GateDirections(int direction) {
+        GateDirections(double direction) {
             this.direction = direction;
         }
 
-        public int getDirection() {
+        public double getDirection() {
             return this.direction;
         }
     }
@@ -53,8 +53,7 @@ public class Magazine extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        gateSpeed = Input.getInstance().getMagazineInput().getGateDirection().getDirection() *
-                Constants.MAGAZINE_GATE_SPEED;
+        gateSpeed = Input.getInstance().getMagazineInput().getGateDirection().getDirection();
         beltSpeed = Input.getInstance().getMagazineInput().getBeltDirection().getDirection() *
                 Constants.MAGAZINE_BELT_SPEED;
     }

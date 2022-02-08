@@ -34,13 +34,12 @@ public class Drivebase extends TorqueSubsystem {
     /**
      * Kinematics
      */
-    public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-            locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
+    public final SwerveDriveKinematics kinematics;
 
     /**
      * Odometry
      */
-    public final SwerveOdometry odometry = new SwerveOdometry(kinematics, feedback.getGyroFeedback().getRotation2d());
+    public final SwerveOdometry odometry;
 
     /**
      * Modules
@@ -64,6 +63,11 @@ public class Drivebase extends TorqueSubsystem {
         backRight = new SwerveWheel(1, Ports.DRIVE_TRANS_RIGHT_BACK, Ports.DRIVE_ROT_RIGHT_BACK);
         frontLeft = new SwerveWheel(2, Ports.DRIVE_TRANS_LEFT_FRONT, Ports.DRIVE_ROT_LEFT_FRONT);
         frontRight = new SwerveWheel(3, Ports.DRIVE_TRANS_RIGHT_FRONT, Ports.DRIVE_ROT_RIGHT_FRONT);
+
+        kinematics = new SwerveDriveKinematics(
+                locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
+
+        odometry = new SwerveOdometry(kinematics, feedback.getGyroFeedback().getRotation2d());
     }
 
     private void reset() {

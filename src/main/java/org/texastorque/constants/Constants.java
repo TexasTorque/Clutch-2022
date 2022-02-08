@@ -19,7 +19,6 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_D = 0;
 
     // Magazine
-    public static final double MAGAZINE_GATE_SPEED = 1.;
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
@@ -36,7 +35,7 @@ public class Constants {
     public static final double HOOD_MAX = 0;
 
     // Climber
-    public static final double CLIMBER_SPEED = .5;
+    public static final double CLIMBER_SPEED = .4;
 
     // Turret
     public static final double TURRET_Ks = -1;

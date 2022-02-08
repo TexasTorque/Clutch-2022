@@ -24,6 +24,7 @@ public class Robot extends TorqueIterative {
         subsystems.add(Drivebase.getInstance());
         subsystems.add(Magazine.getInstance());
         subsystems.add(Intake.getInstance());
+        subsystems.add(Climber.getInstance());
     }
 
     @Override

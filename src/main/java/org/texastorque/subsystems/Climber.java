@@ -5,7 +5,7 @@ import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.component.TorqueFalcon;
+import org.texastorque.torquelib.component.TorqueSparkMax;
 
 public class Climber extends TorqueSubsystem {
     private volatile static Climber instance = null;
@@ -26,22 +26,30 @@ public class Climber extends TorqueSubsystem {
         }
     }
 
-    private TorqueFalcon left;
-    private TorqueFalcon right;
+    private final double tooHigh = Integer.MAX_VALUE;
+    private final double tooLow = Integer.MIN_VALUE;
+
+    private TorqueSparkMax left;
+    private TorqueSparkMax right;
 
     private double climberSpeeds;
 
     private double climberPosition;
 
     private Climber() {
-        left = new TorqueFalcon(Ports.CLIMBER_LEFT);
-        right = new TorqueFalcon(Ports.CLIMBER_RIGHT);
+        left = new TorqueSparkMax(Ports.CLIMBER_LEFT);
+        right = new TorqueSparkMax(Ports.CLIMBER_RIGHT);
     }
 
     @Override
     public void updateTeleop() {
         climberSpeeds = Input.getInstance().getClimberInput().getDirection().getDirection()
                 * Constants.CLIMBER_SPEED;
+        // if (left.getPosition() > tooHigh) {
+        // climberSpeeds = Math.max(climberSpeeds, 0);
+        // } else if (left.getPosition() < tooLow) {
+        // climberSpeeds = Math.min(climberSpeeds, 0);
+        // }
     }
 
     @Override
@@ -51,7 +59,7 @@ public class Climber extends TorqueSubsystem {
 
     @Override
     public void output() {
-        left.set(climberSpeeds);
+        left.set(-climberSpeeds);
         right.set(climberSpeeds);
     }
 

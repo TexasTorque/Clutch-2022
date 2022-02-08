@@ -194,6 +194,9 @@ public class Input extends TorqueInputManager {
     }
 
     public class IntakeInput extends TorqueInput {
+        private TorqueToggle toggleLifted = new TorqueToggle();
+        private IntakePosition liftedPosition = IntakePosition.PRIME;
+
         private IntakeDirection direction = IntakeDirection.STOPPED;
         private IntakePosition intakePosition = IntakePosition.UP;
 
@@ -202,6 +205,9 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
+            toggleLifted.calc(driver.getBButton());
+            liftedPosition = toggleLifted.get() ? IntakePosition.PRIME : IntakePosition.UP;
+
             if (driver.getRightTrigger())
                 direction = IntakeDirection.INTAKE;
             else if (driver.getLeftTrigger())
@@ -212,7 +218,7 @@ public class Input extends TorqueInputManager {
             if (driver.getRightTrigger())
                 intakePosition = IntakePosition.DOWN;
             else
-                intakePosition = IntakePosition.PRIME;
+                intakePosition = liftedPosition;
         }
 
         public IntakeDirection getDirection() {
@@ -292,7 +298,10 @@ public class Input extends TorqueInputManager {
 
             // Set turret on or off
             turretOn.calc(operator.getAButton());
-            if (turretOn.get()) State.getInstance().setTurretState(TurretState.ON); else State.getInstance().setTurretState(TurretState.OFF); 
+            if (turretOn.get())
+                State.getInstance().setTurretState(TurretState.ON);
+            else
+                State.getInstance().setTurretState(TurretState.OFF);
         }
 
         @Override

@@ -33,8 +33,8 @@ public class Shooter extends TorqueSubsystem {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
 
-        hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 0, 0);
-        hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 0, 0);
+        hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 1);
+        hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 1);
     }
 
     @Override

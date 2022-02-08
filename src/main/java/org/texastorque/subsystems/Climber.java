@@ -45,10 +45,10 @@ public class Climber extends TorqueSubsystem {
     public void updateTeleop() {
         climberSpeeds = Input.getInstance().getClimberInput().getDirection().getDirection()
                 * Constants.CLIMBER_SPEED;
-        // if (left.getPosition() > tooHigh) {
-        // climberSpeeds = Math.max(climberSpeeds, 0);
-        // } else if (left.getPosition() < tooLow) {
-        // climberSpeeds = Math.min(climberSpeeds, 0);
+        // if (left.getPosition() > Constants.CLIMBER_LIMIT_HIGH) {
+        //     climberSpeeds = Math.max(climberSpeeds, 0);
+        // } else if (left.getPosition() < Constants.CLIMBER_LIMIT_LOW) {
+        //     climberSpeeds = Math.min(climberSpeeds, 0);
         // }
     }
 

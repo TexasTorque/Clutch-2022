@@ -11,8 +11,6 @@ public class AutoReflect extends TorqueSequence {
 
     @Override
     protected void init() {
-        TorqueBlock c = new TorqueBlock();
-        c.add(new ShootAway());
-        addBlock(c);
+        addBlock(new TorqueBlock(new ShootAway()));
     }
 }

@@ -36,6 +36,9 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = .4;
+    public static final double CLIMBER_LIMIT_HIGH = Integer.MAX_VALUE;
+    public static final double CLIMBER_LIMIT_LOW= Integer.MIN_VALUE;
+
 
     // Turret
     public static final double TURRET_Ks = -1;

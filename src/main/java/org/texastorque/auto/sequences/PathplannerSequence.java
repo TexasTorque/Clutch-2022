@@ -12,9 +12,7 @@ public class PathplannerSequence extends TorqueSequence {
 
     @Override
     protected void init() {
-        TorqueBlock plannerSequence = new TorqueBlock();
-        plannerSequence.add(new Pathplanner("FirstPlannerSequence"));
-        addBlock(plannerSequence);
+        addBlock(new TorqueBlock(new Pathplanner("FirstPlannerSequence")));
     }
 
 }

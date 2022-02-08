@@ -5,7 +5,7 @@ import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.AutomaticMagazineState;
 import org.texastorque.subsystems.Magazine.BeltDirections;
-import org.texastorque.subsystems.Magazine.GateDirections;
+import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -43,7 +43,7 @@ public class ShootAtTarget extends TorqueCommand {
             }
         } else {
             Input.getInstance().getMagazineInput().setBeltDirection(BeltDirections.FORWARDS);
-            Input.getInstance().getMagazineInput().setGateDirection(GateDirections.OPEN);
+            Input.getInstance().getMagazineInput().setGateDirection(GateSpeeds.OPEN);
             if (Timer.getFPGATimestamp() - startMagTime >= magOutputTime)
                 done = true;
         }
@@ -61,7 +61,7 @@ public class ShootAtTarget extends TorqueCommand {
         runMag = false;
         Input.getInstance().getShooterInput().setFlywheelSpeed(0);
         Input.getInstance().getMagazineInput().setBeltDirection(BeltDirections.OFF);
-        Input.getInstance().getMagazineInput().setGateDirection(GateDirections.CLOSED);
+        Input.getInstance().getMagazineInput().setGateDirection(GateSpeeds.CLOSED);
         State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.OFF);
     }
 

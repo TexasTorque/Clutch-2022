@@ -13,7 +13,7 @@ import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
-import org.texastorque.subsystems.Magazine.GateDirections;
+import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.TorqueAssist;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
@@ -235,7 +235,7 @@ public class Input extends TorqueInputManager {
     }
 
     public class MagazineInput extends TorqueInput {
-        private GateDirections gateDirection;
+        private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
         public MagazineInput() {
@@ -244,9 +244,9 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             if (operator.getLeftTrigger())
-                gateDirection = GateDirections.OPEN;
+                gateDirection = GateSpeeds.OPEN;
             else
-                gateDirection = GateDirections.CLOSED;
+                gateDirection = GateSpeeds.CLOSED;
 
             if (operator.getRightBumper())
                 beltDirection = BeltDirections.BACKWARDS;
@@ -260,7 +260,7 @@ public class Input extends TorqueInputManager {
             return beltDirection;
         }
 
-        public GateDirections getGateDirection() {
+        public GateSpeeds getGateDirection() {
             return gateDirection;
         }
 
@@ -274,7 +274,7 @@ public class Input extends TorqueInputManager {
         /**
          * @param gateDirection the gateDirection to set
          */
-        public void setGateDirection(GateDirections gateDirection) {
+        public void setGateDirection(GateSpeeds gateDirection) {
             this.gateDirection = gateDirection;
         }
     }

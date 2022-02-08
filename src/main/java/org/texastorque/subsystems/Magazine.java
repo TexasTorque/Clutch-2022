@@ -9,18 +9,18 @@ import org.texastorque.torquelib.component.TorqueSparkMax;
 public class Magazine extends TorqueSubsystem {
     private volatile static Magazine instance = null;
 
-    public static enum GateDirections {
+    public static enum GateSpeeds {
         OPEN(1),
         CLOSED(-.05);
 
-        private final double direction;
+        private final double speed;
 
-        GateDirections(double direction) {
-            this.direction = direction;
+        GateSpeeds(double speed) {
+            this.speed = speed;
         }
 
-        public double getDirection() {
-            return this.direction;
+        public double getSpeed() {
+            return this.speed;
         }
     }
 
@@ -53,7 +53,7 @@ public class Magazine extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        gateSpeed = Input.getInstance().getMagazineInput().getGateDirection().getDirection();
+        gateSpeed = Input.getInstance().getMagazineInput().getGateDirection().getSpeed();
         beltSpeed = Input.getInstance().getMagazineInput().getBeltDirection().getDirection() *
                 Constants.MAGAZINE_BELT_SPEED;
     }

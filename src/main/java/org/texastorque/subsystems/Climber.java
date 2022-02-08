@@ -26,47 +26,63 @@ public class Climber extends TorqueSubsystem {
         }
     }
 
-    private final double tooHigh = Integer.MAX_VALUE;
-    private final double tooLow = Integer.MIN_VALUE;
-
     private TorqueSparkMax left;
     private TorqueSparkMax right;
 
-    private double climberSpeeds;
-
-    private double climberPosition;
+    private double climberSpeedsLeft;
+    private double climberSpeedsRight;
 
     private Climber() {
         left = new TorqueSparkMax(Ports.CLIMBER_LEFT);
         right = new TorqueSparkMax(Ports.CLIMBER_RIGHT);
+        left.tareEncoder();
+        right.tareEncoder();
     }
 
     @Override
     public void updateTeleop() {
-        climberSpeeds = Input.getInstance().getClimberInput().getDirection().getDirection()
+        double climberSpeeds = Input.getInstance().getClimberInput().getDirection().getDirection()
                 * Constants.CLIMBER_SPEED;
-        // if (left.getPosition() > Constants.CLIMBER_LIMIT_HIGH) {
-        //     climberSpeeds = Math.max(climberSpeeds, 0);
-        // } else if (left.getPosition() < Constants.CLIMBER_LIMIT_LOW) {
-        //     climberSpeeds = Math.min(climberSpeeds, 0);
-        // }
+        if (Input.getInstance().getClimberInput().runLeft) {
+            climberSpeedsLeft = Constants.CLIMBER_SPEED;
+        } else if (Input.getInstance().getClimberInput().runRight) {
+            climberSpeedsRight = Constants.CLIMBER_SPEED;
+        } else {
+            if (left.getPosition() > Constants.CLIMBER_LEFT_LIMIT_HIGH) {
+                climberSpeedsLeft = Math.max(climberSpeeds, 0);
+            } else if (left.getPosition() < Constants.CLIMBER_LEFT_LIMIT_LOW) {
+                climberSpeedsLeft = Math.min(climberSpeeds, 0);
+            } else {
+                climberSpeedsLeft = climberSpeeds;
+            }
+
+            if (right.getPosition() < Constants.CLIMBER_RIGHT_LIMIT_HIGH) {
+                climberSpeedsRight = Math.max(climberSpeeds, 0);
+            } else if (right.getPosition() > Constants.CLIMBER_RIGHT_LIMIT_LOW) {
+                climberSpeedsRight = Math.min(climberSpeeds, 0);
+            } else {
+                climberSpeedsRight = climberSpeeds;
+            }
+        }
     }
 
     @Override
     public void updateFeedbackTeleop() {
-        climberPosition = left.getPosition(); // left or right, doesnt matter
+        // climberPosition = left.getPosition(); // left or right, doesnt matter
     }
 
     @Override
     public void output() {
-        left.set(-climberSpeeds);
-        right.set(climberSpeeds);
+        left.set(-climberSpeedsLeft);
+        right.set(climberSpeedsRight);
     }
 
     @Override
     public void updateSmartDashboard() {
-        SmartDashboard.putNumber("[Climber]Speed", climberSpeeds);
-        SmartDashboard.putNumber("[Climber]Position", climberPosition);
+        SmartDashboard.putNumber("[Climber]SpeedLeft", climberSpeedsLeft);
+        SmartDashboard.putNumber("[Climber]SpeedRight", climberSpeedsRight);
+        SmartDashboard.putNumber("[Climber]Position Left", left.getPosition());
+        SmartDashboard.putNumber("[Climber]Position Right", right.getPosition());
     }
 
     public static synchronized Climber getInstance() {

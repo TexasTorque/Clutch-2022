@@ -336,6 +336,8 @@ public class Input extends TorqueInputManager {
 
     public class ClimberInput extends TorqueInput {
         private ClimberDirection direction = ClimberDirection.STOP;
+        public boolean runLeft = false;
+        public boolean runRight = false;
 
         public ClimberInput() {
         }
@@ -348,6 +350,16 @@ public class Input extends TorqueInputManager {
                 direction = ClimberDirection.PULL;
             else
                 direction = ClimberDirection.STOP;
+
+            if (driver.getDPADLeft())
+                runLeft = true;
+            else
+                runLeft = false;
+
+            if (driver.getDPADRight())
+                runRight = true;
+            else
+                runRight = false;
         }
 
         public ClimberDirection getDirection() {

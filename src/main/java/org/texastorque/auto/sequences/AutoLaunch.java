@@ -11,8 +11,6 @@ public class AutoLaunch extends TorqueSequence {
 
     @Override
     protected void init() {
-        TorqueBlock c = new TorqueBlock();
-        c.add(new ShootAtTarget());
-        addBlock(c);
+        addBlock(new TorqueBlock(new ShootAtTarget()));
     }
 }

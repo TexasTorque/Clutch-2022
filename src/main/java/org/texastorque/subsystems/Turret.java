@@ -163,9 +163,7 @@ public class Turret extends TorqueSubsystem {
     }
 
     public static Turret getInstance() {
-        if (instance == null)
-            instance = new Turret();
-        return instance;
+        return instance == null ? instance = new Turret() : instance;
     }
 
 }

@@ -35,9 +35,9 @@ public class Constants {
     public static final double HOOD_MAX = 0;
 
     // Climber
-    public static final double CLIMBER_SPEED = 1;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 108;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -108;
+    public static final double CLIMBER_SPEED = .5;
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 110;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -110;
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
 

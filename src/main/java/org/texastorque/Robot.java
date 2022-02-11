@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.texastorque.auto.AutoManager;
 import org.texastorque.inputs.*;
 import org.texastorque.inputs.State.RobotState;
+import org.texastorque.modules.ArduinoInterface;
 import org.texastorque.subsystems.*;
 
 public class Robot extends TorqueIterative {
@@ -19,12 +20,16 @@ public class Robot extends TorqueIterative {
 
     private AutoManager autoManager = AutoManager.getInstance();
 
+    private ArduinoInterface arduinoInterface = ArduinoInterface.getInstance();
+
     @Override
     public void robotInit() {
         subsystems.add(Drivebase.getInstance());
         subsystems.add(Magazine.getInstance());
         subsystems.add(Intake.getInstance());
         subsystems.add(Climber.getInstance());
+
+        arduinoInterface.setToAllianceColor();
     }
 
     @Override

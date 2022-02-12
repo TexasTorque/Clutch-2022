@@ -23,7 +23,7 @@ public class Robot extends TorqueIterative {
     public void robotInit() {
         subsystems.add(Drivebase.getInstance());
         subsystems.add(Magazine.getInstance());
-        subsystems.add(Intake.getInstance());
+        // subsystems.add(Intake.getInstance());
         // subsystems.add(Climber.getInstance());
         subsystems.add(Shooter.getInstance());
     }

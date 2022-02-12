@@ -18,6 +18,11 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
 
+    public static final double DRIVE_Ks = 0.37843;
+    public static final double DRIVE_Kv = 1.5423;
+    public static final double DRIVE_Ka = 1.5065;
+    public static final double DRIVE_Kp = 0;
+
     // Magazine
     public static final double MAGAZINE_BELT_SPEED = 1.;
 

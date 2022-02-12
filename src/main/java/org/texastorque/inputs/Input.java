@@ -45,6 +45,7 @@ public class Input extends TorqueInputManager {
     private TorqueAssist autoReflect = new TorqueAssist(new AutoReflect(), magazineInput, shooterInput);
 
     // Etc.
+    private TimedTruthy driverRumble = new TimedTruthy();
     private TimedTruthy operatorRumble = new TimedTruthy();
 
     private Input() {
@@ -93,7 +94,8 @@ public class Input extends TorqueInputManager {
         autoLaunch.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.SHOOTING);
         autoReflect.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.REFLECTING);
 
-        driver.setRumble(operatorRumble.calc());
+        driver.setRumble(driverRumble.calc());
+        operator.setRumble(operatorRumble.calc());
 
         modules.forEach(TorqueInput::run);
     }
@@ -395,9 +397,22 @@ public class Input extends TorqueInputManager {
         return climberInput;
     }
 
-    @Override
-    public void requestRumble(double forTime) {
-        // ignore rn
+    /**
+     * Rumble the driver's controller
+     * 
+     * @param forTime seconds
+     */
+    public void requestDriverRumble(double forTime) {
+        driverRumble.setTime(forTime);
+    }
+
+    /**
+     * Rumble the operator's controller
+     * 
+     * @param forTime seconds
+     */
+    public void requestOperatorRumble(double forTime) {
+        operatorRumble.setTime(forTime);
     }
 
     /**

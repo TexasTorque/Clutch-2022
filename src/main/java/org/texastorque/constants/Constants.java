@@ -25,14 +25,14 @@ public class Constants {
     public static final double INTAKE_ROTARY_SPEED = 1.;
 
     // Shooter
-    public static final double FLYWHEEL_Kv = -1;
-    public static final double FLYWHEEL_Ka = -1;
-    public static final double FLYWHEEL_Ks = -1;
-    public static final double FLYWHEEL_Kp = -1;
-    public static final double FLYWHEEL_Ki = -1;
-    public static final double FLYWHEEL_Kd = -1;
+    public static final double FLYWHEEL_Kv = 0.14068; // Values are for rotations/sec
+    public static final double FLYWHEEL_Ka = 0.026483;
+    public static final double FLYWHEEL_Ks = 0.30442;
+    public static final double FLYWHEEL_Kp = 0.076869;
+    public static final double FLYWHEEL_Ki = 0;
+    public static final double FLYWHEEL_Kd = 0;
     public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 0;
+    public static final double HOOD_MAX = 50;
 
     // Climber
     public static final double CLIMBER_SPEED = .5;

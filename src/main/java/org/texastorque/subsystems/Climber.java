@@ -68,7 +68,6 @@ public class Climber extends TorqueSubsystem {
 
     @Override
     public void updateFeedbackTeleop() {
-        // climberPosition = left.getPosition(); // left or right, doesnt matter
     }
 
     @Override

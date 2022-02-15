@@ -88,18 +88,20 @@ public class SwerveWheel {
         SwerveModuleState state = SwerveModuleState.optimize(desiredState, getRotation());
 
         if (DriverStation.isTeleop()) {
-            double output = Math.min(driveFF.calculate(state.speedMetersPerSecond) + drivePID.calculate(
-                    drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS), state.speedMetersPerSecond), 12);
-            if (id == 0) {
-                SmartDashboard.putNumber(id + "output", output);
-                SmartDashboard.putNumber(id + "speed", state.speedMetersPerSecond);
-                SmartDashboard.putNumber(id + "real", drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS));
-            }
-            drive.setVoltage(-output);
-            // drive.set(requestedSpeed * -1 /
-            // metersPerSecondToEncoderPerSecond(Constants.DRIVE_MAX_SPEED_METERS));
+            drive.set(state.speedMetersPerSecond * -1 /
+                    Constants.DRIVE_MAX_SPEED_METERS);
         } else {
-            // drive.set(requestedSpeed * -1, ControlType.kSmartVelocity);
+            // double output = Math.min(driveFF.calculate(state.speedMetersPerSecond) +
+            // drivePID.calculate(
+            // drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
+            // state.speedMetersPerSecond), 12);
+            // if (id == 0) {
+            // SmartDashboard.putNumber(id + "output", output);
+            // SmartDashboard.putNumber(id + "speed", state.speedMetersPerSecond);
+            // SmartDashboard.putNumber(id + "real",
+            // drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS));
+            // }
+            // drive.setVoltage(-output);
         }
 
         double requestedRotate = TorqueMathUtil.constrain(

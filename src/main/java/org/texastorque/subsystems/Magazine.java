@@ -11,7 +11,7 @@ public class Magazine extends TorqueSubsystem {
 
     public static enum GateSpeeds {
         OPEN(1),
-        CLOSED(-.05);
+        CLOSED(-.1);
 
         private final double speed;
 

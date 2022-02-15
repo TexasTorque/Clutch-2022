@@ -84,42 +84,47 @@ public class Turret extends TorqueSubsystem {
     }
 
     public void updateTeleop() {
-        if (State.getInstance().getTurretState() == TurretState.ON) {
-            if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
-                if (!checkOver() && !checkHoming()) {
-                    // calculate pid controller with goal at 0
-                    // change request (power) updates continously
-                    double reqVelocity = Feedback.getInstance().getLimelightFeedback().gethOffset() * 20; // one/twenty sec
+        // if (State.getInstance().getTurretState() == TurretState.ON) {
+        // if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
+        // if (!checkOver() && !checkHoming()) {
+        // // calculate pid controller with goal at 0
+        // // change request (power) updates continously
+        // double reqVelocity =
+        // Feedback.getInstance().getLimelightFeedback().gethOffset() * 20; //
+        // one/twenty sec
 
-                    changeRequest = -1 * simpleMotorFeedforward.calculate(reqVelocity)
-                            + pidController.calculate(reqVelocity,
-                                    rotator.getVelocityDegrees());
-                }
+        // changeRequest = -1 * simpleMotorFeedforward.calculate(reqVelocity)
+        // + pidController.calculate(reqVelocity,
+        // rotator.getVelocityDegrees());
+        // }
 
-            } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target :( .. let's find it!
-                if (!checkOver() && checkHoming()) {
-                    if (Feedback.getInstance().getGyroFeedback().getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
-                        changeRequest = .1;
-                    } else if (Feedback.getInstance().getGyroFeedback()
-                            .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
-                        changeRequest = -.1;
-                    }
-                }
-            } else {
-                // if good get out of encodercorrecting
-                if (encoderOverStatus.atPosition(rotator.getDegrees())) {
-                    encoderOverStatus = EncoderOverStatus.OFF;
-                } else {
-                    // set approp changeReq using pid
-                    double reqVelocity = (encoderOverStatus.getToPosition() - rotator.getDegrees()) * 4; // one sec
+        // } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target
+        // :( .. let's find it!
+        // if (!checkOver() && checkHoming()) {
+        // if (Feedback.getInstance().getGyroFeedback().getGyroDirection() ==
+        // Feedback.GyroDirection.CLOCKWISE) {
+        // changeRequest = .1;
+        // } else if (Feedback.getInstance().getGyroFeedback()
+        // .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
+        // changeRequest = -.1;
+        // }
+        // }
+        // } else {
+        // // if good get out of encodercorrecting
+        // if (encoderOverStatus.atPosition(rotator.getDegrees())) {
+        // encoderOverStatus = EncoderOverStatus.OFF;
+        // } else {
+        // // set approp changeReq using pid
+        // double reqVelocity = (encoderOverStatus.getToPosition() -
+        // rotator.getDegrees()) * 4; // one sec
 
-                    changeRequest = simpleMotorFeedforward.calculate(reqVelocity)
-                            + pidController.calculate(reqVelocity, rotator.getVelocityDegrees());
-                }
-            }
-        } else {
-            changeRequest = 0;
-        }
+        // changeRequest = simpleMotorFeedforward.calculate(reqVelocity)
+        // + pidController.calculate(reqVelocity, rotator.getVelocityDegrees());
+        // }
+        // }
+        // } else {
+        // changeRequest = 0;
+        // }
 
     }
 
@@ -147,11 +152,16 @@ public class Turret extends TorqueSubsystem {
         return false;
     }
 
+    private double getDegrees() {
+        double pos = rotator.getPosition() / Constants.TURRET_RATIO * 360.;
+        return pos % 360;
+    }
+
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("rotatorPos", rotator.getPosition());
         SmartDashboard.putNumber("rotatorPosConv", rotator.getPositionConverted());
-        SmartDashboard.putNumber("rotatorPosDeg", rotator.getDegrees());
+        SmartDashboard.putNumber("rotatorPosDeg", getDegrees());
         SmartDashboard.putNumber("changeRequest", changeRequest);
         SmartDashboard.putString("encoderOver", encoderOverStatus.name());
         SmartDashboard.putNumber("Req voltage", changeRequest);
@@ -159,7 +169,7 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public void output() {
-        rotator.setVoltage(changeRequest);
+        // rotator.setVoltage(changeRequest);
     }
 
     public static Turret getInstance() {

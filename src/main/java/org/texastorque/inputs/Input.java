@@ -74,25 +74,30 @@ public class Input extends TorqueInputManager {
     @Override
     public void update() {
 
-        if (operator.getBButtonPressed()) {
-            // If detect our alliance, shoot.
-            // If detect enemy, shoot badly
-            // Otherwise, do nothin
+        // SHOOT IS GOING TO BE MAPPED TO DRIVER X BUTTON
 
-            // if not currently auto
-            if (State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.OFF) {
-                if (MagazineBallManager.getInstance().isOurAlliance()) {
-                    State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
-                } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-                    State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
-                } else {
-                    // if no ball is detected, alert driver for 1 sec with rumble
-                    operatorRumble.setTime(1);
-                }
-            }
-        }
-        autoLaunch.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.SHOOTING);
-        autoReflect.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.REFLECTING);
+        // if (operator.getBButtonPressed()) {
+        // // If detect our alliance, shoot.
+        // // If detect enemy, shoot badly
+        // // Otherwise, do nothin
+
+        // // if not currently auto
+        // if (State.getInstance().getAutomaticMagazineState() ==
+        // AutomaticMagazineState.OFF) {
+        // if (MagazineBallManager.getInstance().isOurAlliance()) {
+        // State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
+        // } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
+        // State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
+        // } else {
+        // // if no ball is detected, alert driver for 1 sec with rumble
+        // operatorRumble.setTime(1);
+        // }
+        // }
+        // }
+        // autoLaunch.run(State.getInstance().getAutomaticMagazineState() ==
+        // AutomaticMagazineState.SHOOTING);
+        // autoReflect.run(State.getInstance().getAutomaticMagazineState() ==
+        // AutomaticMagazineState.REFLECTING);
 
         driver.setRumble(driverRumble.calc());
         operator.setRumble(operatorRumble.calc());
@@ -250,12 +255,13 @@ public class Input extends TorqueInputManager {
             else
                 gateDirection = GateSpeeds.CLOSED;
 
-            if (operator.getRightBumper())
-                beltDirection = BeltDirections.BACKWARDS;
-            else if (operator.getRightTrigger())
+            // if (operator.getRightBumper())
+            // beltDirection = BeltDirections.BACKWARDS;
+            // else
+            if (operator.getRightTrigger())
                 beltDirection = BeltDirections.FORWARDS;
             else
-                beltDirection = BeltDirections.OFF;
+                beltDirection = BeltDirections.BACKWARDS;
         }
 
         public BeltDirections getBeltDirection() {
@@ -286,6 +292,8 @@ public class Input extends TorqueInputManager {
         private double hood; // degrees
         private TorqueToggle turretOn = new TorqueToggle();
 
+        public boolean allowedToShoot = false;
+
         public ShooterInput() {
         }
 
@@ -298,8 +306,10 @@ public class Input extends TorqueInputManager {
                 hood = 10;
             }
 
+            allowedToShoot = operator.getXButton();
+
             // Set turret on or off
-            turretOn.calc(operator.getAButton());
+            turretOn.calc(operator.getAButton()); // should be put on driver A button
             if (turretOn.get())
                 State.getInstance().setTurretState(TurretState.ON);
             else

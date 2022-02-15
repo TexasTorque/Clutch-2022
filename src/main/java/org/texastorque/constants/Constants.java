@@ -41,8 +41,8 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = .5;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 110;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -110;
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 102;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -102; // Will change again
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
 
@@ -53,6 +53,8 @@ public class Constants {
     public static final double TURRET_Kp = -1;
     public static final double TURRET_Ki = -1;
     public static final double TURRET_Kd = -1;
+    public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
+    public static final double TURRET_RATIO = 192.708; // to 1
 
     // Information
     public static final double TOP_SPEED_FEET = 16.52;

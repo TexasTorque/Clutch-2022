@@ -107,6 +107,7 @@ public class Drivebase extends TorqueSubsystem {
     @Override
     public void updateAuto() {
         swerveModuleStates = AutoInput.getInstance().getDriveStates();
+        outputAuto();
     }
 
     @Override

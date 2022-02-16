@@ -91,17 +91,18 @@ public class SwerveWheel {
             drive.set(state.speedMetersPerSecond * -1 /
                     Constants.DRIVE_MAX_SPEED_METERS);
         } else {
-            // double output = Math.min(driveFF.calculate(state.speedMetersPerSecond) +
-            // drivePID.calculate(
-            // drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
-            // state.speedMetersPerSecond), 12);
-            // if (id == 0) {
-            // SmartDashboard.putNumber(id + "output", output);
-            // SmartDashboard.putNumber(id + "speed", state.speedMetersPerSecond);
-            // SmartDashboard.putNumber(id + "real",
-            // drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS));
-            // }
-            // drive.setVoltage(-output);
+            double output = Math.min(driveFF.calculate(state.speedMetersPerSecond) +
+                    drivePID.calculate(
+                            drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
+                            state.speedMetersPerSecond),
+                    12);
+            if (id == 0) {
+                SmartDashboard.putNumber(id + "output", output);
+                SmartDashboard.putNumber(id + "speed", state.speedMetersPerSecond);
+                SmartDashboard.putNumber(id + "real",
+                        drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS));
+            }
+            drive.setVoltage(-output);
         }
 
         double requestedRotate = TorqueMathUtil.constrain(

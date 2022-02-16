@@ -66,6 +66,11 @@ public class Pathplanner extends TorqueCommand {
                 SmartDashboard.putNumber("[Want]Y", currentTrajectory.poseMeters.getY());
                 SmartDashboard.putNumber("[Want]Rot", currentTrajectory.poseMeters.getRotation().getDegrees());
 
+                SmartDashboard.putNumber("[Real]X", Drivebase.getInstance().odometry.getPoseMeters().getX());
+                SmartDashboard.putNumber("[Real]Y", Drivebase.getInstance().odometry.getPoseMeters().getY());
+                SmartDashboard.putNumber("[Real]Rot",
+                                Drivebase.getInstance().odometry.getPoseMeters().getRotation().getDegrees());
+
                 ChassisSpeeds chassisSpeeds = hController.calculate(Drivebase.getInstance().odometry.getPoseMeters(),
                                 currentTrajectory, currentTrajectory.holonomicRotation);
                 chassisSpeeds = new ChassisSpeeds(-chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,

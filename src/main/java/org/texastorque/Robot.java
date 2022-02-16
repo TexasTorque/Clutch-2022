@@ -25,8 +25,8 @@ public class Robot extends TorqueIterative {
         // subsystems.add(Magazine.getInstance());
         // subsystems.add(Intake.getInstance());
         subsystems.add(Climber.getInstance());
-        subsystems.add(Shooter.getInstance());
-        subsystems.add(Turret.getInstance());
+        // subsystems.add(Shooter.getInstance());
+        // subsystems.add(Turret.getInstance());
     }
 
     @Override
@@ -69,6 +69,7 @@ public class Robot extends TorqueIterative {
         autoManager.runCurrentSequence();
         subsystems.forEach(TorqueSubsystem::updateAuto);
         subsystems.forEach(TorqueSubsystem::output);
+        subsystems.forEach(TorqueSubsystem::updateFeedbackAuto);
     }
 
     @Override

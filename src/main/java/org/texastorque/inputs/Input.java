@@ -245,6 +245,8 @@ public class Input extends TorqueInputManager {
         private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
+        private TorqueToggle autoMag = new TorqueToggle();
+
         public MagazineInput() {
         }
 
@@ -255,13 +257,16 @@ public class Input extends TorqueInputManager {
             else
                 gateDirection = GateSpeeds.CLOSED;
 
+            autoMag.calc(operator.getLeftBumper());
             // if (operator.getRightBumper())
             // beltDirection = BeltDirections.BACKWARDS;
             // else
             if (operator.getRightTrigger())
                 beltDirection = BeltDirections.FORWARDS;
-            else
+            else if (autoMag.get() || operator.getRightBumper())
                 beltDirection = BeltDirections.BACKWARDS;
+            else
+                beltDirection = BeltDirections.OFF;
         }
 
         public BeltDirections getBeltDirection() {
@@ -314,6 +319,8 @@ public class Input extends TorqueInputManager {
                 State.getInstance().setTurretState(TurretState.ON);
             else
                 State.getInstance().setTurretState(TurretState.OFF);
+
+            SmartDashboard.putBoolean("[Input]Turret On", turretOn.get());
         }
 
         @Override

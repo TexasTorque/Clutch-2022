@@ -2,6 +2,16 @@
 
 Texas Torque's main robot code for the 2022 Rapid React season!
 
+## Controls
+
+### Driver
+
+![driver](./controls/rev-1/driver.png)
+
+### Operator
+
+![operator](./controls/rev-1/operator.png)
+
 ## Formatting
 
 To acquire the formatter in VSCode, download [this extension](https://marketplace.visualstudio.com/items?itemName=redhat.java).

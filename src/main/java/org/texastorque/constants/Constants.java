@@ -53,7 +53,6 @@ public class Constants {
     public static final double TURRET_Kp = 0.42539;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0.033865;
-    public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double TURRET_RATIO = 192.708; // to 1
 
     // Information
@@ -75,5 +74,10 @@ public class Constants {
     public static final double PATH_PLANNER_R_P = 6;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
+
+    // Physical
+    public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
+    public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
+    public static final double LIMELIGHT_ANGEL_DEG = 45;
 
 }

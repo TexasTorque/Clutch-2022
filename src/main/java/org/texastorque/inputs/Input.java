@@ -295,7 +295,7 @@ public class Input extends TorqueInputManager {
     public class ShooterInput extends TorqueInput {
         private double flywheel; // rpm
         private double hood; // degrees
-        private TorqueToggle turretOn = new TorqueToggle();
+        private TorqueToggle turretOn = new TorqueToggle(true);
 
         public boolean allowedToShoot = false;
 
@@ -304,13 +304,6 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            // Launchpad shoot in case of failure
-            // TODO: tune values
-            if (driver.getXButton()) {
-                flywheel = 5000;
-                hood = 10;
-            }
-
             allowedToShoot = operator.getXButton();
 
             // Set turret on or off

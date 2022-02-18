@@ -21,7 +21,6 @@ public class Turret extends TorqueSubsystem {
     private TorqueSparkMax rotator = new TorqueSparkMax(Ports.TURRET);
 
     private double changeRequest = 0; // power needed to achieve target
-    private static double startAngle = -90;
     // private final SimpleMotorFeedforward simpleMotorFeedforward = new
     // SimpleMotorFeedforward(Constants.TURRET_Ks,
     // Constants.TURRET_Kv, Constants.TURRET_Ka);
@@ -29,7 +28,7 @@ public class Turret extends TorqueSubsystem {
             Constants.TURRET_Kp);
 
     enum EncoderOverStatus {
-        OFF, TOLEFT(-90 + startAngle, 70 + startAngle), TORIGHT(90 + startAngle, -70 + startAngle), HOMING;
+        OFF, TOLEFT(-140, 65), TORIGHT(70, -130), HOMING;
         /*
          * Think of these like states of the turret
          * off - tracking the tape
@@ -43,8 +42,8 @@ public class Turret extends TorqueSubsystem {
          * homing - looking for target
          */
 
-        private double toPosition;
         private double overPosition;
+        private double toPosition;
 
         private EncoderOverStatus() {
         }
@@ -85,20 +84,21 @@ public class Turret extends TorqueSubsystem {
     private EncoderOverStatus encoderOverStatus = EncoderOverStatus.OFF;
 
     public Turret() {
+        rotator.setPosition(Constants.TURRET_RATIO * -60. / 360.);
     }
 
     public void updateTeleop() {
         if (State.getInstance().getTurretState() == TurretState.ON) {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
-                // if (!checkOver() && !checkHoming()) {
-                // calculate pid controller with goal at 0
-                // change request (power) updates continously
-                double pidOutput = pidController
-                        .calculate(
-                                Feedback.getInstance().getLimelightFeedback().gethOffset(),
-                                0);
-                changeRequest = (Constants.TURRET_Ks * Math.signum(pidOutput)) + pidOutput;
-                // }
+                if (!checkOver() && !checkHoming()) {
+                    if (Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < toleranceDegrees) {
+                        changeRequest = 0;
+                    } else {
+                        double pidOutput = pidController.calculate(
+                                Feedback.getInstance().getLimelightFeedback().gethOffset(), 0);
+                        changeRequest = (Constants.TURRET_Ks * Math.signum(pidOutput)) + pidOutput;
+                    }
+                }
 
             } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target
                 // :( .. let's find it!
@@ -108,12 +108,13 @@ public class Turret extends TorqueSubsystem {
                     // changeRequest = 1 + Constants.TURRET_Ks;
                     // } else if (Feedback.getInstance().getGyroFeedback()
                     // .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
-                    changeRequest = -2 - Constants.TURRET_Ks;
+                    changeRequest = -3 - Constants.TURRET_Ks;
                     // }
                 }
             } else {
                 // if good get out of encodercorrecting
-                if (encoderOverStatus.atPosition(getDegrees())) {
+                if (encoderOverStatus.atPosition(getDegrees())
+                        || Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
                     encoderOverStatus = EncoderOverStatus.OFF;
                 } else {
                     // set approp changeReq using pid
@@ -168,11 +169,7 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public void output() {
-        if (Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < toleranceDegrees) {
-            rotator.setVoltage(0);
-        } else {
-            rotator.setVoltage(Math.signum(changeRequest) * Math.min(Math.abs(changeRequest), 3.2));
-        }
+        rotator.setVoltage(Math.signum(changeRequest) * Math.min(Math.abs(changeRequest), 3.2));
     }
 
     public static Turret getInstance() {

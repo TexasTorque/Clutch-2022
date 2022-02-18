@@ -108,9 +108,6 @@ public class SwerveWheel {
         double requestedRotate = TorqueMathUtil.constrain(
                 rotatePID.calculate(fromEncoder(rotate.getPosition()), state.angle.getDegrees()),
                 -1, 1);
-        SmartDashboard.putNumber("Req Rot: " + id, requestedRotate);
-        SmartDashboard.putNumber("Req Deg: " + id, state.angle.getDegrees());
-        SmartDashboard.putNumber("Req Pos: " + id, fromEncoder(rotate.getPosition()));
         rotate.set(requestedRotate);
     }
 }

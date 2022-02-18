@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.texastorque.constants.Constants;
 import org.texastorque.torquelib.base.TorqueFeedback;
 import org.texastorque.torquelib.util.RollingMedian;
 
@@ -116,19 +118,24 @@ public class Feedback {
         private double vOffset;
         private double taOffset;
 
-        private RollingMedian distanceMedian;
+        private RollingMedian vMedian;
+        private RollingMedian hMedian;
+        private RollingMedian taMedian;
+
         private double distance;
 
         public LimelightFeedback() {
-            distanceMedian = new RollingMedian(5);
+            vMedian = new RollingMedian(4);
+            hMedian = new RollingMedian(4);
+            taMedian = new RollingMedian(4);
         }
 
         @Override
         public void update() {
-            hOffset = tx.getDouble(0);
-            vOffset = ty.getDouble(0);
-            taOffset = ta.getDouble(0);
-            distance = distanceMedian.calculate(hOffset);
+            hOffset = hMedian.calculate(tx.getDouble(0));
+            vOffset = vMedian.calculate(ty.getDouble(0));
+            taOffset = taMedian.calculate(ta.getDouble(0));
+            distance = calcDistance(vOffset);
         }
 
         /**
@@ -157,6 +164,17 @@ public class Feedback {
          */
         public double getDistance() {
             return distance;
+        }
+
+        /**
+         * Calculate distance
+         * 
+         * @param ty Vert degree offset
+         * @return distance (m)
+         */
+        private double calcDistance(double ty) {
+            return (Constants.HEIGHT_OF_VISION_STRIP_METERS - Constants.HEIGHT_TO_LIMELIGHT_METERS)
+                    / Math.tan(Math.toRadians(Constants.LIMELIGHT_ANGEL_DEG + ty));
         }
 
         public void smartDashboard() {

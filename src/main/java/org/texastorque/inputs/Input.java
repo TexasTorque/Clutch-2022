@@ -118,8 +118,8 @@ public class Input extends TorqueInputManager {
         private double xSpeed = 0;
         private double ySpeed = 0;
 
-        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(50, 1000);
-        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(50, 1000);
+        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(2, 1);
+        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(2, 1);
 
         private DriveBaseTranslationInput() {
         }
@@ -259,7 +259,14 @@ public class Input extends TorqueInputManager {
             else
                 gateDirection = GateSpeeds.CLOSED;
 
-            autoMag.calc(operator.getLeftBumper());
+            if (shooterInput.getFlywheel() != 0 && Feedback.getInstance().getShooterFeedback().getRPM()
+                    - Constants.SHOOTER_ERROR > shooterInput.getFlywheel())
+                gateDirection = GateSpeeds.OPEN;
+            else
+                gateDirection = GateSpeeds.CLOSED;
+
+            // autoMag.calc(operator.getLeftBumper());
+            autoMag.calc(operator.getYButton());
             // if (operator.getRightBumper())
             // beltDirection = BeltDirections.BACKWARDS;
             // else
@@ -315,7 +322,6 @@ public class Input extends TorqueInputManager {
                 }
             } else {
                 flywheel = 0;
-                hood = 0;
             }
 
             // Set turret on or off
@@ -354,7 +360,16 @@ public class Input extends TorqueInputManager {
          * @param speed RPM
          */
         public void setFlywheelSpeed(double speed) {
-            this.flywheel = speed;
+            this.flywheel = Math.min(speed, 4000);
+        }
+
+        /**
+         * Set the hood for the flywheel
+         * 
+         * @param hood Hood position
+         */
+        public void setHood(double hood) {
+            this.hood = TorqueMathUtil.constrain(hood, 0, 50);
         }
 
         /**

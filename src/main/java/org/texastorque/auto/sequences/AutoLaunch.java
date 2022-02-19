@@ -7,6 +7,7 @@ import org.texastorque.torquelib.auto.TorqueSequence;
 public class AutoLaunch extends TorqueSequence {
     public AutoLaunch() {
         super("AutoLaunch");
+        init();
     }
 
     @Override

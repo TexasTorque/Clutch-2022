@@ -2,6 +2,7 @@ package org.texastorque.subsystems;
 
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
+import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
@@ -55,7 +56,12 @@ public class Shooter extends TorqueSubsystem {
                 + flywheelPIDController.calculate(flywheel.getVelocity() / 60,
                         flywheelSetpoint),
                 12);
+    }
 
+    @Override
+    public void updateAuto() {
+        flywheelSpeed = AutoInput.getInstance().getFlywheelSpeed();
+        hoodPosition = AutoInput.getInstance().getHoodPosition();
     }
 
     @Override

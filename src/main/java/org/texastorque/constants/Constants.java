@@ -30,7 +30,7 @@ public class Constants {
     public static final double INTAKE_ROTARY_SPEED = 1.;
 
     // Shooter
-    public static final double FLYWHEEL_Kv = 0.14068; // Values are for rotations/sec
+    public static final double FLYWHEEL_Kv = 0.15068; // Values are for rotations/sec
     public static final double FLYWHEEL_Ka = 0.026483;
     public static final double FLYWHEEL_Ks = 0.30442;
     public static final double FLYWHEEL_Kp = 0;
@@ -80,5 +80,6 @@ public class Constants {
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 42.5;
+    public static final double SHOOTER_ERROR = 100;
 
 }

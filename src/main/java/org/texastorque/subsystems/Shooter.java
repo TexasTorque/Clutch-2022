@@ -1,5 +1,7 @@
 package org.texastorque.subsystems;
 
+import com.revrobotics.CANSparkMax.ControlType;
+
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.AutoInput;
@@ -9,9 +11,11 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueLinearServo;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 import org.texastorque.torquelib.util.TorqueMathUtil;
+import org.texastorque.util.KPID;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends TorqueSubsystem {
@@ -23,39 +27,32 @@ public class Shooter extends TorqueSubsystem {
     // setpoints grabbed from input
     private double flywheelSpeed;
     private double hoodPosition;
-
-    // control system
-    private SimpleMotorFeedforward flywheelFeedforward = new SimpleMotorFeedforward(Constants.FLYWHEEL_Ks,
-            Constants.FLYWHEEL_Kv, Constants.FLYWHEEL_Ka);
-    private PIDController flywheelPIDController = new PIDController(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,
-            Constants.FLYWHEEL_Kd);
+    private double flywheelSetpoint;
 
     public Shooter() {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_RIGHT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.invertFollower();
 
+        flywheel.configurePID(new KPID(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki, Constants.FLYWHEEL_Kd,
+                Constants.FLYWHEEL_Kf, 0, 1));
+        flywheel.configureIZone(Constants.FLYWHEEL_Iz);
+
         hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 1);
         hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 1);
 
         SmartDashboard.putNumber("RPMSET", 0);
-        SmartDashboard.putNumber("HOODSET", 0);
+        // SmartDashboard.putNumber("HOODSET", 0);
     }
 
     @Override
     public void updateTeleop() {
 
-        double flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
+        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
+        // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
         hoodPosition = TorqueMathUtil.constrain(Input.getInstance().getShooterInput().getHood(),
                 Constants.HOOD_MIN, Constants.HOOD_MAX);
 
-        // convert RPM to RPS
-        flywheelSetpoint /= 60;
-
-        flywheelSpeed = Math.min(flywheelFeedforward.calculate(flywheelSetpoint)
-                + flywheelPIDController.calculate(flywheel.getVelocity() / 60,
-                        flywheelSetpoint),
-                12);
     }
 
     @Override
@@ -74,14 +71,13 @@ public class Shooter extends TorqueSubsystem {
     public void output() {
         hoodRight.setPosition(hoodPosition);
         hoodLeft.setPosition(hoodPosition);
-        // TODO: check initial voltage before output
-        flywheel.setVoltage(flywheelSpeed);
+        flywheel.set(flywheelSetpoint, ControlType.kVelocity);
     }
 
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Shooter]Hood SetPoint", this.hoodPosition);
-        SmartDashboard.putNumber("[Shooter]Flywheel SetPoint", this.flywheelSpeed);
+        SmartDashboard.putNumber("[Shooter]Flywheel SetPoint", this.flywheelSetpoint);
         SmartDashboard.putNumber("[Shooter]Flywheel Volt", flywheel.getOutputCurrent());
     }
 

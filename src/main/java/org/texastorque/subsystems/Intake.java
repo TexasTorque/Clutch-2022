@@ -55,7 +55,7 @@ public class Intake extends TorqueSubsystem {
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
         rotary.configurePID(new KPID(0.3, 0.00005, .00002, 0, -.5, .5));
-        rotary.tareEncoder();
+        // rotary.tareEncoder();
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
     }
 

@@ -118,8 +118,8 @@ public class Input extends TorqueInputManager {
         private double xSpeed = 0;
         private double ySpeed = 0;
 
-        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(2, 1);
-        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(2, 1);
+        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(3, 4);
+        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(3, 4);
 
         private DriveBaseTranslationInput() {
         }
@@ -247,20 +247,18 @@ public class Input extends TorqueInputManager {
         private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
-        private TorqueToggle autoMag = new TorqueToggle();
+        private TorqueToggle autoMag = new TorqueToggle(true);
 
         public MagazineInput() {
         }
 
         @Override
         public void update() {
-            if (operator.getLeftTrigger())
-                gateDirection = GateSpeeds.OPEN;
-            else
-                gateDirection = GateSpeeds.CLOSED;
-
-            if (shooterInput.getFlywheel() != 0 && Feedback.getInstance().getShooterFeedback().getRPM()
-                    - Constants.SHOOTER_ERROR > shooterInput.getFlywheel())
+            if (operator.getLeftTrigger()
+                    || (shooterInput.getFlywheel() != 0 && (shooterInput.getFlywheel()
+                            - Constants.SHOOTER_ERROR < Feedback.getInstance().getShooterFeedback().getRPM()
+                            && shooterInput.getFlywheel() + Constants.SHOOTER_ERROR > Feedback.getInstance()
+                                    .getShooterFeedback().getRPM())))
                 gateDirection = GateSpeeds.OPEN;
             else
                 gateDirection = GateSpeeds.CLOSED;

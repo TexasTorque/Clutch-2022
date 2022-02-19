@@ -28,7 +28,7 @@ public class Turret extends TorqueSubsystem {
             Constants.TURRET_Kp);
 
     enum EncoderOverStatus {
-        OFF, TOLEFT(-140, 65), TORIGHT(70, -130), HOMING;
+        OFF, TOLEFT(-130, 65), TORIGHT(70, -120), HOMING;
         /*
          * Think of these like states of the turret
          * off - tracking the tape

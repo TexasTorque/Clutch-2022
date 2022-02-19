@@ -48,21 +48,21 @@ public class Climber extends TorqueSubsystem {
         } else if (Input.getInstance().getClimberInput().runRight) {
             climberSpeedsRight = Constants.CLIMBER_SPEED * .3;
         } else {
-            // if (left.getPosition() > Constants.CLIMBER_LEFT_LIMIT_HIGH) {
-            // climberSpeedsLeft = Math.max(climberSpeeds, 0);
-            // } else if (left.getPosition() < Constants.CLIMBER_LEFT_LIMIT_LOW) {
-            // climberSpeedsLeft = Math.min(climberSpeeds, 0);
-            // } else {
-            climberSpeedsLeft = climberSpeeds;
-            // }
+            if (left.getPosition() > Constants.CLIMBER_LEFT_LIMIT_HIGH) {
+                climberSpeedsLeft = Math.max(climberSpeeds, 0);
+            } else if (left.getPosition() < Constants.CLIMBER_LEFT_LIMIT_LOW) {
+                climberSpeedsLeft = Math.min(climberSpeeds, 0);
+            } else {
+                climberSpeedsLeft = climberSpeeds;
+            }
 
-            // if (right.getPosition() < Constants.CLIMBER_RIGHT_LIMIT_HIGH) {
-            // climberSpeedsRight = Math.max(climberSpeeds, 0);
-            // } else if (right.getPosition() > Constants.CLIMBER_RIGHT_LIMIT_LOW) {
-            // climberSpeedsRight = Math.min(climberSpeeds, 0);
-            // } else {
-            climberSpeedsRight = climberSpeeds;
-            // }
+            if (right.getPosition() < Constants.CLIMBER_RIGHT_LIMIT_HIGH) {
+                climberSpeedsRight = Math.max(climberSpeeds, 0);
+            } else if (right.getPosition() > Constants.CLIMBER_RIGHT_LIMIT_LOW) {
+                climberSpeedsRight = Math.min(climberSpeeds, 0);
+            } else {
+                climberSpeedsRight = climberSpeeds;
+            }
         }
     }
 

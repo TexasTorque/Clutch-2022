@@ -33,7 +33,7 @@ public class Constants {
     public static final double FLYWHEEL_Kv = 0.14068; // Values are for rotations/sec
     public static final double FLYWHEEL_Ka = 0.026483;
     public static final double FLYWHEEL_Ks = 0.30442;
-    public static final double FLYWHEEL_Kp = 0.076869;
+    public static final double FLYWHEEL_Kp = 0;
     public static final double FLYWHEEL_Ki = 0;
     public static final double FLYWHEEL_Kd = 0;
     public static final double HOOD_MIN = 0;
@@ -41,8 +41,8 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = .5;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 340;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -340; // Will change again
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 330;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -345; // Will change again
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
     // 63:1 gear ratio
@@ -52,7 +52,8 @@ public class Constants {
     public static final double TURRET_Ka = 0.0029152;
     public static final double TURRET_Kp = 0.42539;
     public static final double TURRET_Ki = 0;
-    public static final double TURRET_Kd = 0.033865;
+    public static final double TURRET_Kd = 0;
+    // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 192.708; // to 1
 
     // Information
@@ -78,6 +79,6 @@ public class Constants {
     // Physical
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
-    public static final double LIMELIGHT_ANGEL_DEG = 45;
+    public static final double LIMELIGHT_ANGEL_DEG = 42.5;
 
 }

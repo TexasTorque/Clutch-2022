@@ -48,7 +48,7 @@ public class Intake extends TorqueSubsystem {
     private TorqueSparkMax rotary;
     private TorqueSparkMax roller;
 
-    private IntakePosition rotarySetPoint = IntakePosition.UP;
+    private IntakePosition rotarySetPoint = IntakePosition.PRIME;
     private double rollerSpeed;
 
     private Intake() {

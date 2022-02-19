@@ -22,6 +22,7 @@ import org.texastorque.torquelib.controlLoop.TimedTruthy;
 import org.texastorque.torquelib.controlLoop.TorqueSlewLimiter;
 import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueLock;
+import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.torquelib.util.TorqueToggle;
 
 public class Input extends TorqueInputManager {
@@ -205,7 +206,7 @@ public class Input extends TorqueInputManager {
         private IntakePosition liftedPosition = IntakePosition.PRIME;
 
         private IntakeDirection direction = IntakeDirection.STOPPED;
-        private IntakePosition intakePosition = IntakePosition.UP;
+        private IntakePosition intakePosition = IntakePosition.PRIME;
 
         public IntakeInput() {
         }
@@ -213,7 +214,8 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             toggleLifted.calc(driver.getBButton());
-            liftedPosition = toggleLifted.get() ? IntakePosition.PRIME : IntakePosition.UP;
+            // liftedPosition = toggleLifted.get() ? IntakePosition.PRIME :
+            // IntakePosition.UP;
 
             if (driver.getRightTrigger())
                 direction = IntakeDirection.INTAKE;
@@ -297,14 +299,24 @@ public class Input extends TorqueInputManager {
         private double hood; // degrees
         private TorqueToggle turretOn = new TorqueToggle(true);
 
-        public boolean allowedToShoot = false;
-
         public ShooterInput() {
         }
 
         @Override
         public void update() {
-            allowedToShoot = operator.getXButton();
+            if (operator.getXButton()) {
+                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
+                    double dist = Feedback.getInstance().getLimelightFeedback().getDistance();
+                    flywheel = regressionRPM(dist);
+                    hood = regressionHood(dist);
+                } else {
+                    flywheel = 1600;
+                    hood = 0;
+                }
+            } else {
+                flywheel = 0;
+                hood = 0;
+            }
 
             // Set turret on or off
             turretOn.calc(operator.getAButton()); // should be put on driver A button
@@ -344,6 +356,24 @@ public class Input extends TorqueInputManager {
         public void setFlywheelSpeed(double speed) {
             this.flywheel = speed;
         }
+
+        /**
+         * @param distance Distance (m)
+         * @return RPM the shooter should go at
+         */
+        private double regressionRPM(double distance) {
+            return TorqueMathUtil.constrain((292 * distance) + 1340, 4000);
+        }
+
+        /**
+         * @param distance Distance (m)
+         * @return Hood the shooter should go at
+         */
+
+        private double regressionHood(double distance) {
+            return TorqueMathUtil.constrain(50, 50);
+        }
+
     }
 
     public class ClimberInput extends TorqueInput {

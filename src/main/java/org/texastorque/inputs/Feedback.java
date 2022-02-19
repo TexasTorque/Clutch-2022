@@ -48,6 +48,8 @@ public class Feedback {
         private double yaw;
         private double roll;
 
+        private float angleOffset = 0;
+
         private GyroDirection direction = GyroDirection.CLOCKWISE;
 
         private GyroFeedback() {
@@ -91,11 +93,18 @@ public class Feedback {
 
         private float getDegrees() {
             // return nxGyro.getRoll();
-            return nxGyro.getFusedHeading();
+            return (nxGyro.getFusedHeading() + angleOffset) % 360;
         }
 
         private float getCCWDegrees() {
             return 360.0f - nxGyro.getFusedHeading();
+        }
+
+        /**
+         * @param angleOffset the angleOffset to set
+         */
+        public void setAngleOffset(float angleOffset) {
+            this.angleOffset = (angleOffset - nxGyro.getFusedHeading() + 360f) % 360f;
         }
 
         @Override

@@ -128,6 +128,11 @@ public class Turret extends TorqueSubsystem {
 
     }
 
+    @Override
+    public void updateAuto() {
+        updateTeleop();
+    }
+
     private boolean checkOver() {
         // if encoder is over limit (left / right)
         // encoderCorrecting = true;

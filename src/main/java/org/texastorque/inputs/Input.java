@@ -374,7 +374,7 @@ public class Input extends TorqueInputManager {
          * @param distance Distance (m)
          * @return RPM the shooter should go at
          */
-        private double regressionRPM(double distance) {
+        public double regressionRPM(double distance) {
             return TorqueMathUtil.constrain((292 * distance) + 1340, 4000);
         }
 
@@ -383,7 +383,7 @@ public class Input extends TorqueInputManager {
          * @return Hood the shooter should go at
          */
 
-        private double regressionHood(double distance) {
+        public double regressionHood(double distance) {
             return TorqueMathUtil.constrain(50, 50);
         }
 

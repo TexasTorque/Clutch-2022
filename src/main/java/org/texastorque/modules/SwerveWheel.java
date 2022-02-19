@@ -27,11 +27,9 @@ public class SwerveWheel {
     private static final double m = 4096;
 
     // PID
-    // private static final KPID drivePID = new KPID(0.0001, 0, 0, 0.0003, -1, 1);
+    private static final KPID drivePID = new KPID(Constants.DRIVE_Kp, Constants.DRIVE_Ki, Constants.DRIVE_Kd,
+            Constants.DRIVE_Kf, -1, 1);
     private static final PIDController rotatePID = new PIDController(.008, 0, 0);
-    private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(Constants.DRIVE_Ks, Constants.DRIVE_Kv,
-            Constants.DRIVE_Ka);
-    private final PIDController drivePID = new PIDController(Constants.DRIVE_Kp, 0, 0);
 
     // Convertions
     private static final double degreeToEncoder = m / 180.0;
@@ -43,7 +41,8 @@ public class SwerveWheel {
         drive = new TorqueSparkMax(portTrans);
         rotate = new TorqueTalon(portRot);
 
-        // drive.configurePID(drivePID);
+        drive.configurePID(drivePID);
+        drive.configureIZone(Constants.DRIVE_KIz);
         drive.setSupplyLimit(35); // Amperage supply limit
 
         rotatePID.enableContinuousInput(-180, 180);
@@ -91,18 +90,14 @@ public class SwerveWheel {
             drive.set(state.speedMetersPerSecond * -1 /
                     Constants.DRIVE_MAX_SPEED_METERS);
         } else {
-            double output = Math.min(driveFF.calculate(state.speedMetersPerSecond) +
-                    drivePID.calculate(
-                            drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
-                            state.speedMetersPerSecond),
-                    12);
+            double en = -drive.velocityMetersToEncoder(Constants.DRIVE_WHEEL_RADIUS_METERS, state.speedMetersPerSecond);
             if (id == 0) {
-                SmartDashboard.putNumber(id + "output", output);
+                SmartDashboard.putNumber(id + "en", en);
                 SmartDashboard.putNumber(id + "speed", state.speedMetersPerSecond);
                 SmartDashboard.putNumber(id + "real",
                         drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS));
             }
-            drive.setVoltage(-output);
+            drive.set(en, ControlType.kVelocity);
         }
 
         double requestedRotate = TorqueMathUtil.constrain(

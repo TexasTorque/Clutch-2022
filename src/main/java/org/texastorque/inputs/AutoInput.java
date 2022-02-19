@@ -12,7 +12,8 @@ public class AutoInput {
     private static volatile AutoInput instance;
 
     // Drive
-    private SwerveModuleState[] driveStates;
+    private SwerveModuleState[] driveStates = new SwerveModuleState[] { new SwerveModuleState(),
+            new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState() };
 
     public SwerveModuleState[] getDriveStates() {
         return driveStates;

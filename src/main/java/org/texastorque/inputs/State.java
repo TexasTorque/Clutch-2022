@@ -4,7 +4,7 @@ public class State {
     private static volatile State instance;
 
     private RobotState state;
-    private TurretState turretState;
+    private TurretState turretState = TurretState.ON;
     private AutomaticMagazineState automaticMagazineState = AutomaticMagazineState.OFF;
 
     private State() {

@@ -57,7 +57,7 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void updateAuto() {
-        flywheelSpeed = AutoInput.getInstance().getFlywheelSpeed();
+        flywheelSetpoint = AutoInput.getInstance().getFlywheelSpeed();
         hoodPosition = AutoInput.getInstance().getHoodPosition();
     }
 
@@ -65,6 +65,11 @@ public class Shooter extends TorqueSubsystem {
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(flywheel.getVelocity());
         Feedback.getInstance().getShooterFeedback().setHoodPosition(hoodRight.getPosition());
+    }
+
+    @Override
+    public void updateFeedbackAuto() {
+        updateFeedbackTeleop();
     }
 
     @Override

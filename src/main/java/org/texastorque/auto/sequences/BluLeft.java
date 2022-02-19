@@ -3,6 +3,7 @@ package org.texastorque.auto.sequences;
 import org.texastorque.auto.commands.Pathplanner;
 import org.texastorque.auto.commands.SetIntake;
 import org.texastorque.auto.commands.SetMagazine;
+import org.texastorque.auto.commands.ShootAtTarget;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
@@ -24,10 +25,13 @@ public class BluLeft extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new SetMagazine(BeltDirections.FORWARDS, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.BACKWARDS, GateSpeeds.CLOSED)));
         // Run path
         addBlock(new TorqueBlock(new Pathplanner("BLULeft")));
         // Shoot
-        // TODO
+        addBlock(new TorqueBlock(new ShootAtTarget()));
+        // Shut off
+        addBlock(new TorqueBlock(new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

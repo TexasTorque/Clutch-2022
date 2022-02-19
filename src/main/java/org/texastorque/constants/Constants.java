@@ -21,7 +21,11 @@ public class Constants {
     public static final double DRIVE_Ks = 0.37843;
     public static final double DRIVE_Kv = 1.5423;
     public static final double DRIVE_Ka = 1.5065;
-    public static final double DRIVE_Kp = 0;
+    public static final double DRIVE_Kp = 0.00004;
+    public static final double DRIVE_Ki = 0.0001;
+    public static final double DRIVE_Kd = 0;
+    public static final double DRIVE_Kf = 0.0002;
+    public static final double DRIVE_KIz = 0.2;
 
     // Magazine
     public static final double MAGAZINE_BELT_SPEED = 1.;
@@ -36,11 +40,11 @@ public class Constants {
     public static final double FLYWHEEL_Kp = 0.0003;
     public static final double FLYWHEEL_Ki = 0.0000006;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00022;
+    public static final double FLYWHEEL_Kf = 0.00026;
     public static final double FLYWHEEL_Iz = 100;
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 50;
-    public static final double SHOOTER_ERROR = 10;
+    public static final double SHOOTER_ERROR = 20;
 
     // Climber
     public static final double CLIMBER_SPEED = .5;
@@ -71,11 +75,11 @@ public class Constants {
     public static final double PATH_PLANNER_X_I = 0;
     public static final double PATH_PLANNER_X_D = 0;
 
-    public static final double PATH_PLANNER_Y_I = 1;
-    public static final double PATH_PLANNER_Y_P = 0;
+    public static final double PATH_PLANNER_Y_P = 1;
+    public static final double PATH_PLANNER_Y_I = 0;
     public static final double PATH_PLANNER_Y_D = 0;
 
-    public static final double PATH_PLANNER_R_P = 6;
+    public static final double PATH_PLANNER_R_P = 8;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 

@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.AutoInput;
@@ -129,6 +131,10 @@ public class Drivebase extends TorqueSubsystem {
     public void updateFeedbackTeleop() {
         odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1), frontLeft.getState(),
                 frontRight.getState(), backLeft.getState(), backRight.getState());
+        SmartDashboard.putNumber("[Real]X", odometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("[Real]Y", odometry.getPoseMeters().getY());
+        SmartDashboard.putNumber("[Real]Rot",
+                odometry.getPoseMeters().getRotation().getDegrees());
     }
 
     @Override

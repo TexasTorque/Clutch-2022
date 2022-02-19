@@ -10,7 +10,7 @@ public class MagazineBallManager {
         NONE, BLUE, RED
     }
 
-    private final String magazineTableName = "magazineDetector"; // TODO: update with correct value;
+    private final String magazineTableName = "ball_mag"; // TODO: update with correct value;
     private NetworkTableInstance NT;
     private NetworkTableEntry ballColorEntry;
     private NetworkTableEntry allianceEntryRed;
@@ -19,7 +19,8 @@ public class MagazineBallManager {
 
     public MagazineBallManager() {
         NT = NetworkTableInstance.getDefault();
-        ballColorEntry = NT.getTable(magazineTableName).getEntry("ballColor");
+        ballColorEntry = NT.getTable(magazineTableName).getEntry("color");
+        // TODO: better way of doing using the change to State in arduino_interface branch
         allianceEntryRed = NT.getTable("FMSInfo").getEntry("IsRedAlliance"); // TODO: check if correct
     }
 

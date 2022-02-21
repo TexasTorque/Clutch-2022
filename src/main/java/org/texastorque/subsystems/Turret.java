@@ -80,6 +80,9 @@ public class Turret extends TorqueSubsystem {
 
     private EncoderOverStatus encoderOverStatus = EncoderOverStatus.OFF;
 
+    private boolean doingSabotage = false;
+    private double sabotageSetpoint = 0;
+
     public Turret() {
         rotator.setPosition(Constants.TURRET_RATIO * -60. / 360.);
         SmartDashboard.putData("Rpid", pidController);
@@ -90,10 +93,20 @@ public class Turret extends TorqueSubsystem {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if (!checkOver() && !checkHoming()) {
                     double hOffset = Feedback.getInstance().getLimelightFeedback().gethOffset();
+
                     // be slightly off :) (do a little trolling)
                     if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-                        hOffset += 10 * Math.signum(hOffset);
+                        if (doingSabotage) {
+                            hOffset = sabotageSetpoint;
+                        } else {
+                            doingSabotage = true;
+                            sabotageSetpoint = 10 * Math.signum(hOffset) + hOffset;
+                            hOffset = sabotageSetpoint;
+                        }
+                    } else {
+                        doingSabotage = false;
                     }
+
                     if (Math.abs(hOffset) < toleranceDegrees) {
                         changeRequest = 0;
                     } else {

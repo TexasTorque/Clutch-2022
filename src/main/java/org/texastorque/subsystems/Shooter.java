@@ -27,7 +27,6 @@ public class Shooter extends TorqueSubsystem {
     private TorqueLinearServo hoodLeft, hoodRight;
 
     // setpoints grabbed from input
-    private double flywheelSpeed;
     private double hoodPosition;
     private double flywheelSetpoint;
 
@@ -43,7 +42,7 @@ public class Shooter extends TorqueSubsystem {
         hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 1);
         hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 1);
 
-        SmartDashboard.putNumber("RPMSET", 0);
+        // SmartDashboard.putNumber("RPMSET", 0);
         // SmartDashboard.putNumber("HOODSET", 0);
     }
 
@@ -52,6 +51,7 @@ public class Shooter extends TorqueSubsystem {
 
         flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
         // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
+        // hoodPosition = SmartDashboard.getNumber("HOODSET", 50);
         hoodPosition = TorqueMathUtil.constrain(Input.getInstance().getShooterInput().getHood(),
                 Constants.HOOD_MIN, Constants.HOOD_MAX);
         updateTurretState();
@@ -78,7 +78,7 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(flywheel.getVelocity());
-        Feedback.getInstance().getShooterFeedback().setHoodPosition(hoodRight.getPosition());
+        Feedback.getInstance().getShooterFeedback().setHoodPosition(hoodLeft.getPosition());
     }
 
     @Override

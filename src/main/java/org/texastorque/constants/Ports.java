@@ -40,7 +40,4 @@ public class Ports {
     public static final int ARDUINO_B = 1; // DIO
     public static final int ARDUINO_C = 2; // DIO
 
-
-
-
 }

@@ -365,7 +365,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((292 * distance) + 1340, 4000);
+            return TorqueMathUtil.constrain((316.4 * distance) + 1240, 3000);
         }
 
         /**
@@ -374,7 +374,10 @@ public class Input extends TorqueInputManager {
          */
 
         public double regressionHood(double distance) {
-            return TorqueMathUtil.constrain(50, 50);
+            // past 1.9, just do max
+            if (distance > 1.9)
+                return 50;
+            return TorqueMathUtil.constrain(22.87 * distance - 3.914, 0, 50);
         }
 
     }

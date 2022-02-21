@@ -7,6 +7,7 @@ import org.texastorque.torquelib.auto.TorqueSequence;
 public class AutoReflect extends TorqueSequence {
     public AutoReflect() {
         super("AutoReflect");
+        init();
     }
 
     @Override

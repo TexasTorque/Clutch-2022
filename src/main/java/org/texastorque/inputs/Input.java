@@ -22,6 +22,7 @@ import org.texastorque.torquelib.controlLoop.TimedTruthy;
 import org.texastorque.torquelib.controlLoop.TorqueSlewLimiter;
 import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueLock;
+import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.torquelib.util.TorqueToggle;
 
 public class Input extends TorqueInputManager {
@@ -45,6 +46,7 @@ public class Input extends TorqueInputManager {
     private TorqueAssist autoReflect = new TorqueAssist(new AutoReflect(), magazineInput, shooterInput);
 
     // Etc.
+    private TimedTruthy driverRumble = new TimedTruthy();
     private TimedTruthy operatorRumble = new TimedTruthy();
 
     private Input() {
@@ -73,27 +75,33 @@ public class Input extends TorqueInputManager {
     @Override
     public void update() {
 
-        if (operator.getBButtonPressed()) {
-            // If detect our alliance, shoot.
-            // If detect enemy, shoot badly
-            // Otherwise, do nothin
+        // SHOOT IS GOING TO BE MAPPED TO DRIVER X BUTTON
 
-            // if not currently auto
-            if (State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.OFF) {
-                if (MagazineBallManager.getInstance().isOurAlliance()) {
-                    State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
-                } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-                    State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
-                } else {
-                    // if no ball is detected, alert driver for 1 sec with rumble
-                    operatorRumble.setTime(1);
-                }
-            }
-        }
-        autoLaunch.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.SHOOTING);
-        autoReflect.run(State.getInstance().getAutomaticMagazineState() == AutomaticMagazineState.REFLECTING);
+        // if (operator.getBButtonPressed()) {
+        // // If detect our alliance, shoot.
+        // // If detect enemy, shoot badly
+        // // Otherwise, do nothin
 
-        driver.setRumble(operatorRumble.calc());
+        // // if not currently auto
+        // if (State.getInstance().getAutomaticMagazineState() ==
+        // AutomaticMagazineState.OFF) {
+        // if (MagazineBallManager.getInstance().isOurAlliance()) {
+        // State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
+        // } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
+        // State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
+        // } else {
+        // // if no ball is detected, alert driver for 1 sec with rumble
+        // operatorRumble.setTime(1);
+        // }
+        // }
+        // }
+        // autoLaunch.run(State.getInstance().getAutomaticMagazineState() ==
+        // AutomaticMagazineState.SHOOTING);
+        // autoReflect.run(State.getInstance().getAutomaticMagazineState() ==
+        // AutomaticMagazineState.REFLECTING);
+
+        driver.setRumble(driverRumble.calc());
+        operator.setRumble(operatorRumble.calc());
 
         modules.forEach(TorqueInput::run);
     }
@@ -110,8 +118,8 @@ public class Input extends TorqueInputManager {
         private double xSpeed = 0;
         private double ySpeed = 0;
 
-        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(50, 1000);
-        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(50, 1000);
+        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(3, 4);
+        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(3, 4);
 
         private DriveBaseTranslationInput() {
         }
@@ -198,7 +206,7 @@ public class Input extends TorqueInputManager {
         private IntakePosition liftedPosition = IntakePosition.PRIME;
 
         private IntakeDirection direction = IntakeDirection.STOPPED;
-        private IntakePosition intakePosition = IntakePosition.UP;
+        private IntakePosition intakePosition = IntakePosition.PRIME;
 
         public IntakeInput() {
         }
@@ -206,7 +214,8 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             toggleLifted.calc(driver.getBButton());
-            liftedPosition = toggleLifted.get() ? IntakePosition.PRIME : IntakePosition.UP;
+            // liftedPosition = toggleLifted.get() ? IntakePosition.PRIME :
+            // IntakePosition.UP;
 
             if (driver.getRightTrigger())
                 direction = IntakeDirection.INTAKE;
@@ -238,20 +247,31 @@ public class Input extends TorqueInputManager {
         private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
+        private TorqueToggle autoMag = new TorqueToggle(true);
+
         public MagazineInput() {
         }
 
         @Override
         public void update() {
-            if (operator.getLeftTrigger())
+            if (operator.getLeftTrigger()
+                    || (shooterInput.getFlywheel() != 0 && (shooterInput.getFlywheel()
+                            - Constants.SHOOTER_ERROR < Feedback.getInstance().getShooterFeedback().getRPM()
+                            && shooterInput.getFlywheel() + Constants.SHOOTER_ERROR > Feedback.getInstance()
+                                    .getShooterFeedback().getRPM())))
                 gateDirection = GateSpeeds.OPEN;
             else
                 gateDirection = GateSpeeds.CLOSED;
 
-            if (operator.getRightBumper())
-                beltDirection = BeltDirections.BACKWARDS;
-            else if (operator.getRightTrigger())
+            // autoMag.calc(operator.getLeftBumper());
+            autoMag.calc(operator.getYButton());
+            // if (operator.getRightBumper())
+            // beltDirection = BeltDirections.BACKWARDS;
+            // else
+            if (operator.getRightTrigger())
                 beltDirection = BeltDirections.FORWARDS;
+            else if (autoMag.get() || operator.getRightBumper())
+                beltDirection = BeltDirections.BACKWARDS;
             else
                 beltDirection = BeltDirections.OFF;
         }
@@ -282,26 +302,34 @@ public class Input extends TorqueInputManager {
     public class ShooterInput extends TorqueInput {
         private double flywheel; // rpm
         private double hood; // degrees
-        private TorqueToggle turretOn = new TorqueToggle();
+        private TorqueToggle turretOn = new TorqueToggle(true);
 
         public ShooterInput() {
         }
 
         @Override
         public void update() {
-            // Launchpad shoot in case of failure
-            // TODO: tune values
-            if (driver.getXButton()) {
-                flywheel = 5000;
-                hood = 10;
+            if (operator.getXButton()) {
+                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
+                    double dist = Feedback.getInstance().getLimelightFeedback().getDistance();
+                    flywheel = regressionRPM(dist);
+                    hood = regressionHood(dist);
+                } else {
+                    flywheel = 1600;
+                    hood = 0;
+                }
+            } else {
+                flywheel = 0;
             }
 
             // Set turret on or off
-            turretOn.calc(operator.getAButton());
+            turretOn.calc(operator.getAButton()); // should be put on driver A button
             if (turretOn.get())
                 State.getInstance().setTurretState(TurretState.ON);
             else
                 State.getInstance().setTurretState(TurretState.OFF);
+
+            SmartDashboard.putBoolean("[Input]Turret On", turretOn.get());
         }
 
         @Override
@@ -330,8 +358,35 @@ public class Input extends TorqueInputManager {
          * @param speed RPM
          */
         public void setFlywheelSpeed(double speed) {
-            this.flywheel = speed;
+            this.flywheel = Math.min(speed, 4000);
         }
+
+        /**
+         * Set the hood for the flywheel
+         * 
+         * @param hood Hood position
+         */
+        public void setHood(double hood) {
+            this.hood = TorqueMathUtil.constrain(hood, 0, 50);
+        }
+
+        /**
+         * @param distance Distance (m)
+         * @return RPM the shooter should go at
+         */
+        public double regressionRPM(double distance) {
+            return TorqueMathUtil.constrain((292 * distance) + 1340, 4000);
+        }
+
+        /**
+         * @param distance Distance (m)
+         * @return Hood the shooter should go at
+         */
+
+        public double regressionHood(double distance) {
+            return TorqueMathUtil.constrain(50, 50);
+        }
+
     }
 
     public class ClimberInput extends TorqueInput {
@@ -395,9 +450,22 @@ public class Input extends TorqueInputManager {
         return climberInput;
     }
 
-    @Override
-    public void requestRumble(double forTime) {
-        // ignore rn
+    /**
+     * Rumble the driver's controller
+     * 
+     * @param forTime seconds
+     */
+    public void requestDriverRumble(double forTime) {
+        driverRumble.setTime(forTime);
+    }
+
+    /**
+     * Rumble the operator's controller
+     * 
+     * @param forTime seconds
+     */
+    public void requestOperatorRumble(double forTime) {
+        operatorRumble.setTime(forTime);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.texastorque.subsystems;
 
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
+import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
@@ -11,7 +12,7 @@ public class Magazine extends TorqueSubsystem {
 
     public static enum GateSpeeds {
         OPEN(1),
-        CLOSED(-.05);
+        CLOSED(-.1);
 
         private final double speed;
 
@@ -55,6 +56,13 @@ public class Magazine extends TorqueSubsystem {
     public void updateTeleop() {
         gateSpeed = Input.getInstance().getMagazineInput().getGateDirection().getSpeed();
         beltSpeed = Input.getInstance().getMagazineInput().getBeltDirection().getDirection() *
+                Constants.MAGAZINE_BELT_SPEED;
+    }
+
+    @Override
+    public void updateAuto() {
+        gateSpeed = AutoInput.getInstance().getGateDirection().getSpeed();
+        beltSpeed = AutoInput.getInstance().getBeltDirection().getDirection() *
                 Constants.MAGAZINE_BELT_SPEED;
     }
 

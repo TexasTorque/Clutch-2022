@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
+import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
@@ -30,8 +31,8 @@ public class Intake extends TorqueSubsystem {
 
     public static enum IntakePosition {
         UP(0),
-        PRIME(-2),
-        DOWN(-8.5);
+        PRIME(-3.3),
+        DOWN(-9.2);
         // Intake setpoints
 
         private final double position;
@@ -48,13 +49,13 @@ public class Intake extends TorqueSubsystem {
     private TorqueSparkMax rotary;
     private TorqueSparkMax roller;
 
-    private IntakePosition rotarySetPoint = IntakePosition.UP;
+    private IntakePosition rotarySetPoint = IntakePosition.PRIME;
     private double rollerSpeed;
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
-        rotary.configurePID(new KPID(0.05, 0.00005, .00002, 0, -.5, .5));
-        rotary.tareEncoder();
+        rotary.configurePID(new KPID(0.3, 0.00005, .00002, 0, -.5, .5));
+        // rotary.tareEncoder();
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
     }
 
@@ -62,6 +63,13 @@ public class Intake extends TorqueSubsystem {
     public void updateTeleop() {
         rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
         rollerSpeed = -Input.getInstance().getIntakeInput().getDirection().getDirection() *
+                Constants.INTAKE_ROTARY_SPEED;
+    }
+
+    @Override
+    public void updateAuto() {
+        rotarySetPoint = AutoInput.getInstance().getIntakePosition();
+        rollerSpeed = -AutoInput.getInstance().getIntakeSpeed().getDirection() *
                 Constants.INTAKE_ROTARY_SPEED;
     }
 

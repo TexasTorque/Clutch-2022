@@ -10,6 +10,7 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.util.KPID;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,7 +27,8 @@ public class SwerveWheel {
     private static final double m = 4096;
 
     // PID
-    private static final KPID drivePID = new KPID(0.0001, 0, 0, 0.0003, -1, 1);
+    private static final KPID drivePID = new KPID(Constants.DRIVE_Kp, Constants.DRIVE_Ki, Constants.DRIVE_Kd,
+            Constants.DRIVE_Kf, -1, 1);
     private static final PIDController rotatePID = new PIDController(.008, 0, 0);
 
     // Convertions
@@ -40,6 +42,7 @@ public class SwerveWheel {
         rotate = new TorqueTalon(portRot);
 
         drive.configurePID(drivePID);
+        drive.configureIZone(Constants.DRIVE_KIz);
         drive.setSupplyLimit(35); // Amperage supply limit
 
         rotatePID.enableContinuousInput(-180, 180);
@@ -83,21 +86,23 @@ public class SwerveWheel {
         // desiredState.angle.times(-1);
         SwerveModuleState state = SwerveModuleState.optimize(desiredState, getRotation());
 
-        double requestedSpeed = metersPerSecondToEncoderPerSecond(state.speedMetersPerSecond);
-
         if (DriverStation.isTeleop()) {
-            drive.set(requestedSpeed * -1 /
-                    metersPerSecondToEncoderPerSecond(Constants.DRIVE_MAX_SPEED_METERS));
+            drive.set(state.speedMetersPerSecond * -1 /
+                    Constants.DRIVE_MAX_SPEED_METERS);
         } else {
-            drive.set(requestedSpeed * -1, ControlType.kSmartVelocity);
+            double en = -drive.velocityMetersToEncoder(Constants.DRIVE_WHEEL_RADIUS_METERS, state.speedMetersPerSecond);
+            if (id == 0) {
+                SmartDashboard.putNumber(id + "en", en);
+                SmartDashboard.putNumber(id + "speed", state.speedMetersPerSecond);
+                SmartDashboard.putNumber(id + "real",
+                        drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS));
+            }
+            drive.set(en, ControlType.kVelocity);
         }
 
         double requestedRotate = TorqueMathUtil.constrain(
                 rotatePID.calculate(fromEncoder(rotate.getPosition()), state.angle.getDegrees()),
                 -1, 1);
-        SmartDashboard.putNumber("Req Rot: " + id, requestedRotate);
-        SmartDashboard.putNumber("Req Deg: " + id, state.angle.getDegrees());
-        SmartDashboard.putNumber("Req Pos: " + id, fromEncoder(rotate.getPosition()));
         rotate.set(requestedRotate);
     }
 }

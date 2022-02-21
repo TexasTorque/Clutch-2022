@@ -28,11 +28,19 @@ public class Ports {
     public static final int SHOOTER_HOOD_LEFT = 1; // PWM
     public static final int SHOOTER_HOOD_RIGHT = 2; // PWM
 
-
     // Climber
-    public static final int CLIMBER_LEFT = 16;
-    public static final int CLIMBER_RIGHT = 17;
+    public static final int CLIMBER_LEFT = 16; // CAN
+    public static final int CLIMBER_RIGHT = 17; // CAN
 
     // Turret
     public static final int TURRET = 18; // CAN
+
+    // Arduino
+    public static final int ARDUINO_A = 0; // DIO
+    public static final int ARDUINO_B = 1; // DIO
+    public static final int ARDUINO_C = 2; // DIO
+
+
+
+
 }

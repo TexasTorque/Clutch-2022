@@ -65,6 +65,16 @@ public class Robot extends TorqueIterative {
     }
 
     @Override
+    public void testContinuous() {
+        teleopContinuous();
+    }
+
+    @Override
+    public void testInit() {
+        teleopInit();
+    }
+
+    @Override
     public void autoContinuous() {
         autoManager.runCurrentSequence();
         subsystems.forEach(TorqueSubsystem::updateAuto);

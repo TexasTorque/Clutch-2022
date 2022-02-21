@@ -302,14 +302,13 @@ public class Input extends TorqueInputManager {
     public class ShooterInput extends TorqueInput {
         private double flywheel; // rpm
         private double hood; // degrees
-        private TorqueToggle turretOn = new TorqueToggle(true);
 
         public ShooterInput() {
         }
 
         @Override
         public void update() {
-            if (operator.getXButton()) {
+            if (driver.getXButton()) {
                 if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
                     double dist = Feedback.getInstance().getLimelightFeedback().getDistance();
                     flywheel = regressionRPM(dist);
@@ -321,15 +320,6 @@ public class Input extends TorqueInputManager {
             } else {
                 flywheel = 0;
             }
-
-            // Set turret on or off
-            turretOn.calc(operator.getAButton()); // should be put on driver A button
-            if (turretOn.get())
-                State.getInstance().setTurretState(TurretState.ON);
-            else
-                State.getInstance().setTurretState(TurretState.OFF);
-
-            SmartDashboard.putBoolean("[Input]Turret On", turretOn.get());
         }
 
         @Override

@@ -5,27 +5,24 @@ import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.TurretState;
+import org.texastorque.modules.MagazineBallManager;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
-import org.texastorque.torquelib.util.Parameters.Constant;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret extends TorqueSubsystem {
     public static volatile Turret instance;
 
-    private static final double toleranceDegrees = 4.5; // degrees where we say we are at the target.
+    private static final double toleranceDegrees = .7; // degrees where we say we are at the target.
+    private static final double maxVoltage = 11;
 
     private TorqueSparkMax rotator = new TorqueSparkMax(Ports.TURRET);
 
     private double changeRequest = 0; // power needed to achieve target
-    // private final SimpleMotorFeedforward simpleMotorFeedforward = new
-    // SimpleMotorFeedforward(Constants.TURRET_Ks,
-    // Constants.TURRET_Kv, Constants.TURRET_Ka);
     private final PIDController pidController = new PIDController(Constants.TURRET_Kp, Constants.TURRET_Ki,
-            Constants.TURRET_Kp);
+            Constants.TURRET_Kd);
 
     enum EncoderOverStatus {
         OFF, TOLEFT(-130, 65), TORIGHT(70, -120), HOMING;
@@ -85,31 +82,37 @@ public class Turret extends TorqueSubsystem {
 
     public Turret() {
         rotator.setPosition(Constants.TURRET_RATIO * -60. / 360.);
+        SmartDashboard.putData("Rpid", pidController);
     }
 
     public void updateTeleop() {
         if (State.getInstance().getTurretState() == TurretState.ON) {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if (!checkOver() && !checkHoming()) {
-                    if (Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < toleranceDegrees) {
+                    double hOffset = Feedback.getInstance().getLimelightFeedback().gethOffset();
+                    // be slightly off :) (do a little trolling)
+                    if (MagazineBallManager.getInstance().isEnemyAlliance()) {
+                        hOffset += 10 * Math.signum(hOffset);
+                    }
+                    if (Math.abs(hOffset) < toleranceDegrees) {
                         changeRequest = 0;
                     } else {
                         double pidOutput = pidController.calculate(
-                                Feedback.getInstance().getLimelightFeedback().gethOffset(), 0);
+                                hOffset, 0);
                         changeRequest = (Constants.TURRET_Ks * Math.signum(pidOutput)) + pidOutput;
                     }
-                }
 
+                }
             } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target
                 // :( .. let's find it!
                 if (!checkOver() && checkHoming()) {
-                    // if (Feedback.getInstance().getGyroFeedback()
-                    // .getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
-                    // changeRequest = 1 + Constants.TURRET_Ks;
-                    // } else if (Feedback.getInstance().getGyroFeedback()
-                    // .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
-                    changeRequest = -3 - Constants.TURRET_Ks;
-                    // }
+                    if (Feedback.getInstance().getGyroFeedback()
+                            .getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
+                        changeRequest = 10 + Constants.TURRET_Ks;
+                    } else if (Feedback.getInstance().getGyroFeedback()
+                            .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
+                        changeRequest = -10 - Constants.TURRET_Ks;
+                    }
                 }
             } else {
                 // if good get out of encodercorrecting
@@ -174,7 +177,7 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public void output() {
-        rotator.setVoltage(Math.signum(changeRequest) * Math.min(Math.abs(changeRequest), 3.2));
+        rotator.setVoltage(Math.signum(changeRequest) * Math.min(Math.abs(changeRequest), maxVoltage));
     }
 
     public static Turret getInstance() {

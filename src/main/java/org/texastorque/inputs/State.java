@@ -1,14 +1,19 @@
 package org.texastorque.inputs;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 public class State {
     private static volatile State instance;
 
     private RobotState state;
     private TurretState turretState = TurretState.ON;
     private AutomaticMagazineState automaticMagazineState = AutomaticMagazineState.OFF;
+    private AllianceColor allianceColor;
 
     private State() {
         state = RobotState.DISABLED;
+
+        fetchAllianceColorFromFMS();
     }
 
     public static enum RobotState {
@@ -48,6 +53,32 @@ public class State {
 
     public void setAutomaticMagazineState(AutomaticMagazineState state) {
         this.automaticMagazineState = state;
+    }
+
+    public static enum AllianceColor {
+        RED(true), BLUE(false);
+
+        private final boolean red;
+
+        AllianceColor(boolean red) {
+            this.red = red;
+        }
+
+        public boolean isRed() {
+            return this.red;
+        }
+    }
+
+    public void fetchAllianceColorFromFMS() {
+        this.allianceColor = NetworkTableInstance.getDefault()
+                .getTable("FMSInfo").getEntry("IsRedAlliance")
+                .getBoolean(false) ? AllianceColor.RED : AllianceColor.BLUE;
+    }
+
+    public AllianceColor getAllianceColor() {
+        if (this.allianceColor == null)
+            fetchAllianceColorFromFMS();
+        return this.allianceColor;
     }
 
     public static synchronized State getInstance() {

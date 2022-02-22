@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Turret extends TorqueSubsystem {
     public static volatile Turret instance;
 
-    private static final double toleranceDegrees = .7; // degrees where we say we are at the target.
     private static final double maxVoltage = 11;
 
     private TorqueSparkMax rotator = new TorqueSparkMax(Ports.TURRET);
@@ -71,9 +70,9 @@ public class Turret extends TorqueSubsystem {
          */
         public boolean atPosition(double currentPos) {
             if (Math.signum(toPosition) == -1) {
-                return currentPos - toleranceDegrees <= toPosition;
+                return currentPos - Constants.TOLERANCE_DEGREES <= toPosition;
             } else {
-                return currentPos + toleranceDegrees >= toPosition;
+                return currentPos + Constants.TOLERANCE_DEGREES >= toPosition;
             }
         }
     }
@@ -107,7 +106,7 @@ public class Turret extends TorqueSubsystem {
                         doingSabotage = false;
                     }
 
-                    if (Math.abs(hOffset) < toleranceDegrees) {
+                    if (Math.abs(hOffset) < Constants.TOLERANCE_DEGREES) {
                         changeRequest = 0;
                     } else {
                         double pidOutput = pidController.calculate(
@@ -149,7 +148,7 @@ public class Turret extends TorqueSubsystem {
         updateTeleop();
     }
 
-    public boolean checkOver() {
+    private boolean checkOver() {
         // if encoder is over limit (left / right)
         // encoderCorrecting = true;
         if (getDegrees() > EncoderOverStatus.TORIGHT.getOverPosition()) { // if the turret is over the right

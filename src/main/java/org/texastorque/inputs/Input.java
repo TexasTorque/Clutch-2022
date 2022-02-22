@@ -232,7 +232,8 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             // If we are asking to shoot and the turret is locked
-            if (shooterInput.getFlywheel() != 0 && Turret.getInstance().checkOver()) {
+            if (shooterInput.getFlywheel() != 0 && Feedback.getInstance().getLimelightFeedback().gethOffset() 
+                    < Constants.TOLERANCE_DEGREES) {
                 // We are "target locked"
                 ArduinoInterface.getInstance().setLightMode(LightMode.TARGET_LOCK);
 
@@ -305,8 +306,13 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             // Regression
-            if (driver.getXButton() || Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0)
-                setFromDist(Feedback.getInstance().getLimelightFeedback().getDistance());
+            if (driver.getXButton())
+                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0)
+                    setFromDist(Feedback.getInstance().getLimelightFeedback().getDistance());
+                else {
+                    flywheel = 1600;
+                    hood = 0;
+                }
             // Layup
             else if (operator.getYButton())
                 setFromDist(0); // distance at layup (tbd)

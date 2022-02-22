@@ -63,6 +63,8 @@ public class Constants {
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 192.708; // to 1
 
+    public static final double TOLERANCE_DEGREES = .7;
+
     // Information
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;

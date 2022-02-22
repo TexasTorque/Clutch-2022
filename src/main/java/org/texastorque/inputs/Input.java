@@ -232,31 +232,31 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             // If we are asking to shoot and the turret is locked
-            if (shooterInput.getFlywheel() != 0 && Feedback.getInstance().getLimelightFeedback().gethOffset() 
-                    < Constants.TOLERANCE_DEGREES) {
+            if (shooterInput.getFlywheel() != 0
+                    && Feedback.getInstance().getLimelightFeedback().gethOffset() < Constants.TOLERANCE_DEGREES) {
                 // We are "target locked"
                 ArduinoInterface.getInstance().setLightMode(LightMode.TARGET_LOCK);
 
                 // If the shooter is ready wee decide to shoot
-                if (shooterInput.getFlywheel() - Constants.SHOOTER_ERROR 
-                        < Feedback.getInstance().getShooterFeedback().getRPM()
-                        && shooterInput.getFlywheel() + Constants.SHOOTER_ERROR 
-                        > Feedback.getInstance().getShooterFeedback().getRPM()
-                ) 
+                if (shooterInput.getFlywheel() - Constants.SHOOTER_ERROR < Feedback.getInstance().getShooterFeedback()
+                        .getRPM()
+                        && shooterInput.getFlywheel() + Constants.SHOOTER_ERROR > Feedback.getInstance()
+                                .getShooterFeedback().getRPM())
                     gateDirection = GateSpeeds.OPEN;
                 // Otherwise we dont
-                else 
+                else
                     gateDirection = GateSpeeds.CLOSED;
             } else {
                 // We want to be in the normal setting
-                ArduinoInterface.getInstance().setToAllianceColor();
-
-                // Operator override
-                if (operator.getLeftTrigger())
-                    gateDirection = GateSpeeds.OPEN;
-                else 
-                    gateDirection = GateSpeeds.CLOSED;
+                if (ArduinoInterface.getInstance().getCurrentLightMode() == LightMode.TARGET_LOCK)
+                    ArduinoInterface.getInstance().setToAllianceColor();
             }
+
+            // Operator override
+            if (operator.getLeftTrigger())
+                gateDirection = GateSpeeds.OPEN;
+            else
+                gateDirection = GateSpeeds.CLOSED;
 
             autoMag.calc(driver.getYButton());
 
@@ -325,7 +325,8 @@ public class Input extends TorqueInputManager {
             // SmartDashboard
             else if (operator.getAButton())
                 setFromDist(SmartDashboard.getNumber("[Input]Distance", 0));
-            else reset();
+            else
+                reset();
         }
 
         @Override
@@ -393,7 +394,7 @@ public class Input extends TorqueInputManager {
     public class ClimberInput extends TorqueInput {
         private ClimberDirection direction = ClimberDirection.STOP;
         // ! DEBUG ONLY, PUBLIC SHOULD BE ENCAPSULATED IF PERMANENT
-        public boolean runLeft = false; 
+        public boolean runLeft = false;
         public boolean runRight = false;
 
         private boolean climbHasStarted = false;
@@ -409,17 +410,17 @@ public class Input extends TorqueInputManager {
                 direction = ClimberDirection.PULL;
             else
                 direction = ClimberDirection.STOP;
-            
+
             // ^ If up or down is pressed, set the LEDs to ENDGAME
-            if (direction != ClimberDirection.STOP) {
-                if (!climbHasStarted)
-                    ArduinoInterface.getInstance().setLightMode(LightMode.ENDGAME);
+            if (direction != ClimberDirection.STOP)
                 climbHasStarted = true;
-            }
+
+            if (climbHasStarted && ArduinoInterface.getInstance().getCurrentLightMode() != LightMode.ENDGAME)
+                ArduinoInterface.getInstance().setLightMode(LightMode.ENDGAME);
 
             // The operator can cancel the ENGAME sequence
             if (operator.getRightCenterButton()) {
-                if (climbHasStarted)
+                if (ArduinoInterface.getInstance().getCurrentLightMode() == LightMode.ENDGAME)
                     ArduinoInterface.getInstance().setToAllianceColor();
                 climbHasStarted = false;
             }

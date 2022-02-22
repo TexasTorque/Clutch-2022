@@ -40,7 +40,7 @@ public class Constants {
     public static final double FLYWHEEL_Kp = 0.0003;
     public static final double FLYWHEEL_Ki = 0.0000006;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00026;
+    public static final double FLYWHEEL_Kf = 0.0003;
     public static final double FLYWHEEL_Iz = 100;
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 50;
@@ -68,9 +68,9 @@ public class Constants {
     // Information
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
-    public static final double TOP_ACCELERATION_METERS = 2;
+    public static final double TOP_ACCELERATION_METERS = 4;
     public static final double MAX_ANGULAR_SPEED = 4 * Math.PI;
-    public static final double MAX_ANGULAR_ACCELERATION = 2 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = 3 * Math.PI;
 
     // Path Planner
     public static final double PATH_PLANNER_X_P = 1;
@@ -81,7 +81,7 @@ public class Constants {
     public static final double PATH_PLANNER_Y_I = 0;
     public static final double PATH_PLANNER_Y_D = 0;
 
-    public static final double PATH_PLANNER_R_P = 8;
+    public static final double PATH_PLANNER_R_P = 6;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 

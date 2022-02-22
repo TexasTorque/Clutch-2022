@@ -90,8 +90,8 @@ public class AutoInput {
     }
 
     // Magazine
-    private GateSpeeds gateDirection;
-    private BeltDirections beltDirection;
+    private GateSpeeds gateDirection = GateSpeeds.CLOSED;
+    private BeltDirections beltDirection = BeltDirections.OFF;
 
     /**
      * @param gateDirection the gateDirection to set

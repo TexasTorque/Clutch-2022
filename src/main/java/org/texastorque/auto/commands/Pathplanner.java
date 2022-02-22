@@ -35,9 +35,16 @@ public class Pathplanner extends TorqueCommand {
                         thetaController);
         private final Timer timer = new Timer();
 
+        private boolean resetOdometry = true;
+
         public Pathplanner(String name) {
                 thetaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
                 trajectory = PathPlanner.loadPath(name, Constants.TOP_SPEED_METERS, Constants.TOP_ACCELERATION_METERS);
+        }
+
+        public Pathplanner(String name, boolean resetOdometry) {
+                this(name);
+                this.resetOdometry = resetOdometry;
         }
 
         @Override
@@ -46,18 +53,21 @@ public class Pathplanner extends TorqueCommand {
                 timer.reset();
                 timer.start();
 
-                float offset = 360f - (float) trajectory.getInitialPose().getRotation().getDegrees();
-                Feedback.getInstance().getGyroFeedback()
-                                .setAngleOffset(offset);
-                Drivebase.getInstance().odometry.resetPosition(trajectory.getInitialPose(),
-                                trajectory.getInitialPose().getRotation());
+                if (resetOdometry) {
+                        float offset = 360f - (float) trajectory.getInitialPose().getRotation().getDegrees();
+                        Feedback.getInstance().getGyroFeedback()
+                                        .setAngleOffset(offset);
+                        Drivebase.getInstance().odometry.resetPosition(trajectory.getInitialPose(),
+                                        trajectory.getInitialPose().getRotation());
 
-                System.out.println("My initial: "
-                                + Drivebase.getInstance().odometry.getPoseMeters().getRotation().getDegrees());
-                System.out.println("My initial real: "
-                                + Feedback.getInstance().getGyroFeedback().getRotation2d().getDegrees());
-                System.out.println("Wanted initial:"
-                                + trajectory.getInitialPose().getRotation().getDegrees());
+                        System.out.println("My initial: "
+                                        + Drivebase.getInstance().odometry.getPoseMeters().getRotation().getDegrees());
+                        System.out.println("My initial real: "
+                                        + Feedback.getInstance().getGyroFeedback().getRotation2d().getDegrees());
+                        System.out.println("Wanted initial:"
+                                        + trajectory.getInitialPose().getRotation().getDegrees());
+
+                }
         }
 
         @Override

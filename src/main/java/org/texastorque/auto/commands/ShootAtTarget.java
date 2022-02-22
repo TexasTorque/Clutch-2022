@@ -13,13 +13,21 @@ import org.texastorque.torquelib.auto.TorqueCommand;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ShootAtTarget extends TorqueCommand {
-    private static final double magOutputTime = 4;
+    private final double magOutputTime;
 
     private boolean done = false;
     private boolean runMag = false;
     private double startMagTime = 0;
     private double distance;
     private double outputRPM;
+
+    public ShootAtTarget() {
+        this.magOutputTime = 2; // TBD
+    }
+
+    public ShootAtTarget(double magOutputTime) {
+        this.magOutputTime = magOutputTime;
+    }
 
     @Override
     protected void init() {
@@ -40,7 +48,7 @@ public class ShootAtTarget extends TorqueCommand {
                 startMagTime = Timer.getFPGATimestamp();
             }
         } else {
-            Input.getInstance().getMagazineInput().setGateDirection(GateSpeeds.OPEN);
+            AutoInput.getInstance().setGateDirection(GateSpeeds.OPEN);
             if (Timer.getFPGATimestamp() - startMagTime >= magOutputTime)
                 done = true;
         }

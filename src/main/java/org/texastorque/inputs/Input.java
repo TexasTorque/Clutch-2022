@@ -8,7 +8,10 @@ import org.texastorque.auto.sequences.AutoLaunch;
 import org.texastorque.auto.sequences.AutoReflect;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.State.*;
+import org.texastorque.modules.ArduinoInterface;
 import org.texastorque.modules.MagazineBallManager;
+import org.texastorque.modules.ArduinoInterface.LightMode;
+import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
@@ -74,32 +77,6 @@ public class Input extends TorqueInputManager {
 
     @Override
     public void update() {
-
-        // SHOOT IS GOING TO BE MAPPED TO DRIVER X BUTTON
-
-        // if (operator.getBButtonPressed()) {
-        // // If detect our alliance, shoot.
-        // // If detect enemy, shoot badly
-        // // Otherwise, do nothin
-
-        // // if not currently auto
-        // if (State.getInstance().getAutomaticMagazineState() ==
-        // AutomaticMagazineState.OFF) {
-        // if (MagazineBallManager.getInstance().isOurAlliance()) {
-        // State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.SHOOTING);
-        // } else if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-        // State.getInstance().setAutomaticMagazineState(AutomaticMagazineState.REFLECTING);
-        // } else {
-        // // if no ball is detected, alert driver for 1 sec with rumble
-        // operatorRumble.setTime(1);
-        // }
-        // }
-        // }
-        // autoLaunch.run(State.getInstance().getAutomaticMagazineState() ==
-        // AutomaticMagazineState.SHOOTING);
-        // autoReflect.run(State.getInstance().getAutomaticMagazineState() ==
-        // AutomaticMagazineState.REFLECTING);
-
         driver.setRumble(driverRumble.calc());
         operator.setRumble(operatorRumble.calc());
 
@@ -254,20 +231,34 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            if (operator.getLeftTrigger()
-                    || (shooterInput.getFlywheel() != 0 && (shooterInput.getFlywheel()
-                            - Constants.SHOOTER_ERROR < Feedback.getInstance().getShooterFeedback().getRPM()
-                            && shooterInput.getFlywheel() + Constants.SHOOTER_ERROR > Feedback.getInstance()
-                                    .getShooterFeedback().getRPM())))
-                gateDirection = GateSpeeds.OPEN;
-            else
-                gateDirection = GateSpeeds.CLOSED;
+            // If we are asking to shoot and the turret is locked
+            if (shooterInput.getFlywheel() != 0 && Turret.getInstance().checkOver()) {
+                // We are "target locked"
+                ArduinoInterface.getInstance().setLightMode(LightMode.TARGET_LOCK);
 
-            // autoMag.calc(operator.getLeftBumper());
-            autoMag.calc(operator.getYButton());
-            // if (operator.getRightBumper())
-            // beltDirection = BeltDirections.BACKWARDS;
-            // else
+                // If the shooter is ready wee decide to shoot
+                if (shooterInput.getFlywheel() - Constants.SHOOTER_ERROR 
+                        < Feedback.getInstance().getShooterFeedback().getRPM()
+                        && shooterInput.getFlywheel() + Constants.SHOOTER_ERROR 
+                        > Feedback.getInstance().getShooterFeedback().getRPM()
+                ) 
+                    gateDirection = GateSpeeds.OPEN;
+                // Otherwise we dont
+                else 
+                    gateDirection = GateSpeeds.CLOSED;
+            } else {
+                // We want to be in the normal setting
+                ArduinoInterface.getInstance().setToAllianceColor();
+
+                // Operator override
+                if (operator.getLeftTrigger())
+                    gateDirection = GateSpeeds.OPEN;
+                else 
+                    gateDirection = GateSpeeds.CLOSED;
+            }
+
+            autoMag.calc(driver.getYButton());
+
             if (operator.getRightTrigger())
                 beltDirection = BeltDirections.FORWARDS;
             else if (autoMag.get() || operator.getRightBumper())
@@ -306,24 +297,35 @@ public class Input extends TorqueInputManager {
         public ShooterInput() {
         }
 
+        private void setFromDist(double dist) {
+            flywheel = regressionRPM(dist);
+            hood = regressionHood(dist);
+        }
+
         @Override
         public void update() {
-            if (driver.getXButton()) {
-                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
-                    double dist = Feedback.getInstance().getLimelightFeedback().getDistance();
-                    flywheel = regressionRPM(dist);
-                    hood = regressionHood(dist);
-                } else {
-                    flywheel = 1600;
-                    hood = 0;
-                }
-            } else {
-                flywheel = 0;
-            }
+            // Regression
+            if (driver.getXButton() || Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0)
+                setFromDist(Feedback.getInstance().getLimelightFeedback().getDistance());
+            // Layup
+            else if (operator.getYButton())
+                setFromDist(0); // distance at layup (tbd)
+            // Launchpad
+            else if (operator.getXButton())
+                setFromDist(0); // distance at launchpad (tbd)
+            // Tarmac
+            else if (operator.getBButton())
+                setFromDist(0); // distance at tarmac (tbd)
+            // SmartDashboard
+            else if (operator.getAButton())
+                setFromDist(SmartDashboard.getNumber("[Input]Distance", 0));
+            else reset();
         }
 
         @Override
         public void reset() {
+            flywheel = 0;
+            hood = 0;
         }
 
         /**
@@ -384,8 +386,11 @@ public class Input extends TorqueInputManager {
 
     public class ClimberInput extends TorqueInput {
         private ClimberDirection direction = ClimberDirection.STOP;
-        public boolean runLeft = false;
+        // ! DEBUG ONLY, PUBLIC SHOULD BE ENCAPSULATED IF PERMANENT
+        public boolean runLeft = false; 
         public boolean runRight = false;
+
+        private boolean climbHasStarted = false;
 
         public ClimberInput() {
         }
@@ -398,7 +403,22 @@ public class Input extends TorqueInputManager {
                 direction = ClimberDirection.PULL;
             else
                 direction = ClimberDirection.STOP;
+            
+            // ^ If up or down is pressed, set the LEDs to ENDGAME
+            if (direction != ClimberDirection.STOP) {
+                if (!climbHasStarted)
+                    ArduinoInterface.getInstance().setLightMode(LightMode.ENDGAME);
+                climbHasStarted = true;
+            }
 
+            // The operator can cancel the ENGAME sequence
+            if (operator.getRightCenterButton()) {
+                if (climbHasStarted)
+                    ArduinoInterface.getInstance().setToAllianceColor();
+                climbHasStarted = false;
+            }
+
+            // ! DEBUG
             if (driver.getDPADLeft())
                 runLeft = true;
             else

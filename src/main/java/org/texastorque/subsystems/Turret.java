@@ -149,7 +149,7 @@ public class Turret extends TorqueSubsystem {
         updateTeleop();
     }
 
-    private boolean checkOver() {
+    public boolean checkOver() {
         // if encoder is over limit (left / right)
         // encoderCorrecting = true;
         if (getDegrees() > EncoderOverStatus.TORIGHT.getOverPosition()) { // if the turret is over the right

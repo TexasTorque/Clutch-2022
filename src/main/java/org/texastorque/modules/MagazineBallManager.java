@@ -1,5 +1,7 @@
 package org.texastorque.modules;
 
+import org.texastorque.inputs.State;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -13,26 +15,23 @@ public class MagazineBallManager {
     private final String magazineTableName = "ball_mag";
     private NetworkTableInstance NT;
     private NetworkTableEntry ballColorEntry;
-    private NetworkTableEntry allianceEntryRed;
     private MagazineState state = MagazineState.NONE;
     private String ballColor;
 
     public MagazineBallManager() {
         NT = NetworkTableInstance.getDefault();
         ballColorEntry = NT.getTable(magazineTableName).getEntry("color");
-        allianceEntryRed = NT.getTable("FMSInfo").getEntry("IsRedAlliance");
     }
 
     public void update() {
         ballColor = ballColorEntry.getString("none");
 
-        if (ballColor.equals("blue")) {
+        if (ballColor.equals("blue"))
             setMagState(MagazineState.BLUE);
-        } else if (ballColor.equals("red")) {
+        else if (ballColor.equals("red"))
             setMagState(MagazineState.RED);
-        } else {
+        else
             setMagState(MagazineState.NONE);
-        }
     }
 
     public void setMagState(MagazineState state) {
@@ -43,16 +42,15 @@ public class MagazineBallManager {
      * @return If the magazine detects our alliance's ball
      */
     public boolean isOurAlliance() {
-        return state == MagazineState.BLUE && !allianceEntryRed.getBoolean(false)
-                || state == MagazineState.RED && allianceEntryRed.getBoolean(false);
+        return !isEnemyAlliance();
     }
 
     /**
      * @return If the magazine detects our enemy's ball
      */
     public boolean isEnemyAlliance() {
-        return state == MagazineState.BLUE && allianceEntryRed.getBoolean(false)
-                || state == MagazineState.RED && !allianceEntryRed.getBoolean(false);
+        return state == MagazineState.BLUE && State.getInstance().getAllianceColor() == State.AllianceColor.RED
+                || state == MagazineState.RED && State.getInstance().getAllianceColor() == State.AllianceColor.BLUE;
     }
 
     public MagazineState getMagazineState() {
@@ -60,8 +58,6 @@ public class MagazineBallManager {
     }
 
     public static MagazineBallManager getInstance() {
-        if (instance == null)
-            instance = new MagazineBallManager();
-        return instance;
+        return instance == null ? instance = new MagazineBallManager() : instance;
     }
 }

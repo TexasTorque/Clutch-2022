@@ -238,6 +238,10 @@ public class Feedback {
         }
     }
 
+    public boolean isTurretAlligned() {
+        return limelightFeedback.gethOffset() < Constants.TOLERANCE_DEGREES;
+    }
+
     public GyroFeedback getGyroFeedback() {
         return gyroFeedback;
     }

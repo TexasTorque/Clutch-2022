@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import org.texastorque.auto.AutoManager;
 import org.texastorque.inputs.*;
 import org.texastorque.inputs.State.RobotState;
-import org.texastorque.modules.ArduinoInterface;
-import org.texastorque.modules.ArduinoInterface.LightMode;
 import org.texastorque.subsystems.*;
 
 public class Robot extends TorqueIterative {
@@ -21,8 +19,6 @@ public class Robot extends TorqueIterative {
 
     private AutoManager autoManager = AutoManager.getInstance();
 
-    private ArduinoInterface arduinoInterface = ArduinoInterface.getInstance();
-
     @Override
     public void robotInit() {
         subsystems.add(Drivebase.getInstance());
@@ -31,8 +27,7 @@ public class Robot extends TorqueIterative {
         subsystems.add(Climber.getInstance());
         subsystems.add(Shooter.getInstance());
         subsystems.add(Turret.getInstance());
-
-        arduinoInterface.setToAllianceColor();
+        subsystems.add(Lights.getInstance());
     }
 
     @Override
@@ -50,7 +45,6 @@ public class Robot extends TorqueIterative {
 
     @Override
     public void teleopInit() {
-        arduinoInterface.setToAllianceColor();
         state.setRobotState(RobotState.TELEOP);
         subsystems.forEach(TorqueSubsystem::initTeleop);
     }
@@ -66,8 +60,6 @@ public class Robot extends TorqueIterative {
 
     @Override
     public void autoInit() {
-        arduinoInterface.setToAllianceColor();
-        arduinoInterface.setLightMode(LightMode.AUTO_LIGHTS);
         autoManager.chooseCurrentSequence();
         state.setRobotState(RobotState.AUTONOMOUS);
         subsystems.forEach(TorqueSubsystem::initAuto);

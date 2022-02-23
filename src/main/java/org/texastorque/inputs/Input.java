@@ -8,9 +8,7 @@ import org.texastorque.auto.sequences.AutoLaunch;
 import org.texastorque.auto.sequences.AutoReflect;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.State.*;
-import org.texastorque.modules.ArduinoInterface;
 import org.texastorque.modules.MagazineBallManager;
-import org.texastorque.modules.ArduinoInterface.LightMode;
 import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
@@ -231,30 +229,14 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            // If we are asking to shoot and the turret is locked
-            if (shooterInput.getFlywheel() != 0
-                    && Feedback.getInstance().getLimelightFeedback().gethOffset() < Constants.TOLERANCE_DEGREES) {
-                // We are "target locked"
-                ArduinoInterface.getInstance().setLightMode(LightMode.TARGET_LOCK);
-
-                // If the shooter is ready wee decide to shoot
-                if (shooterInput.getFlywheel() - Constants.SHOOTER_ERROR < Feedback.getInstance().getShooterFeedback()
-                        .getRPM()
-                        && shooterInput.getFlywheel() + Constants.SHOOTER_ERROR > Feedback.getInstance()
-                                .getShooterFeedback().getRPM())
-                    gateDirection = GateSpeeds.OPEN;
-                // Otherwise we dont
-                else
-                    gateDirection = GateSpeeds.CLOSED;
-            } else {
-                // We want to be in the normal setting
-                if (ArduinoInterface.getInstance().getCurrentLightMode() == LightMode.TARGET_LOCK)
-                    ArduinoInterface.getInstance().setToAllianceColor();
-            }
-
-            // Operator override
+            // This override logic is very delicate, why X shoot not working yesterday
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
+
+            // If we are asking to shoot and the flywheel is reved and the turret is locked
+            else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady()
+                    && Feedback.getInstance().isTurretAlligned()) 
+                    gateDirection = GateSpeeds.OPEN;
             else
                 gateDirection = GateSpeeds.CLOSED;
 
@@ -301,6 +283,11 @@ public class Input extends TorqueInputManager {
         private void setFromDist(double dist) {
             flywheel = regressionRPM(dist);
             hood = regressionHood(dist);
+        }
+
+        public boolean isFlywheelReady() {
+            return flywheel - Constants.SHOOTER_ERROR 
+                    < Feedback.getInstance().getShooterFeedback().getRPM();
         }
 
         @Override
@@ -415,15 +402,10 @@ public class Input extends TorqueInputManager {
             if (direction != ClimberDirection.STOP)
                 climbHasStarted = true;
 
-            if (climbHasStarted && ArduinoInterface.getInstance().getCurrentLightMode() != LightMode.ENDGAME)
-                ArduinoInterface.getInstance().setLightMode(LightMode.ENDGAME);
 
             // The operator can cancel the ENGAME sequence
-            if (operator.getRightCenterButton()) {
-                if (ArduinoInterface.getInstance().getCurrentLightMode() == LightMode.ENDGAME)
-                    ArduinoInterface.getInstance().setToAllianceColor();
+            if (operator.getRightCenterButton())
                 climbHasStarted = false;
-            }
 
             // ! DEBUG
             if (driver.getDPADLeft())
@@ -439,6 +421,10 @@ public class Input extends TorqueInputManager {
 
         public ClimberDirection getDirection() {
             return direction;
+        }
+
+        public boolean getClimbHasStarted() {
+            return climbHasStarted;
         }
 
         @Override

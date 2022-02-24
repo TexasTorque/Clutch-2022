@@ -303,16 +303,17 @@ public class Input extends TorqueInputManager {
             }
             // Layup
             else if (operator.getYButton()) {
-                setFromDist(0); // distance at layup (tbd)
+                flywheel = 1600;
+                hood = 0;
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad
             else if (operator.getXButton()) {
-                setFromDist(0); // distance at launchpad (tbd)
+                setFromDist(1.17); // distance at launchpad (tbd)
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // Tarmac
             else if (operator.getBButton()) {
-                setFromDist(0); // distance at tarmac (tbd)
+                setFromDist(3.52); // distance at tarmac (tbd)
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
             else if (operator.getAButton()) {

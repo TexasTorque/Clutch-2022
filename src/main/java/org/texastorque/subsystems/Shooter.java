@@ -7,17 +7,12 @@ import org.texastorque.constants.Ports;
 import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
-import org.texastorque.inputs.State;
-import org.texastorque.inputs.State.TurretState;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueLinearServo;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.util.KPID;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends TorqueSubsystem {
@@ -54,25 +49,12 @@ public class Shooter extends TorqueSubsystem {
         // hoodPosition = SmartDashboard.getNumber("HOODSET", 50);
         hoodPosition = TorqueMathUtil.constrain(Input.getInstance().getShooterInput().getHood(),
                 Constants.HOOD_MIN, Constants.HOOD_MAX);
-        updateTurretState();
     }
 
     @Override
     public void updateAuto() {
         flywheelSetpoint = AutoInput.getInstance().getFlywheelSpeed();
         hoodPosition = AutoInput.getInstance().getHoodPosition();
-        updateTurretState();
-    }
-
-    /**
-     * Enable turret if shooting
-     */
-    private void updateTurretState() {
-        if (flywheelSetpoint != 0) {
-            State.getInstance().setTurretState(TurretState.ON);
-        } else {
-            State.getInstance().setTurretState(TurretState.OFF);
-        }
     }
 
     @Override

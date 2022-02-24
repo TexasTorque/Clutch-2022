@@ -235,8 +235,8 @@ public class Input extends TorqueInputManager {
 
             // If we are asking to shoot and the flywheel is reved and the turret is locked
             else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady()
-                    && Feedback.getInstance().isTurretAlligned()) 
-                    gateDirection = GateSpeeds.OPEN;
+                    && Feedback.getInstance().isTurretAlligned())
+                gateDirection = GateSpeeds.OPEN;
             else
                 gateDirection = GateSpeeds.CLOSED;
 
@@ -286,33 +286,39 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean isFlywheelReady() {
-            return flywheel - Constants.SHOOTER_ERROR 
-                    < Feedback.getInstance().getShooterFeedback().getRPM();
+            return flywheel - Constants.SHOOTER_ERROR < Feedback.getInstance().getShooterFeedback().getRPM();
         }
 
         @Override
         public void update() {
             // Regression
-            if (driver.getXButton())
+            if (driver.getXButton()) {
                 if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0)
                     setFromDist(Feedback.getInstance().getLimelightFeedback().getDistance());
                 else {
                     flywheel = 1600;
                     hood = 0;
                 }
+                State.getInstance().setTurretState(TurretState.ON);
+            }
             // Layup
-            else if (operator.getYButton())
+            else if (operator.getYButton()) {
                 setFromDist(0); // distance at layup (tbd)
+                State.getInstance().setTurretState(TurretState.CENTER);
+            }
             // Launchpad
-            else if (operator.getXButton())
+            else if (operator.getXButton()) {
                 setFromDist(0); // distance at launchpad (tbd)
-            // Tarmac
-            else if (operator.getBButton())
+                State.getInstance().setTurretState(TurretState.CENTER);
+            } // Tarmac
+            else if (operator.getBButton()) {
                 setFromDist(0); // distance at tarmac (tbd)
-            // SmartDashboard
-            else if (operator.getAButton())
+                State.getInstance().setTurretState(TurretState.CENTER);
+            } // SmartDashboard
+            else if (operator.getAButton()) {
                 setFromDist(SmartDashboard.getNumber("[Input]Distance", 0));
-            else
+                State.getInstance().setTurretState(TurretState.ON);
+            } else
                 reset();
         }
 
@@ -320,6 +326,7 @@ public class Input extends TorqueInputManager {
         public void reset() {
             flywheel = 0;
             hood = 0;
+            State.getInstance().setTurretState(TurretState.OFF);
         }
 
         /**
@@ -401,7 +408,6 @@ public class Input extends TorqueInputManager {
             // ^ If up or down is pressed, set the LEDs to ENDGAME
             if (direction != ClimberDirection.STOP)
                 climbHasStarted = true;
-
 
             // The operator can cancel the ENGAME sequence
             if (operator.getRightCenterButton())

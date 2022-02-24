@@ -122,8 +122,6 @@ public class AutoInput {
     }
 
     public static AutoInput getInstance() {
-        if (instance == null)
-            instance = new AutoInput();
-        return instance;
+        return instance == null ? instance = new AutoInput() : instance;
     }
 }

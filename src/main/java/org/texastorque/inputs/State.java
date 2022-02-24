@@ -24,7 +24,7 @@ public class State {
     }
 
     public static enum TurretState {
-        OFF, ON
+        OFF, ON, CENTER
     }
 
     public static enum AutomaticMagazineState {

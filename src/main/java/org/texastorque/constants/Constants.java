@@ -62,7 +62,7 @@ public class Constants {
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 192.708; // to 1
-
+    public static final double TURRET_CENTER_ROT = 30; // 30 degrees center
     public static final double TOLERANCE_DEGREES = .7;
 
     // Information

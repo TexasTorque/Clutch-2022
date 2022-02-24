@@ -137,6 +137,10 @@ public class Turret extends TorqueSubsystem {
                     changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
                 }
             }
+        } else if (State.getInstance().getTurretState() == TurretState.CENTER) {
+            // Attempt to be at center
+            double pidOut = pidController.calculate(getDegrees(), Constants.TURRET_CENTER_ROT);
+            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
         } else {
             changeRequest = 0;
         }
@@ -179,12 +183,10 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public void updateSmartDashboard() {
-        SmartDashboard.putNumber("rotatorPos", rotator.getPosition());
-        SmartDashboard.putNumber("rotatorPosConv", rotator.getPositionConverted());
         SmartDashboard.putNumber("rotatorPosDeg", getDegrees());
         SmartDashboard.putNumber("changeRequest", changeRequest);
         SmartDashboard.putString("encoderOver", encoderOverStatus.name());
-        SmartDashboard.putNumber("Req voltage", changeRequest);
+        SmartDashboard.putNumber("Turret Voltage", changeRequest);
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.AutomaticMagazineState;
+import org.texastorque.inputs.State.TurretState;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.TorqueCommand;
@@ -18,6 +19,8 @@ public class ShootAtTarget extends TorqueCommand {
     private boolean done = false;
     private boolean runMag = false;
     private double startMagTime = 0;
+
+    private boolean turretOn = true;
     private double distance;
     private double outputRPM;
 
@@ -29,12 +32,27 @@ public class ShootAtTarget extends TorqueCommand {
         this.magOutputTime = magOutputTime;
     }
 
+    public ShootAtTarget(boolean turretOn) {
+        this();
+        this.turretOn = turretOn;
+    }
+
+    public ShootAtTarget(double magOutputTime, boolean turretOn) {
+        this.magOutputTime = magOutputTime;
+        this.turretOn = turretOn;
+    }
+
     @Override
     protected void init() {
         distance = Feedback.getInstance().getLimelightFeedback().getDistance();
         outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
         AutoInput.getInstance().setFlywheelSpeed(outputRPM);
         AutoInput.getInstance().setHoodPosition(50);
+        if (turretOn) {
+            State.getInstance().setTurretState(TurretState.ON);
+        } else {
+            State.getInstance().setTurretState(TurretState.OFF);
+        }
         System.out.println("Shoot at target locked & loaded!");
     }
 
@@ -67,6 +85,7 @@ public class ShootAtTarget extends TorqueCommand {
         runMag = false;
         AutoInput.getInstance().setFlywheelSpeed(0);
         AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
+        State.getInstance().setTurretState(TurretState.OFF);
     }
 
 }

@@ -22,6 +22,7 @@ public class Ports {
     public static final int MAGAZINE_GATE = 12; // CAN
 
     // Shooter
+    public static final int SHOOTER_HOOD = 13;  // CAN
     public static final int SHOOTER_FLYWHEEL_LEFT = 14; // CAN
     public static final int SHOOTER_FLYWHEEL_RIGHT = 15; // CAN
 

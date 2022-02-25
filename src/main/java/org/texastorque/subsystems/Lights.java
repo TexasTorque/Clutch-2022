@@ -58,42 +58,49 @@ public class Lights extends TorqueSubsystem {
     DigitalOutput c;
 
     private LightMode lightMode = LightMode.NO_LIGHTS;
+    
+    // I was having bugs when i didn't check
+    // if the DIO had already been set, I think
+    // setting them too frequently breaks it
+    // - Jacob (blame me if it ends up being useless)
+    private boolean lightModeSet;
 
     private Lights() {
+        lightModeSet = false;
         a = new DigitalOutput(Ports.ARDUINO_A);
         b = new DigitalOutput(Ports.ARDUINO_B); 
         c = new DigitalOutput(Ports.ARDUINO_C);
     }
 
     public void resetTeleop() {
-        lightMode = State.getInstance().getAllianceColor().isRed()
+        this.setLightMode(State.getInstance().getAllianceColor().isRed()
                 ? LightMode.RED_TELEOP
-                : LightMode.BLUE_TELEOP;
+                : LightMode.BLUE_TELEOP);
     }
 
     public void resetAuto() {
-        lightMode = State.getInstance().getAllianceColor().isRed()
+        this.setLightMode(State.getInstance().getAllianceColor().isRed()
                 ? LightMode.RED_AUTO
-                : LightMode.BLUE_AUTO;
+                : LightMode.BLUE_AUTO);
     } 
 
     @Override
     public void updateTeleop() {
         if (Feedback.getInstance().isTurretAlligned())
-            lightMode = LightMode.TARGET_LOCK;
+            this.setLightMode(LightMode.TARGET_LOCK);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
-            lightMode = LightMode.SHOOTING;
+            this.setLightMode(LightMode.SHOOTING);
         else if (Input.getInstance().getClimberInput().getClimbHasStarted())
-            lightMode = LightMode.ENDGAME;
+            this.setLightMode(LightMode.ENDGAME);
         else resetTeleop();     
     }
 
     @Override
     public void updateAuto() {
         if (Feedback.getInstance().isTurretAlligned())
-            lightMode = LightMode.TARGET_LOCK;
+            this.setLightMode(LightMode.TARGET_LOCK);
         else if (AutoInput.getInstance().getFlywheelSpeed() != 0)
-            lightMode = LightMode.SHOOTING; 
+            this.setLightMode(LightMode.SHOOTING);
         else resetAuto(); 
     }
 
@@ -101,11 +108,22 @@ public class Lights extends TorqueSubsystem {
     public void updateFeedbackTeleop() {
     }
 
+    // Use this instead of just the variable!
+    private void setLightMode(LightMode lightMode) {
+        if (this.lightMode != lightMode) {
+            this.lightMode = lightMode;
+            lightModeSet = false;
+        }
+    }
+
     @Override
     public void output() {
-        a.set(lightMode.getA());
-        b.set(lightMode.getB());
-        c.set(lightMode.getC());
+        if (!lightModeSet) {
+            a.set(lightMode.getA());
+            b.set(lightMode.getB());
+            c.set(lightMode.getC());
+            lightModeSet = true;
+        }   
     }
 
     @Override

@@ -41,6 +41,7 @@ public class Climber extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
+        
         double climberSpeeds = Input.getInstance().getClimberInput().getDirection().getDirection()
                 * Constants.CLIMBER_SPEED;
         if (Input.getInstance().getClimberInput().runLeft) {

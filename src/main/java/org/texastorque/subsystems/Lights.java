@@ -86,20 +86,24 @@ public class Lights extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        if (Feedback.getInstance().isTurretAlligned())
+        //if (Feedback.getInstance().isTurretAlligned())
+            //this.setLightMode(LightMode.TARGET_LOCK);
+        // top clause is for demo
+        if (Input.getInstance().getClimberInput().getGreenOn())
             this.setLightMode(LightMode.TARGET_LOCK);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
             this.setLightMode(LightMode.SHOOTING);
-        else if (Input.getInstance().getClimberInput().getClimbHasStarted())
-            this.setLightMode(LightMode.ENDGAME);
+        else if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
+            System.out.println("set to endgame");
+            this.setLightMode(LightMode.ENDGAME); }
         else resetTeleop();     
     }
 
     @Override
     public void updateAuto() {
-        if (Feedback.getInstance().isTurretAlligned())
-            this.setLightMode(LightMode.TARGET_LOCK);
-        else if (AutoInput.getInstance().getFlywheelSpeed() != 0)
+        // if (Feedback.getInstance().isTurretAlligned())
+        //     this.setLightMode(LightMode.TARGET_LOCK);
+        if (AutoInput.getInstance().getFlywheelSpeed() != 0)
             this.setLightMode(LightMode.SHOOTING);
         else resetAuto(); 
     }
@@ -109,7 +113,7 @@ public class Lights extends TorqueSubsystem {
     }
 
     // Use this instead of just the variable!
-    private void setLightMode(LightMode lightMode) {
+    public void setLightMode(LightMode lightMode) {
         if (this.lightMode != lightMode) {
             this.lightMode = lightMode;
             lightModeSet = false;
@@ -129,6 +133,13 @@ public class Lights extends TorqueSubsystem {
     @Override
     public void updateSmartDashboard() {
         
+    }
+
+    @Override
+    public void disable() {
+        // set lights to solid
+        this.resetTeleop();
+        output();
     }
 
     public static synchronized Lights getInstance() {

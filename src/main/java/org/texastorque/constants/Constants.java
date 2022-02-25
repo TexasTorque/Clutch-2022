@@ -68,9 +68,9 @@ public class Constants {
     // Information
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
-    public static final double TOP_ACCELERATION_METERS = 4;
+    public static final double TOP_ACCELERATION_METERS = 2.5;
     public static final double MAX_ANGULAR_SPEED = 4 * Math.PI;
-    public static final double MAX_ANGULAR_ACCELERATION = 3 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI;
 
     // Path Planner
     public static final double PATH_PLANNER_X_P = 1;
@@ -81,11 +81,11 @@ public class Constants {
     public static final double PATH_PLANNER_Y_I = 0;
     public static final double PATH_PLANNER_Y_D = 0;
 
-    public static final double PATH_PLANNER_R_P = 6;
+    public static final double PATH_PLANNER_R_P = 8;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 
-    // Physical
+    // Physical`
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 42.5;

@@ -437,9 +437,6 @@ public class Input extends TorqueInputManager {
             return climbHasStarted;
         }
 
-        public boolean getGreenOn() {
-            return greenOn;
-        }
 
         @Override
         public void reset() {

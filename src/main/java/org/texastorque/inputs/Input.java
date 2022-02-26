@@ -396,8 +396,6 @@ public class Input extends TorqueInputManager {
 
         private boolean climbHasStarted = false;
 
-        // DEBUG
-        private boolean greenOn = false;
 
         public ClimberInput() {
         }
@@ -415,10 +413,6 @@ public class Input extends TorqueInputManager {
             if (direction != ClimberDirection.STOP)
                 climbHasStarted = true;
             
-            // DELETE THIS ALSO
-            if (operator.getRightStickClick()) {
-                greenOn = true;
-            } else {greenOn = false;}
 
             // The operator can cancel the ENGAME sequence
             if (operator.getRightCenterButton())

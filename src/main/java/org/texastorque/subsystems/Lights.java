@@ -103,13 +103,8 @@ public class Lights extends TorqueSubsystem {
 
     @Override
     public void updateAuto() {
-<<<<<<< Updated upstream
-        // if (Feedback.getInstance().isTurretAlligned())
-        //     this.setLightMode(LightMode.TARGET_LOCK);
-=======
         if (Feedback.getInstance().isTurretAlligned())
             this.setLightMode(LightMode.TARGET_LOCK);
->>>>>>> Stashed changes
         if (AutoInput.getInstance().getFlywheelSpeed() != 0)
             this.setLightMode(LightMode.SHOOTING);
         else resetAuto(); 
@@ -145,11 +140,7 @@ public class Lights extends TorqueSubsystem {
     @Override
     public void disable() {
         // set lights to solid
-<<<<<<< Updated upstream
-        this.resetTeleop();
-=======
         resetTeleop();
->>>>>>> Stashed changes
         output();
     }
 

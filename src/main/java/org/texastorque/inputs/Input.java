@@ -9,10 +9,12 @@ import org.texastorque.auto.sequences.AutoReflect;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.State.*;
 import org.texastorque.modules.MagazineBallManager;
+import org.texastorque.subsystems.Lights;
 import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
+import org.texastorque.subsystems.Lights.LightMode;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.TorqueAssist;
@@ -390,6 +392,7 @@ public class Input extends TorqueInputManager {
 
         private boolean climbHasStarted = false;
 
+
         public ClimberInput() {
         }
 
@@ -405,11 +408,11 @@ public class Input extends TorqueInputManager {
             // ^ If up or down is pressed, set the LEDs to ENDGAME
             if (direction != ClimberDirection.STOP)
                 climbHasStarted = true;
+            
 
             // The operator can cancel the ENGAME sequence
             if (operator.getLeftCenterButton())
                 climbHasStarted = false;
-
             // ! DEBUG
             if (driver.getDPADLeft())
                 runLeft = true;
@@ -429,6 +432,7 @@ public class Input extends TorqueInputManager {
         public boolean getClimbHasStarted() {
             return climbHasStarted;
         }
+
 
         @Override
         public void reset() {

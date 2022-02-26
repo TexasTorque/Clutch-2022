@@ -90,8 +90,9 @@ public class Lights extends TorqueSubsystem {
             this.setLightMode(LightMode.TARGET_LOCK);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
             this.setLightMode(LightMode.SHOOTING);
-        else if (Input.getInstance().getClimberInput().getClimbHasStarted())
-            this.setLightMode(LightMode.ENDGAME);
+        else if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
+            System.out.println("set to endgame");
+            this.setLightMode(LightMode.ENDGAME); }
         else resetTeleop();     
     }
 
@@ -109,7 +110,7 @@ public class Lights extends TorqueSubsystem {
     }
 
     // Use this instead of just the variable!
-    private void setLightMode(LightMode lightMode) {
+    public void setLightMode(LightMode lightMode) {
         if (this.lightMode != lightMode) {
             this.lightMode = lightMode;
             lightModeSet = false;
@@ -129,6 +130,13 @@ public class Lights extends TorqueSubsystem {
     @Override
     public void updateSmartDashboard() {
         
+    }
+
+    @Override
+    public void disable() {
+        // set lights to solid
+        resetTeleop();
+        output();
     }
 
     public static synchronized Lights getInstance() {

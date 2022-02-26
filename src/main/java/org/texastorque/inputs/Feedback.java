@@ -22,23 +22,27 @@ public class Feedback {
     private GyroFeedback gyroFeedback;
     private LimelightFeedback limelightFeedback;
     private ShooterFeedback shooterFeedback;
+    private ClimberFeedback climberFeedback;
 
     private Feedback() {
         gyroFeedback = new GyroFeedback();
         limelightFeedback = new LimelightFeedback();
         shooterFeedback = new ShooterFeedback();
+        climberFeedback = new ClimberFeedback();
     }
 
     public void update() {
         gyroFeedback.update();
         limelightFeedback.update();
         shooterFeedback.update();
+        climberFeedback.update();
     }
 
     public void smartDashboard() {
         gyroFeedback.smartDashboard();
         limelightFeedback.smartDashboard();
         shooterFeedback.smartDashboard();
+        climberFeedback.smartDashboard();
     }
 
     public class GyroFeedback extends TorqueFeedback {
@@ -238,6 +242,50 @@ public class Feedback {
         }
     }
 
+    public class ClimberFeedback extends TorqueFeedback {
+
+        private double leftPosition;
+        private double rightPosition;
+
+        @Override
+        public void update() {
+        }
+
+        /**
+         * @return the leftPosition
+         */
+        public double getLeftPosition() {
+            return leftPosition;
+        }
+
+        /**
+         * @return the rightPosition
+         */
+        public double getRightPosition() {
+            return rightPosition;
+        }
+
+        /**
+         * @param leftPosition the leftPosition to set
+         */
+        public void setLeftPosition(double leftPosition) {
+            this.leftPosition = leftPosition;
+        }
+
+        /**
+         * @param rightPosition the rightPosition to set
+         */
+        public void setRightPosition(double rightPosition) {
+            this.rightPosition = rightPosition;
+        }
+
+        @Override
+        public void smartDashboard() {
+            SmartDashboard.putNumber("[Climber]Position Left", leftPosition);
+            SmartDashboard.putNumber("[Climber]Position Right", rightPosition);
+        }
+    }
+
     public boolean isTurretAlligned() {
         return limelightFeedback.gethOffset() < Constants.TOLERANCE_DEGREES;
     }
@@ -252,6 +300,10 @@ public class Feedback {
 
     public ShooterFeedback getShooterFeedback() {
         return shooterFeedback;
+    }
+
+    public ClimberFeedback getClimberFeedback() {
+        return climberFeedback;
     }
 
     public static synchronized Feedback getInstance() {

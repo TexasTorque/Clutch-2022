@@ -23,7 +23,7 @@ public class ShootAway extends TorqueCommand {
     protected void continuous() {
         // Just get rid of it asap
         Input.getInstance().getShooterInput().setFlywheelSpeed(2000);
-        Input.getInstance().getMagazineInput().setBeltDirection(BeltDirections.FORWARDS);
+        Input.getInstance().getMagazineInput().setBeltDirection(BeltDirections.OUTTAKE);
         Input.getInstance().getMagazineInput().setGateDirection(GateSpeeds.OPEN);
     }
 

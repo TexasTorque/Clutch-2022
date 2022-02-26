@@ -1,6 +1,8 @@
 package org.texastorque.subsystems;
 
 import com.revrobotics.CANSparkMax.ControlType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -31,7 +33,7 @@ public class Intake extends TorqueSubsystem {
 
     public static enum IntakePosition {
         UP(0),
-        PRIME(-3.3),
+        PRIME(-2.3),
         DOWN(-9.2);
         // Intake setpoints
 
@@ -49,14 +51,16 @@ public class Intake extends TorqueSubsystem {
     private TorqueSparkMax rotary;
     private TorqueSparkMax roller;
 
+    private DigitalInput limitSwitch;
+
     private IntakePosition rotarySetPoint = IntakePosition.PRIME;
     private double rollerSpeed;
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
         rotary.configurePID(new KPID(0.3, 0.00005, .00002, 0, -.5, .5));
-        // rotary.tareEncoder();
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
+        limitSwitch = new DigitalInput(Ports.ROTARY_LIMIT_SWITCH);
     }
 
     @Override
@@ -79,7 +83,14 @@ public class Intake extends TorqueSubsystem {
 
     @Override
     public void output() {
-        rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
+        // We are at the bottom, staph!
+        if (limitSwitch.get() && rotarySetPoint == IntakePosition.DOWN) {
+            SmartDashboard.putBoolean("rotary running", false);
+            rotary.set(0);
+        } else {
+            SmartDashboard.putBoolean("rotary running", true);
+            rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
+        }
         roller.set(rollerSpeed);
     }
 
@@ -88,6 +99,7 @@ public class Intake extends TorqueSubsystem {
         SmartDashboard.putNumber("[Intake]Roller Speed", rollerSpeed);
         SmartDashboard.putNumber("[Intake]Rotary Position", rotary.getPosition());
         SmartDashboard.putNumber("[Intake]Rotary Set Point", rotarySetPoint.getPosition());
+        SmartDashboard.putBoolean("[Intake]Limit switch", limitSwitch.get());
     }
 
     public static synchronized Intake getInstance() {

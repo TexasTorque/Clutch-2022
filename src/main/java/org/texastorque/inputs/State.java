@@ -81,6 +81,26 @@ public class State {
         return this.allianceColor;
     }
 
+    public static enum AutoClimb {
+        OFF, ON
+    }
+
+    private AutoClimb autoClimb;
+
+    /**
+     * @return the autoClimb
+     */
+    public AutoClimb getAutoClimb() {
+        return autoClimb;
+    }
+
+    /**
+     * @param autoClimb the autoClimb to set
+     */
+    public void setAutoClimb(AutoClimb autoClimb) {
+        this.autoClimb = autoClimb;
+    }
+
     public static synchronized State getInstance() {
         return instance == null ? instance = new State() : instance;
     }

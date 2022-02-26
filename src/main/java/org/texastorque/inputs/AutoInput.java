@@ -121,6 +121,37 @@ public class AutoInput {
         return beltDirection;
     }
 
+    private double climberRightSetpoint = 0;
+    private double climberLeftSetpoint = 0;
+
+    /**
+     * @return the climberLeftSetpoint
+     */
+    public double getClimberLeftSetpoint() {
+        return climberLeftSetpoint;
+    }
+
+    /**
+     * @return the climberRightSetpoint
+     */
+    public double getClimberRightSetpoint() {
+        return climberRightSetpoint;
+    }
+
+    /**
+     * @param climberLeftSetpoint the climberLeftSetpoint to set
+     */
+    public void setClimberLeftSetpoint(double climberLeftSetpoint) {
+        this.climberLeftSetpoint = climberLeftSetpoint;
+    }
+
+    /**
+     * @param climberRightSetpoint the climberRightSetpoint to set
+     */
+    public void setClimberRightSetpoint(double climberRightSetpoint) {
+        this.climberRightSetpoint = climberRightSetpoint;
+    }
+
     public static AutoInput getInstance() {
         return instance == null ? instance = new AutoInput() : instance;
     }

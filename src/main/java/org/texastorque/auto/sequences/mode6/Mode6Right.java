@@ -1,22 +1,16 @@
-package org.texastorque.auto.sequences;
+package org.texastorque.auto.sequences.mode6;
 
-import org.texastorque.auto.commands.Pathplanner;
-import org.texastorque.auto.commands.SetIntake;
-import org.texastorque.auto.commands.SetMagazine;
-import org.texastorque.auto.commands.ShootAtTarget;
-import org.texastorque.auto.commands.Wait;
+import org.texastorque.torquelib.auto.*;
+
+import org.texastorque.auto.commands.*;
+
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
-import org.texastorque.torquelib.auto.TorqueBlock;
-import org.texastorque.torquelib.auto.TorqueSequence;
 
-/**
- * Example sequence.
- */
-public class BluRight1 extends TorqueSequence {
-    public BluRight1(String name) {
+public class Mode6Right extends TorqueSequence {
+    public Mode6Right(String name) {
         super(name);
 
         init();
@@ -29,21 +23,22 @@ public class BluRight1 extends TorqueSequence {
 
         // Start Intake, Automag
         addBlock(new TorqueBlock(new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new SetMagazine(BeltDirections.BACKWARDS, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Run path
-        addBlock(new TorqueBlock(new Pathplanner("BLURight1a")));
+        addBlock(new TorqueBlock(new Pathplanner("Mode6Right_1")));
 
-        // Shoot 2 balorqueBlock(new ShootAtTarget()));
+        // Shoot 2
+        addBlock(new TorqueBlock((new ShootAtTarget())));
 
         // Get more balls
-        addBlock(new TorqueBlock(new Pathplanner("BLURight1b", false)));
+        addBlock(new TorqueBlock(new Pathplanner("Mode6Right_2", false)));
 
         // Wait x seconds for human player
         addBlock(new TorqueBlock(new Wait(3)));
 
         // Go to shoot
-        addBlock(new TorqueBlock(new Pathplanner("BLURight1c", false)));
+        addBlock(new TorqueBlock(new Pathplanner("Mode6Right_3", false)));
 
         // Shoot!
         addBlock(new TorqueBlock(new ShootAtTarget()));

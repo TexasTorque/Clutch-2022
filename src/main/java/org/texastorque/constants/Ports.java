@@ -16,6 +16,7 @@ public class Ports {
     // Intake
     public static final int INTAKE_ROTARY = 9; // CAN
     public static final int INTAKE_ROLLER = 10; // CAN
+    public static final int ROTARY_LIMIT_SWITCH = 3; // DIO
 
     // Magazine
     public static final int MAGAZINE_BELT = 11; // CAN

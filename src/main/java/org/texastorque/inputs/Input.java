@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.texastorque.auto.sequences.AutoLaunch;
-import org.texastorque.auto.sequences.AutoReflect;
+import org.texastorque.auto.sequences.assists.*;
+import org.texastorque.auto.sequences.assists.AutoClimb;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.State.*;
 import org.texastorque.modules.MagazineBallManager;
@@ -45,12 +45,14 @@ public class Input extends TorqueInputManager {
     private List<TorqueInput> modules = new ArrayList<>();
 
     // Assists
-    private TorqueAssist rotateToBall = new TorqueAssist(new AutoReflect(), driveBaseRotationInput);
+    private TorqueAssist rotateToBall;
+    private TorqueAssist climbAssist;
 
     // Etc.
     private TimedTruthy driverRumble = new TimedTruthy();
     private TimedTruthy operatorRumble = new TimedTruthy();
     private TorqueToggle rotateToBallToggle = new TorqueToggle(false);
+    private TorqueToggle climberToggle = new TorqueToggle(false);
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -73,13 +75,21 @@ public class Input extends TorqueInputManager {
 
         climberInput = new ClimberInput();
         modules.add(climberInput);
+
+        rotateToBall = new TorqueAssist(new AutoReflect(), driveBaseRotationInput);
+        climbAssist = new TorqueAssist(new AutoClimb(), driveBaseTranslationInput,
+                driveBaseRotationInput, intakeInput, magazineInput, shooterInput, climberInput);
     }
 
     @Override
     public void update() {
-        rotateToBallToggle.calc(operator.getRightCenterButton());
-        rotateToBall.run(intakeInput.getPosition() == IntakePosition.DOWN && rotateToBallToggle.get()
-                && !climberInput.getClimbHasStarted());
+        // rotateToBallToggle.calc(operator.getRightCenterButton());
+        // rotateToBall.run(intakeInput.getPosition() == IntakePosition.DOWN &&
+        // rotateToBallToggle.get()
+        // && !climberInput.getClimbHasStarted());
+
+        climberToggle.calc(operator.getXButton());
+        climbAssist.run(climberToggle.get());
 
         driver.setRumble(driverRumble.calc());
         operator.setRumble(operatorRumble.calc());
@@ -99,8 +109,8 @@ public class Input extends TorqueInputManager {
         private double xSpeed = 0;
         private double ySpeed = 0;
 
-        private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(3, 4);
-        private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(3, 4);
+        // private TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(3, 4);
+        // private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(3, 4);
 
         private DriveBaseTranslationInput() {
         }
@@ -111,11 +121,11 @@ public class Input extends TorqueInputManager {
 
             ySpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false);
 
-            xSpeed = xLimiter.calculate(xSpeeds.getSpeed() * driver.getLeftYAxis()) *
+            xSpeed = xSpeeds.getSpeed() * driver.getLeftYAxis() *
                     Constants.DRIVE_MAX_SPEED_METERS;
 
             // Negated to get positive values when going left
-            ySpeed = -yLimiter.calculate(ySpeeds.getSpeed() * driver.getLeftXAxis()) *
+            ySpeed = -ySpeeds.getSpeed() * driver.getLeftXAxis() *
                     Constants.DRIVE_MAX_SPEED_METERS;
         }
 
@@ -145,7 +155,7 @@ public class Input extends TorqueInputManager {
 
         private double rot = 0;
 
-        private TorqueSlewLimiter rotLimiter = new TorqueSlewLimiter(50, 1000);
+        // private TorqueSlewLimiter rotLimiter = new TorqueSlewLimiter(50, 1000);
 
         private TorqueLock<Double> rotLock = new TorqueLock<Double>(false);
         private TorqueToggle rotLockToggle = new TorqueToggle();
@@ -158,9 +168,10 @@ public class Input extends TorqueInputManager {
             rotSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false);
             rotLockToggle.calc(driver.getRightStickClick());
             rotLock.setLocked(rotLockToggle.get());
+            // rot = -rotLock.calculate(rotLimiter.calculate(rotSpeeds.getSpeed() *
+            // driver.getRightXAxis()) *Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
             rot = -rotLock.calculate(
-                    rotLimiter.calculate(rotSpeeds.getSpeed() * driver.getRightXAxis()) *
-                            Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
+                    rotSpeeds.getSpeed() * driver.getRightXAxis() * Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS_DRIVER);
         }
 
         @Override
@@ -230,22 +241,22 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
+            autoMag.calc(operator.getAButton());
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
-
             // If we are asking to shoot and the flywheel is reved and the turret is locked
             else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady()
                     && Feedback.getInstance().isTurretAlligned())
                 gateDirection = GateSpeeds.OPEN;
-            else
+            else if (autoMag.get())
                 gateDirection = GateSpeeds.CLOSED;
-
-            autoMag.calc(operator.getAButton());
+            else
+                gateDirection = GateSpeeds.OFF;
 
             if (operator.getRightTrigger())
-                beltDirection = BeltDirections.FORWARDS;
+                beltDirection = BeltDirections.OUTTAKE;
             else if (autoMag.get() || operator.getRightBumper())
-                beltDirection = BeltDirections.BACKWARDS;
+                beltDirection = BeltDirections.INTAKE;
             else
                 beltDirection = BeltDirections.OFF;
         }
@@ -324,7 +335,6 @@ public class Input extends TorqueInputManager {
         @Override
         public void reset() {
             flywheel = 0;
-            hood = 0;
             State.getInstance().setTurretState(TurretState.OFF);
         }
 
@@ -392,7 +402,6 @@ public class Input extends TorqueInputManager {
 
         private boolean climbHasStarted = false;
 
-
         public ClimberInput() {
         }
 
@@ -408,7 +417,6 @@ public class Input extends TorqueInputManager {
             // ^ If up or down is pressed, set the LEDs to ENDGAME
             if (direction != ClimberDirection.STOP)
                 climbHasStarted = true;
-            
 
             // The operator can cancel the ENGAME sequence
             if (operator.getLeftCenterButton())
@@ -432,7 +440,6 @@ public class Input extends TorqueInputManager {
         public boolean getClimbHasStarted() {
             return climbHasStarted;
         }
-
 
         @Override
         public void reset() {

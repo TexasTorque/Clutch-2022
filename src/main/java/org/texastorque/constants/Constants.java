@@ -9,6 +9,7 @@ public class Constants {
     public static final double DRIVE_WHEEL_RADIUS_METERS = 1.788 * INCH_TO_FOOT * FOOT_TO_METER; // 1.788 is width with
                                                                                                  // wear
     public static final double DRIVE_MAX_SPEED_METERS = 5;
+    public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS_DRIVER = 2 * Math.PI;
     public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS = 4 * Math.PI;
 
     public static final double DISTANCE_TO_CENTER_X = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
@@ -40,16 +41,16 @@ public class Constants {
     public static final double FLYWHEEL_Kp = 0.0003;
     public static final double FLYWHEEL_Ki = 0.0000006;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.0003;
+    public static final double FLYWHEEL_Kf = 0.00026;
     public static final double FLYWHEEL_Iz = 100;
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 50;
-    public static final double SHOOTER_ERROR = 20;
+    public static final double SHOOTER_ERROR = 30;
 
     // Climber
-    public static final double CLIMBER_SPEED = .5;
+    public static final double CLIMBER_SPEED = 1;
     public static final double CLIMBER_LEFT_LIMIT_HIGH = 330;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -345; // Will change again
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -345;
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
     // 63:1 gear ratio
@@ -62,7 +63,7 @@ public class Constants {
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 192.708; // to 1
-    public static final double TURRET_CENTER_ROT = 30; // 30 degrees center
+    public static final double TURRET_CENTER_ROT = -30; // 30 degrees center
     public static final double TOLERANCE_DEGREES = .7;
 
     // Information

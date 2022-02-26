@@ -1,22 +1,16 @@
-package org.texastorque.auto.sequences;
+package org.texastorque.auto.sequences.mode6;
 
-import org.texastorque.auto.commands.Pathplanner;
-import org.texastorque.auto.commands.SetIntake;
-import org.texastorque.auto.commands.SetMagazine;
-import org.texastorque.auto.commands.ShootAtTarget;
-import org.texastorque.auto.commands.Wait;
+import org.texastorque.torquelib.auto.*;
+
+import org.texastorque.auto.commands.*;
+
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
-import org.texastorque.torquelib.auto.TorqueBlock;
-import org.texastorque.torquelib.auto.TorqueSequence;
 
-/**
- * Example sequence.
- */
-public class BluRight2 extends TorqueSequence {
-    public BluRight2(String name) {
+public class Mode6LeftB extends TorqueSequence {
+    public Mode6LeftB(String name) {
         super(name);
 
         init();
@@ -26,10 +20,10 @@ public class BluRight2 extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new SetMagazine(BeltDirections.BACKWARDS, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Run path
-        addBlock(new TorqueBlock(new Pathplanner("BLURight2")));
+        addBlock(new TorqueBlock(new Pathplanner("rightbottompickuponeballandreturn")));
 
         // Shoot!
         addBlock(new TorqueBlock(new ShootAtTarget(4)));

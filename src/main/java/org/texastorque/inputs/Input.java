@@ -43,12 +43,12 @@ public class Input extends TorqueInputManager {
     private List<TorqueInput> modules = new ArrayList<>();
 
     // Assists
-    private TorqueAssist autoLaunch = new TorqueAssist(new AutoLaunch(), magazineInput, shooterInput);
-    private TorqueAssist autoReflect = new TorqueAssist(new AutoReflect(), magazineInput, shooterInput);
+    private TorqueAssist rotateToBall = new TorqueAssist(new AutoReflect(), driveBaseRotationInput);
 
     // Etc.
     private TimedTruthy driverRumble = new TimedTruthy();
     private TimedTruthy operatorRumble = new TimedTruthy();
+    private TorqueToggle rotateToBallToggle = new TorqueToggle(false);
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -75,6 +75,10 @@ public class Input extends TorqueInputManager {
 
     @Override
     public void update() {
+        rotateToBallToggle.calc(operator.getRightCenterButton());
+        rotateToBall.run(intakeInput.getPosition() == IntakePosition.DOWN && rotateToBallToggle.get()
+                && !climberInput.getClimbHasStarted());
+
         driver.setRumble(driverRumble.calc());
         operator.setRumble(operatorRumble.calc());
 
@@ -177,7 +181,6 @@ public class Input extends TorqueInputManager {
     }
 
     public class IntakeInput extends TorqueInput {
-        private TorqueToggle toggleLifted = new TorqueToggle();
         private IntakePosition liftedPosition = IntakePosition.PRIME;
 
         private IntakeDirection direction = IntakeDirection.STOPPED;
@@ -188,10 +191,6 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            toggleLifted.calc(driver.getBButton());
-            // liftedPosition = toggleLifted.get() ? IntakePosition.PRIME :
-            // IntakePosition.UP;
-
             if (driver.getRightTrigger())
                 direction = IntakeDirection.INTAKE;
             else if (driver.getLeftTrigger())
@@ -229,7 +228,6 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            // This override logic is very delicate, why X shoot not working yesterday
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
 
@@ -240,7 +238,7 @@ public class Input extends TorqueInputManager {
             else
                 gateDirection = GateSpeeds.CLOSED;
 
-            autoMag.calc(driver.getYButton());
+            autoMag.calc(operator.getAButton());
 
             if (operator.getRightTrigger())
                 beltDirection = BeltDirections.FORWARDS;
@@ -302,24 +300,22 @@ public class Input extends TorqueInputManager {
                 State.getInstance().setTurretState(TurretState.ON);
             }
             // Layup
-            else if (operator.getYButton()) {
+            else if (driver.getYButton()) {
                 flywheel = 1600;
                 hood = 0;
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad
-            else if (operator.getXButton()) {
-                setFromDist(1.17); // distance at launchpad (tbd)
+            else if (driver.getAButton()) {
+                setFromDist(1.17);
                 State.getInstance().setTurretState(TurretState.CENTER);
-            } // Tarmac
-            else if (operator.getBButton()) {
-                setFromDist(3.52); // distance at tarmac (tbd)
+            }
+            // Tarmac
+            else if (driver.getBButton()) {
+                setFromDist(3.52);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
-            else if (operator.getAButton()) {
-                setFromDist(SmartDashboard.getNumber("[Input]Distance", 0));
-                State.getInstance().setTurretState(TurretState.ON);
-            } else
+            else
                 reset();
         }
 
@@ -411,7 +407,7 @@ public class Input extends TorqueInputManager {
                 climbHasStarted = true;
 
             // The operator can cancel the ENGAME sequence
-            if (operator.getRightCenterButton())
+            if (operator.getLeftCenterButton())
                 climbHasStarted = false;
 
             // ! DEBUG

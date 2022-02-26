@@ -86,13 +86,8 @@ public class Lights extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        //if (Feedback.getInstance().isTurretAlligned())
-            //this.setLightMode(LightMode.TARGET_LOCK);
-        // top clause is for demo
-        if (Input.getInstance().getClimberInput().getGreenOn())
+        if (Feedback.getInstance().isTurretAlligned())
             this.setLightMode(LightMode.TARGET_LOCK);
-        // if (Input.getInstance().getClimberInput().getGreenOn())
-        //     this.setLightMode(LightMode.TARGET_LOCK);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
             this.setLightMode(LightMode.SHOOTING);
         else if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
@@ -105,7 +100,7 @@ public class Lights extends TorqueSubsystem {
     public void updateAuto() {
         if (Feedback.getInstance().isTurretAlligned())
             this.setLightMode(LightMode.TARGET_LOCK);
-        if (AutoInput.getInstance().getFlywheelSpeed() != 0)
+        else if (AutoInput.getInstance().getFlywheelSpeed() != 0)
             this.setLightMode(LightMode.SHOOTING);
         else resetAuto(); 
     }

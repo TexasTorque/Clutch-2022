@@ -91,6 +91,8 @@ public class Lights extends TorqueSubsystem {
         // top clause is for demo
         if (Input.getInstance().getClimberInput().getGreenOn())
             this.setLightMode(LightMode.TARGET_LOCK);
+        // if (Input.getInstance().getClimberInput().getGreenOn())
+        //     this.setLightMode(LightMode.TARGET_LOCK);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
             this.setLightMode(LightMode.SHOOTING);
         else if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
@@ -101,8 +103,13 @@ public class Lights extends TorqueSubsystem {
 
     @Override
     public void updateAuto() {
+<<<<<<< Updated upstream
         // if (Feedback.getInstance().isTurretAlligned())
         //     this.setLightMode(LightMode.TARGET_LOCK);
+=======
+        if (Feedback.getInstance().isTurretAlligned())
+            this.setLightMode(LightMode.TARGET_LOCK);
+>>>>>>> Stashed changes
         if (AutoInput.getInstance().getFlywheelSpeed() != 0)
             this.setLightMode(LightMode.SHOOTING);
         else resetAuto(); 
@@ -138,7 +145,11 @@ public class Lights extends TorqueSubsystem {
     @Override
     public void disable() {
         // set lights to solid
+<<<<<<< Updated upstream
         this.resetTeleop();
+=======
+        resetTeleop();
+>>>>>>> Stashed changes
         output();
     }
 

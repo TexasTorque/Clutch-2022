@@ -4,6 +4,9 @@ import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.auto.commands.Pathplanner;
 
+/**
+ * @deprecated Used for path testing, no longer needed
+ */
 public class PathplannerSequence extends TorqueSequence {
     private String pathName;
 

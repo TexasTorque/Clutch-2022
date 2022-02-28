@@ -245,7 +245,8 @@ public class Input extends TorqueInputManager {
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
             // If we are asking to shoot and the flywheel is reved and the turret is locked
-            else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady()) 
+            else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady() 
+                    && (!shooterInput.isUsingRegression() || Feedback.getInstance().isTurretAlligned())) 
                 gateDirection = GateSpeeds.OPEN;
             else if (autoMag.get())
                 gateDirection = GateSpeeds.CLOSED;
@@ -284,15 +285,27 @@ public class Input extends TorqueInputManager {
     }
 
     public class ShooterInput extends TorqueInput {
+        private boolean usingRegression = false;
         private double flywheel; // rpm
         private double hood; // degrees
 
         public ShooterInput() {
         }
 
+        public boolean isUsingRegression() {
+            return usingRegression;
+        }
+
+        private void setRawValues(double flywheel, double hood) {
+            this.flywheel = flywheel;
+            this.hood = hood;
+            usingRegression = false;
+        }
+
         private void setFromDist(double dist) {
             flywheel = regressionRPM(dist);
             hood = regressionHood(dist);
+            usingRegression = true;
         }
 
         public boolean isFlywheelReady() {
@@ -303,30 +316,27 @@ public class Input extends TorqueInputManager {
         public void update() {
             // Regression
             if (driver.getXButton()) {
-                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0)
+                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
                     setFromDist(Feedback.getInstance().getLimelightFeedback().getDistance());
-                else {
-                    flywheel = 1600;
-                    hood = 0;
+                } else {
+                    setRawValues(1600, 0);
                 }
                 State.getInstance().setTurretState(TurretState.ON);
-            }
+            } 
+
             // Layup
             else if (driver.getYButton()) {
-                flywheel = 1600;
-                hood = 0;
+                setRawValues(1600, 0);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad
             else if (driver.getAButton()) {
-                flywheel = 2300;
-                hood = 50;
+                setRawValues(2300, 50);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Tarmac
             else if (driver.getBButton()) {
-                flywheel = 2100;
-                hood = 50;
+                setRawValues(2100, 50);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
             else

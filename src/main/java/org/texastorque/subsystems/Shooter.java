@@ -19,7 +19,7 @@ public class Shooter extends TorqueSubsystem {
     private static volatile Shooter instance;
 
     private TorqueSparkMax flywheel;
-    private TorqueLinearServo hoodLeft, hoodRight;
+    private TorqueSparkMax hood;
 
     // setpoints grabbed from input
     private double hoodPosition;
@@ -34,8 +34,7 @@ public class Shooter extends TorqueSubsystem {
                 Constants.FLYWHEEL_Kf, 0, 1));
         flywheel.configureIZone(Constants.FLYWHEEL_Iz);
 
-        hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 1);
-        hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 1);
+        hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
 
         // SmartDashboard.putNumber("RPMSET", 0);
         // SmartDashboard.putNumber("HOODSET", 0);
@@ -60,7 +59,7 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(flywheel.getVelocity());
-        Feedback.getInstance().getShooterFeedback().setHoodPosition(hoodLeft.getPosition());
+        Feedback.getInstance().getShooterFeedback().setHoodPosition(hood.getPosition());
     }
 
     @Override
@@ -70,8 +69,7 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void output() {
-        hoodRight.setPosition(hoodPosition);
-        hoodLeft.setPosition(hoodPosition);
+        hood.set(hoodPosition, ControlType.kPosition);
         flywheel.set(flywheelSetpoint, ControlType.kVelocity);
     }
 

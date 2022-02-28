@@ -1,7 +1,6 @@
 package org.texastorque.auto;
 
 import org.texastorque.torquelib.auto.*;
-import org.texastorque.auto.sequences.*;
 import org.texastorque.auto.sequences.mode0.*;
 import org.texastorque.auto.sequences.mode1.*;
 import org.texastorque.auto.sequences.mode2.*;
@@ -34,15 +33,16 @@ public class AutoManager extends TorqueAutoManager {
         addSequence("Mode 4 Left", new Mode4Left(""));
         addSequence("Mode 4 Right", new Mode4Right(""));
 
-        addSequence("Mode 5 Center", new Mode5Center(""));
-        addSequence("Mode 5 Left A", new Mode5LeftA(""));
-        addSequence("Mode 5 Left B", new Mode5LeftB(""));
-        addSequence("Mode 5 Right A", new Mode5RightA(""));
-        addSequence("Mode 5 Right B", new Mode5RightB(""));
+        // addSequence("Mode 5 Center", new Mode5Center(""));
+        // addSequence("Mode 5 Left A", new Mode5LeftA(""));
+        // addSequence("Mode 5 Left B", new Mode5LeftB(""));
+        // addSequence("Mode 5 Right A", new Mode5RightA(""));
+        // addSequence("Mode 5 Right B", new Mode5RightB(""));
 
+        addSequence("Mode 6 Center Right", new Mode6Right(""));
         addSequence("Mode 6 Right", new Mode6Right(""));
-        addSequence("Mode 6 Left A", new Mode6Right(""));
-        addSequence("Mode 6 Left B", new Mode6Right(""));
+        // addSequence("Mode 6 Left A", new Mode6Right(""));
+        // addSequence("Mode 6 Left B", new Mode6Right(""));
     }
 
     /**

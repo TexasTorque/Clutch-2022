@@ -245,8 +245,8 @@ public class Input extends TorqueInputManager {
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
             // If we are asking to shoot and the flywheel is reved and the turret is locked
-            else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady() 
-                    && (!shooterInput.isUsingRegression() || Feedback.getInstance().isTurretAlligned())) 
+            else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady()
+                    && (!shooterInput.isUsingRegression() || Feedback.getInstance().isTurretAlligned()))
                 gateDirection = GateSpeeds.OPEN;
             else if (autoMag.get())
                 gateDirection = GateSpeeds.CLOSED;
@@ -322,7 +322,7 @@ public class Input extends TorqueInputManager {
                     setRawValues(1600, 0);
                 }
                 State.getInstance().setTurretState(TurretState.ON);
-            } 
+            }
 
             // Layup
             else if (driver.getYButton()) {

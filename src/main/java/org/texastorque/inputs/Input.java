@@ -320,12 +320,14 @@ public class Input extends TorqueInputManager {
             }
             // Launchpad
             else if (driver.getAButton()) {
-                setFromDist(1.17);
+                flywheel = 2300;
+                hood = 50;
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Tarmac
             else if (driver.getBButton()) {
-                setFromDist(3.52);
+                flywheel = 2100;
+                hood = 50;
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
             else

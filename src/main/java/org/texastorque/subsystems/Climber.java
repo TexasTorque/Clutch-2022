@@ -46,7 +46,7 @@ public class Climber extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         if (State.getInstance().getAutoClimb() == AutoClimb.ON) {
-            updateAuto();
+            updateAssist();
             return;
         }
         double climberSpeeds = Input.getInstance().getClimberInput().getDirection().getDirection()
@@ -74,8 +74,7 @@ public class Climber extends TorqueSubsystem {
         }
     }
 
-    @Override
-    public void updateAuto() {
+    public void updateAssist() {
 
         double climberLeftSetpoint = AutoInput.getInstance().getClimberLeftSetpoint();
         double climberRightSetpoint = AutoInput.getInstance().getClimberRightSetpoint();

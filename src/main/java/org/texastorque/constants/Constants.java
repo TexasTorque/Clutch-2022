@@ -32,7 +32,10 @@ public class Constants {
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROTARY_SPEED = 1.;
+    public static final double INTAKE_ROLLER_SPEED = 1.;
+
+    public static final double INTAKE_ROTARY_MIN_SPEED = -.25;
+    public static final double INTAKE_ROTARY_MAX_SPEED = .25;
 
     // Shooter
     public static final double FLYWHEEL_Kv = 0.15475; // Values are for rotations/sec
@@ -90,5 +93,6 @@ public class Constants {
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 42.5;
+
 
 }

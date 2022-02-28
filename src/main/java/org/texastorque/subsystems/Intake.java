@@ -58,7 +58,8 @@ public class Intake extends TorqueSubsystem {
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
-        rotary.configurePID(new KPID(0.3, 0.00005, .00002, 0, -.5, .5));
+        rotary.configurePID(new KPID(0.3, 0.00005, .00002, 0, 
+                Constants.INTAKE_ROTARY_MIN_SPEED, Constants.INTAKE_ROTARY_MAX_SPEED));
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
         limitSwitch = new DigitalInput(Ports.ROTARY_LIMIT_SWITCH);
     }
@@ -67,14 +68,14 @@ public class Intake extends TorqueSubsystem {
     public void updateTeleop() {
         rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
         rollerSpeed = -Input.getInstance().getIntakeInput().getDirection().getDirection() *
-                Constants.INTAKE_ROTARY_SPEED;
+                Constants.INTAKE_ROLLER_SPEED;
     }
 
     @Override
     public void updateAuto() {
         rotarySetPoint = AutoInput.getInstance().getIntakePosition();
         rollerSpeed = -AutoInput.getInstance().getIntakeSpeed().getDirection() *
-                Constants.INTAKE_ROTARY_SPEED;
+                Constants.INTAKE_ROLLER_SPEED;
     }
 
     @Override

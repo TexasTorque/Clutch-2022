@@ -211,7 +211,7 @@ public class Input extends TorqueInputManager {
             else
                 direction = IntakeDirection.STOPPED;
 
-            if (driver.getRightTrigger())
+            if (driver.getRightTrigger() || driver.getLeftTrigger())
                 intakePosition = IntakePosition.DOWN;
             else
                 intakePosition = liftedPosition;

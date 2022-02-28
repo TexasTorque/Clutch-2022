@@ -336,7 +336,7 @@ public class Input extends TorqueInputManager {
             }
             // Tarmac
             else if (driver.getBButton()) {
-                setRawValues(2100, 50);
+                setRawValues(2000, 50);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
             else

@@ -21,8 +21,7 @@ public class SetMagazine extends TorqueCommand {
     }
 
     @Override
-    protected void continuous() {
-    }
+    protected void continuous() {}
 
     @Override
     protected boolean endCondition() {
@@ -30,7 +29,5 @@ public class SetMagazine extends TorqueCommand {
     }
 
     @Override
-    protected void end() {
-    }
-
+    protected void end() {}
 }

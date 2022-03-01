@@ -1,23 +1,21 @@
 package org.texastorque.inputs;
 
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.texastorque.subsystems.Intake;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-
 public class AutoInput {
     private static volatile AutoInput instance;
 
     // Drive
-    private SwerveModuleState[] driveStates = new SwerveModuleState[] { new SwerveModuleState(),
-            new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState() };
+    private SwerveModuleState[] driveStates = new SwerveModuleState[] {
+        new SwerveModuleState(), new SwerveModuleState(),
+        new SwerveModuleState(), new SwerveModuleState()};
 
-    public SwerveModuleState[] getDriveStates() {
-        return driveStates;
-    }
+    public SwerveModuleState[] getDriveStates() { return driveStates; }
 
     public void setDriveStates(SwerveModuleState[] states) {
         driveStates = states;
@@ -44,16 +42,12 @@ public class AutoInput {
     /**
      * @return the flywheelSpeed
      */
-    public double getFlywheelSpeed() {
-        return flywheelSpeed;
-    }
+    public double getFlywheelSpeed() { return flywheelSpeed; }
 
     /**
      * @return the hoodPosition
      */
-    public double getHoodPosition() {
-        return hoodPosition;
-    }
+    public double getHoodPosition() { return hoodPosition; }
 
     // Intake
     private IntakePosition intakePosition = IntakePosition.PRIME;
@@ -61,7 +55,7 @@ public class AutoInput {
 
     /**
      * Set the intake position
-     * 
+     *
      * @param position
      */
     public void setIntakePosition(IntakePosition position) {
@@ -78,16 +72,12 @@ public class AutoInput {
     /**
      * @return the intakePosition
      */
-    public IntakePosition getIntakePosition() {
-        return intakePosition;
-    }
+    public IntakePosition getIntakePosition() { return intakePosition; }
 
     /**
      * @return the intakeSpeed
      */
-    public IntakeDirection getIntakeSpeed() {
-        return intakeSpeed;
-    }
+    public IntakeDirection getIntakeSpeed() { return intakeSpeed; }
 
     // Magazine
     private GateSpeeds gateDirection = GateSpeeds.CLOSED;
@@ -110,16 +100,12 @@ public class AutoInput {
     /**
      * @return the gateDirection
      */
-    public GateSpeeds getGateDirection() {
-        return gateDirection;
-    }
+    public GateSpeeds getGateDirection() { return gateDirection; }
 
     /**
      * @return the beltDirection
      */
-    public BeltDirections getBeltDirection() {
-        return beltDirection;
-    }
+    public BeltDirections getBeltDirection() { return beltDirection; }
 
     private double climberRightSetpoint = 0;
     private double climberLeftSetpoint = 0;
@@ -127,16 +113,12 @@ public class AutoInput {
     /**
      * @return the climberLeftSetpoint
      */
-    public double getClimberLeftSetpoint() {
-        return climberLeftSetpoint;
-    }
+    public double getClimberLeftSetpoint() { return climberLeftSetpoint; }
 
     /**
      * @return the climberRightSetpoint
      */
-    public double getClimberRightSetpoint() {
-        return climberRightSetpoint;
-    }
+    public double getClimberRightSetpoint() { return climberRightSetpoint; }
 
     /**
      * @param climberLeftSetpoint the climberLeftSetpoint to set

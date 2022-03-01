@@ -1,6 +1,5 @@
 package org.texastorque.auto;
 
-import org.texastorque.torquelib.auto.*;
 import org.texastorque.auto.sequences.mode0.*;
 import org.texastorque.auto.sequences.mode1.*;
 import org.texastorque.auto.sequences.mode2.*;
@@ -8,6 +7,7 @@ import org.texastorque.auto.sequences.mode3.*;
 import org.texastorque.auto.sequences.mode4.*;
 import org.texastorque.auto.sequences.mode5.*;
 import org.texastorque.auto.sequences.mode6.*;
+import org.texastorque.torquelib.auto.*;
 
 public class AutoManager extends TorqueAutoManager {
     private static volatile AutoManager instance;

@@ -1,8 +1,7 @@
 package org.texastorque.auto.commands;
 
-import org.texastorque.torquelib.auto.TorqueCommand;
-
 import edu.wpi.first.wpilibj.Timer;
+import org.texastorque.torquelib.auto.TorqueCommand;
 
 public class Wait extends TorqueCommand {
     private double time, start;
@@ -10,9 +9,7 @@ public class Wait extends TorqueCommand {
     /**
      * @param time The time the robot will go for.
      */
-    public Wait(double time) {
-        this.time = time;
-    }
+    public Wait(double time) { this.time = time; }
 
     @Override
     public void init() {
@@ -20,8 +17,7 @@ public class Wait extends TorqueCommand {
     }
 
     @Override
-    public void continuous() {
-    }
+    public void continuous() {}
 
     @Override
     public boolean endCondition() {
@@ -29,6 +25,5 @@ public class Wait extends TorqueCommand {
     }
 
     @Override
-    public void end() {
-    }
+    public void end() {}
 }

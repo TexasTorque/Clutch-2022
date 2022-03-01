@@ -1,13 +1,11 @@
 package org.texastorque.auto.sequences.mode2;
 
-import org.texastorque.torquelib.auto.*;
-
 import org.texastorque.auto.commands.*;
-
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
+import org.texastorque.torquelib.auto.*;
 
 public class Mode2Right extends TorqueSequence {
     public Mode2Right(String name) {
@@ -19,7 +17,8 @@ public class Mode2Right extends TorqueSequence {
     @Override
     protected void init() {
         // Start up mag
-        addBlock(new TorqueBlock(new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+        addBlock(new TorqueBlock(
+            new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Shoot
         addBlock(new TorqueBlock(new ShootAtTarget()));
@@ -28,6 +27,7 @@ public class Mode2Right extends TorqueSequence {
         addBlock(new TorqueBlock(new Pathplanner("Mode2Right")));
 
         // Stop mag
-        addBlock(new TorqueBlock(new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+        addBlock(new TorqueBlock(
+            new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

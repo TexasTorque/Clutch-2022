@@ -448,6 +448,7 @@ public class Input extends TorqueInputManager {
             // The operator can cancel the ENGAME sequence
             if (operator.getLeftCenterButton())
                 climbHasStarted = false;
+
             // ! DEBUG
             if (driver.getDPADLeft())
                 runLeft = true;

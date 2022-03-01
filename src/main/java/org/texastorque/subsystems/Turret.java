@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Feedback;
+import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.TurretState;
 import org.texastorque.modules.MagazineBallManager;
@@ -85,6 +86,12 @@ public class Turret extends TorqueSubsystem {
     }
 
     public void updateTeleop() {
+        if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
+            rotator.setPosition(Constants.TURRET_RATIO * -210. / 360.);
+            return;
+        }
+
+
         if (State.getInstance().getTurretState() == TurretState.ON) {
             if (encoderOverStatus ==
                 EncoderOverStatus.OFF) { // turret is tracking tape

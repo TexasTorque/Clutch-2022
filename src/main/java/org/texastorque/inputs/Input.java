@@ -17,6 +17,7 @@ import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.subsystems.Turret;
 import org.texastorque.torquelib.auto.TorqueAssist;
+import org.texastorque.torquelib.auto.TorqueAssist.AssistMode;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.component.TorqueSpeedSettings;
@@ -77,7 +78,7 @@ public class Input extends TorqueInputManager {
 
         rotateToBall = new TorqueAssist(new AutoReflect(), driveBaseRotationInput);
         climbAssist = new TorqueAssist(
-                new AutoClimb(), driveBaseTranslationInput, driveBaseRotationInput,
+                new AutoClimb(), AssistMode.RESET_BLOCK, driveBaseTranslationInput, driveBaseRotationInput,
                 intakeInput, magazineInput, shooterInput, climberInput);
     }
 

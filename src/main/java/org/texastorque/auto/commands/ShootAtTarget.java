@@ -1,5 +1,6 @@
 package org.texastorque.auto.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
@@ -10,8 +11,6 @@ import org.texastorque.inputs.State.TurretState;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.TorqueCommand;
-
-import edu.wpi.first.wpilibj.Timer;
 
 public class ShootAtTarget extends TorqueCommand {
     private final double magOutputTime;
@@ -45,7 +44,8 @@ public class ShootAtTarget extends TorqueCommand {
     @Override
     protected void init() {
         distance = Feedback.getInstance().getLimelightFeedback().getDistance();
-        outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+        outputRPM =
+            Input.getInstance().getShooterInput().regressionRPM(distance);
         AutoInput.getInstance().setFlywheelSpeed(outputRPM);
         AutoInput.getInstance().setHoodPosition(50);
         if (turretOn) {
@@ -60,7 +60,9 @@ public class ShootAtTarget extends TorqueCommand {
     protected void continuous() {
         if (!runMag) {
             // check if rpm is in range (+-x)
-            if (Math.abs(outputRPM - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR) {
+            if (Math.abs(outputRPM -
+                         Feedback.getInstance().getShooterFeedback().getRPM()) <
+                Constants.SHOOTER_ERROR) {
                 // if so, launch magazine for x seconds
                 runMag = true;
                 startMagTime = Timer.getFPGATimestamp();
@@ -70,7 +72,6 @@ public class ShootAtTarget extends TorqueCommand {
             if (Timer.getFPGATimestamp() - startMagTime >= magOutputTime)
                 done = true;
         }
-
     }
 
     @Override
@@ -87,5 +88,4 @@ public class ShootAtTarget extends TorqueCommand {
         AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
         State.getInstance().setTurretState(TurretState.OFF);
     }
-
 }

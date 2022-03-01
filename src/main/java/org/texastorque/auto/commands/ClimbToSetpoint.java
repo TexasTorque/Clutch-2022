@@ -1,12 +1,11 @@
 package org.texastorque.auto.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.AutoClimb;
 import org.texastorque.torquelib.auto.TorqueCommand;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ClimbToSetpoint extends TorqueCommand {
     private static double allowedError = 3;
@@ -27,19 +26,21 @@ public class ClimbToSetpoint extends TorqueCommand {
     }
 
     @Override
-    protected void continuous() {
-    }
+    protected void continuous() {}
 
     @Override
     protected boolean endCondition() {
-        return Math.abs(Feedback.getInstance().getClimberFeedback().getLeftPosition() - leftSetpoint) < allowedError
-                && Math.abs(
-                        Feedback.getInstance().getClimberFeedback().getRightPosition() - rightSetpoint) < allowedError;
+        return Math.abs(Feedback.getInstance()
+                            .getClimberFeedback()
+                            .getLeftPosition() -
+                        leftSetpoint) < allowedError &&
+            Math.abs(
+                Feedback.getInstance().getClimberFeedback().getRightPosition() -
+                rightSetpoint) < allowedError;
     }
 
     @Override
     protected void end() {
         State.getInstance().setAutoClimb(AutoClimb.OFF);
     }
-
 }

@@ -5,7 +5,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.AutoInput;
@@ -24,14 +23,14 @@ public class Drivebase extends TorqueSubsystem {
     /**
      * Locations of wheel modules
      */
-    private final Translation2d locationBackLeft = new Translation2d(Constants.DISTANCE_TO_CENTER_X,
-            -Constants.DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationBackRight = new Translation2d(Constants.DISTANCE_TO_CENTER_X,
-            Constants.DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationFrontLeft = new Translation2d(-Constants.DISTANCE_TO_CENTER_X,
-            -Constants.DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationFrontRight = new Translation2d(-Constants.DISTANCE_TO_CENTER_X,
-            Constants.DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationBackLeft = new Translation2d(
+        Constants.DISTANCE_TO_CENTER_X, -Constants.DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationBackRight = new Translation2d(
+        Constants.DISTANCE_TO_CENTER_X, Constants.DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationFrontLeft = new Translation2d(
+        -Constants.DISTANCE_TO_CENTER_X, -Constants.DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationFrontRight = new Translation2d(
+        -Constants.DISTANCE_TO_CENTER_X, Constants.DISTANCE_TO_CENTER_Y);
 
     /**
      * Kinematics
@@ -61,15 +60,21 @@ public class Drivebase extends TorqueSubsystem {
     private SwerveModuleState[] swerveModuleStates;
 
     private Drivebase() {
-        backLeft = new SwerveWheel(0, Ports.DRIVE_TRANS_LEFT_BACK, Ports.DRIVE_ROT_LEFT_BACK);
-        backRight = new SwerveWheel(1, Ports.DRIVE_TRANS_RIGHT_BACK, Ports.DRIVE_ROT_RIGHT_BACK);
-        frontLeft = new SwerveWheel(2, Ports.DRIVE_TRANS_LEFT_FRONT, Ports.DRIVE_ROT_LEFT_FRONT);
-        frontRight = new SwerveWheel(3, Ports.DRIVE_TRANS_RIGHT_FRONT, Ports.DRIVE_ROT_RIGHT_FRONT);
+        backLeft = new SwerveWheel(0, Ports.DRIVE_TRANS_LEFT_BACK,
+                                   Ports.DRIVE_ROT_LEFT_BACK);
+        backRight = new SwerveWheel(1, Ports.DRIVE_TRANS_RIGHT_BACK,
+                                    Ports.DRIVE_ROT_RIGHT_BACK);
+        frontLeft = new SwerveWheel(2, Ports.DRIVE_TRANS_LEFT_FRONT,
+                                    Ports.DRIVE_ROT_LEFT_FRONT);
+        frontRight = new SwerveWheel(3, Ports.DRIVE_TRANS_RIGHT_FRONT,
+                                     Ports.DRIVE_ROT_RIGHT_FRONT);
 
-        kinematics = new SwerveDriveKinematics(
-                locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
+        kinematics =
+            new SwerveDriveKinematics(locationBackLeft, locationBackRight,
+                                      locationFrontLeft, locationFrontRight);
 
-        odometry = new SwerveOdometry(kinematics, feedback.getGyroFeedback().getRotation2d());
+        odometry = new SwerveOdometry(
+            kinematics, feedback.getGyroFeedback().getRotation2d());
     }
 
     private void reset() {
@@ -97,13 +102,13 @@ public class Drivebase extends TorqueSubsystem {
         fieldRelative = true;
 
         swerveModuleStates = kinematics.toSwerveModuleStates(
-                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                        xSpeed, ySpeed, rotation,
-                        feedback.getGyroFeedback().getRotation2d())
-                        : new ChassisSpeeds(xSpeed, ySpeed, rotation));
+            fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                xSpeed, ySpeed, rotation,
+                                feedback.getGyroFeedback().getRotation2d())
+                          : new ChassisSpeeds(xSpeed, ySpeed, rotation));
 
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
-                Constants.DRIVE_MAX_SPEED_METERS);
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            swerveModuleStates, Constants.DRIVE_MAX_SPEED_METERS);
     }
 
     @Override
@@ -129,12 +134,13 @@ public class Drivebase extends TorqueSubsystem {
 
     @Override
     public void updateFeedbackTeleop() {
-        odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1), frontLeft.getState(),
-                frontRight.getState(), backLeft.getState(), backRight.getState());
+        odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1),
+                        frontLeft.getState(), frontRight.getState(),
+                        backLeft.getState(), backRight.getState());
         SmartDashboard.putNumber("[Real]X", odometry.getPoseMeters().getX());
         SmartDashboard.putNumber("[Real]Y", odometry.getPoseMeters().getY());
-        SmartDashboard.putNumber("[Real]Rot",
-                odometry.getPoseMeters().getRotation().getDegrees());
+        SmartDashboard.putNumber(
+            "[Real]Rot", odometry.getPoseMeters().getRotation().getDegrees());
     }
 
     @Override
@@ -143,8 +149,7 @@ public class Drivebase extends TorqueSubsystem {
     }
 
     @Override
-    public void updateSmartDashboard() {
-    }
+    public void updateSmartDashboard() {}
 
     public static synchronized Drivebase getInstance() {
         return (instance == null) ? instance = new Drivebase() : instance;

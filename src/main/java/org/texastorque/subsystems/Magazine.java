@@ -17,13 +17,9 @@ public class Magazine extends TorqueSubsystem {
 
         private final double speed;
 
-        GateSpeeds(double speed) {
-            this.speed = speed;
-        }
+        GateSpeeds(double speed) { this.speed = speed; }
 
-        public double getSpeed() {
-            return this.speed;
-        }
+        public double getSpeed() { return this.speed; }
     }
 
     public static enum BeltDirections {
@@ -33,13 +29,9 @@ public class Magazine extends TorqueSubsystem {
 
         private final int direction;
 
-        BeltDirections(int direction) {
-            this.direction = direction;
-        }
+        BeltDirections(int direction) { this.direction = direction; }
 
-        public int getDirection() {
-            return this.direction;
-        }
+        public int getDirection() { return this.direction; }
     }
 
     private TorqueSparkMax belt;
@@ -55,21 +47,26 @@ public class Magazine extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        gateSpeed = Input.getInstance().getMagazineInput().getGateDirection().getSpeed();
-        beltSpeed = Input.getInstance().getMagazineInput().getBeltDirection().getDirection() *
-                Constants.MAGAZINE_BELT_SPEED;
+        gateSpeed = Input.getInstance()
+                        .getMagazineInput()
+                        .getGateDirection()
+                        .getSpeed();
+        beltSpeed = Input.getInstance()
+                        .getMagazineInput()
+                        .getBeltDirection()
+                        .getDirection() *
+                    Constants.MAGAZINE_BELT_SPEED;
     }
 
     @Override
     public void updateAuto() {
         gateSpeed = AutoInput.getInstance().getGateDirection().getSpeed();
         beltSpeed = AutoInput.getInstance().getBeltDirection().getDirection() *
-                Constants.MAGAZINE_BELT_SPEED;
+                    Constants.MAGAZINE_BELT_SPEED;
     }
 
     @Override
-    public void updateFeedbackTeleop() {
-    }
+    public void updateFeedbackTeleop() {}
 
     @Override
     public void output() {
@@ -78,8 +75,7 @@ public class Magazine extends TorqueSubsystem {
     }
 
     @Override
-    public void updateSmartDashboard() {
-    }
+    public void updateSmartDashboard() {}
 
     public static synchronized Magazine getInstance() {
         return instance == null ? instance = new Magazine() : instance;

@@ -1,16 +1,13 @@
 package org.texastorque.modules;
 
-import org.texastorque.inputs.State;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import org.texastorque.inputs.State;
 
 public class MagazineBallManager {
     private static MagazineBallManager instance;
 
-    public enum MagazineState {
-        NONE, BLUE, RED
-    }
+    public enum MagazineState { NONE, BLUE, RED }
 
     private final String magazineTableName = "ball_mag";
     private NetworkTableInstance NT;
@@ -34,30 +31,28 @@ public class MagazineBallManager {
             setMagState(MagazineState.NONE);
     }
 
-    public void setMagState(MagazineState state) {
-        this.state = state;
-    }
+    public void setMagState(MagazineState state) { this.state = state; }
 
     /**
      * @return If the magazine detects our alliance's ball
      */
-    public boolean isOurAlliance() {
-        return !isEnemyAlliance();
-    }
+    public boolean isOurAlliance() { return !isEnemyAlliance(); }
 
     /**
      * @return If the magazine detects our enemy's ball
      */
     public boolean isEnemyAlliance() {
-        return state == MagazineState.BLUE && State.getInstance().getAllianceColor() == State.AllianceColor.RED
-                || state == MagazineState.RED && State.getInstance().getAllianceColor() == State.AllianceColor.BLUE;
+        return state == MagazineState.BLUE &&
+            State.getInstance().getAllianceColor() == State.AllianceColor.RED ||
+            state == MagazineState.RED &&
+                State.getInstance().getAllianceColor() ==
+                    State.AllianceColor.BLUE;
     }
 
-    public MagazineState getMagazineState() {
-        return state;
-    }
+    public MagazineState getMagazineState() { return state; }
 
     public static MagazineBallManager getInstance() {
-        return instance == null ? instance = new MagazineBallManager() : instance;
+        return instance == null ? instance = new MagazineBallManager()
+                                : instance;
     }
 }

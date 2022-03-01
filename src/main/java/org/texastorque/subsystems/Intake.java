@@ -1,7 +1,6 @@
 package org.texastorque.subsystems;
 
 import com.revrobotics.CANSparkMax.ControlType;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
@@ -22,13 +21,9 @@ public class Intake extends TorqueSubsystem {
 
         private final int direction;
 
-        IntakeDirection(int direction) {
-            this.direction = direction;
-        }
+        IntakeDirection(int direction) { this.direction = direction; }
 
-        public int getDirection() {
-            return direction;
-        }
+        public int getDirection() { return direction; }
     }
 
     public static enum IntakePosition {
@@ -39,13 +34,9 @@ public class Intake extends TorqueSubsystem {
 
         private final double position;
 
-        IntakePosition(double position) {
-            this.position = position;
-        }
+        IntakePosition(double position) { this.position = position; }
 
-        public double getPosition() {
-            return position;
-        }
+        public double getPosition() { return position; }
     }
 
     private TorqueSparkMax rotary;
@@ -58,8 +49,9 @@ public class Intake extends TorqueSubsystem {
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
-        rotary.configurePID(new KPID(0.3, 0.00005, .00002, 0, 
-                Constants.INTAKE_ROTARY_MIN_SPEED, Constants.INTAKE_ROTARY_MAX_SPEED));
+        rotary.configurePID(new KPID(0.3, 0.00005, .00002, 0,
+                                     Constants.INTAKE_ROTARY_MIN_SPEED,
+                                     Constants.INTAKE_ROTARY_MAX_SPEED));
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
         limitSwitch = new DigitalInput(Ports.ROTARY_LIMIT_SWITCH);
     }
@@ -67,20 +59,22 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
-        rollerSpeed = -Input.getInstance().getIntakeInput().getDirection().getDirection() *
-                Constants.INTAKE_ROLLER_SPEED;
+        rollerSpeed = -Input.getInstance()
+                           .getIntakeInput()
+                           .getDirection()
+                           .getDirection() *
+                      Constants.INTAKE_ROLLER_SPEED;
     }
 
     @Override
     public void updateAuto() {
         rotarySetPoint = AutoInput.getInstance().getIntakePosition();
         rollerSpeed = -AutoInput.getInstance().getIntakeSpeed().getDirection() *
-                Constants.INTAKE_ROLLER_SPEED;
+                      Constants.INTAKE_ROLLER_SPEED;
     }
 
     @Override
-    public void updateFeedbackTeleop() {
-    }
+    public void updateFeedbackTeleop() {}
 
     @Override
     public void output() {
@@ -98,8 +92,10 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Intake]Roller Speed", rollerSpeed);
-        SmartDashboard.putNumber("[Intake]Rotary Position", rotary.getPosition());
-        SmartDashboard.putNumber("[Intake]Rotary Set Point", rotarySetPoint.getPosition());
+        SmartDashboard.putNumber("[Intake]Rotary Position",
+                                 rotary.getPosition());
+        SmartDashboard.putNumber("[Intake]Rotary Set Point",
+                                 rotarySetPoint.getPosition());
         SmartDashboard.putBoolean("[Intake]Limit switch", limitSwitch.get());
     }
 

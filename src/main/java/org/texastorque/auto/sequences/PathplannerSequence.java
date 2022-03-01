@@ -1,8 +1,8 @@
 package org.texastorque.auto.sequences;
 
+import org.texastorque.auto.commands.Pathplanner;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
-import org.texastorque.auto.commands.Pathplanner;
 
 /**
  * @deprecated Used for path testing, no longer needed
@@ -20,5 +20,4 @@ public class PathplannerSequence extends TorqueSequence {
     protected void init() {
         addBlock(new TorqueBlock(new Pathplanner(pathName)));
     }
-
 }

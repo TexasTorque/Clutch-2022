@@ -3,20 +3,19 @@ package org.texastorque.inputs;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.texastorque.auto.sequences.assists.*;
 import org.texastorque.auto.sequences.assists.AutoClimb;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.State.*;
 import org.texastorque.modules.MagazineBallManager;
-import org.texastorque.subsystems.Lights;
-import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
+import org.texastorque.subsystems.Lights;
 import org.texastorque.subsystems.Lights.LightMode;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
+import org.texastorque.subsystems.Turret;
 import org.texastorque.torquelib.auto.TorqueAssist;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputManager;
@@ -77,8 +76,9 @@ public class Input extends TorqueInputManager {
         modules.add(climberInput);
 
         rotateToBall = new TorqueAssist(new AutoReflect(), driveBaseRotationInput);
-        climbAssist = new TorqueAssist(new AutoClimb(), driveBaseTranslationInput,
-                driveBaseRotationInput, intakeInput, magazineInput, shooterInput, climberInput);
+        climbAssist = new TorqueAssist(
+                new AutoClimb(), driveBaseTranslationInput, driveBaseRotationInput,
+                intakeInput, magazineInput, shooterInput, climberInput);
     }
 
     @Override
@@ -117,9 +117,11 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            xSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false);
+            xSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(),
+                    false, false);
 
-            ySpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false);
+            ySpeeds.update(driver.getRightBumper(), driver.getLeftBumper(),
+                    false, false);
 
             xSpeed = xSpeeds.getSpeed() * driver.getLeftYAxis() *
                     Constants.DRIVE_MAX_SPEED_METERS;
@@ -155,7 +157,8 @@ public class Input extends TorqueInputManager {
 
         private double rot = 0;
 
-        // private TorqueSlewLimiter rotLimiter = new TorqueSlewLimiter(50, 1000);
+        // private TorqueSlewLimiter rotLimiter = new TorqueSlewLimiter(50,
+        // 1000);
 
         private TorqueLock<Double> rotLock = new TorqueLock<Double>(false);
         private TorqueToggle rotLockToggle = new TorqueToggle();
@@ -165,13 +168,17 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
-            rotSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false);
+            rotSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(),
+                    false, false);
             rotLockToggle.calc(driver.getRightStickClick());
             rotLock.setLocked(rotLockToggle.get());
-            // rot = -rotLock.calculate(rotLimiter.calculate(rotSpeeds.getSpeed() *
-            // driver.getRightXAxis()) *Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
+            // rot =
+            // -rotLock.calculate(rotLimiter.calculate(rotSpeeds.getSpeed() *
+            // driver.getRightXAxis())
+            // *Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS);
             rot = -rotLock.calculate(
-                    rotSpeeds.getSpeed() * driver.getRightXAxis() * Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS_DRIVER);
+                    rotSpeeds.getSpeed() * driver.getRightXAxis() *
+                            Constants.DRIVE_MAX_ANGUAR_SPEED_RADIANS_DRIVER);
         }
 
         @Override
@@ -244,9 +251,12 @@ public class Input extends TorqueInputManager {
             autoMag.calc(operator.getAButton());
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
-            // If we are asking to shoot and the flywheel is reved and the turret is locked
-            else if (shooterInput.getFlywheel() != 0 && shooterInput.isFlywheelReady()
-                    && (!shooterInput.isUsingRegression() || Feedback.getInstance().isTurretAlligned()))
+            // If we are asking to shoot and the flywheel is reved and the
+            // turret is locked
+            else if (shooterInput.getFlywheel() != 0 &&
+                    shooterInput.isFlywheelReady() &&
+                    (!shooterInput.isUsingRegression() ||
+                            Feedback.getInstance().isTurretAlligned()))
                 gateDirection = GateSpeeds.OPEN;
             else if (autoMag.get())
                 gateDirection = GateSpeeds.CLOSED;
@@ -309,15 +319,21 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean isFlywheelReady() {
-            return Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
+            return Math.abs(
+                    flywheel -
+                            Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
         }
 
         @Override
         public void update() {
             // Regression
             if (driver.getXButton()) {
-                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
-                    setFromDist(Feedback.getInstance().getLimelightFeedback().getDistance());
+                if (Feedback.getInstance()
+                        .getLimelightFeedback()
+                        .getTaOffset() > 0) {
+                    setFromDist(Feedback.getInstance()
+                            .getLimelightFeedback()
+                            .getDistance());
                 } else {
                     setRawValues(1600, 0);
                 }
@@ -350,7 +366,7 @@ public class Input extends TorqueInputManager {
         }
 
         /**
-         * 
+         *
          * @return flywheel RPM
          */
         public double getFlywheel() {
@@ -358,7 +374,7 @@ public class Input extends TorqueInputManager {
         }
 
         /**
-         * 
+         *
          * @return hood degrees
          */
         public double getHood() {
@@ -367,7 +383,7 @@ public class Input extends TorqueInputManager {
 
         /**
          * Set the speed of the flywheel
-         * 
+         *
          * @param speed RPM
          */
         public void setFlywheelSpeed(double speed) {
@@ -376,7 +392,7 @@ public class Input extends TorqueInputManager {
 
         /**
          * Set the hood for the flywheel
-         * 
+         *
          * @param hood Hood position
          */
         public void setHood(double hood) {
@@ -402,7 +418,6 @@ public class Input extends TorqueInputManager {
                 return 50;
             return TorqueMathUtil.constrain(22.87 * distance - 3.914, 0, 50);
         }
-
     }
 
     public class ClimberInput extends TorqueInput {
@@ -483,7 +498,7 @@ public class Input extends TorqueInputManager {
 
     /**
      * Rumble the driver's controller
-     * 
+     *
      * @param forTime seconds
      */
     public void requestDriverRumble(double forTime) {
@@ -492,7 +507,7 @@ public class Input extends TorqueInputManager {
 
     /**
      * Rumble the operator's controller
-     * 
+     *
      * @param forTime seconds
      */
     public void requestOperatorRumble(double forTime) {

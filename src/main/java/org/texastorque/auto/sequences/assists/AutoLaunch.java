@@ -1,8 +1,7 @@
 package org.texastorque.auto.sequences.assists;
 
-import org.texastorque.torquelib.auto.*;
-
 import org.texastorque.auto.commands.*;
+import org.texastorque.torquelib.auto.*;
 
 public class AutoLaunch extends TorqueSequence {
     public AutoLaunch() {

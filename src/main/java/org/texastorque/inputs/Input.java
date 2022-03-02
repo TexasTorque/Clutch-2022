@@ -114,6 +114,7 @@ public class Input extends TorqueInputManager {
         // private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(3, 4);
 
         private DriveBaseTranslationInput() {
+            
         }
 
         @Override
@@ -131,7 +132,7 @@ public class Input extends TorqueInputManager {
             ySpeed = -ySpeeds.getSpeed() * driver.getLeftXAxis() *
                     Constants.DRIVE_MAX_SPEED_METERS;
         }
-
+        
         @Override
         public void reset() {
             xSpeed = 0;
@@ -148,8 +149,10 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void smartDashboard() {
-            SmartDashboard.putNumber("[Input]X Speed", xSpeed);
-            SmartDashboard.putNumber("[Input]Y Speed", ySpeed);
+            // SmartDashboard.putNumber("[Input]X Speed", xSpeed);
+            // SmartDashboard.putNumber("[Input]Y Speed", ySpeed);
+            SmartDashboard.putNumber("Speed", xSpeeds.getSpeed());
+
         }
     }
 
@@ -459,8 +462,15 @@ public class Input extends TorqueInputManager {
                 runRight = true;
             else
                 runRight = false;
+
+            
         }
 
+        @Override
+        public void smartDashboard() {
+            SmartDashboard.putBoolean("Climb Started", climbHasStarted);
+        }
+        
         public ClimberDirection getDirection() {
             return direction;
         }

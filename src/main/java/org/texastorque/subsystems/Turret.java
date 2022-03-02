@@ -92,7 +92,7 @@ public class Turret extends TorqueSubsystem {
     }
 
     public void updateTeleop() {
-        if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
+        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
             double pidOut = pidController.calculate(
                     getDegrees(), Constants.TURRET_BACK_ROT);
             changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;

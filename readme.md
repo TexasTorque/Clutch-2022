@@ -2,6 +2,10 @@
 
 Texas Torque's main robot code for the 2022 Rapid React season!
 
+## Controls
+
+Please publish major control changes to the [Google Drive folder](https://drive.google.com/drive/folders/1bb2S4_d-e_ZlqMYT-pupsMfWWjnk1Fzt), and inform other programmers and driveteam.
+
 ## Formatting
 
 To acquire the formatter in VSCode, download [this extension](https://marketplace.visualstudio.com/items?itemName=redhat.java).

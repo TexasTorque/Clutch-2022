@@ -84,10 +84,11 @@ public class Input extends TorqueInputManager {
 
     @Override
     public void update() {
-        // rotateToBallToggle.calc(operator.getRightCenterButton());
-        // rotateToBall.run(intakeInput.getPosition() == IntakePosition.DOWN &&
-        // rotateToBallToggle.get()
-        // && !climberInput.getClimbHasStarted());
+        // rotateToBallToggle.calc(operator.getBButton());
+        // rotateToBall.run(
+        //     intakeInput.getPosition() == IntakePosition.DOWN 
+        //     && rotateToBallToggle.get() && !climberInput.getClimbHasStarted()
+        // );
 
         climberToggle.calc(operator.getXButton());
         climbAssist.run(climberToggle.get());
@@ -324,9 +325,8 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean isFlywheelReady() {
-            return Math.abs(
-                    flywheel -
-                            Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
+            return Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) 
+                    < Constants.SHOOTER_ERROR;
         }
 
         @Override
@@ -339,9 +339,8 @@ public class Input extends TorqueInputManager {
                     setFromDist(Feedback.getInstance()
                             .getLimelightFeedback()
                             .getDistance());
-                } else {
-                    setRawValues(1600, 0);
-                }
+                } else
+                    setRawValues(1600, Constants.HOOD_MIN);
                 State.getInstance().setTurretState(TurretState.ON);
             }
 
@@ -350,16 +349,16 @@ public class Input extends TorqueInputManager {
                 setRawValues(1600, Constants.HOOD_MIN);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
-            // Launchpad
-            else if (driver.getAButton()) {
-                setRawValues(2300, Constants.HOOD_MAX);
-                State.getInstance().setTurretState(TurretState.CENTER);
-            }
+            // Launchpad (interferes w/ intake toggle)
+            // else if (driver.getAButton()) {
+            //     setRawValues(2300, Constants.HOOD_MAX);
+            //     State.getInstance().setTurretState(TurretState.CENTER);
+            // }
             // Tarmac
-            else if (driver.getBButton()) {
+            else if (driver.getAButton()) {
                 setRawValues(2000, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);
-            } // SmartDashboard
+            } 
             else
                 reset();
         }
@@ -450,7 +449,7 @@ public class Input extends TorqueInputManager {
                 climbHasStarted = true;
 
             // The operator can cancel the ENGAME sequence
-            if (operator.getLeftCenterButton())
+            if (operator.getYButton())
                 climbHasStarted = false;
             // ! DEBUG
             if (driver.getDPADLeft())
@@ -468,7 +467,7 @@ public class Input extends TorqueInputManager {
             return direction;
         }
 
-        public boolean getClimbHasStarted() {
+        public boolean hasClimbStarted() {
             return climbHasStarted;
         }
 

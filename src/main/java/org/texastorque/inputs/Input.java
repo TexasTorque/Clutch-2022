@@ -303,8 +303,10 @@ public class Input extends TorqueInputManager {
         private boolean usingRegression = false;
         private double flywheel; // rpm
         private double hood; // degrees
+        private TorqueToggle xFactorToggle;
 
         public ShooterInput() {
+            xFactorToggle = new TorqueToggle(true);
         }
 
         public boolean isUsingRegression() {
@@ -329,8 +331,14 @@ public class Input extends TorqueInputManager {
                             Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
         }
 
+        public boolean xFactor() {
+            return xFactorToggle.get() && flywheel != 0;
+        }
+
         @Override
         public void update() {
+            xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
+
             // Regression
             if (driver.getXButton()) {
                 if (Feedback.getInstance()

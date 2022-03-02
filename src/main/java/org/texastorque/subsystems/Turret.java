@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.Feedback;
+import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.TurretState;
 import org.texastorque.modules.MagazineBallManager;
@@ -20,12 +21,12 @@ public class Turret extends TorqueSubsystem {
 
     private double changeRequest = 0; // power needed to achieve target
     private final PIDController pidController = new PIDController(
-        Constants.TURRET_Kp, Constants.TURRET_Ki, Constants.TURRET_Kd);
+            Constants.TURRET_Kp, Constants.TURRET_Ki, Constants.TURRET_Kd);
 
     enum EncoderOverStatus {
         OFF,
-        TOLEFT(-130, 65),
-        TORIGHT(70, -120),
+        TOLEFT(-90, 75),
+        TORIGHT(90, -75),
         HOMING;
         /*
          * Think of these like states of the turret
@@ -43,7 +44,8 @@ public class Turret extends TorqueSubsystem {
         private double overPosition;
         private double toPosition;
 
-        private EncoderOverStatus() {}
+        private EncoderOverStatus() {
+        }
 
         private EncoderOverStatus(double overPosition, double toPosition) {
             this.overPosition = overPosition;
@@ -53,12 +55,16 @@ public class Turret extends TorqueSubsystem {
         /**
          * @return the toPosition
          */
-        public double getToPosition() { return toPosition; }
+        public double getToPosition() {
+            return toPosition;
+        }
 
         /**
          * @return the overPosition
          */
-        public double getOverPosition() { return overPosition; }
+        public double getOverPosition() {
+            return overPosition;
+        }
 
         /**
          *
@@ -80,18 +86,22 @@ public class Turret extends TorqueSubsystem {
     private double sabotageSetpoint = 0;
 
     public Turret() {
-        rotator.setPosition(Constants.TURRET_RATIO * -60. / 360.);
+        rotator.setPosition(Constants.TURRET_RATIO * -90. / 360.);
+
         SmartDashboard.putData("Rpid", pidController);
     }
 
     public void updateTeleop() {
-        if (State.getInstance().getTurretState() == TurretState.ON) {
-            if (encoderOverStatus ==
-                EncoderOverStatus.OFF) { // turret is tracking tape
+        if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
+            double pidOut = pidController.calculate(
+                    getDegrees(), Constants.TURRET_BACK_ROT);
+            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+        } else if (State.getInstance().getTurretState() == TurretState.ON) {
+            if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if (!checkOver() && !checkHoming()) {
                     double hOffset = Feedback.getInstance()
-                                         .getLimelightFeedback()
-                                         .gethOffset();
+                            .getLimelightFeedback()
+                            .gethOffset();
 
                     // be slightly off :) (do a little trolling)
                     if (MagazineBallManager.getInstance().isEnemyAlliance()) {
@@ -99,8 +109,7 @@ public class Turret extends TorqueSubsystem {
                             hOffset = sabotageSetpoint;
                         } else {
                             doingSabotage = true;
-                            sabotageSetpoint =
-                                10 * Math.signum(hOffset) + hOffset;
+                            sabotageSetpoint = 10 * Math.signum(hOffset) + hOffset;
                             hOffset = sabotageSetpoint;
                         }
                     } else {
@@ -111,46 +120,38 @@ public class Turret extends TorqueSubsystem {
                         changeRequest = 0;
                     } else {
                         double pidOutput = pidController.calculate(hOffset, 0);
-                        changeRequest =
-                            (Constants.TURRET_Ks * Math.signum(pidOutput)) +
-                            pidOutput;
+                        changeRequest = (Constants.TURRET_Ks * Math.signum(pidOutput)) +
+                                pidOutput;
                     }
                 }
-            } else if (encoderOverStatus ==
-                       EncoderOverStatus.HOMING) { // we lost target
+            } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target
                 // :( .. let's find it!
                 if (!checkOver() && checkHoming()) {
                     if (Feedback.getInstance()
                             .getGyroFeedback()
-                            .getGyroDirection() ==
-                        Feedback.GyroDirection.CLOCKWISE) {
+                            .getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
                         changeRequest = 10 + Constants.TURRET_Ks;
                     } else if (Feedback.getInstance()
-                                   .getGyroFeedback()
-                                   .getGyroDirection() ==
-                               Feedback.GyroDirection.COUNTERCLOCKWISE) {
+                            .getGyroFeedback()
+                            .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
                         changeRequest = -10 - Constants.TURRET_Ks;
                     }
                 }
             } else {
                 // if good get out of encodercorrecting
-                if (encoderOverStatus.atPosition(getDegrees()) ||
-                    Feedback.getInstance()
-                            .getLimelightFeedback()
-                            .getTaOffset() > 0) {
+                if (encoderOverStatus.atPosition(getDegrees())) {
                     encoderOverStatus = EncoderOverStatus.OFF;
                 } else {
                     // set approp changeReq using pid
                     double pidOut = pidController.calculate(
-                        getDegrees(), encoderOverStatus.getToPosition());
-                    changeRequest =
-                        Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+                            getDegrees(), encoderOverStatus.getToPosition());
+                    changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
                 }
             }
         } else if (State.getInstance().getTurretState() == TurretState.CENTER) {
             // Attempt to be at center
             double pidOut = pidController.calculate(
-                getDegrees(), Constants.TURRET_CENTER_ROT);
+                    getDegrees(), Constants.TURRET_CENTER_ROT);
             changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
         } else {
             changeRequest = 0;
@@ -165,19 +166,15 @@ public class Turret extends TorqueSubsystem {
     private boolean checkOver() {
         // if encoder is over limit (left / right)
         // encoderCorrecting = true;
-        if (getDegrees() >
-            EncoderOverStatus.TORIGHT
+        if (getDegrees() > EncoderOverStatus.TORIGHT
                 .getOverPosition()) { // if the turret is over the right
                                       // degree limit (190)
-            encoderOverStatus =
-                EncoderOverStatus.TORIGHT; // turret resets to -160
+            encoderOverStatus = EncoderOverStatus.TORIGHT; // turret resets to -160
             return true;
-        } else if (getDegrees() <
-                   EncoderOverStatus.TOLEFT
-                       .getOverPosition()) { // if the turret is over te
-                                             // left degree limit (-190)
-            encoderOverStatus =
-                EncoderOverStatus.TOLEFT; // turret resets to 160
+        } else if (getDegrees() < EncoderOverStatus.TOLEFT
+                .getOverPosition()) { // if the turret is over te
+                                      // left degree limit (-190)
+            encoderOverStatus = EncoderOverStatus.TOLEFT; // turret resets to 160
             return true;
         }
         return false;
@@ -199,16 +196,14 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public void updateSmartDashboard() {
-        SmartDashboard.putNumber("rotatorPosDeg", getDegrees());
-        SmartDashboard.putNumber("changeRequest", changeRequest);
-        SmartDashboard.putString("encoderOver", encoderOverStatus.name());
+        SmartDashboard.putNumber("Turret Position", getDegrees());
         SmartDashboard.putNumber("Turret Voltage", changeRequest);
     }
 
     @Override
     public void output() {
         rotator.setVoltage(Math.signum(changeRequest) *
-                           Math.min(Math.abs(changeRequest), maxVoltage));
+                Math.min(Math.abs(changeRequest), maxVoltage));
     }
 
     public static Turret getInstance() {

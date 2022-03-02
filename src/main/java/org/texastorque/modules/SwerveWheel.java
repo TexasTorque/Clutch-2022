@@ -25,11 +25,9 @@ public class SwerveWheel {
     private static final double m = 4096;
 
     // PID
-    private static final KPID drivePID =
-        new KPID(Constants.DRIVE_Kp, Constants.DRIVE_Ki, Constants.DRIVE_Kd,
-                 Constants.DRIVE_Kf, -1, 1);
-    private static final PIDController rotatePID =
-        new PIDController(.008, 0, 0);
+    private static final KPID drivePID = new KPID(Constants.DRIVE_Kp, Constants.DRIVE_Ki, Constants.DRIVE_Kd,
+            Constants.DRIVE_Kf, -1, 1);
+    private static final PIDController rotatePID = new PIDController(.008, 0, 0);
 
     // Convertions
     private static final double degreeToEncoder = m / 180.0;
@@ -47,7 +45,7 @@ public class SwerveWheel {
 
         rotatePID.enableContinuousInput(-180, 180);
         rotate.configureSupplyLimit(
-            new SupplyCurrentLimitConfiguration(true, 25, 30, 1));
+                new SupplyCurrentLimitConfiguration(true, 25, 30, 1));
     }
 
     /**
@@ -71,8 +69,8 @@ public class SwerveWheel {
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
-            getRotation());
+                drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
+                getRotation());
     }
 
     /**
@@ -82,36 +80,39 @@ public class SwerveWheel {
      */
     public double metersPerSecondToEncoderPerSecond(double metersPerSecond) {
         return 4 * (30.0 * metersPerSecond) /
-            (Math.PI * Constants.DRIVE_WHEEL_RADIUS_METERS);
+                (Math.PI * Constants.DRIVE_WHEEL_RADIUS_METERS);
     }
 
     public void setDesiredState(SwerveModuleState desiredState) {
         // desiredState.angle.times(-1);
-        SwerveModuleState state =
-            SwerveModuleState.optimize(desiredState, getRotation());
-
+        SwerveModuleState state = SwerveModuleState.optimize(desiredState, getRotation());
+        if (id == 0) {
+            SmartDashboard.putNumber("rot", getRotation().getDegrees());
+        }
         if (DriverStation.isTeleop()) {
             drive.set(state.speedMetersPerSecond * -1 /
-                      Constants.DRIVE_MAX_SPEED_METERS);
+                    Constants.DRIVE_MAX_SPEED_METERS);
         } else {
             double en = -drive.velocityMetersToEncoder(
-                Constants.DRIVE_WHEEL_RADIUS_METERS,
-                state.speedMetersPerSecond);
+                    Constants.DRIVE_WHEEL_RADIUS_METERS,
+                    state.speedMetersPerSecond);
             if (id == 0) {
                 SmartDashboard.putNumber(id + "en", en);
                 SmartDashboard.putNumber(id + "speed",
-                                         state.speedMetersPerSecond);
+                        state.speedMetersPerSecond);
                 SmartDashboard.putNumber(
-                    id + "real", drive.getVelocityMeters(
-                                     Constants.DRIVE_WHEEL_RADIUS_METERS));
+                        id + "real", drive.getVelocityMeters(
+                                Constants.DRIVE_WHEEL_RADIUS_METERS));
             }
             drive.set(en, ControlType.kVelocity);
         }
 
         double requestedRotate = TorqueMathUtil.constrain(
-            rotatePID.calculate(fromEncoder(rotate.getPosition()),
-                                state.angle.getDegrees()),
-            -1, 1);
+                rotatePID.calculate(fromEncoder(rotate.getPosition()),
+                        state.angle.getDegrees()),
+                -1, 1);
+        if (id == 0)
+            SmartDashboard.putNumber("req rotate output", requestedRotate);
         rotate.set(requestedRotate);
     }
 }

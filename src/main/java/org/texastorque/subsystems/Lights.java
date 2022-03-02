@@ -21,14 +21,14 @@ public class Lights extends TorqueSubsystem {
     private volatile static Lights instance = null;
 
     public static enum LightMode {
-        NO_LIGHTS(false, false, false),  // 000, Nothing
-        RED_TELEOP(false, false, true),  // 001, Solid red
+        NO_LIGHTS(false, false, false), // 000, Nothing
+        RED_TELEOP(false, false, true), // 001, Solid red
         BLUE_TELEOP(false, true, false), // 010, Solid blue
-        TARGET_LOCK(false, true, true),  // 011, Solid green
-        ENDGAME(true, false, false),     // 100, Strobe rainbow
-        SHOOTING(true, false, true),     // 101, Flash green
-        RED_AUTO(true, true, false),     // 110, Flash red
-        BLUE_AUTO(true, true, true);     // 111, Flash blue
+        TARGET_LOCK(false, true, true), // 011, Solid green
+        ENDGAME(true, false, false), // 100, Strobe rainbow
+        SHOOTING(true, false, true), // 101, Flash green
+        RED_AUTO(true, true, false), // 110, Flash red
+        BLUE_AUTO(true, true, true); // 111, Flash blue
 
         private final boolean a;
         private final boolean b;
@@ -40,11 +40,17 @@ public class Lights extends TorqueSubsystem {
             this.c = c;
         }
 
-        public boolean getA() { return this.a; }
+        public boolean getA() {
+            return this.a;
+        }
 
-        public boolean getB() { return this.b; }
+        public boolean getB() {
+            return this.b;
+        }
 
-        public boolean getC() { return this.c; }
+        public boolean getC() {
+            return this.c;
+        }
     }
 
     DigitalOutput a;
@@ -68,19 +74,19 @@ public class Lights extends TorqueSubsystem {
 
     public void resetTeleop() {
         this.setLightMode(State.getInstance().getAllianceColor().isRed()
-                              ? LightMode.RED_TELEOP
-                              : LightMode.BLUE_TELEOP);
+                ? LightMode.RED_TELEOP
+                : LightMode.BLUE_TELEOP);
     }
 
     public void resetAuto() {
         this.setLightMode(State.getInstance().getAllianceColor().isRed()
-                              ? LightMode.RED_AUTO
-                              : LightMode.BLUE_AUTO);
+                ? LightMode.RED_AUTO
+                : LightMode.BLUE_AUTO);
     }
 
     @Override
     public void updateTeleop() {
-        if (Feedback.getInstance().isTurretAlligned())
+        if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
             this.setLightMode(LightMode.TARGET_LOCK);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
             this.setLightMode(LightMode.SHOOTING);
@@ -93,7 +99,7 @@ public class Lights extends TorqueSubsystem {
 
     @Override
     public void updateAuto() {
-        if (Feedback.getInstance().isTurretAlligned())
+        if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
             this.setLightMode(LightMode.TARGET_LOCK);
         else if (AutoInput.getInstance().getFlywheelSpeed() != 0)
             this.setLightMode(LightMode.SHOOTING);
@@ -102,7 +108,8 @@ public class Lights extends TorqueSubsystem {
     }
 
     @Override
-    public void updateFeedbackTeleop() {}
+    public void updateFeedbackTeleop() {
+    }
 
     // Use this instead of just the variable!
     public void setLightMode(LightMode lightMode) {
@@ -123,7 +130,8 @@ public class Lights extends TorqueSubsystem {
     }
 
     @Override
-    public void updateSmartDashboard() {}
+    public void updateSmartDashboard() {
+    }
 
     @Override
     public void disable() {

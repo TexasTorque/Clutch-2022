@@ -21,9 +21,13 @@ public class Climber extends TorqueSubsystem {
 
         private final int direction;
 
-        ClimberDirection(int direction) { this.direction = direction; }
+        ClimberDirection(int direction) {
+            this.direction = direction;
+        }
 
-        public int getDirection() { return direction; }
+        public int getDirection() {
+            return direction;
+        }
     }
 
     private TorqueSparkMax left;
@@ -46,10 +50,10 @@ public class Climber extends TorqueSubsystem {
             return;
         }
         double climberSpeeds = Input.getInstance()
-                                   .getClimberInput()
-                                   .getDirection()
-                                   .getDirection() *
-                               Constants.CLIMBER_SPEED;
+                .getClimberInput()
+                .getDirection()
+                .getDirection() *
+                Constants.CLIMBER_SPEED;
         if (Input.getInstance().getClimberInput().runLeft) {
             climberSpeedsLeft = Constants.CLIMBER_SPEED * .3;
         } else if (Input.getInstance().getClimberInput().runRight) {
@@ -65,8 +69,7 @@ public class Climber extends TorqueSubsystem {
 
             if (right.getPosition() < Constants.CLIMBER_RIGHT_LIMIT_HIGH) {
                 climberSpeedsRight = Math.max(climberSpeeds, 0);
-            } else if (right.getPosition() >
-                       Constants.CLIMBER_RIGHT_LIMIT_LOW) {
+            } else if (right.getPosition() > Constants.CLIMBER_RIGHT_LIMIT_LOW) {
                 climberSpeedsRight = Math.min(climberSpeeds, 0);
             } else {
                 climberSpeedsRight = climberSpeeds;
@@ -76,10 +79,8 @@ public class Climber extends TorqueSubsystem {
 
     public void updateAssist() {
 
-        double climberLeftSetpoint =
-            AutoInput.getInstance().getClimberLeftSetpoint();
-        double climberRightSetpoint =
-            AutoInput.getInstance().getClimberRightSetpoint();
+        double climberLeftSetpoint = AutoInput.getInstance().getClimberLeftSetpoint();
+        double climberRightSetpoint = AutoInput.getInstance().getClimberRightSetpoint();
 
         if (climberLeftSetpoint > left.getPosition()) {
             climberSpeedsLeft = -Constants.CLIMBER_SPEED; // need to go up
@@ -98,9 +99,9 @@ public class Climber extends TorqueSubsystem {
     public void updateFeedbackTeleop() {
 
         Feedback.getInstance().getClimberFeedback().setLeftPosition(
-            left.getPosition());
+                left.getPosition());
         Feedback.getInstance().getClimberFeedback().setRightPosition(
-            right.getPosition());
+                right.getPosition());
     }
 
     @Override

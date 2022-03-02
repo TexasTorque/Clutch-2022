@@ -42,18 +42,18 @@ public class Constants {
     public static final double FLYWHEEL_Ka = 0.042938;
     public static final double FLYWHEEL_Ks = 0.034329;
     public static final double FLYWHEEL_Kp = 0.0003;
-    public static final double FLYWHEEL_Ki = 0.0000006;
+    public static final double FLYWHEEL_Ki = 0.0000009;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00026;
+    public static final double FLYWHEEL_Kf = 0.00028;
     public static final double FLYWHEEL_Iz = 100;
     public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 50;
+    public static final double HOOD_MAX = 24;
     public static final double SHOOTER_ERROR = 15;
 
     // Climber
     public static final double CLIMBER_SPEED = 1;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 345;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -345;
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 350;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -350;
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
     // 63:1 gear ratio
@@ -65,8 +65,9 @@ public class Constants {
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;
-    public static final double TURRET_RATIO = 192.708; // to 1
-    public static final double TURRET_CENTER_ROT = -30; // 30 degrees center
+    public static final double TURRET_RATIO = 128.4722; // to 1
+    public static final double TURRET_CENTER_ROT = 0; // 30 degrees center
+    public static final double TURRET_BACK_ROT = -180;
     public static final double TOLERANCE_DEGREES = .7;
 
     // Information
@@ -93,4 +94,8 @@ public class Constants {
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 42.5;
+    public static final double HOOD_Kp = 0.1;
+    public static final double HOOD_Ki = 0.001;
+    public static final double HOOD_kd = 0;
+    public static final double HOOD_Iz = .3;
 }

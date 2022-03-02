@@ -202,6 +202,7 @@ public class Input extends TorqueInputManager {
     }
 
     public class IntakeInput extends TorqueInput {
+        private TorqueToggle toggleLifted = new TorqueToggle();
         private IntakePosition liftedPosition = IntakePosition.PRIME;
 
         private IntakeDirection direction = IntakeDirection.STOPPED;
@@ -212,6 +213,9 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
+            toggleLifted.calc(driver.getBButton());
+            liftedPosition = toggleLifted.get() ? IntakePosition.PRIME : IntakePosition.UP;
+
             if (driver.getRightTrigger())
                 direction = IntakeDirection.INTAKE;
             else if (driver.getLeftTrigger())
@@ -343,17 +347,17 @@ public class Input extends TorqueInputManager {
 
             // Layup
             else if (driver.getYButton()) {
-                setRawValues(1600, 0);
+                setRawValues(1600, Constants.HOOD_MIN);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad
             else if (driver.getAButton()) {
-                setRawValues(2300, 50);
+                setRawValues(2300, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Tarmac
             else if (driver.getBButton()) {
-                setRawValues(2000, 50);
+                setRawValues(2000, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
             else
@@ -416,8 +420,8 @@ public class Input extends TorqueInputManager {
         public double regressionHood(double distance) {
             // past 1.9, just do max
             if (distance > 1.9)
-                return 50;
-            return TorqueMathUtil.constrain(22.87 * distance - 3.914, 0, 50);
+                return Constants.HOOD_MAX;
+            return TorqueMathUtil.constrain(22.87 * distance - 3.914, Constants.HOOD_MIN, Constants.HOOD_MAX);
         }
     }
 

@@ -86,15 +86,14 @@ public class Turret extends TorqueSubsystem {
     }
 
     public void updateTeleop() {
-        if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
-            rotator.setPosition(Constants.TURRET_RATIO * -210. / 360.);
-            return;
-        }
+        // if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
+        //     rotator.setPosition(Constants.TURRET_RATIO * -210. / 360.);
+        //     return;
+        // }
 
 
         if (State.getInstance().getTurretState() == TurretState.ON) {
-            if (encoderOverStatus ==
-                EncoderOverStatus.OFF) { // turret is tracking tape
+            if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if (!checkOver() && !checkHoming()) {
                     double hOffset = Feedback.getInstance()
                                          .getLimelightFeedback()

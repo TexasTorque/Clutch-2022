@@ -336,14 +336,14 @@ public class Input extends TorqueInputManager {
                             .getLimelightFeedback()
                             .getDistance());
                 } else {
-                    setRawValues(1600, 0);
+                    setRawValues(1800, 0);
                 }
                 State.getInstance().setTurretState(TurretState.ON);
             }
 
             // Layup
             else if (driver.getYButton()) {
-                setRawValues(1600, 0);
+                setRawValues(1800, 0);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad

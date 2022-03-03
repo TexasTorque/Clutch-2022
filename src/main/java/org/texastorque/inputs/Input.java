@@ -480,6 +480,11 @@ public class Input extends TorqueInputManager {
         }
 
         @Override
+        public void smartDashboard() {
+            SmartDashboard.putBoolean("Climb Started", climbHasStarted);
+        }
+
+        @Override
         public void reset() {
         }
     }

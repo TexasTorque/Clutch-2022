@@ -19,14 +19,15 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
 
-    public static final double DRIVE_Ks = 0.37843;
-    public static final double DRIVE_Kv = 1.5423;
-    public static final double DRIVE_Ka = 1.5065;
-    public static final double DRIVE_Kp = 0.00004;
+    public static final double DRIVE_Ks = 0.22063;
+    public static final double DRIVE_Kv = 1.9995;
+    public static final double DRIVE_Ka = 0.55405;
+    public static final double DRIVE_Kp = 0.0004;
     public static final double DRIVE_Ki = 0.0001;
     public static final double DRIVE_Kd = 0;
     public static final double DRIVE_Kf = 0.0002;
     public static final double DRIVE_KIz = 0.2;
+    public static final double DRIVE_GEARING = 4.44;
 
     // Magazine
     public static final double MAGAZINE_BELT_SPEED = 1.;
@@ -42,12 +43,12 @@ public class Constants {
     public static final double FLYWHEEL_Ka = 0.042938;
     public static final double FLYWHEEL_Ks = 0.034329;
     public static final double FLYWHEEL_Kp = 0.0003;
-    public static final double FLYWHEEL_Ki = 0.0000009;
+    public static final double FLYWHEEL_Ki = 0.0000011;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00028;
+    public static final double FLYWHEEL_Kf = 0.00025;
     public static final double FLYWHEEL_Iz = 100;
     public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 24;
+    public static final double HOOD_MAX = 25;
     public static final double SHOOTER_ERROR = 15;
 
     // Climber
@@ -73,7 +74,7 @@ public class Constants {
     // Information
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
-    public static final double TOP_ACCELERATION_METERS = 2.5;
+    public static final double TOP_ACCELERATION_METERS = 2;
     public static final double MAX_ANGULAR_SPEED = 4 * Math.PI;
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI;
 

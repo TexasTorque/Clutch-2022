@@ -86,8 +86,8 @@ public class Input extends TorqueInputManager {
     public void update() {
         // rotateToBallToggle.calc(operator.getBButton());
         // rotateToBall.run(
-        //     intakeInput.getPosition() == IntakePosition.DOWN 
-        //     && rotateToBallToggle.get() && !climberInput.getClimbHasStarted()
+        // intakeInput.getPosition() == IntakePosition.DOWN
+        // && rotateToBallToggle.get() && !climberInput.getClimbHasStarted()
         // );
 
         climberToggle.calc(operator.getXButton());
@@ -149,8 +149,7 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void smartDashboard() {
-            SmartDashboard.putNumber("[Input]X Speed", xSpeed);
-            SmartDashboard.putNumber("[Input]Y Speed", ySpeed);
+            SmartDashboard.putNumber("Speed", xSpeeds.getSpeed());
         }
     }
 
@@ -304,8 +303,10 @@ public class Input extends TorqueInputManager {
         private boolean usingRegression = false;
         private double flywheel; // rpm
         private double hood; // degrees
+        private TorqueToggle xFactorToggle;
 
         public ShooterInput() {
+            xFactorToggle = new TorqueToggle(true);
         }
 
         public boolean isUsingRegression() {
@@ -325,12 +326,17 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean isFlywheelReady() {
-            return Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) 
-                    < Constants.SHOOTER_ERROR;
+            return Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
+        }
+
+        public boolean xFactor() {
+            return xFactorToggle.get() && flywheel != 0;
         }
 
         @Override
         public void update() {
+            xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
+
             // Regression
             if (driver.getXButton()) {
                 if (Feedback.getInstance()
@@ -346,20 +352,19 @@ public class Input extends TorqueInputManager {
 
             // Layup
             else if (driver.getYButton()) {
-                setRawValues(1600, Constants.HOOD_MIN);
+                setRawValues(1550, 5);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad (interferes w/ intake toggle)
             // else if (driver.getAButton()) {
-            //     setRawValues(2300, Constants.HOOD_MAX);
-            //     State.getInstance().setTurretState(TurretState.CENTER);
+            // setRawValues(2300, Constants.HOOD_MAX);
+            // State.getInstance().setTurretState(TurretState.CENTER);
             // }
             // Tarmac
             else if (driver.getAButton()) {
-                setRawValues(2000, Constants.HOOD_MAX);
+                setRawValues(1800, 21);
                 State.getInstance().setTurretState(TurretState.CENTER);
-            } 
-            else
+            } else
                 reset();
         }
 
@@ -408,7 +413,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((316.4 * distance) + 1240, 3000);
+            return TorqueMathUtil.constrain(149.2 * distance + 1389, 0, 3000);
         }
 
         /**
@@ -418,9 +423,8 @@ public class Input extends TorqueInputManager {
 
         public double regressionHood(double distance) {
             // past 1.9, just do max
-            if (distance > 1.9)
-                return Constants.HOOD_MAX;
-            return TorqueMathUtil.constrain(22.87 * distance - 3.914, Constants.HOOD_MIN, Constants.HOOD_MAX);
+            return TorqueMathUtil.constrain(-42.69 / Math.pow(distance + 1e-8, 4) + 23.49, Constants.HOOD_MIN,
+                    Constants.HOOD_MAX);
         }
     }
 
@@ -469,6 +473,11 @@ public class Input extends TorqueInputManager {
 
         public boolean hasClimbStarted() {
             return climbHasStarted;
+        }
+
+        @Override
+        public void smartDashboard() {
+            SmartDashboard.putBoolean("Climb Started", climbHasStarted);
         }
 
         @Override

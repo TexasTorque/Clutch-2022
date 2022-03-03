@@ -44,10 +44,9 @@ public class ShootAtTarget extends TorqueCommand {
     @Override
     protected void init() {
         distance = Feedback.getInstance().getLimelightFeedback().getDistance();
-        outputRPM =
-            Input.getInstance().getShooterInput().regressionRPM(distance);
+        outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
         AutoInput.getInstance().setFlywheelSpeed(outputRPM);
-        AutoInput.getInstance().setHoodPosition(50);
+        AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
         if (turretOn) {
             State.getInstance().setTurretState(TurretState.ON);
         } else {
@@ -61,8 +60,7 @@ public class ShootAtTarget extends TorqueCommand {
         if (!runMag) {
             // check if rpm is in range (+-x)
             if (Math.abs(outputRPM -
-                         Feedback.getInstance().getShooterFeedback().getRPM()) <
-                Constants.SHOOTER_ERROR) {
+                    Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR) {
                 // if so, launch magazine for x seconds
                 runMag = true;
                 startMagTime = Timer.getFPGATimestamp();

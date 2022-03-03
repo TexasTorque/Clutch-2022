@@ -355,17 +355,17 @@ public class Input extends TorqueInputManager {
 
             // Layup
             else if (driver.getYButton()) {
-                setRawValues(1600, Constants.HOOD_MIN);
+                setRawValues(1550, 5);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad
             else if (driver.getAButton()) {
-                setRawValues(2300, Constants.HOOD_MAX);
+                setRawValues(2200, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Tarmac
             else if (driver.getBButton()) {
-                setRawValues(2000, Constants.HOOD_MAX);
+                setRawValues(1800, 21);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
             else
@@ -417,7 +417,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((316.4 * distance) + 1240, 3000);
+            return TorqueMathUtil.constrain(149.2 * distance + 1389, 0, 3000);
         }
 
         /**
@@ -427,9 +427,8 @@ public class Input extends TorqueInputManager {
 
         public double regressionHood(double distance) {
             // past 1.9, just do max
-            if (distance > 1.9)
-                return Constants.HOOD_MAX;
-            return TorqueMathUtil.constrain(22.87 * distance - 3.914, Constants.HOOD_MIN, Constants.HOOD_MAX);
+            return TorqueMathUtil.constrain(-42.69 / Math.pow(distance + 1e-8, 4) + 23.49, Constants.HOOD_MIN,
+                    Constants.HOOD_MAX);
         }
     }
 

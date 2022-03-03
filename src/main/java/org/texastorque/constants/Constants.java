@@ -25,7 +25,7 @@ public class Constants {
     public static final double DRIVE_Kp = 0.0004;
     public static final double DRIVE_Ki = 0.0001;
     public static final double DRIVE_Kd = 0;
-    public static final double DRIVE_Kf = 0.0004;
+    public static final double DRIVE_Kf = 0.0002;
     public static final double DRIVE_KIz = 0.2;
     public static final double DRIVE_GEARING = 4.44;
 

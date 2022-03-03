@@ -148,8 +148,7 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void smartDashboard() {
-            SmartDashboard.putNumber("[Input]X Speed", xSpeed);
-            SmartDashboard.putNumber("[Input]Y Speed", ySpeed);
+            SmartDashboard.putNumber("Speed", xSpeeds.getSpeed());
         }
     }
 

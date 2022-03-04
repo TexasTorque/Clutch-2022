@@ -246,7 +246,7 @@ public class Input extends TorqueInputManager {
         private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
-        private TorqueToggle autoMag = new TorqueToggle(true);
+        private TorqueToggle autoMag = new TorqueToggle(false);
 
         public MagazineInput() {
         }
@@ -304,6 +304,8 @@ public class Input extends TorqueInputManager {
         private double flywheel; // rpm
         private double hood; // degrees
         private TorqueToggle xFactorToggle;
+        private int readyCounter = 0;
+        private final int readyCounterNeeded = 20;
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -326,7 +328,15 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean isFlywheelReady() {
-            return Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
+            if (Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR) {
+                readyCounter++;
+                if (readyCounter > readyCounterNeeded) {
+                    return true;
+                }
+            } else {
+                readyCounter = 0;
+            }
+            return false;
         }
 
         public boolean xFactor() {

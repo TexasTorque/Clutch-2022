@@ -33,7 +33,7 @@ public class Intake extends TorqueSubsystem {
     public static enum IntakePosition {
         UP(1.5),
         PRIME(4.4),
-        DOWN(8.14);
+        DOWN(8.6);
         // Intake setpoints
 
         private final double position;

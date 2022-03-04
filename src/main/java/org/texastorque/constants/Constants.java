@@ -45,11 +45,11 @@ public class Constants {
     public static final double FLYWHEEL_Kp = 0.0003;
     public static final double FLYWHEEL_Ki = 0.0000011;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00025;
-    public static final double FLYWHEEL_Iz = 100;
+    public static final double FLYWHEEL_Kf = 0.00023;
+    public static final double FLYWHEEL_Iz = 150;
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 25;
-    public static final double SHOOTER_ERROR = 15;
+    public static final double SHOOTER_ERROR = 30;
 
     // Climber
     public static final double CLIMBER_SPEED = 1;

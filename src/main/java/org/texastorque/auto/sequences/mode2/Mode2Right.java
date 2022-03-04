@@ -17,11 +17,11 @@ public class Mode2Right extends TorqueSequence {
     @Override
     protected void init() {
         // Start up mag
-        // addBlock(new TorqueBlock(
-        // new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+        addBlock(new TorqueBlock(
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Shoot
-        // addBlock(new TorqueBlock(new ShootAtTarget()));
+        addBlock(new TorqueBlock(new ShootAtTarget()));
 
         // Taxi
         addBlock(new TorqueBlock(new Pathplanner("Mode2Right")));

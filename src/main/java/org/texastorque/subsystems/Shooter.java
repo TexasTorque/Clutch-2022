@@ -34,13 +34,14 @@ public class Shooter extends TorqueSubsystem {
                         Constants.FLYWHEEL_Kd, Constants.FLYWHEEL_Kf, 0, 1));
         flywheel.configureIZone(Constants.FLYWHEEL_Iz);
 
-        hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
-        hood.invertPolarity(true);
-        hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -1, 1));
-        hood.configureIZone(Constants.HOOD_Iz);
+        // hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
+        // hood.invertPolarity(true);
+        // hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki,
+        // Constants.HOOD_kd, 0, -.5, .5));
+        // hood.configureIZone(Constants.HOOD_Iz);
 
-        SmartDashboard.putNumber("RPMSET", 0);
-        SmartDashboard.putNumber("HOODSET", 0);
+        // SmartDashboard.putNumber("RPMSET", 0);
+        // SmartDashboard.putNumber("HOODSET", 0);
     }
 
     @Override
@@ -64,8 +65,8 @@ public class Shooter extends TorqueSubsystem {
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(
                 flywheel.getVelocity());
-        Feedback.getInstance().getShooterFeedback().setHoodPosition(
-                hood.getPosition());
+        // Feedback.getInstance().getShooterFeedback().setHoodPosition(
+        // hood.getPosition());
     }
 
     @Override
@@ -75,7 +76,8 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void output() {
-        hood.set(TorqueMathUtil.constrain(hoodPosition, Constants.HOOD_MIN, Constants.HOOD_MAX), ControlType.kPosition);
+        // hood.set(TorqueMathUtil.constrain(hoodPosition, Constants.HOOD_MIN,
+        // Constants.HOOD_MAX), ControlType.kPosition);
         flywheel.set(flywheelSetpoint, ControlType.kVelocity);
     }
 
@@ -86,7 +88,7 @@ public class Shooter extends TorqueSubsystem {
                 this.flywheelSetpoint);
         SmartDashboard.putNumber("[Shooter]Flywheel Volt",
                 flywheel.getOutputCurrent());
-        SmartDashboard.putNumber("[Shooter] Hood Position", hood.getPosition());
+        // SmartDashboard.putNumber("[Shooter] Hood Position", hood.getPosition());
     }
 
     public static synchronized Shooter getInstance() {

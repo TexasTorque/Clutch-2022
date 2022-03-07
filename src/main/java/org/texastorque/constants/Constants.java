@@ -25,7 +25,7 @@ public class Constants {
     public static final double DRIVE_Kp = 0.0004;
     public static final double DRIVE_Ki = 0.0001;
     public static final double DRIVE_Kd = 0;
-    public static final double DRIVE_Kf = 0.0002;
+    public static final double DRIVE_Kf = 0.0004;
     public static final double DRIVE_KIz = 0.2;
     public static final double DRIVE_GEARING = 4.44;
 
@@ -45,7 +45,7 @@ public class Constants {
     public static final double FLYWHEEL_Kp = 0.0003;
     public static final double FLYWHEEL_Ki = 0.0000011;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00023;
+    public static final double FLYWHEEL_Kf = 0.00024;
     public static final double FLYWHEEL_Iz = 150;
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 25;
@@ -53,8 +53,8 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = 1;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 350;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -350;
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 338;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -327;
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
     // 63:1 gear ratio
@@ -79,15 +79,15 @@ public class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Math.PI;
 
     // Path Planner
-    public static final double PATH_PLANNER_X_P = 1;
+    public static final double PATH_PLANNER_X_P = 2;
     public static final double PATH_PLANNER_X_I = 0;
     public static final double PATH_PLANNER_X_D = 0;
 
-    public static final double PATH_PLANNER_Y_P = 1;
+    public static final double PATH_PLANNER_Y_P = 2;
     public static final double PATH_PLANNER_Y_I = 0;
     public static final double PATH_PLANNER_Y_D = 0;
 
-    public static final double PATH_PLANNER_R_P = 8;
+    public static final double PATH_PLANNER_R_P = 6;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 

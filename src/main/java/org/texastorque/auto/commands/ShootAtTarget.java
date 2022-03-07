@@ -43,10 +43,13 @@ public class ShootAtTarget extends TorqueCommand {
 
     @Override
     protected void init() {
-        distance = Feedback.getInstance().getLimelightFeedback().getDistance();
-        outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+        // distance = Feedback.getInstance().getLimelightFeedback().getDistance();
+        // outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+        // AutoInput.getInstance().setFlywheelSpeed(outputRPM);
+        // AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
+        outputRPM = 1500;
+
         AutoInput.getInstance().setFlywheelSpeed(outputRPM);
-        AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
         if (turretOn) {
             State.getInstance().setTurretState(TurretState.ON);
         } else {

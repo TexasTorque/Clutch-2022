@@ -67,12 +67,28 @@ public class Climber extends TorqueSubsystem {
                 climberSpeedsLeft = climberSpeeds;
             }
 
+            if (Math.abs(Constants.CLIMBER_LEFT_LIMIT_HIGH - left.getPosition()) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PUSH) {
+                climberSpeedsLeft *= .5;
+            } else if (Math.abs(Constants.CLIMBER_LEFT_LIMIT_LOW - left.getPosition()) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
+                climberSpeedsLeft *= .5;
+            }
+
             if (right.getPosition() < Constants.CLIMBER_RIGHT_LIMIT_HIGH) {
                 climberSpeedsRight = Math.max(climberSpeeds, 0);
             } else if (right.getPosition() > Constants.CLIMBER_RIGHT_LIMIT_LOW) {
                 climberSpeedsRight = Math.min(climberSpeeds, 0);
             } else {
                 climberSpeedsRight = climberSpeeds;
+            }
+
+            if (Math.abs(right.getPosition() - Constants.CLIMBER_RIGHT_LIMIT_HIGH) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PUSH) {
+                climberSpeedsRight *= .5;
+            } else if (Math.abs(Constants.CLIMBER_RIGHT_LIMIT_LOW - right.getPosition()) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
+                climberSpeedsRight *= .5;
             }
         }
     }

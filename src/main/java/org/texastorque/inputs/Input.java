@@ -256,6 +256,8 @@ public class Input extends TorqueInputManager {
             autoMag.calc(operator.getAButton());
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
+            else if (operator.getLeftBumper())
+                gateDirection = GateSpeeds.CLOSED;
             // If we are asking to shoot and the flywheel is reved and the
             // turret is locked
             else if (shooterInput.getFlywheel() != 0 &&
@@ -349,20 +351,22 @@ public class Input extends TorqueInputManager {
 
             // Regression
             if (driver.getXButton()) {
-                if (Feedback.getInstance()
-                        .getLimelightFeedback()
-                        .getTaOffset() > 0) {
-                    setFromDist(Feedback.getInstance()
-                            .getLimelightFeedback()
-                            .getDistance());
-                } else
-                    setRawValues(1600, Constants.HOOD_MIN);
+                setRawValues(1900, 0);
                 State.getInstance().setTurretState(TurretState.ON);
+                // if (Feedback.getInstance()
+                // .getLimelightFeedback()
+                // .getTaOffset() > 0) {
+                // setFromDist(Feedback.getInstance()
+                // .getLimelightFeedback()
+                // .getDistance());
+                // } else
+                // setRawValues(1600, Constants.HOOD_MIN);
+                // State.getInstance().setTurretState(TurretState.ON);
             }
 
             // Layup
             else if (driver.getYButton()) {
-                setRawValues(1550, 5);
+                setRawValues(1500, 0);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad (interferes w/ intake toggle)
@@ -372,7 +376,7 @@ public class Input extends TorqueInputManager {
             // }
             // Tarmac
             else if (driver.getAButton()) {
-                setRawValues(1800, 21);
+                setRawValues(1900, 0);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } else
                 reset();
@@ -423,7 +427,8 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain(149.2 * distance + 1389, 0, 3000);
+            // return TorqueMathUtil.constrain(149.2 * distance + 1389, 0, 3000);
+            return TorqueMathUtil.constrain(-.2014 * (1 - Math.exp(2.133 * (distance + 1e-8))) + 1664, 0, 3000);
         }
 
         /**
@@ -433,7 +438,7 @@ public class Input extends TorqueInputManager {
 
         public double regressionHood(double distance) {
             // past 1.9, just do max
-            return TorqueMathUtil.constrain(-42.69 / Math.pow(distance + 1e-8, 4) + 23.49, Constants.HOOD_MIN,
+            return TorqueMathUtil.constrain(94.57 * (1 - Math.exp(-1.350 * distance)) - 69.99 - 4, Constants.HOOD_MIN,
                     Constants.HOOD_MAX);
         }
     }

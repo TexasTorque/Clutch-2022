@@ -25,8 +25,8 @@ public class Turret extends TorqueSubsystem {
 
     enum EncoderOverStatus {
         OFF,
-        TOLEFT(-90, 75),
-        TORIGHT(90, -75),
+        TOLEFT(-95, 75),
+        TORIGHT(95, -75),
         HOMING;
         /*
          * Think of these like states of the turret
@@ -87,7 +87,6 @@ public class Turret extends TorqueSubsystem {
 
     public Turret() {
         rotator.setPosition(Constants.TURRET_RATIO * -90. / 360.);
-
         SmartDashboard.putData("Rpid", pidController);
     }
 

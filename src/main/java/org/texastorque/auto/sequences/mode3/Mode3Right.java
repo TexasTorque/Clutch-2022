@@ -18,8 +18,8 @@ public class Mode3Right extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-            new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Run path
         addBlock(new TorqueBlock(new Pathplanner("Mode3Right")));
@@ -29,7 +29,7 @@ public class Mode3Right extends TorqueSequence {
 
         // Shut off
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
-            new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

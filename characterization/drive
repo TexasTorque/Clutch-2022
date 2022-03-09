@@ -3,7 +3,7 @@
   "encoder type": "Encoder Port",
   "encoding": false,
   "gearing denominator": 1.0,
-  "gearing numerator": 4.44,
+  "gearing numerator": 5.3333,
   "gyro": "NavX",
   "gyro ctor": "SPI (MXP)",
   "is drivetrain": true,

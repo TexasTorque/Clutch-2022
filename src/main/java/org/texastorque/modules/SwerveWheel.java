@@ -2,11 +2,14 @@ package org.texastorque.modules;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.torquelib.component.TorqueSparkMax;
@@ -23,10 +26,22 @@ public class SwerveWheel {
         // Values
         private final int id;
         private static final double m = 4096;
+        private double lastSpeed = 0;
+        private double lastTime = Timer.getFPGATimestamp();
 
         // PID
-        private static final KPID drivePID = new KPID(Constants.DRIVE_Kp, Constants.DRIVE_Ki, Constants.DRIVE_Kd,
-                        Constants.DRIVE_Kf, -1, 1);
+        private static final KPID drivePIDLeft = new KPID(Constants.DRIVE_LEFT_Kp, Constants.DRIVE_LEFT_Ki,
+                        Constants.DRIVE_LEFT_Kd,
+                        0, -1, 1);
+        private static final SimpleMotorFeedforward driveFeedforwardLeft = new SimpleMotorFeedforward(
+                        Constants.DRIVE_LEFT_Ks, Constants.DRIVE_LEFT_Kv, Constants.DRIVE_LEFT_Ka);
+
+        private static final KPID drivePIDRight = new KPID(Constants.DRIVE_RIGHT_Kp, Constants.DRIVE_RIGHT_Ki,
+                        Constants.DRIVE_RIGHT_Kd,
+                        0, -1, 1);
+        private static final SimpleMotorFeedforward driveFeedforwardRight = new SimpleMotorFeedforward(
+                        Constants.DRIVE_RIGHT_Ks, Constants.DRIVE_RIGHT_Kv, Constants.DRIVE_RIGHT_Ka);
+
         private static final PIDController rotatePID = new PIDController(.008, 0, 0);
 
         // Convertions
@@ -39,8 +54,17 @@ public class SwerveWheel {
                 drive = new TorqueSparkMax(portTrans);
                 rotate = new TorqueTalon(portRot);
 
-                drive.configurePID(drivePID);
+                if (isLeft()) {
+                        drive.configurePID(drivePIDLeft);
+                } else {
+                        drive.configurePID(drivePIDRight);
+                }
+
                 drive.configureIZone(Constants.DRIVE_KIz);
+                drive.configureSmartMotion(metersPerSecondToEncoderPerMinute(Constants.TOP_SPEED_METERS),
+                                metersPerSecondToEncoderPerMinute(Constants.DRIVE_MINIMUM_VELOCITY),
+                                metersPerSecondToEncoderPerMinute(Constants.TOP_ACCELERATION_METERS),
+                                metersPerSecondToEncoderPerMinute(Constants.DRIVE_ALLOWED_ERROR), 0);
                 drive.setSupplyLimit(40); // Amperage supply limit
 
                 rotatePID.enableContinuousInput(-180, 180);
@@ -69,40 +93,72 @@ public class SwerveWheel {
 
         public SwerveModuleState getState() {
                 return new SwerveModuleState(
-                                drive.getVelocityMeters(Constants.DRIVE_WHEEL_RADIUS_METERS),
+                                encoderPerMinuteToMetersPerSecond(drive.getVelocity()),
                                 getRotation());
         }
 
-        // /**
-        // *
-        // * @param metersPerSecond Speed in meters per second
-        // * @return Speed in encoder per second
-        // */
-        // public double metersPerSecondToEncoderPerSecond(double metersPerSecond) {
-        // return 4 * (30.0 * metersPerSecond) /
-        // (Math.PI * Constants.DRIVE_WHEEL_RADIUS_METERS);
-        // }
+        /**
+         *
+         * @param metersPerSecond Speed in meters per second
+         * @return Speed in encoder rotations per minute
+         */
+        public double metersPerSecondToEncoderPerMinute(double metersPerSecond) {
+                return metersPerSecond * (60. / 1.) * (1 / (2 * Math.PI * Constants.DRIVE_WHEEL_RADIUS_METERS))
+                                * (1. / Constants.DRIVE_GEARING);
+        }
+
+        /**
+         *
+         * @param encodersPerMinute Speed in encoder rotations per minute
+         * @return Speed in meters per second
+         */
+        public double encoderPerMinuteToMetersPerSecond(double encodersPerMinute) {
+                return encodersPerMinute * (1. / 60.) * (2 * Math.PI * Constants.DRIVE_WHEEL_RADIUS_METERS / 1.)
+                                * (Constants.DRIVE_GEARING / 1.);
+        }
+
+        /**
+         * 
+         * @return If the swerve module is on the left side
+         */
+        private boolean isLeft() {
+                return id == 0 || id == 2;
+        }
 
         public void setDesiredState(SwerveModuleState desiredState) {
-                // desiredState.angle.times(-1);
                 SwerveModuleState state = SwerveModuleState.optimize(desiredState, getRotation());
-
+                if (id == 0) {
+                        SmartDashboard.putNumber("speedDist", drive.getPosition());
+                }
                 if (DriverStation.isTeleop()) {
                         drive.set(state.speedMetersPerSecond * -1 /
                                         Constants.DRIVE_MAX_SPEED_METERS);
                 } else {
-                        double en = -drive.velocityMetersToEncoder(
-                                        Constants.DRIVE_WHEEL_RADIUS_METERS,
-                                        state.speedMetersPerSecond);
+                        double t = Timer.getFPGATimestamp();
+                        double dt = t - lastTime;
+
+                        double en = -metersPerSecondToEncoderPerMinute(state.speedMetersPerSecond);
                         if (id == 0) {
                                 SmartDashboard.putNumber(id + "en", en);
                                 SmartDashboard.putNumber(id + "speed",
                                                 state.speedMetersPerSecond);
                                 SmartDashboard.putNumber(
-                                                id + "real", drive.getVelocityMeters(
-                                                                Constants.DRIVE_WHEEL_RADIUS_METERS));
+                                                id + "real", encoderPerMinuteToMetersPerSecond(drive.getVelocity()));
                         }
-                        drive.set(en, ControlType.kVelocity);
+                        if (isLeft()) {
+                                drive.setWithFF(en, ControlType.kSmartVelocity, 0,
+                                                -driveFeedforwardLeft.calculate(
+                                                                lastSpeed, state.speedMetersPerSecond, dt),
+                                                ArbFFUnits.kVoltage);
+                        } else {
+                                drive.setWithFF(en, ControlType.kSmartVelocity, 0,
+                                                -driveFeedforwardRight.calculate(lastSpeed, state.speedMetersPerSecond,
+                                                                dt),
+                                                ArbFFUnits.kVoltage);
+
+                        }
+                        lastTime = t;
+                        lastSpeed = state.speedMetersPerSecond;
                 }
 
                 double requestedRotate = TorqueMathUtil.constrain(

@@ -37,6 +37,7 @@ public class Lights extends TorqueSubsystem {
 
         last = Timer.getFPGATimestamp();
         flashState = false;
+        rainbowHue = 0;
 
         defaultTeleop();
     }

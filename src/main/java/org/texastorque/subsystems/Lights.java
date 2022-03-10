@@ -1,138 +1,133 @@
 package org.texastorque.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.texastorque.constants.Constants;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.constants.Ports;
 import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
-import org.texastorque.subsystems.Magazine.BeltDirections;
-import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.component.TorqueSparkMax;
 
 /**
- * Replacment for ArduinoInterface using continuous
- * update loop.
+ * Controls the LEDs on the robot using the AddressableLED
+ * API. If we add more lights, we can make a TorqueLib
+ * abstraction to manage that better.
+ * 
+ * @author Justus, Omar, Jacob
  */
 public class Lights extends TorqueSubsystem {
+
     private volatile static Lights instance = null;
 
-    public static enum LightMode {
-        NO_LIGHTS(false, false, false), // 000, Nothing
-        RED_TELEOP(false, false, true), // 001, Solid red
-        BLUE_TELEOP(false, true, false), // 010, Solid blue
-        TARGET_LOCK(false, true, true), // 011, Solid green
-        ENDGAME(true, false, false), // 100, Strobe rainbow
-        SHOOTING(true, false, true), // 101, Flash green
-        RED_AUTO(true, true, false), // 110, Flash red
-        BLUE_AUTO(true, true, true); // 111, Flash blue
+    private AddressableLED leds;
+    private AddressableLEDBuffer buffer;
 
-        private final boolean a;
-        private final boolean b;
-        private final boolean c;
-
-        LightMode(boolean a, boolean b, boolean c) {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-        }
-
-        public boolean getA() {
-            return this.a;
-        }
-
-        public boolean getB() {
-            return this.b;
-        }
-
-        public boolean getC() {
-            return this.c;
-        }
-    }
-
-    DigitalOutput a;
-    DigitalOutput b;
-    DigitalOutput c;
-
-    private LightMode lightMode = LightMode.NO_LIGHTS;
-
-    // I was having bugs when i didn't check
-    // if the DIO had already been set, I think
-    // setting them too frequently breaks it
-    // - Jacob (blame me if it ends up being useless)
-    private boolean lightModeSet;
+    private double last;
+    private boolean flashState;
+    private int rainbowHue;
 
     private Lights() {
-        lightModeSet = false;
-        a = new DigitalOutput(Ports.ARDUINO_A);
-        b = new DigitalOutput(Ports.ARDUINO_B);
-        c = new DigitalOutput(Ports.ARDUINO_C);
+        leds = new AddressableLED(Ports.LIGHTS);
+        buffer = new AddressableLEDBuffer(59); // ?
+        leds.setLength(buffer.getLength());
+        leds.setData(buffer);
+        leds.start();
+
+        last = Timer.getFPGATimestamp();
+        flashState = false;
+
+        defaultTeleop();
     }
 
-    public void resetTeleop() {
-        // this.setLightMode(State.getInstance().getAllianceColor().isRed()
-        //         ? LightMode.RED_TELEOP
-        //         : LightMode.BLUE_TELEOP);
-
-        this.setLightMode(State.isRedAlliance()
-                ? LightMode.RED_TELEOP
-                : LightMode.BLUE_TELEOP);
+    /**
+     * Sets lights solid
+     * 
+     * @param r Red
+     * @param g Green
+     * @param b Blue 
+     */
+    private void setLights(int r, int g, int b) {
+        for (int i = 0; i < buffer.getLength(); i++)
+            buffer.setRGB(i, r, g, b);
     }
 
-    public void resetAuto() {
-        // this.setLightMode(State.getInstance().getAllianceColor().isRed()
-        //         ? LightMode.RED_AUTO
-        //         : LightMode.BLUE_AUTO);
+    /**
+     * Sets lights flashing based on the period
+     * 
+     * @param r Red
+     * @param g Green
+     * @param b Blue 
+     * @param period Time delay (seconds)
+     */
+    private void setLights(int r, int g, int b, double period) {
+        double now = Timer.getFPGATimestamp();
+        if (now - last > period) {
+            last = now;
+            flashState = !flashState;
+        }
 
-        this.setLightMode(State.isRedAlliance()
-                ? LightMode.RED_AUTO
-                : LightMode.BLUE_AUTO);
+        if (flashState)
+            setLights(r, g, b);
+        else
+            setLights(0, 0, 0);
+    }
+
+    /**
+     * fun function for an endgame rainbow effect
+     */
+    private void setRainbow() {
+        for (int i = 0; i < buffer.getLength(); i++)
+            buffer.setHSV(i, (rainbowHue + 
+                    (i * 180 / buffer.getLength())) % 180, 255, 128);
+        rainbowHue = (rainbowHue + 3) % 180;
     }
 
     @Override
     public void updateTeleop() {
         if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
-            this.setLightMode(LightMode.TARGET_LOCK);
+            // TARGET LOCK
+            setLights(0, 255, 0);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
-            this.setLightMode(LightMode.SHOOTING);
-        else if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-            System.out.println("set to endgame");
-            this.setLightMode(LightMode.ENDGAME);
-        } else
-            resetTeleop();
+            // SHOOTING
+            setLights(0, 255, 0, .25);
+        else if (Input.getInstance().getClimberInput().hasClimbStarted())
+            // ENDGAME RAINBOW
+            setRainbow();
+        else
+            defaultTeleop();
     }
 
     @Override
     public void updateAuto() {
         if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
-            this.setLightMode(LightMode.TARGET_LOCK);
+            // TARGET LOCK
+            setLights(0, 255, 0);
         else if (AutoInput.getInstance().getFlywheelSpeed() != 0)
-            this.setLightMode(LightMode.SHOOTING);
+            // SHOOTING
+            setLights(0, 255, 0, .25);
         else
-            resetAuto();
+            defaultAuto();
     }
 
-    @Override
-    public void updateFeedbackTeleop() {
+    public void defaultTeleop() {
+        if (State.isRedAlliance())
+            setLights(255, 0, 0);
+        else
+            setLights(0, 0, 255);
     }
 
-    // Use this instead of just the variable!
-    public void setLightMode(LightMode lightMode) {
-        if (this.lightMode != lightMode) {
-            this.lightMode = lightMode;
-            lightModeSet = false;
-        }
+    public void defaultAuto() {
+        if (State.isRedAlliance())
+            setLights(255, 0, 0, .25);
+        else
+            setLights(0, 0, 255, .25);
     }
 
     @Override
     public void output() {
-        if (!lightModeSet) {
-            
-            lightModeSet = true;
-        }
+        leds.setData(buffer);
     }
 
     @Override
@@ -142,7 +137,7 @@ public class Lights extends TorqueSubsystem {
     @Override
     public void disable() {
         // set lights to solid
-        resetTeleop();
+        defaultTeleop();
         output();
     }
 

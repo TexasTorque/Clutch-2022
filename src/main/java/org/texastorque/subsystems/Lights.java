@@ -73,13 +73,21 @@ public class Lights extends TorqueSubsystem {
     }
 
     public void resetTeleop() {
-        this.setLightMode(State.getInstance().getAllianceColor().isRed()
+        // this.setLightMode(State.getInstance().getAllianceColor().isRed()
+        //         ? LightMode.RED_TELEOP
+        //         : LightMode.BLUE_TELEOP);
+
+        this.setLightMode(State.isRedAlliance()
                 ? LightMode.RED_TELEOP
                 : LightMode.BLUE_TELEOP);
     }
 
     public void resetAuto() {
-        this.setLightMode(State.getInstance().getAllianceColor().isRed()
+        // this.setLightMode(State.getInstance().getAllianceColor().isRed()
+        //         ? LightMode.RED_AUTO
+        //         : LightMode.BLUE_AUTO);
+
+        this.setLightMode(State.isRedAlliance()
                 ? LightMode.RED_AUTO
                 : LightMode.BLUE_AUTO);
     }
@@ -122,9 +130,7 @@ public class Lights extends TorqueSubsystem {
     @Override
     public void output() {
         if (!lightModeSet) {
-            a.set(lightMode.getA());
-            b.set(lightMode.getB());
-            c.set(lightMode.getC());
+            
             lightModeSet = true;
         }
     }

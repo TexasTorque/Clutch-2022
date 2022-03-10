@@ -70,8 +70,8 @@ public class State {
         }
     }
 
-    public void fetchAllianceColorFromFMS() {
-        this.allianceColor = NetworkTableInstance.getDefault()
+    public static AllianceColor fetchAllianceColorFromFMS() {
+        return NetworkTableInstance.getDefault()
                 .getTable("FMSInfo")
                 .getEntry("IsRedAlliance")
                 .getBoolean(false)
@@ -79,11 +79,24 @@ public class State {
                         : AllianceColor.BLUE;
     }
 
-    public AllianceColor getAllianceColor() {
-        if (this.allianceColor == null)
-            fetchAllianceColorFromFMS();
-        return this.allianceColor;
+    public static boolean isRedAlliance() {
+        return fetchAllianceColorFromFMS().isRed();
     }
+
+    // public void fetchAllianceColorFromFMS() {
+    //     this.allianceColor = NetworkTableInstance.getDefault()
+    //             .getTable("FMSInfo")
+    //             .getEntry("IsRedAlliance")
+    //             .getBoolean(false)
+    //                     ? AllianceColor.RED
+    //                     : AllianceColor.BLUE;
+    // }
+
+    // public AllianceColor getAllianceColor() {
+    //     if (this.allianceColor == null)
+    //         fetchAllianceColorFromFMS();
+    //     return this.allianceColor;
+    // }
 
     public static enum AutoClimb {
         OFF, ON

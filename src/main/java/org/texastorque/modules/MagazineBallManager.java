@@ -42,11 +42,12 @@ public class MagazineBallManager {
      * @return If the magazine detects our enemy's ball
      */
     public boolean isEnemyAlliance() {
-        return state == MagazineState.BLUE &&
-            State.getInstance().getAllianceColor() == State.AllianceColor.RED ||
-            state == MagazineState.RED &&
-                State.getInstance().getAllianceColor() ==
-                    State.AllianceColor.BLUE;
+        return (state == MagazineState.BLUE 
+                && State.fetchAllianceColorFromFMS() 
+                == State.AllianceColor.RED) 
+                || (state == MagazineState.RED 
+                && State.fetchAllianceColorFromFMS() 
+                == State.AllianceColor.BLUE);
     }
 
     public MagazineState getMagazineState() { return state; }

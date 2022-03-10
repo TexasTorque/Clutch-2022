@@ -12,7 +12,6 @@ import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Lights;
-import org.texastorque.subsystems.Lights.LightMode;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.subsystems.Turret;

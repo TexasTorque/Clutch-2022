@@ -123,8 +123,8 @@ public class Feedback {
 
     public class LimelightFeedback extends TorqueFeedback {
         private NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
-        private NetworkTableEntry tx = limelightTable.getEntry("tx");
-        private NetworkTableEntry ty = limelightTable.getEntry("ty");
+        private NetworkTableEntry tx = limelightTable.getEntry("ty");
+        private NetworkTableEntry ty = limelightTable.getEntry("tx");
         private NetworkTableEntry ta = limelightTable.getEntry("ta");
 
         private double hOffset;
@@ -146,7 +146,7 @@ public class Feedback {
         @Override
         public void update() {
             hOffset = hMedian.calculate(tx.getDouble(0));
-            vOffset = vMedian.calculate(ty.getDouble(0));
+            vOffset = vMedian.calculate(-ty.getDouble(0));
             taOffset = taMedian.calculate(ta.getDouble(0));
             distance = calcDistance(vOffset);
         }

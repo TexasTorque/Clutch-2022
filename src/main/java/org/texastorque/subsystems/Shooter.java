@@ -17,7 +17,7 @@ public class Shooter extends TorqueSubsystem {
     private static volatile Shooter instance;
 
     private TorqueSparkMax flywheel;
-    private TorqueSparkMax hood;
+    private TorqueLinearServo hoodLeft, hoodRight;
 
     // setpoints grabbed from input
     private double hoodPosition;
@@ -34,25 +34,22 @@ public class Shooter extends TorqueSubsystem {
                         Constants.FLYWHEEL_Kd, Constants.FLYWHEEL_Kf, 0, 1));
         flywheel.configureIZone(Constants.FLYWHEEL_Iz);
 
-        // hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
-        // hood.invertPolarity(true);
-        // hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki,
-        // Constants.HOOD_kd, 0, -.5, .5));
-        // hood.configureIZone(Constants.HOOD_Iz);
+        hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 5);
+        hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 5);
 
-        // SmartDashboard.putNumber("RPMSET", 0);
-        // SmartDashboard.putNumber("HOODSET", 0);
+        SmartDashboard.putNumber("RPMSET", 0);
+        SmartDashboard.putNumber("HOODSET", 0);
     }
 
     @Override
     public void updateTeleop() {
 
         flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
-        // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
-        // hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
         hoodPosition = TorqueMathUtil.constrain(
                 Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
                 Constants.HOOD_MAX);
+        // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
+        // hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
     }
 
     @Override
@@ -65,8 +62,7 @@ public class Shooter extends TorqueSubsystem {
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(
                 flywheel.getVelocity());
-        // Feedback.getInstance().getShooterFeedback().setHoodPosition(
-        // hood.getPosition());
+        Feedback.getInstance().getShooterFeedback().setHoodPosition(hoodRight.get());
     }
 
     @Override
@@ -76,8 +72,8 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void output() {
-        // hood.set(TorqueMathUtil.constrain(hoodPosition, Constants.HOOD_MIN,
-        // Constants.HOOD_MAX), ControlType.kPosition);
+        hoodRight.setPosition(hoodPosition);
+        hoodLeft.setPosition(hoodPosition);
         flywheel.set(flywheelSetpoint, ControlType.kVelocity);
     }
 

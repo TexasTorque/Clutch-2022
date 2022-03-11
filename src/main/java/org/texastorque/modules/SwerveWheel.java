@@ -1,5 +1,6 @@
 package org.texastorque.modules;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
@@ -42,14 +43,16 @@ public class SwerveWheel {
         private static final SimpleMotorFeedforward driveFeedforwardRight = new SimpleMotorFeedforward(
                         Constants.DRIVE_RIGHT_Ks, Constants.DRIVE_RIGHT_Kv, Constants.DRIVE_RIGHT_Ka);
 
-        private static final PIDController rotatePID = new PIDController(.008, 0, 0);
+        private final PIDController rotatePID;
+        private final double Ks;
 
         // Convertions
         private static final double degreeToEncoder = m / 180.0;
         private static final double encoderToDegree = 180.0 / m;
 
-        public SwerveWheel(int id, int portTrans, int portRot) {
+        public SwerveWheel(int id, int portTrans, int portRot, PIDController rotatePID, double Ks) {
                 this.id = id;
+                this.Ks = Ks;
 
                 drive = new TorqueSparkMax(portTrans);
                 rotate = new TorqueTalon(portRot);
@@ -67,9 +70,18 @@ public class SwerveWheel {
                                 metersPerSecondToEncoderPerMinute(Constants.DRIVE_ALLOWED_ERROR), 0);
                 drive.setSupplyLimit(40); // Amperage supply limit
 
+                this.rotatePID = rotatePID;
                 rotatePID.enableContinuousInput(-180, 180);
+                rotatePID.setTolerance(Constants.DRIVE_ROT_TOLERANCE);
+
                 rotate.configureSupplyLimit(
                                 new SupplyCurrentLimitConfiguration(true, 25, 30, 1));
+                // if (id == 0) {
+                // SmartDashboard.putNumber("kp", rotatePID.getP());
+                // SmartDashboard.putNumber("ki", rotatePID.getI());
+                // SmartDashboard.putNumber("kd", rotatePID.getD());
+                // SmartDashboard.putNumber("kadd", add);
+                // }
         }
 
         /**
@@ -161,10 +173,33 @@ public class SwerveWheel {
                         lastSpeed = state.speedMetersPerSecond;
                 }
 
-                double requestedRotate = TorqueMathUtil.constrain(
-                                rotatePID.calculate(fromEncoder(rotate.getPosition()),
-                                                state.angle.getDegrees()),
-                                -1, 1);
-                rotate.set(requestedRotate);
+                // double kp = SmartDashboard.getNumber("kp", 0);
+                // double ki = SmartDashboard.getNumber("ki", 0);
+                // double kd = SmartDashboard.getNumber("kd", 0);
+                // add = SmartDashboard.getNumber("kadd", add);
+
+                // if (kp != rotatePID.getP()) {
+                // rotatePID.setP(kp);
+                // }
+                // if (ki != rotatePID.getI()) {
+                // rotatePID.setI(ki);
+                // }
+                // if (kd != rotatePID.getD()) {
+                // rotatePID.setD(kd);
+                // }
+
+                double req = rotatePID.calculate(fromEncoder(rotate.getPosition()),
+                                state.angle.getDegrees());
+                req = TorqueMathUtil.constrain(req + Ks * Math.signum(req), -1, 1);
+
+                // if (id == 0) {
+                // SmartDashboard.putNumber("ReqRotvolt", req);
+                // SmartDashboard.putNumber("ReqRotreq", state.angle.getDegrees());
+                // SmartDashboard.putNumber("ReqRotreal", fromEncoder(rotate.getPosition()));
+                // }
+                if (rotatePID.atSetpoint()) {
+                        req = 0;
+                }
+                rotate.set(req);
         }
 }

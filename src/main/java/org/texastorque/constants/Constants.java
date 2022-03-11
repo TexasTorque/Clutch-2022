@@ -19,6 +19,28 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
 
+    public static final double DRIVE_ROT_RIGHT_FRONT_Kp = 0.008;
+    public static final double DRIVE_ROT_RIGHT_FRONT_Ki = 0.;
+    public static final double DRIVE_ROT_RIGHT_FRONT_Kd = 0.;
+    public static final double DRIVE_ROT_RIGHT_FRONT_Ks = 0.03;
+
+    public static final double DRIVE_ROT_LEFT_FRONT_Kp = 0.008;
+    public static final double DRIVE_ROT_LEFT_FRONT_Ki = 0.;
+    public static final double DRIVE_ROT_LEFT_FRONT_Kd = 0.;
+    public static final double DRIVE_ROT_LEFT_FRONT_Ks = 0.03;
+
+    public static final double DRIVE_ROT_RIGHT_BACK_Kp = 0.008;
+    public static final double DRIVE_ROT_RIGHT_BACK_Ki = 0;
+    public static final double DRIVE_ROT_RIGHT_BACK_Kd = 0.;
+    public static final double DRIVE_ROT_RIGHT_BACK_Ks = 0.03;
+
+    public static final double DRIVE_ROT_LEFT_BACK_Kp = 0.008;
+    public static final double DRIVE_ROT_LEFT_BACK_Ki = 0;
+    public static final double DRIVE_ROT_LEFT_BACK_Kd = 0;
+    public static final double DRIVE_ROT_LEFT_BACK_Ks = 0.03;
+
+    public static final double DRIVE_ROT_TOLERANCE = 1;
+
     public static final double DRIVE_LEFT_Ks = 0.3192;
     public static final double DRIVE_LEFT_Kv = 2.1904;
     public static final double DRIVE_LEFT_Ka = 0.17902;
@@ -43,7 +65,7 @@ public class Constants {
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROLLER_SPEED = 1.;
+    public static final double INTAKE_ROLLER_SPEED = .75;
 
     public static final double INTAKE_ROTARY_MIN_SPEED = -.25;
     public static final double INTAKE_ROTARY_MAX_SPEED = .25;
@@ -58,8 +80,9 @@ public class Constants {
     public static final double FLYWHEEL_Kf = 0.00024;
     public static final double FLYWHEEL_Iz = 150;
     public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 25;
-    public static final double SHOOTER_ERROR = 30;
+    public static final double HOOD_MAX = 50;
+    public static final double SHOOTER_ERROR = 20;
+    public static final double HOOD_ERROR = 1;
 
     // Climber
     public static final double CLIMBER_SPEED = 1;
@@ -79,14 +102,14 @@ public class Constants {
     public static final double TURRET_RATIO = 128.4722; // to 1
     public static final double TURRET_CENTER_ROT = 0; // 30 degrees center
     public static final double TURRET_BACK_ROT = -180;
-    public static final double TOLERANCE_DEGREES = .7;
+    public static final double TOLERANCE_DEGREES = 1.3;
 
     // Information
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
     public static final double TOP_ACCELERATION_METERS = 1.5;
-    public static final double MAX_ANGULAR_SPEED = 2 * Math.PI;
-    public static final double MAX_ANGULAR_ACCELERATION = 1 * Math.PI;
+    public static final double MAX_ANGULAR_SPEED = 3 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = 2 * Math.PI;
 
     // Path Planner
     public static final double PATH_PLANNER_X_P = 1;
@@ -97,16 +120,13 @@ public class Constants {
     public static final double PATH_PLANNER_Y_I = 0;
     public static final double PATH_PLANNER_Y_D = 0;
 
-    public static final double PATH_PLANNER_R_P = 4;
+    public static final double PATH_PLANNER_R_P = 3;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 
     // Physical`
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
-    public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
-    public static final double LIMELIGHT_ANGEL_DEG = 42.5;
-    public static final double HOOD_Kp = 0.1;
-    public static final double HOOD_Ki = 0.001;
-    public static final double HOOD_kd = 0;
-    public static final double HOOD_Iz = .3;
+    public static final double HEIGHT_TO_LIMELIGHT_METERS = 35 * INCH_TO_FOOT * FOOT_TO_METER;
+    public static final double LIMELIGHT_ANGEL_DEG = 45;
+
 }

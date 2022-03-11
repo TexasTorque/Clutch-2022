@@ -47,7 +47,7 @@ public class Lights extends TorqueSubsystem {
      * 
      * @param r Red
      * @param g Green
-     * @param b Blue 
+     * @param b Blue
      */
     private void setLights(int r, int g, int b) {
         for (int i = 0; i < buffer.getLength(); i++)
@@ -57,9 +57,9 @@ public class Lights extends TorqueSubsystem {
     /**
      * Sets lights flashing based on the period
      * 
-     * @param r Red
-     * @param g Green
-     * @param b Blue 
+     * @param r      Red
+     * @param g      Green
+     * @param b      Blue
      * @param period Time delay (seconds)
      */
     private void setLights(int r, int g, int b, double period) {
@@ -80,7 +80,7 @@ public class Lights extends TorqueSubsystem {
      */
     private void setRainbow() {
         for (int i = 0; i < buffer.getLength(); i++)
-            buffer.setHSV(i, (rainbowHue + 
+            buffer.setHSV(i, (rainbowHue +
                     (i * 180 / buffer.getLength())) % 180, 255, 128);
         rainbowHue = (rainbowHue + 3) % 180;
     }
@@ -136,9 +136,8 @@ public class Lights extends TorqueSubsystem {
     }
 
     @Override
-    public void disable() {
-        // set lights to solid
-        defaultTeleop();
+    public void updateDisabled() {
+        setRainbow();
         output();
     }
 

@@ -23,6 +23,9 @@ public class ShootAtTarget extends TorqueCommand {
     private double distance;
     private double outputRPM;
 
+    private int readyIterations = 0;
+    private final int neededReadyIterations = 10;
+
     public ShootAtTarget() {
         this.magOutputTime = 2; // TBD
     }
@@ -43,13 +46,7 @@ public class ShootAtTarget extends TorqueCommand {
 
     @Override
     protected void init() {
-        // distance = Feedback.getInstance().getLimelightFeedback().getDistance();
-        // outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
-        // AutoInput.getInstance().setFlywheelSpeed(outputRPM);
-        // AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
-        outputRPM = 1500;
 
-        AutoInput.getInstance().setFlywheelSpeed(outputRPM);
         if (turretOn) {
             State.getInstance().setTurretState(TurretState.ON);
         } else {
@@ -60,13 +57,25 @@ public class ShootAtTarget extends TorqueCommand {
 
     @Override
     protected void continuous() {
+        distance = Feedback.getInstance().getLimelightFeedback().getDistance();
+        outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+        AutoInput.getInstance().setFlywheelSpeed(outputRPM);
+        AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
+
         if (!runMag) {
             // check if rpm is in range (+-x)
             if (Math.abs(outputRPM -
                     Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR) {
-                // if so, launch magazine for x seconds
-                runMag = true;
-                startMagTime = Timer.getFPGATimestamp();
+                if (readyIterations >= neededReadyIterations) {
+                    // if so, launch magazine for x seconds
+                    runMag = true;
+                    startMagTime = Timer.getFPGATimestamp();
+
+                } else {
+                    readyIterations++;
+                }
+            } else {
+                readyIterations = 0;
             }
         } else {
             AutoInput.getInstance().setGateDirection(GateSpeeds.OPEN);

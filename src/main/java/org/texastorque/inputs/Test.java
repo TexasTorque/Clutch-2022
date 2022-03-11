@@ -3,11 +3,16 @@ package org.texastorque.inputs;
 import org.texastorque.constants.Constants;
 
 public class Test {
+    private static final double turnCountPerRevolution = 4096. * 2;
+
     public static void main(String[] args) {
 
-        System.out.println(2 * (60. / 1.) * (1 / (2 * Math.PI * Constants.DRIVE_WHEEL_RADIUS_METERS))
-                * (1. / Constants.DRIVE_GEARING));
-        System.out.println(2242.84300 * (1. / 60.) * (2 * Math.PI * Constants.DRIVE_WHEEL_RADIUS_METERS / 1.)
-                * (Constants.DRIVE_GEARING / 1.));
+        double current = 45;
+        double reqDegrees = -45;
+        int desired = (int) Math.round(reqDegrees * turnCountPerRevolution / 360.);
+        double outputPosition = Math.IEEEremainder(desired - current, turnCountPerRevolution / 2) + current;
+        double dist = Math.abs(Math.IEEEremainder(desired - current, turnCountPerRevolution));
+        System.out.println("Reverse direction? " + dist);
+        System.out.println("Output position (encoder): " + outputPosition);
     }
 }

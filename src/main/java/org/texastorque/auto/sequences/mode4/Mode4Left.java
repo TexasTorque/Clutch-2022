@@ -18,9 +18,12 @@ public class Mode4Left extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-            new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
-            new ShootAtTarget(2)));
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
+                new ShootAtTarget(2)));
+
+        // Prepare hood for end shoot
+        addBlock(new TorqueBlock(new PrepareHood(50)));
 
         // Run path
         addBlock(new TorqueBlock(new Pathplanner("Mode4Left")));
@@ -30,7 +33,7 @@ public class Mode4Left extends TorqueSequence {
 
         // Shut off
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
-            new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

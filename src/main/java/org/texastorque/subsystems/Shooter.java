@@ -55,7 +55,8 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateAuto() {
         flywheelSetpoint = AutoInput.getInstance().getFlywheelSpeed();
-        hoodPosition = AutoInput.getInstance().getHoodPosition();
+        hoodPosition = TorqueMathUtil.constrain(AutoInput.getInstance().getHoodPosition(), Constants.HOOD_MIN,
+                Constants.HOOD_MAX);
     }
 
     @Override

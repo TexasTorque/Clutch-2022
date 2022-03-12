@@ -310,7 +310,7 @@ public class Input extends TorqueInputManager {
         private double hood; // degrees
         private TorqueToggle xFactorToggle;
         private int readyCounter = 0;
-        private final int readyCounterNeeded = 20;
+        private final int readyCounterNeeded = 10;
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -367,7 +367,7 @@ public class Input extends TorqueInputManager {
 
             // Layup
             else if (driver.getYButton()) {
-                setRawValues(1530, Constants.HOOD_MIN);
+                setRawValues(1550, Constants.HOOD_MIN);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Launchpad (interferes w/ intake toggle)
@@ -428,7 +428,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((316.4 * distance) + 1240, 3000);
+            return TorqueMathUtil.constrain((373.7 * distance) + 1130, 3000);
         }
 
         /**
@@ -438,9 +438,10 @@ public class Input extends TorqueInputManager {
 
         public double regressionHood(double distance) {
             // past 1.9, just do max
-            if (distance > 1.9)
+            if (distance > 1.5)
                 return 50;
-            return TorqueMathUtil.constrain(22.87 * distance - 3.914, 0, 50);
+            return TorqueMathUtil.constrain(3.280 * Math.pow(10, distance * 0.7443), Constants.HOOD_MIN,
+                    Constants.HOOD_MAX);
         }
     }
 

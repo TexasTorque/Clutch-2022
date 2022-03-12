@@ -24,7 +24,7 @@ public class ShootAtTarget extends TorqueCommand {
     private double outputRPM;
 
     private int readyIterations = 0;
-    private final int neededReadyIterations = 10;
+    private final int neededReadyIterations = 4;
 
     public ShootAtTarget() {
         this.magOutputTime = 2; // TBD
@@ -46,7 +46,6 @@ public class ShootAtTarget extends TorqueCommand {
 
     @Override
     protected void init() {
-
         if (turretOn) {
             State.getInstance().setTurretState(TurretState.ON);
         } else {
@@ -78,6 +77,8 @@ public class ShootAtTarget extends TorqueCommand {
                 readyIterations = 0;
             }
         } else {
+            State.getInstance().setTurretState(TurretState.OFF);
+            AutoInput.getInstance().setBeltDirection(BeltDirections.INTAKE);
             AutoInput.getInstance().setGateDirection(GateSpeeds.OPEN);
             if (Timer.getFPGATimestamp() - startMagTime >= magOutputTime)
                 done = true;

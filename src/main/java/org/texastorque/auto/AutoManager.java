@@ -1,6 +1,7 @@
 package org.texastorque.auto;
 
 import org.texastorque.auto.sequences.PathplannerSequence;
+import org.texastorque.auto.sequences.ShooterTester;
 import org.texastorque.auto.sequences.mode0.*;
 import org.texastorque.auto.sequences.mode1.*;
 import org.texastorque.auto.sequences.mode2.*;
@@ -45,6 +46,7 @@ public class AutoManager extends TorqueAutoManager {
         // addSequence("Mode 6 Left A", new Mode6Right(""));
         // addSequence("Mode 6 Left B", new Mode6Right(""));
         addSequence("Drive Forward 1m", new PathplannerSequence("1mtest"));
+        addSequence("Shooter tester", new ShooterTester());
     }
 
     /**

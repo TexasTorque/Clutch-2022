@@ -8,9 +8,7 @@ public class Constants {
     // Drivebase
     public static final double DRIVE_WHEEL_RADIUS_METERS = 2 * INCH_TO_FOOT * FOOT_TO_METER; // 1.788 is width with
                                                                                              // wear
-    public static final double DRIVE_MAX_SPEED_METERS = 5;
     public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS_DRIVER = 2 * Math.PI;
-    public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS = 4 * Math.PI;
 
     public static final double DISTANCE_TO_CENTER_X = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double DISTANCE_TO_CENTER_Y = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
@@ -95,7 +93,7 @@ public class Constants {
     public static final double TURRET_Ks = 0.19206;
     public static final double TURRET_Kv = 0.059555;
     public static final double TURRET_Ka = 0.0029152;
-    public static final double TURRET_Kp = 0.40539;
+    public static final double TURRET_Kp = 0.20539;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;
@@ -105,9 +103,8 @@ public class Constants {
     public static final double TOLERANCE_DEGREES = 1.3;
 
     // Information
-    public static final double TOP_SPEED_FEET = 16.52;
-    public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
-    public static final double TOP_ACCELERATION_METERS = 1.5;
+    public static final double DRIVE_MAX_SPEED_METERS = 5;
+    public static final double DRIVE_MAX_ACCELERATION_METERS = 2.5;
     public static final double MAX_ANGULAR_SPEED = 3 * Math.PI;
     public static final double MAX_ANGULAR_ACCELERATION = 2 * Math.PI;
 

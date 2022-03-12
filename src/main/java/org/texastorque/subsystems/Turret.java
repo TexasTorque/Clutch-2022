@@ -25,8 +25,8 @@ public class Turret extends TorqueSubsystem {
 
     enum EncoderOverStatus {
         OFF,
-        TOLEFT(-95, 75),
-        TORIGHT(95, -75),
+        TOLEFT(-90, 70),
+        TORIGHT(90, -70),
         HOMING;
         /*
          * Think of these like states of the turret

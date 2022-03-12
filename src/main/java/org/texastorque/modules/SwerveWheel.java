@@ -64,9 +64,9 @@ public class SwerveWheel {
                 }
 
                 drive.configureIZone(Constants.DRIVE_KIz);
-                drive.configureSmartMotion(metersPerSecondToEncoderPerMinute(Constants.TOP_SPEED_METERS),
+                drive.configureSmartMotion(metersPerSecondToEncoderPerMinute(Constants.DRIVE_MAX_SPEED_METERS),
                                 metersPerSecondToEncoderPerMinute(Constants.DRIVE_MINIMUM_VELOCITY),
-                                metersPerSecondToEncoderPerMinute(Constants.TOP_ACCELERATION_METERS),
+                                metersPerSecondToEncoderPerMinute(Constants.DRIVE_MAX_ACCELERATION_METERS),
                                 metersPerSecondToEncoderPerMinute(Constants.DRIVE_ALLOWED_ERROR), 0);
                 drive.setSupplyLimit(40); // Amperage supply limit
 

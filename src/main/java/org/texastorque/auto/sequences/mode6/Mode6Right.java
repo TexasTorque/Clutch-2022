@@ -21,8 +21,8 @@ public class Mode6Right extends TorqueSequence {
 
         // Start Intake, Automag
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-            new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Run path
         addBlock(new TorqueBlock(new Pathplanner("Mode6Right_1")));
@@ -44,7 +44,7 @@ public class Mode6Right extends TorqueSequence {
 
         // Shut off
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
-            new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

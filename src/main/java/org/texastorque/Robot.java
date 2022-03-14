@@ -44,7 +44,7 @@ public class Robot extends TorqueIterative {
     }
 
     @Override
-    public void disabledPeriodic() {
+    public void disabledContinuous() {
         state.setRobotState(RobotState.DISABLED);
         subsystems.forEach(TorqueSubsystem::updateDisabled);
     }

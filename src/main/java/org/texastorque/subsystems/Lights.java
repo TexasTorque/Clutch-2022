@@ -105,9 +105,9 @@ public class Lights extends TorqueSubsystem {
         if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
             // TARGET LOCK
             setLights(0, 255, 0);
-        else if (AutoInput.getInstance().getFlywheelSpeed() != 0)
-            // SHOOTING
-            setLights(0, 255, 0, .25);
+        // else if (AutoInput.getInstance().getFlywheelSpeed() != 0)
+        // // SHOOTING
+        // setLights(0, 255, 0, .25);
         else
             defaultAuto();
     }

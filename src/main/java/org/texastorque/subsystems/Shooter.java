@@ -1,6 +1,9 @@
 package org.texastorque.subsystems;
 
 import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -23,6 +26,9 @@ public class Shooter extends TorqueSubsystem {
     private double hoodPosition;
     private double flywheelSetpoint;
 
+    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.FLYWHEEL_Ks,
+            Constants.FLYWHEEL_Kv);
+
     public Shooter() {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
@@ -33,6 +39,8 @@ public class Shooter extends TorqueSubsystem {
                 new KPID(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,
                         Constants.FLYWHEEL_Kd, Constants.FLYWHEEL_Kf, 0, 1));
         flywheel.configureIZone(Constants.FLYWHEEL_Iz);
+        flywheel.configureSmartMotion(Constants.FLYWHEEEL_MAX_SPEED, 0, Constants.FLYWHEEL_MAX_ACCELERATION,
+                Constants.SHOOTER_ERROR, 0);
 
         hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 5);
         hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 5);
@@ -75,7 +83,10 @@ public class Shooter extends TorqueSubsystem {
     public void output() {
         hoodRight.setPosition(hoodPosition);
         hoodLeft.setPosition(hoodPosition);
-        flywheel.set(flywheelSetpoint, ControlType.kVelocity);
+        // flywheel.setWithFF(flywheelSetpoint, ControlType.kVelocity, 0,
+        // feedforward.calculate(flywheelSetpoint / 60),
+        // ArbFFUnits.kVoltage);
+        flywheel.set(flywheelSetpoint, ControlType.kSmartVelocity);
     }
 
     @Override

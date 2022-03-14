@@ -15,6 +15,8 @@ import org.texastorque.torquelib.auto.TorqueCommand;
 public class ShootAtTarget extends TorqueCommand {
     private final double magOutputTime;
 
+    private boolean stop = true;
+
     private boolean done = false;
     private boolean runMag = false;
     private double startMagTime = 0;
@@ -27,20 +29,21 @@ public class ShootAtTarget extends TorqueCommand {
     private final int neededReadyIterations = 4;
 
     public ShootAtTarget() {
-        this.magOutputTime = 2; // TBD
+        this.magOutputTime = 2;
     }
 
     public ShootAtTarget(double magOutputTime) {
         this.magOutputTime = magOutputTime;
     }
 
-    public ShootAtTarget(boolean turretOn) {
-        this();
-        this.turretOn = turretOn;
+    public ShootAtTarget(double magOutputTime, boolean stop) {
+        this.magOutputTime = magOutputTime;
+        this.stop = stop;
     }
 
-    public ShootAtTarget(double magOutputTime, boolean turretOn) {
+    public ShootAtTarget(double magOutputTime, boolean stop, boolean turretOn) {
         this.magOutputTime = magOutputTime;
+        this.stop = stop;
         this.turretOn = turretOn;
     }
 
@@ -96,7 +99,8 @@ public class ShootAtTarget extends TorqueCommand {
         System.out.println("ShootAtTarget done, have a good day!");
         done = false;
         runMag = false;
-        AutoInput.getInstance().setFlywheelSpeed(0);
+        if (stop)
+            AutoInput.getInstance().setFlywheelSpeed(0);
         AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
         State.getInstance().setTurretState(TurretState.OFF);
     }

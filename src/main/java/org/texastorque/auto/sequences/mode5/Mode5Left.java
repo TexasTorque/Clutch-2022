@@ -7,13 +7,14 @@ import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.*;
 
-public class Mode5LeftB extends TorqueSequence {
-    public Mode5LeftB(String name) {
+public class Mode5Left extends TorqueSequence {
+    public Mode5Left(String name) {
         super(name);
 
         init();
     }
 
     @Override
-    protected void init() {}
+    protected void init() {
+    }
 }

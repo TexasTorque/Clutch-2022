@@ -26,8 +26,8 @@ public class Turret extends TorqueSubsystem {
 
     enum EncoderOverStatus {
         OFF,
-        TOLEFT(-90, 70),
-        TORIGHT(90, -70),
+        TOLEFT(-93, 70),
+        TORIGHT(93, -70),
         HOMING;
         /*
          * Think of these like states of the turret
@@ -103,18 +103,18 @@ public class Turret extends TorqueSubsystem {
                             .getLimelightFeedback()
                             .gethOffset();
 
-                    // be slightly off :) (do a little trolling)
-                    if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-                        if (doingSabotage) {
-                            hOffset = sabotageSetpoint;
-                        } else {
-                            doingSabotage = true;
-                            sabotageSetpoint = 10 * Math.signum(hOffset) + hOffset;
-                            hOffset = sabotageSetpoint;
-                        }
-                    } else {
-                        doingSabotage = false;
-                    }
+                    // // be slightly off :) (do a little trolling)
+                    // if (MagazineBallManager.getInstance().isEnemyAlliance()) {
+                    // if (doingSabotage) {
+                    // hOffset = sabotageSetpoint;
+                    // } else {
+                    // doingSabotage = true;
+                    // sabotageSetpoint = 10 * Math.signum(hOffset) + hOffset;
+                    // hOffset = sabotageSetpoint;
+                    // }
+                    // } else {
+                    // doingSabotage = false;
+                    // }
 
                     if (Math.abs(hOffset) < Constants.TOLERANCE_DEGREES) {
                         changeRequest = 0;

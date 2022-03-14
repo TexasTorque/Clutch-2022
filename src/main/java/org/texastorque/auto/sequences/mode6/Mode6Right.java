@@ -16,33 +16,34 @@ public class Mode6Right extends TorqueSequence {
 
     @Override
     protected void init() {
-        // Shoot preload
-        addBlock(new TorqueBlock(new ShootAtTarget(.8)));
-
-        // Start Intake, Automag
         addBlock(new TorqueBlock(
+                new PrepareTurret(-75),
+                new PrepareShooter(50, 1960),
                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
+                new Pathplanner("Mode6Right_1")));
 
-        // Run path
-        addBlock(
-                new TorqueBlock(new PrepareTurret(-70), new PrepareShooter(50, 1850), new Pathplanner("Mode6Right_1")));
+        addBlock(new TorqueBlock((new ShootAtTarget(1.4, false))));
 
-        // Shoot 2
-        addBlock(new TorqueBlock((new ShootAtTarget(1.6))));
+        addBlock(new TorqueBlock(
+                new PrepareTurret(-75),
+                new PrepareShooter(50, 1960),
+                new Pathplanner("Mode6Right_1_5", false)));
 
-        // Get more balls
+        addBlock(new TorqueBlock((new ShootAtTarget(1.2, false))));
+
+        // Go to human player
         addBlock(new TorqueBlock(new Pathplanner("Mode6Right_2", false)));
 
-        // Wait x seconds for human player
+        // Waiting for human player
         addBlock(new TorqueBlock(new Wait(1)));
 
-        // Go to shoot
+        // Go to the last shoot
         addBlock(new TorqueBlock(new PrepareTurret(-5), new PrepareShooter(50, 1975),
                 new Pathplanner("Mode6Right_3", false)));
 
         // Shoot!
-        addBlock(new TorqueBlock(new ShootAtTarget(1.6)));
+        addBlock(new TorqueBlock(new ShootAtTarget(1.6, true)));
 
         // Shut off
         addBlock(new TorqueBlock(

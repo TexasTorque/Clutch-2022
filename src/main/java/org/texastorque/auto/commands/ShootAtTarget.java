@@ -46,6 +46,7 @@ public class ShootAtTarget extends TorqueCommand {
 
     @Override
     protected void init() {
+        AutoInput.getInstance().setSetTurretPosition(false);
         if (turretOn) {
             State.getInstance().setTurretState(TurretState.ON);
         } else {

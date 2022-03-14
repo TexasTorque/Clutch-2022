@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
+import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
@@ -159,7 +160,13 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public void updateAuto() {
-        updateTeleop();
+        if (AutoInput.getInstance().getSettingTurretPosition()) {
+            double pidOut = pidController.calculate(
+                    getDegrees(), AutoInput.getInstance().getTurretPosition());
+            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+        } else {
+            updateTeleop();
+        }
     }
 
     private boolean checkOver() {

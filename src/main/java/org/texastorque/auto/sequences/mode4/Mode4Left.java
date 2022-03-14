@@ -23,7 +23,7 @@ public class Mode4Left extends TorqueSequence {
                 new ShootAtTarget(2)));
 
         // Prepare hood for end shoot
-        addBlock(new TorqueBlock(new PrepareHood(50)));
+        addBlock(new TorqueBlock(new PrepareShooter(50)));
 
         // Run path
         addBlock(new TorqueBlock(new Pathplanner("Mode4Left")));

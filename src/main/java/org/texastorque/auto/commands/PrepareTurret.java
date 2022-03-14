@@ -4,24 +4,24 @@ import org.texastorque.inputs.AutoInput;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
 /**
- * Preset a hood to extend to. Useful to do prior to paths so shooter is ready.
+ * Have turret go to position to make auto faster
  */
-public class PrepareHood extends TorqueCommand {
+public class PrepareTurret extends TorqueCommand {
 
-    private final double hoodSetpoint;
+    private final double turretPosition;
 
-    public PrepareHood(double hoodSetpoint) {
-        this.hoodSetpoint = hoodSetpoint;
+    public PrepareTurret(double turretPosition) {
+        this.turretPosition = turretPosition;
     }
 
     @Override
     protected void init() {
-        AutoInput.getInstance().setHoodPosition(hoodSetpoint);
+        AutoInput.getInstance().setTurretPosition(turretPosition);
+        AutoInput.getInstance().setSetTurretPosition(true);
     }
 
     @Override
     protected void continuous() {
-
     }
 
     @Override
@@ -31,7 +31,6 @@ public class PrepareHood extends TorqueCommand {
 
     @Override
     protected void end() {
-
     }
 
 }

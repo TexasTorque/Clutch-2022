@@ -63,7 +63,7 @@ public class Constants {
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROLLER_SPEED = .75;
+    public static final double INTAKE_ROLLER_SPEED = .85;
 
     public static final double INTAKE_ROTARY_MIN_SPEED = -.25;
     public static final double INTAKE_ROTARY_MAX_SPEED = .25;
@@ -104,7 +104,7 @@ public class Constants {
 
     // Information
     public static final double DRIVE_MAX_SPEED_METERS = 5;
-    public static final double DRIVE_MAX_ACCELERATION_METERS = 2.5;
+    public static final double DRIVE_MAX_ACCELERATION_METERS = 4;
     public static final double MAX_ANGULAR_SPEED = 3 * Math.PI;
     public static final double MAX_ANGULAR_ACCELERATION = 2 * Math.PI;
 

@@ -40,7 +40,7 @@ public class Robot extends TorqueIterative {
     @Override
     public void disabledInit() {
         state.setRobotState(RobotState.DISABLED);
-        subsystems.forEach(TorqueSubsystem::disable);
+        subsystems.forEach(TorqueSubsystem::initDisabled);
     }
 
     @Override

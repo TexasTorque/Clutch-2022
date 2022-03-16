@@ -125,12 +125,6 @@ public class Lights extends TorqueSubsystem {
     @Override
     public void updateSmartDashboard() {}
 
-    @Override
-    public void disable() {
-        // set lights to solid
-        resetTeleop();
-        output();
-    }
 
     public static synchronized Lights getInstance() {
         return instance == null ? instance = new Lights() : instance;

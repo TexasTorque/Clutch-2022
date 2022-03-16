@@ -351,12 +351,12 @@ public class Input extends TorqueInputManager {
             }
             // Launchpad
             else if (driver.getAButton()) {
-                setRawValues(2300, 50);
+                setRawValues(2300, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
             // Tarmac
             else if (driver.getBButton()) {
-                setRawValues(2000, 50);
+                setRawValues(2000, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } // SmartDashboard
             else
@@ -400,7 +400,7 @@ public class Input extends TorqueInputManager {
          * @param hood Hood position
          */
         public void setHood(double hood) {
-            this.hood = TorqueMathUtil.constrain(hood, 0, 50);
+            this.hood = TorqueMathUtil.constrain(hood, 0, Constants.HOOD_MAX);
         }
 
         /**
@@ -420,7 +420,7 @@ public class Input extends TorqueInputManager {
             // past 1.9, just do max
             if (distance > 1.9)
                 return 50;
-            return TorqueMathUtil.constrain(22.87 * distance - 3.914, 0, 50);
+            return TorqueMathUtil.constrain(22.87 * distance - 3.914, 0, Constants.HOOD_MAX);
         }
     }
 

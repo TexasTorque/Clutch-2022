@@ -5,6 +5,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.texastorque.constants.Constants;
@@ -17,10 +19,10 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 public class RotateManager {
     private static volatile RotateManager instance;
 
-    private final static int pixWidth = 640;
+    private final static int pixWidth = 320;
     private final static String leftTableName = "ball_detection_left";
     private final static String rightTableName = "ball_detection_right";
-    private final static double correctionSpeed = Math.PI;
+    private final static double correctionSpeed = Math.PI / 4;
 
     // Each first entry represents a x-pixel entry (0, 640px) of the center of
     // the ball Each second entry represents a radius entry (0, 640px) of the
@@ -35,9 +37,9 @@ public class RotateManager {
         NetworkTable rightTable = NT.getTable(rightTableName);
 
         leftEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(
-            leftTable.getEntry("position"), leftTable.getEntry("radius"));
+                leftTable.getEntry("position"), leftTable.getEntry("radius"));
         rightEntry = new Pair<NetworkTableEntry, NetworkTableEntry>(
-            rightTable.getEntry("position"), rightTable.getEntry("radius"));
+                rightTable.getEntry("position"), rightTable.getEntry("radius"));
     }
 
     /**
@@ -46,16 +48,13 @@ public class RotateManager {
      * @return Speed to rotate [-MAX_ANGULAR, MAX_ANGULAR]
      */
     public double process() {
-        Optional<Pair<NetworkTableEntry, NetworkTableEntry>> opt =
-            Stream.of(leftEntry, rightEntry)
-                .filter((Pair<NetworkTableEntry, NetworkTableEntry> x)
-                            -> x.getSecond().getDouble(0) !=
-                                   0) // remove
-                                      // non-detections
+        Optional<Pair<NetworkTableEntry, NetworkTableEntry>> opt = Stream.of(leftEntry, rightEntry)
+                .filter((Pair<NetworkTableEntry, NetworkTableEntry> x) -> x.getSecond().getDouble(0) != 0) // remove
+                                                                                                           // non-detections
                 .max((Pair<NetworkTableEntry, NetworkTableEntry> x,
-                      Pair<NetworkTableEntry, NetworkTableEntry> y) -> {
+                        Pair<NetworkTableEntry, NetworkTableEntry> y) -> {
                     return Double.compare(x.getSecond().getDouble(0),
-                                          y.getSecond().getDouble(0));
+                            y.getSecond().getDouble(0));
                 });
         // if none are detected, just stop
         if (opt.isEmpty()) {
@@ -67,13 +66,14 @@ public class RotateManager {
         double output = 0;
         if (entry == leftEntry) {
             // output is the proportion away multiplied by the correcting speed.
-            output = (640 - entry.getSecond().getDouble(0)) / pixWidth *
-                     correctionSpeed;
+            output = (pixWidth - entry.getSecond().getDouble(0)) / pixWidth *
+                    correctionSpeed;
         } else {
-            output =
-                entry.getSecond().getDouble(0) / pixWidth * correctionSpeed;
+            output = -entry.getSecond().getDouble(0) / pixWidth * correctionSpeed;
         }
-        return TorqueMathUtil.constrain(output, -1, 1);
+        SmartDashboard.putNumber("Output Speed", output);
+        // output += .4 * Math.signum(output);
+        return TorqueMathUtil.constrain(output, -Constants.MAX_ANGULAR_SPEED, Constants.MAX_ANGULAR_SPEED);
     }
 
     public static synchronized RotateManager getInstance() {

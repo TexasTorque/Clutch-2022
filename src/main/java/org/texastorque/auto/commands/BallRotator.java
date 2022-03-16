@@ -5,7 +5,8 @@ import org.texastorque.modules.RotateManager;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
 public class BallRotator extends TorqueCommand {
-    public BallRotator() {}
+    public BallRotator() {
+    }
 
     @Override
     protected void init() {
@@ -15,7 +16,7 @@ public class BallRotator extends TorqueCommand {
     @Override
     protected void continuous() {
         Input.getInstance().getDrivebaseRotationInput().setRot(
-            RotateManager.getInstance().process());
+                RotateManager.getInstance().process());
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.texastorque.torquelib.auto.TorqueCommand;
 public class ShootAtTarget extends TorqueCommand {
     private final double magOutputTime;
 
-    private boolean stop = true;
+    private boolean stop = false;
 
     private boolean done = false;
     private boolean runMag = false;

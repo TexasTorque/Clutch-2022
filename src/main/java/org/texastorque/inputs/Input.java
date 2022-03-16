@@ -50,7 +50,7 @@ public class Input extends TorqueInputManager {
     // Etc.
     private TimedTruthy driverRumble = new TimedTruthy();
     private TimedTruthy operatorRumble = new TimedTruthy();
-    private TorqueToggle rotateToBallToggle = new TorqueToggle(false);
+    private TorqueToggle rotateToBallToggle = new TorqueToggle(true);
     private TorqueToggle climberToggle = new TorqueToggle(false);
 
     private Input() {
@@ -75,7 +75,7 @@ public class Input extends TorqueInputManager {
         climberInput = new ClimberInput();
         modules.add(climberInput);
 
-        rotateToBall = new TorqueAssist(new AutoReflect(), driveBaseRotationInput);
+        rotateToBall = new TorqueAssist(new RotateToBall(), driveBaseRotationInput);
         climbAssist = new TorqueAssist(new AutoClimb(), AssistMode.RESET_BLOCK,
                 driveBaseTranslationInput, driveBaseRotationInput,
                 intakeInput, magazineInput, shooterInput, climberInput);
@@ -83,11 +83,10 @@ public class Input extends TorqueInputManager {
 
     @Override
     public void update() {
-        // rotateToBallToggle.calc(operator.getBButton());
-        // rotateToBall.run(
-        // intakeInput.getPosition() == IntakePosition.DOWN
-        // && rotateToBallToggle.get() && !climberInput.getClimbHasStarted()
-        // );
+        rotateToBallToggle.calc(operator.getBButton());
+        rotateToBall.run(
+                intakeInput.getPosition() == IntakePosition.DOWN
+                        && rotateToBallToggle.get() && !climberInput.hasClimbStarted());
 
         climberToggle.calc(operator.getXButton());
         climbAssist.run(climberToggle.get());

@@ -16,5 +16,28 @@ public class Mode5Left extends TorqueSequence {
 
     @Override
     protected void init() {
+        addBlock(new TorqueBlock(
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED), new PrepareTurret(0),
+                new PrepareShooter(50, 1960),
+                new Pathplanner("Mode5Left_1")));
+
+        addBlock(new TorqueBlock(
+                new ShootAtTarget(1, false)));
+
+        addBlock(new TorqueBlock(new Pathplanner("Mode5Left_2", false)));
+
+        addBlock(new TorqueBlock(new Wait(1)));
+
+        addBlock(new TorqueBlock(new PrepareTurret(0), new PrepareShooter(50, 1960),
+                new Pathplanner("Mode5Left_3", false)));
+
+        addBlock(new TorqueBlock(new ShootAtTarget(1.6, true)));
+
+        // Shut off
+        addBlock(new TorqueBlock(
+                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+
     }
 }

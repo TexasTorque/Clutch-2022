@@ -79,6 +79,8 @@ public class Climber extends TorqueSubsystem {
 
         left.tareEncoder();
         right.tareEncoder();
+        SmartDashboard.putNumber("servoleft", .5);
+        SmartDashboard.putNumber("servoright", .5);
     }
 
     @Override
@@ -105,7 +107,15 @@ public class Climber extends TorqueSubsystem {
             } else if (left.getPosition() < Constants.CLIMBER_LEFT_LIMIT_LOW) {
                 climberSpeedsLeft = Math.min(climberSpeeds, 0);
             } else {
-                climberSpeedsLeft = climberSpeeds;
+                climberSpeedsLeft = climberSpeeds * .3;
+            }
+
+            if (Math.abs(Constants.CLIMBER_LEFT_LIMIT_HIGH - left.getPosition()) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PUSH) {
+                climberSpeedsLeft *= .5;
+            } else if (Math.abs(Constants.CLIMBER_LEFT_LIMIT_LOW - left.getPosition()) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
+                climberSpeedsLeft *= .5;
             }
 
             if (right.getPosition() < Constants.CLIMBER_RIGHT_LIMIT_HIGH) {
@@ -113,7 +123,15 @@ public class Climber extends TorqueSubsystem {
             } else if (right.getPosition() > Constants.CLIMBER_RIGHT_LIMIT_LOW) {
                 climberSpeedsRight = Math.min(climberSpeeds, 0);
             } else {
-                climberSpeedsRight = climberSpeeds;
+                climberSpeedsRight = climberSpeeds * .3;
+            }
+
+            if (Math.abs(right.getPosition() - Constants.CLIMBER_RIGHT_LIMIT_HIGH) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PUSH) {
+                climberSpeedsRight *= .5;
+            } else if (Math.abs(Constants.CLIMBER_RIGHT_LIMIT_LOW - right.getPosition()) < 25
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
+                climberSpeedsRight *= .5;
             }
         }
     }
@@ -157,6 +175,9 @@ public class Climber extends TorqueSubsystem {
 
         leftServo.set(servoDirection.getPositionLeft());
         rightServo.set(servoDirection.getPositionRight());
+
+        // leftServo.set(SmartDashboard.getNumber("servoleft", 0.5));
+        // rightServo.set(SmartDashboard.getNumber("servoright", 0.5));
     }
 
     @Override

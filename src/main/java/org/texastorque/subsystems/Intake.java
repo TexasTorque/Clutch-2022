@@ -33,7 +33,7 @@ public class Intake extends TorqueSubsystem {
     public static enum IntakePosition {
         UP(1.5),
         PRIME(4.4),
-        DOWN(8.14);
+        DOWN(8.5);
         // Intake setpoints
 
         private final double position;
@@ -88,13 +88,13 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void output() {
         // We are at the bottom, staph!
-        // if (limitSwitch.get() && rotarySetPoint == IntakePosition.DOWN) {
-        //     SmartDashboard.putBoolean("rotary running", false);
-        //     rotary.set(0);
-        // } else {
-        //     SmartDashboard.putBoolean("rotary running", true);
-        //     rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
-        // }
+        if (limitSwitch.get() && rotarySetPoint == IntakePosition.DOWN) {
+            SmartDashboard.putBoolean("rotary running", false);
+            rotary.set(0);
+        } else {
+            SmartDashboard.putBoolean("rotary running", true);
+            rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
+        }
         roller.set(rollerSpeed);
     }
 

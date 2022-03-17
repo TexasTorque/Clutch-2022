@@ -26,6 +26,7 @@ public class Shooter extends TorqueSubsystem {
     public Shooter() {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
+        flywheel.invertPolarity(true);
         flywheel.invertFollower();
         flywheel.setSupplyLimit(40);
 

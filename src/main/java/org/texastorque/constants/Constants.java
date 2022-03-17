@@ -35,7 +35,7 @@ public class Constants {
     public static final double INTAKE_ROLLER_SPEED = 1.;
 
     public static final double INTAKE_ROTARY_MIN_SPEED = -.25;
-    public static final double INTAKE_ROTARY_MAX_SPEED = .25;
+    public static final double INTAKE_ROTARY_MAX_SPEED = .5;
 
     // Shooter
     public static final double FLYWHEEL_Kv = 0.15475; // Values are for rotations/sec
@@ -47,7 +47,7 @@ public class Constants {
     public static final double FLYWHEEL_Kf = 0.00026;
     public static final double FLYWHEEL_Iz = 100;
     public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 24; // will be bigger
+    public static final double HOOD_MAX = 45;
     public static final double SHOOTER_ERROR = 30;
 
     public static final double HOOD_Kp = 0.1;

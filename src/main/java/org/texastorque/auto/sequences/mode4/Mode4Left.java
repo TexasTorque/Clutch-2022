@@ -20,7 +20,7 @@ public class Mode4Left extends TorqueSequence {
         addBlock(new TorqueBlock(
                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
-                new ShootAtTarget(2)));
+                new ShootAtTarget(1.2, true)));
 
         // Prepare hood for end shoot
         addBlock(new TorqueBlock(new PrepareShooter(50)));
@@ -29,7 +29,7 @@ public class Mode4Left extends TorqueSequence {
         addBlock(new TorqueBlock(new Pathplanner("Mode4Left")));
 
         // Shoot!
-        addBlock(new TorqueBlock(new ShootAtTarget(4)));
+        addBlock(new TorqueBlock(new ShootAtTarget(4, true)));
 
         // Shut off
         addBlock(new TorqueBlock(

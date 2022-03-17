@@ -25,7 +25,7 @@ public class Mode3Right extends TorqueSequence {
         addBlock(new TorqueBlock(new Pathplanner("Mode3Right")));
 
         // Shoot!
-        addBlock(new TorqueBlock(new ShootAtTarget(4)));
+        addBlock(new TorqueBlock(new ShootAtTarget(4, true)));
 
         // Shut off
         addBlock(new TorqueBlock(

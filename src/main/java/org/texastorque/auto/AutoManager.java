@@ -28,7 +28,7 @@ public class AutoManager extends TorqueAutoManager {
         addSequence("Mode 2 Left", new Mode2Left(""));
         addSequence("Mode 2 Right", new Mode2Right(""));
 
-        addSequence("Mode 3 Center", new Mode3CenterRight(""));
+        addSequence("Mode 3 Center Right", new Mode3CenterRight(""));
         addSequence("Mode 3 Left", new Mode3Left(""));
         addSequence("Mode 3 Right", new Mode3Right(""));
 

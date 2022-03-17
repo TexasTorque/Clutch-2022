@@ -18,19 +18,19 @@ public class Mode4Right extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-            new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
-            new ShootAtTarget(2)));
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
+                new ShootAtTarget(1.2, true)));
 
         // Run path
         addBlock(new TorqueBlock(new Pathplanner("Mode4Right")));
 
         // Shoot!
-        addBlock(new TorqueBlock(new ShootAtTarget(4)));
+        addBlock(new TorqueBlock(new ShootAtTarget(2, true)));
 
         // Shut off
         addBlock(new TorqueBlock(
-            new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
-            new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

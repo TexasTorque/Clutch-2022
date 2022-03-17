@@ -18,16 +18,17 @@ public class Mode2CenterLeft extends TorqueSequence {
     protected void init() {
         // Start up mag
         addBlock(new TorqueBlock(
-            new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
+                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED)));
 
         // Shoot
-        addBlock(new TorqueBlock(new ShootAtTarget()));
+        addBlock(new TorqueBlock(new ShootAtTarget(2, true)));
 
         // Taxi
         addBlock(new TorqueBlock(new Pathplanner("Mode2CenterLeft")));
 
         // Stop mag
         addBlock(new TorqueBlock(
-            new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

@@ -98,16 +98,16 @@ public class Climber extends TorqueSubsystem {
                 .getDirection() *
                 Constants.CLIMBER_SPEED;
         if (Input.getInstance().getClimberInput().runLeft) {
-            climberSpeedsLeft = Constants.CLIMBER_SPEED * .3;
+            climberSpeedsLeft = Constants.CLIMBER_SPEED * .1;
         } else if (Input.getInstance().getClimberInput().runRight) {
-            climberSpeedsRight = Constants.CLIMBER_SPEED * .3;
+            climberSpeedsRight = Constants.CLIMBER_SPEED * .1;
         } else {
             if (left.getPosition() > Constants.CLIMBER_LEFT_LIMIT_HIGH) {
                 climberSpeedsLeft = Math.max(climberSpeeds, 0);
             } else if (left.getPosition() < Constants.CLIMBER_LEFT_LIMIT_LOW) {
                 climberSpeedsLeft = Math.min(climberSpeeds, 0);
             } else {
-                climberSpeedsLeft = climberSpeeds * .3;
+                climberSpeedsLeft = climberSpeeds;
             }
 
             if (Math.abs(Constants.CLIMBER_LEFT_LIMIT_HIGH - left.getPosition()) < 25
@@ -123,7 +123,7 @@ public class Climber extends TorqueSubsystem {
             } else if (right.getPosition() > Constants.CLIMBER_RIGHT_LIMIT_LOW) {
                 climberSpeedsRight = Math.min(climberSpeeds, 0);
             } else {
-                climberSpeedsRight = climberSpeeds * .3;
+                climberSpeedsRight = climberSpeeds;
             }
 
             if (Math.abs(right.getPosition() - Constants.CLIMBER_RIGHT_LIMIT_HIGH) < 25

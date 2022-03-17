@@ -378,8 +378,14 @@ public class Input extends TorqueInputManager {
             else if (driver.getAButton()) {
                 setRawValues(1900, 0);
                 State.getInstance().setTurretState(TurretState.CENTER);
-            } else
-                reset();
+            } else {
+                if (operator.getYButton()) {
+                    setRawValues(1600, Constants.HOOD_MAX);
+                } else {
+                    reset();
+                }
+
+            }
         }
 
         @Override
@@ -469,7 +475,7 @@ public class Input extends TorqueInputManager {
                 climbHasStarted = true;
 
             // The operator can cancel the ENGAME sequence
-            if (operator.getYButton())
+            if (operator.getLeftCenterButton())
                 climbHasStarted = false;
             // ! DEBUG
             if (driver.getDPADLeft())

@@ -50,7 +50,7 @@ public class Input extends TorqueInputManager {
     // Etc.
     private TimedTruthy driverRumble = new TimedTruthy();
     private TimedTruthy operatorRumble = new TimedTruthy();
-    private TorqueToggle rotateToBallToggle = new TorqueToggle(true);
+    private TorqueToggle rotateToBallToggle = new TorqueToggle(false);
     private TorqueToggle climberToggle = new TorqueToggle(false);
 
     private Input() {
@@ -347,8 +347,11 @@ public class Input extends TorqueInputManager {
             return xFactorToggle.get() && flywheel != 0;
         }
 
+        private double hoodMiddle;
+
         @Override
         public void update() {
+            hoodMiddle = (Constants.HOOD_MAX - Constants.HOOD_MIN) / 2;
             xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
 
             // Regression
@@ -375,8 +378,11 @@ public class Input extends TorqueInputManager {
             // State.getInstance().setTurretState(TurretState.CENTER);
             // }
             // Tarmac
+            // else if (driver.getAButton()) {
+            // setRawValues(1900, 0);
+            // State.getInstance().setTurretState(TurretState.CENTER);
             else if (driver.getAButton()) {
-                setRawValues(1900, 0);
+                setRawValues(950, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);
             } else {
                 if (operator.getYButton()) {

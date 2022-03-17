@@ -310,6 +310,7 @@ public class Input extends TorqueInputManager {
         private TorqueToggle xFactorToggle;
         private int readyCounter = 0;
         private final int readyCounterNeeded = 10;
+        private boolean prewarm = false;
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -344,7 +345,7 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean xFactor() {
-            return xFactorToggle.get() && flywheel != 0;
+            return xFactorToggle.get() && flywheel != 0 && !prewarm;
         }
 
         private double hoodMiddle;
@@ -353,7 +354,7 @@ public class Input extends TorqueInputManager {
         public void update() {
             hoodMiddle = (Constants.HOOD_MAX - Constants.HOOD_MIN) / 2;
             xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
-
+            prewarm = false;
             // Regression
             if (driver.getXButton()) {
                 if (Feedback.getInstance()
@@ -388,6 +389,7 @@ public class Input extends TorqueInputManager {
                 if (operator.getYButton()) {
                     setRawValues(1600, Constants.HOOD_MAX);
                     State.getInstance().setTurretState(TurretState.ON);
+                    prewarm = true;
                 } else {
                     reset();
                 }

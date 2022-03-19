@@ -1,5 +1,6 @@
 package org.texastorque.inputs;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
@@ -316,6 +317,7 @@ public class Input extends TorqueInputManager {
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
+            setRawValues(0, Constants.HOOD_MAX);
         }
 
         public boolean isUsingRegression() {
@@ -454,7 +456,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((373.7 * distance) + 1130, 3000);
+            return TorqueMathUtil.constrain((373.7 * distance) + (DriverStation.isAutonomous() ? 1130 : 1030), 3000);
         }
 
         /**

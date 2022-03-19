@@ -108,13 +108,11 @@ public class Turret extends TorqueSubsystem {
                             .gethOffset();
 
                     // // be slightly off :) (do a little trolling)
-                    // if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-                    // if (doingSabotage) {
-                    // hOffset = sabotageSetpoint;
-                    // } else {
-                    // doingSabotage = true;
-                    // sabotageSetpoint = 10 * Math.signum(hOffset) + hOffset;
-                    // hOffset = sabotageSetpoint;
+                    // if (MagazineBallManager.getInstance().isEnemyAlliance())
+                    // { if (doingSabotage) { hOffset = sabotageSetpoint; } else
+                    // { doingSabotage = true; sabotageSetpoint = 10 *
+                    // Math.signum(hOffset) + hOffset; hOffset =
+                    // sabotageSetpoint;
                     // }
                     // } else {
                     // doingSabotage = false;

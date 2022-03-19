@@ -70,7 +70,7 @@ public class Constants {
     public static final double TURRET_Ks = 0.33584;
     public static final double TURRET_Kv = 0.059555;
     public static final double TURRET_Ka = 0.0029152;
-    public static final double TURRET_Kp = 0.20539;
+    public static final double TURRET_Kp = 0.15539;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;

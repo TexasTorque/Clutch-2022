@@ -26,8 +26,8 @@ public class Turret extends TorqueSubsystem {
 
     enum EncoderOverStatus {
         OFF,
-        TOLEFT(-90, 70),
-        TORIGHT(90, -70),
+        TOLEFT(-80, 65),
+        TORIGHT(80, -65),
         HOMING;
         /*
          * Think of these like states of the turret
@@ -130,11 +130,11 @@ public class Turret extends TorqueSubsystem {
                     if (Feedback.getInstance()
                             .getGyroFeedback()
                             .getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
-                        changeRequest = 5 + Constants.TURRET_Ks;
+                        changeRequest = 8 + Constants.TURRET_Ks;
                     } else if (Feedback.getInstance()
                             .getGyroFeedback()
                             .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
-                        changeRequest = -5 - Constants.TURRET_Ks;
+                        changeRequest = -8 - Constants.TURRET_Ks;
                     }
                 }
             } else {

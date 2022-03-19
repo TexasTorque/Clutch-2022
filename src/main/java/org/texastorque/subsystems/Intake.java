@@ -88,7 +88,7 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void output() {
         // We are at the bottom, staph!
-        if (limitSwitch.get() && rotarySetPoint == IntakePosition.DOWN) {
+        if (limitSwitch.get()) {
             SmartDashboard.putBoolean("rotary running", false);
             rotary.set(0);
         } else {

@@ -246,7 +246,7 @@ public class Input extends TorqueInputManager {
         private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
-        private TorqueToggle autoMag = new TorqueToggle(false);
+        private TorqueToggle autoMag = new TorqueToggle(true);
 
         public MagazineInput() {
         }

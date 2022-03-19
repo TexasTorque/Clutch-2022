@@ -24,6 +24,22 @@ public class Turret extends TorqueSubsystem {
     private final PIDController pidController = new PIDController(
             Constants.TURRET_Kp, Constants.TURRET_Ki, Constants.TURRET_Kd);
 
+    public static enum HomingDirection {
+        LEFT(-1),
+        NONE(0),
+        RIGHT(1);
+
+        private final int direction;
+
+        HomingDirection(int direction) {
+            this.direction = direction;
+        }
+
+        public int getDirection() {
+            return direction;
+        }
+    }
+
     enum EncoderOverStatus {
         OFF,
         TOLEFT(-90, 70),
@@ -127,13 +143,11 @@ public class Turret extends TorqueSubsystem {
             } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target
                 // :( .. let's find it!
                 if (!checkOver() && checkHoming()) {
-                    if (Feedback.getInstance()
-                            .getGyroFeedback()
-                            .getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
+                    if (Input.getInstance().getShooterInput().getHomingDirection() ==
+                            HomingDirection.RIGHT) { 
                         changeRequest = 5 + Constants.TURRET_Ks;
-                    } else if (Feedback.getInstance()
-                            .getGyroFeedback()
-                            .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
+                    } else if (Input.getInstance().getShooterInput().getHomingDirection() ==
+                            HomingDirection.LEFT) { 
                         changeRequest = -5 - Constants.TURRET_Ks;
                     }
                 }

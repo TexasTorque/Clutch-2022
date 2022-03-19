@@ -14,6 +14,7 @@ import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Lights;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
+import org.texastorque.subsystems.Turret.HomingDirection;
 import org.texastorque.subsystems.Turret;
 import org.texastorque.torquelib.auto.TorqueAssist;
 import org.texastorque.torquelib.auto.TorqueAssist.AssistMode;
@@ -311,6 +312,7 @@ public class Input extends TorqueInputManager {
         private int readyCounter = 0;
         private final int readyCounterNeeded = 10;
         private boolean prewarm = false;
+        private HomingDirection homingDirection = HomingDirection.NONE;
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -395,6 +397,16 @@ public class Input extends TorqueInputManager {
                 }
 
             }
+
+            if (operator.getDPADLeft())
+                homingDirection = HomingDirection.LEFT;
+            else if (operator.getDPADRight())
+                homingDirection = HomingDirection.RIGHT;
+            else
+                homingDirection = HomingDirection.NONE;
+
+            SmartDashboard.putString("HomingDirection", homingDirection.toString());
+
         }
 
         @Override
@@ -456,6 +468,10 @@ public class Input extends TorqueInputManager {
                 return 50;
             return TorqueMathUtil.constrain(3.280 * Math.pow(10, distance * 0.7443), Constants.HOOD_MIN,
                     Constants.HOOD_MAX);
+        }
+
+        public HomingDirection getHomingDirection() {
+            return homingDirection;
         }
     }
 

@@ -47,12 +47,12 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
 
-        // flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
-        flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
-        hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
-        // hoodPosition = TorqueMathUtil.constrain(
-        // Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
-        // Constants.HOOD_MAX);
+        // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
+        // hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
+        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
+        hoodPosition = TorqueMathUtil.constrain(
+                Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
+                Constants.HOOD_MAX);
     }
 
     @Override

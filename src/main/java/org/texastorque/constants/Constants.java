@@ -67,16 +67,16 @@ public class Constants {
     public static final double CLIMBER_LEFT_SERVO_DETACHED = 0.7;
     // 63:1 gear ratio
     // Turret
-    public static final double TURRET_Ks = 0.19206;
+    public static final double TURRET_Ks = 0.33584;
     public static final double TURRET_Kv = 0.059555;
     public static final double TURRET_Ka = 0.0029152;
-    public static final double TURRET_Kp = 0.42539;
+    public static final double TURRET_Kp = 0.20539;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;
-    public static final double TURRET_RATIO = 192.708; // to 1
-    public static final double TURRET_CENTER_ROT = -30; // 30 degrees center
-    public static final double TOLERANCE_DEGREES = .7;
+    public static final double TURRET_RATIO = 128.4722; // to 1
+    public static final double TURRET_CENTER_ROT = 0;
+    public static final double TOLERANCE_DEGREES = 1.3;
 
     // Information
     public static final double TOP_SPEED_FEET = 16.52;

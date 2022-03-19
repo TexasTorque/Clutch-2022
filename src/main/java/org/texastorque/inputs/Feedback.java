@@ -75,9 +75,13 @@ public class Feedback {
             yaw = yaw_t;
         }
 
-        public void resetGyro() { nxGyro.reset(); }
+        public void resetGyro() {
+            nxGyro.reset();
+        }
 
-        public void zeroYaw() { nxGyro.zeroYaw(); }
+        public void zeroYaw() {
+            nxGyro.zeroYaw();
+        }
 
         public Rotation2d getRotation2d() {
             return Rotation2d.fromDegrees(getDegrees());
@@ -87,7 +91,9 @@ public class Feedback {
             return Rotation2d.fromDegrees(getCCWDegrees());
         }
 
-        public GyroDirection getGyroDirection() { return direction; }
+        public GyroDirection getGyroDirection() {
+            return direction;
+        }
 
         private float getDegrees() {
             // return nxGyro.getRoll();
@@ -102,8 +108,7 @@ public class Feedback {
          * @param angleOffset the angleOffset to set
          */
         public void setAngleOffset(float angleOffset) {
-            this.angleOffset =
-                (angleOffset - nxGyro.getFusedHeading() + 360f) % 360f;
+            this.angleOffset = (angleOffset - nxGyro.getFusedHeading() + 360f) % 360f;
         }
 
         @Override
@@ -117,10 +122,9 @@ public class Feedback {
     }
 
     public class LimelightFeedback extends TorqueFeedback {
-        private NetworkTable limelightTable =
-            NetworkTableInstance.getDefault().getTable("limelight");
-        private NetworkTableEntry tx = limelightTable.getEntry("tx");
-        private NetworkTableEntry ty = limelightTable.getEntry("ty");
+        private NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+        private NetworkTableEntry tx = limelightTable.getEntry("ty");
+        private NetworkTableEntry ty = limelightTable.getEntry("tx");
         private NetworkTableEntry ta = limelightTable.getEntry("ta");
 
         private double hOffset;
@@ -142,7 +146,7 @@ public class Feedback {
         @Override
         public void update() {
             hOffset = hMedian.calculate(tx.getDouble(0));
-            vOffset = vMedian.calculate(ty.getDouble(0));
+            vOffset = vMedian.calculate(-ty.getDouble(0));
             taOffset = taMedian.calculate(ta.getDouble(0));
             distance = calcDistance(vOffset);
         }
@@ -150,22 +154,30 @@ public class Feedback {
         /**
          * @return the hOffset
          */
-        public double gethOffset() { return hOffset; }
+        public double gethOffset() {
+            return hOffset;
+        }
 
         /**
          * @return the vOffset
          */
-        public double getvOffset() { return vOffset; }
+        public double getvOffset() {
+            return vOffset;
+        }
 
         /**
          * @return the taOffset
          */
-        public double getTaOffset() { return taOffset; }
+        public double getTaOffset() {
+            return taOffset;
+        }
 
         /**
          * @return Median calculated distance to target
          */
-        public double getDistance() { return distance; }
+        public double getDistance() {
+            return distance;
+        }
 
         /**
          * Calculate distance
@@ -176,7 +188,7 @@ public class Feedback {
         private double calcDistance(double ty) {
             return (Constants.HEIGHT_OF_VISION_STRIP_METERS -
                     Constants.HEIGHT_TO_LIMELIGHT_METERS) /
-                Math.tan(Math.toRadians(Constants.LIMELIGHT_ANGEL_DEG + ty));
+                    Math.tan(Math.toRadians(Constants.LIMELIGHT_ANGEL_DEG + ty));
         }
 
         public void smartDashboard() {
@@ -193,17 +205,22 @@ public class Feedback {
         private double hoodPosition;
 
         @Override
-        public void update() {}
+        public void update() {
+        }
 
         /**
          * @return the hoodPosition
          */
-        public double getHoodPosition() { return hoodPosition; }
+        public double getHoodPosition() {
+            return hoodPosition;
+        }
 
         /**
          * @return the RPM
          */
-        public double getRPM() { return RPM; }
+        public double getRPM() {
+            return RPM;
+        }
 
         /**
          * @param hoodPosition the hoodPosition to set
@@ -215,7 +232,9 @@ public class Feedback {
         /**
          * @param RPM the RPM to set
          */
-        public void setRPM(double RPM) { this.RPM = RPM; }
+        public void setRPM(double RPM) {
+            this.RPM = RPM;
+        }
 
         public void smartDashboard() {
             SmartDashboard.putNumber("ShooterRPM", RPM);
@@ -229,17 +248,22 @@ public class Feedback {
         private double rightPosition;
 
         @Override
-        public void update() {}
+        public void update() {
+        }
 
         /**
          * @return the leftPosition
          */
-        public double getLeftPosition() { return leftPosition; }
+        public double getLeftPosition() {
+            return leftPosition;
+        }
 
         /**
          * @return the rightPosition
          */
-        public double getRightPosition() { return rightPosition; }
+        public double getRightPosition() {
+            return rightPosition;
+        }
 
         /**
          * @param leftPosition the leftPosition to set
@@ -266,15 +290,21 @@ public class Feedback {
         return limelightFeedback.gethOffset() < Constants.TOLERANCE_DEGREES;
     }
 
-    public GyroFeedback getGyroFeedback() { return gyroFeedback; }
+    public GyroFeedback getGyroFeedback() {
+        return gyroFeedback;
+    }
 
     public LimelightFeedback getLimelightFeedback() {
         return limelightFeedback;
     }
 
-    public ShooterFeedback getShooterFeedback() { return shooterFeedback; }
+    public ShooterFeedback getShooterFeedback() {
+        return shooterFeedback;
+    }
 
-    public ClimberFeedback getClimberFeedback() { return climberFeedback; }
+    public ClimberFeedback getClimberFeedback() {
+        return climberFeedback;
+    }
 
     public static synchronized Feedback getInstance() {
         return (instance == null) ? instance = new Feedback() : instance;

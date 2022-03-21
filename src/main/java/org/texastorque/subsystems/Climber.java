@@ -1,5 +1,6 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -30,8 +31,40 @@ public class Climber extends TorqueSubsystem {
         }
     }
 
+    public static enum ServoDirection {
+        DETACH(Constants.CLIMBER_LEFT_SERVO_DETACHED, Constants.CLIMBER_RIGHT_SERVO_DETACHED),
+        ATTACH(Constants.CLIMBER_LEFT_SERVO_ATTACHED, Constants.CLIMBER_RIGHT_SERVO_ATTACHED);
+
+        private double positionLeft;
+        private double positionRight;
+
+        ServoDirection(double positionLeft, double positionRight) {
+            this.positionLeft = positionLeft;
+            this.positionRight = positionRight;
+        }
+
+        /**
+         * @return the positionLeft
+         */
+        public double getPositionLeft() {
+            return positionLeft;
+        }
+
+        /**
+         * @return the positionRight
+         */
+        public double getPositionRight() {
+            return positionRight;
+        }
+    }
+
     private TorqueSparkMax left;
     private TorqueSparkMax right;
+
+    private ServoDirection servoDirection = ServoDirection.ATTACH;
+
+    private Servo leftServo;
+    private Servo rightServo;
 
     private double climberSpeedsLeft;
     private double climberSpeedsRight;
@@ -39,16 +72,22 @@ public class Climber extends TorqueSubsystem {
     private Climber() {
         left = new TorqueSparkMax(Ports.CLIMBER_LEFT);
         right = new TorqueSparkMax(Ports.CLIMBER_RIGHT);
+
+        leftServo = new Servo(Ports.CLIMBER_LEFT_SERVO);
+        rightServo = new Servo(Ports.CLIMBER_RIGHT_SERVO);
+
         left.tareEncoder();
         right.tareEncoder();
     }
 
     @Override
     public void updateTeleop() {
-        if (State.getInstance().getAutoClimb() == AutoClimb.ON) {
-            updateAssist();
-            return;
-        }
+        // if (State.getInstance().getAutoClimb() == AutoClimb.ON) {
+        // updateAssist();
+        // return;
+        // }
+        servoDirection = Input.getInstance().getClimberInput().getServoDirection();
+
         double climberSpeeds = Input.getInstance()
                 .getClimberInput()
                 .getDirection()
@@ -129,6 +168,9 @@ public class Climber extends TorqueSubsystem {
     public void output() {
         left.set(-climberSpeedsLeft);
         right.set(climberSpeedsRight);
+
+        leftServo.set(servoDirection.getPositionLeft());
+        rightServo.set(servoDirection.getPositionRight());
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.texastorque.constants.Constants;
 import org.texastorque.inputs.State.*;
 import org.texastorque.modules.MagazineBallManager;
 import org.texastorque.subsystems.Climber.ClimberDirection;
+import org.texastorque.subsystems.Climber.ServoDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Lights;
@@ -461,6 +462,8 @@ public class Input extends TorqueInputManager {
 
     public class ClimberInput extends TorqueInput {
         private ClimberDirection direction = ClimberDirection.STOP;
+        private ServoDirection servoDirection = ServoDirection.ATTACH;
+
         // ! DEBUG ONLY, PUBLIC SHOULD BE ENCAPSULATED IF PERMANENT
         public boolean runLeft = false;
         public boolean runRight = false;
@@ -486,6 +489,13 @@ public class Input extends TorqueInputManager {
             // The operator can cancel the ENGAME sequence
             if (operator.getLeftCenterButton())
                 climbHasStarted = false;
+
+            if (driver.getLeftCenterButton()) {
+                servoDirection = ServoDirection.ATTACH;
+            } else if (driver.getRightCenterButton()) {
+                servoDirection = ServoDirection.DETACH;
+            }
+
             // ! DEBUG
             if (driver.getDPADLeft())
                 runLeft = true;
@@ -504,6 +514,13 @@ public class Input extends TorqueInputManager {
 
         public boolean hasClimbStarted() {
             return climbHasStarted;
+        }
+
+        /**
+         * @return the servoDirection
+         */
+        public ServoDirection getServoDirection() {
+            return servoDirection;
         }
 
         @Override

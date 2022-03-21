@@ -86,10 +86,15 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = 1;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 338;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -327;
-    public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
-    public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 225;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -225;
+    public static final double CLIMBER_LEFT_LIMIT_LOW = -5;
+    public static final double CLIMBER_RIGHT_LIMIT_LOW = 5;
+    public static final double CLIMBER_RIGHT_SERVO_ATTACHED = 0.5;
+    public static final double CLIMBER_RIGHT_SERVO_DETACHED = 0.3;
+    public static final double CLIMBER_LEFT_SERVO_ATTACHED = 0.5;
+    public static final double CLIMBER_LEFT_SERVO_DETACHED = 0.7;
+
     // 63:1 gear ratio
     // Turret
     public static final double TURRET_Ks = 0.19206;

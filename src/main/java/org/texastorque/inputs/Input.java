@@ -391,7 +391,7 @@ public class Input extends TorqueInputManager {
                 State.getInstance().setTurretState(TurretState.CENTER);
             } else {
                 if (operator.getYButton()) {
-                    setRawValues(1600, Constants.HOOD_MAX);
+                    setRawValues(1900, Constants.HOOD_MAX);
                     State.getInstance().setTurretState(TurretState.ON);
                     prewarm = true;
                 } else {

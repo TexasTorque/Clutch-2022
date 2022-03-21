@@ -206,6 +206,7 @@ public class Input extends TorqueInputManager {
     }
 
     public class IntakeInput extends TorqueInput {
+        private TorqueToggle toggleLifted = new TorqueToggle();
         private IntakePosition liftedPosition = IntakePosition.PRIME;
 
         private IntakeDirection direction = IntakeDirection.STOPPED;
@@ -216,6 +217,9 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void update() {
+            toggleLifted.calc(driver.getBButton());
+            liftedPosition = toggleLifted.get() ? IntakePosition.PRIME : IntakePosition.UP;
+
             if (driver.getRightTrigger())
                 direction = IntakeDirection.INTAKE;
             else if (driver.getLeftTrigger())

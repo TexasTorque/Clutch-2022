@@ -24,7 +24,11 @@ public class Turret extends TorqueSubsystem {
     private final PIDController pidController = new PIDController(
             Constants.TURRET_Kp, Constants.TURRET_Ki, Constants.TURRET_Kd);
 
-    enum EncoderOverStatus {
+    public enum HomingDirection {
+        LEFT, NONE, RIGHT; 
+    }
+
+    public enum EncoderOverStatus {
         OFF,
         TOLEFT(-93, 70),
         TORIGHT(93, -70),
@@ -104,13 +108,11 @@ public class Turret extends TorqueSubsystem {
                             .gethOffset();
 
                     // // be slightly off :) (do a little trolling)
-                    // if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-                    // if (doingSabotage) {
-                    // hOffset = sabotageSetpoint;
-                    // } else {
-                    // doingSabotage = true;
-                    // sabotageSetpoint = 10 * Math.signum(hOffset) + hOffset;
-                    // hOffset = sabotageSetpoint;
+                    // if (MagazineBallManager.getInstance().isEnemyAlliance())
+                    // { if (doingSabotage) { hOffset = sabotageSetpoint; } else
+                    // { doingSabotage = true; sabotageSetpoint = 10 *
+                    // Math.signum(hOffset) + hOffset; hOffset =
+                    // sabotageSetpoint;
                     // }
                     // } else {
                     // doingSabotage = false;
@@ -127,14 +129,12 @@ public class Turret extends TorqueSubsystem {
             } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target
                 // :( .. let's find it!
                 if (!checkOver() && checkHoming()) {
-                    if (Feedback.getInstance()
-                            .getGyroFeedback()
-                            .getGyroDirection() == Feedback.GyroDirection.CLOCKWISE) {
+                    if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.LEFT) {
                         changeRequest = 10 + Constants.TURRET_Ks;
-                    } else if (Feedback.getInstance()
-                            .getGyroFeedback()
-                            .getGyroDirection() == Feedback.GyroDirection.COUNTERCLOCKWISE) {
+                    } else if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.RIGHT) {
                         changeRequest = -10 - Constants.TURRET_Ks;
+                    } else {
+                        changeRequest = 10 + Constants.TURRET_Ks;    
                     }
                 }
             } else {

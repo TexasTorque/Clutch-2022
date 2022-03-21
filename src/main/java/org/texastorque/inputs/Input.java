@@ -16,6 +16,7 @@ import org.texastorque.subsystems.Lights;
 import org.texastorque.subsystems.Lights.LightMode;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
+import org.texastorque.subsystems.Turret.HomingDirection;
 import org.texastorque.subsystems.Turret;
 import org.texastorque.torquelib.auto.TorqueAssist;
 import org.texastorque.torquelib.auto.TorqueAssist.AssistMode;
@@ -308,6 +309,8 @@ public class Input extends TorqueInputManager {
         private double flywheel; // rpm
         private double hood; // degrees
 
+        private HomingDirection homingDirection = HomingDirection.NONE;
+
         public ShooterInput() {
         }
 
@@ -366,6 +369,13 @@ public class Input extends TorqueInputManager {
             } // SmartDashboard
             else
                 reset();
+
+            if (operator.getDPADDownLeft())
+                homingDirection = HomingDirection.LEFT;
+            else if (operator.getDPADDownRight())
+                homingDirection = HomingDirection.RIGHT;
+            else
+                homingDirection = HomingDirection.NONE;
         }
 
         @Override
@@ -426,6 +436,10 @@ public class Input extends TorqueInputManager {
             if (distance > 1.9)
                 return Constants.HOOD_MAX;
             return TorqueMathUtil.constrain(18.87 * distance - 3.914, Constants.HOOD_MIN, Constants.HOOD_MAX);
+        }
+
+        public HomingDirection getHomingDirection() {
+            return homingDirection;
         }
     }
 

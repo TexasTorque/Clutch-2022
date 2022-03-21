@@ -406,9 +406,11 @@ public class Input extends TorqueInputManager {
                 homingDirection = HomingDirection.RIGHT;
             else
                 homingDirection = HomingDirection.NONE;
+        }
 
+        @Override 
+        public void smartDashboard() {
             SmartDashboard.putString("HomingDirection", homingDirection.toString());
-
         }
 
         @Override

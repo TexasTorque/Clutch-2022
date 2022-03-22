@@ -1,7 +1,6 @@
 package org.texastorque.subsystems;
 
 import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

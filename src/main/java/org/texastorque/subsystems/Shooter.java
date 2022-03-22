@@ -97,6 +97,9 @@ public class Shooter extends TorqueSubsystem {
         SmartDashboard.putNumber("[Shooter]Flywheel Volt",
                 flywheel.getOutputCurrent());
         // SmartDashboard.putNumber("[Shooter] Hood Position", hood.getPosition());
+
+        SmartDashboard.putNumber("Left Hood Position", hoodLeft.getUpdatedPosition());
+        SmartDashboard.putNumber("Right Hood Position", hoodRight.getUpdatedPosition());
     }
 
     public static synchronized Shooter getInstance() {

@@ -94,6 +94,7 @@ public class Constants {
     public static final double CLIMBER_RIGHT_SERVO_DETACHED = 0.1;
     public static final double CLIMBER_LEFT_SERVO_ATTACHED = 0.5;
     public static final double CLIMBER_LEFT_SERVO_DETACHED = 0.9;
+    public static final double CLIMBER_SLOW_FACTOR = .5;
 
     // 63:1 gear ratio
     // Turret
@@ -128,7 +129,7 @@ public class Constants {
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 
-    // Physical`
+    // Physical
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 35 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 45;

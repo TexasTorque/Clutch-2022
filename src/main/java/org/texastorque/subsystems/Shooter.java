@@ -36,8 +36,9 @@ public class Shooter extends TorqueSubsystem {
         flywheel.configureIZone(Constants.FLYWHEEL_Iz);
 
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
+        hood.setPosition(-3);
         hood.invertPolarity(true);
-        hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -1, 1));
+        hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.35, .35));
         hood.configureIZone(Constants.HOOD_Iz);
 
         SmartDashboard.putNumber("RPMSET", 0);
@@ -47,12 +48,12 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
 
-        // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
-        // hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
-        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
-        hoodPosition = TorqueMathUtil.constrain(
-                Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
-                Constants.HOOD_MAX);
+        flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
+        hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
+        // flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
+        // hoodPosition = TorqueMathUtil.constrain(
+        // Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
+        // Constants.HOOD_MAX);
     }
 
     @Override

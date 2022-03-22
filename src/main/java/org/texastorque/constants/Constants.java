@@ -47,7 +47,7 @@ public class Constants {
     public static final double FLYWHEEL_Kf = 0.00026;
     public static final double FLYWHEEL_Iz = 100;
     public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 45;
+    public static final double HOOD_MAX = 32;
     public static final double SHOOTER_ERROR = 30;
 
     public static final double HOOD_Kp = 0.1;

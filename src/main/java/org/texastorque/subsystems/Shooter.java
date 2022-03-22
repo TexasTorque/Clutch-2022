@@ -51,6 +51,11 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
+        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
+            hoodPosition = Constants.HOOD_MIN;
+            flywheelSetpoint = 0;
+            return;
+        }
 
         flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
         hoodPosition = TorqueMathUtil.constrain(
@@ -92,8 +97,7 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Shooter]Hood SetPoint", this.hoodPosition);
-        SmartDashboard.putNumber("[Shooter]Flywheel SetPoint",
-                this.flywheelSetpoint);
+        SmartDashboard.putNumber("[Shooter]Flywheel SetPoint", this.flywheelSetpoint);
         SmartDashboard.putNumber("[Shooter]Flywheel Volt",
                 flywheel.getOutputCurrent());
         // SmartDashboard.putNumber("[Shooter] Hood Position", hood.getPosition());

@@ -31,6 +31,12 @@ public class Intake extends TorqueSubsystem {
     }
 
     public static enum IntakePosition {
+        // This is a new setpoint for the intake while climbing. 
+        // Since the turret is reversed in climb, we can go basiclly
+        // all the way up. Idealy, it should be 0. During the next 
+        // climb test, we need to test this value as high as we can
+        // get it safely.
+        CLIMB(.5), 
         UP(1.5),
         PRIME(4.4),
         DOWN(8.6);
@@ -68,6 +74,12 @@ public class Intake extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
+        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
+            rotarySetPoint = IntakePosition.CLIMB;
+            rollerSpeed = 0;
+            return;
+        } 
+
         rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
         rollerSpeed = -Input.getInstance()
                 .getIntakeInput()

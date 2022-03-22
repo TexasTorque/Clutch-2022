@@ -55,6 +55,12 @@ public class Magazine extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
+        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
+            gateSpeed = 0;
+            beltSpeed = 0;
+            return;
+        }
+
         gateSpeed = Input.getInstance()
                 .getMagazineInput()
                 .getGateDirection()

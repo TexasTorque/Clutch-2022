@@ -1,5 +1,6 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
@@ -66,6 +67,9 @@ public class Climber extends TorqueSubsystem {
     private Servo leftServo;
     private Servo rightServo;
 
+    private DigitalInput leftClaw;
+    private DigitalInput rightClaw;
+
     private double climberSpeedsLeft;
     private double climberSpeedsRight;
 
@@ -75,6 +79,9 @@ public class Climber extends TorqueSubsystem {
 
         leftServo = new Servo(Ports.CLIMBER_LEFT_SERVO);
         rightServo = new Servo(Ports.CLIMBER_RIGHT_SERVO);
+
+        leftClaw = new DigitalInput(Ports.CLIMBER_CLAW_LEFT);
+        rightClaw = new DigitalInput(Ports.CLIMBER_CLAW_RIGHT);
 
         left.tareEncoder();
         right.tareEncoder();
@@ -111,10 +118,12 @@ public class Climber extends TorqueSubsystem {
             if (Math.abs(Constants.CLIMBER_LEFT_LIMIT_HIGH - left.getPosition()) < 25
                     && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PUSH) {
                 climberSpeedsLeft *= Constants.CLIMBER_SLOW_FACTOR;
-            } else if (Math.abs(Constants.CLIMBER_LEFT_LIMIT_LOW - left.getPosition()) < 25
-                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
-                climberSpeedsLeft *= Constants.CLIMBER_SLOW_FACTOR;
+            }
 
+            // Pull until left claw
+            if (leftClaw.get() && !Input.getInstance().getClimberInput().getHookOverride()
+                    && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
+                climberSpeedsLeft = 0;
             }
 
             if (right.getPosition() < Constants.CLIMBER_RIGHT_LIMIT_HIGH) {
@@ -128,9 +137,12 @@ public class Climber extends TorqueSubsystem {
             if (Math.abs(right.getPosition() - Constants.CLIMBER_RIGHT_LIMIT_HIGH) < 25
                     && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PUSH) {
                 climberSpeedsRight *= Constants.CLIMBER_SLOW_FACTOR;
-            } else if (Math.abs(Constants.CLIMBER_RIGHT_LIMIT_LOW - right.getPosition()) < 25
+            }
+
+            // Pull until right claw
+            if (rightClaw.get() && !Input.getInstance().getClimberInput().getHookOverride()
                     && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
-                climberSpeedsRight *= Constants.CLIMBER_SLOW_FACTOR;
+                climberSpeedsRight = 0;
             }
         }
     }
@@ -174,6 +186,7 @@ public class Climber extends TorqueSubsystem {
 
         leftServo.set(servoDirection.getPositionLeft());
         rightServo.set(servoDirection.getPositionRight());
+
         // leftServo.set(SmartDashboard.getNumber("servoLeft", .5));
         // rightServo.set(SmartDashboard.getNumber("servoRight", .5));
     }
@@ -182,6 +195,9 @@ public class Climber extends TorqueSubsystem {
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Climber]SpeedLeft", climberSpeedsLeft);
         SmartDashboard.putNumber("[Climber]SpeedRight", climberSpeedsRight);
+
+        SmartDashboard.putBoolean("[Climber]ClawLeft", leftClaw.get());
+        SmartDashboard.putBoolean("[Climber]ClawRight", rightClaw.get());
     }
 
     public static synchronized Climber getInstance() {

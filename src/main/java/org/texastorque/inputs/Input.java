@@ -409,7 +409,7 @@ public class Input extends TorqueInputManager {
                 homingDirection = HomingDirection.NONE;
         }
 
-        @Override 
+        @Override
         public void smartDashboard() {
             SmartDashboard.putString("HomingDirection", homingDirection.toString());
         }
@@ -489,6 +489,7 @@ public class Input extends TorqueInputManager {
         public boolean runRight = false;
 
         private boolean climbHasStarted = false;
+        private boolean hookOverride = false;
 
         public ClimberInput() {
         }
@@ -526,6 +527,8 @@ public class Input extends TorqueInputManager {
                 runRight = true;
             else
                 runRight = false;
+
+            hookOverride = operator.getRightCenterButton();
         }
 
         public ClimberDirection getDirection() {
@@ -541,6 +544,10 @@ public class Input extends TorqueInputManager {
          */
         public ServoDirection getServoDirection() {
             return servoDirection;
+        }
+
+        public boolean getHookOverride() {
+            return hookOverride;
         }
 
         @Override

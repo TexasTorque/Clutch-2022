@@ -36,6 +36,8 @@ public class Ports {
     public static final int CLIMBER_RIGHT = 17; // CAN
     public static final int CLIMBER_LEFT_SERVO = 5; // PWM
     public static final int CLIMBER_RIGHT_SERVO = 6; // PWM
+    public static final int CLIMBER_CLAW_LEFT = 7; // PWM
+    public static final int CLIMBER_CLAW_RIGHT = 8; // PWM
 
     // Turret
     public static final int TURRET = 18; // CAN

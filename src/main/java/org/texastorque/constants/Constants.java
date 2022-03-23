@@ -42,7 +42,7 @@ public class Constants {
     public static final double DRIVE_LEFT_Ks = 0.21073;
     public static final double DRIVE_LEFT_Kv = 2.4051;
     public static final double DRIVE_LEFT_Ka = 0.28218;
-    public static final double DRIVE_LEFT_Kp = 0.0017673; // 1.5962E-05;
+    public static final double DRIVE_LEFT_Kp = 1.5962E-05;
     public static final double DRIVE_LEFT_Ki = 0;
     public static final double DRIVE_LEFT_Kd = 0;
 
@@ -107,12 +107,12 @@ public class Constants {
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 128.4722; // to 1
     public static final double TURRET_CENTER_ROT = 0; // 30 degrees center
-    public static final double TURRET_BACK_ROT = -180;
+    public static final double TURRET_BACK_ROT = 180;
     public static final double TOLERANCE_DEGREES = 1.3;
 
     // Information
-    public static final double DRIVE_MAX_SPEED_METERS = 5;
-    public static final double DRIVE_MAX_ACCELERATION_METERS = 4;
+    public static final double DRIVE_MAX_SPEED_METERS = 4;
+    public static final double DRIVE_MAX_ACCELERATION_METERS = 2.5;
     public static final double MAX_ANGULAR_SPEED = 3 * Math.PI;
     public static final double MAX_ANGULAR_ACCELERATION = 2 * Math.PI;
 

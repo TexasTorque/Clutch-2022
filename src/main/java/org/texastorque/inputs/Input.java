@@ -261,7 +261,7 @@ public class Input extends TorqueInputManager {
                 gateDirection = GateSpeeds.CLOSED;
             // If we are asking to shoot and the flywheel is reved and the
             // turret is locked
-            else if (shooterReady())
+            else if (shooterReady() && !shooterInput.isDoingPrewarm())
                 gateDirection = GateSpeeds.OPEN;
             else if (autoMag.get())
                 gateDirection = GateSpeeds.CLOSED;
@@ -459,7 +459,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((373.7 * distance) + (DriverStation.isAutonomous() ? 1130 : 1030), 3000);
+            return TorqueMathUtil.constrain((373.7 * distance) + 925, 3000);
         }
 
         /**
@@ -478,6 +478,10 @@ public class Input extends TorqueInputManager {
 
         public HomingDirection getHomingDirection() {
             return homingDirection;
+        }
+
+        public boolean isDoingPrewarm() {
+            return prewarm;
         }
     }
 

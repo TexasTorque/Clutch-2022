@@ -192,11 +192,11 @@ public class SwerveWheel {
                                 state.angle.getDegrees());
                 req = TorqueMathUtil.constrain(req + Ks * Math.signum(req), -1, 1);
 
-                // if (id == 0) {
-                // SmartDashboard.putNumber("ReqRotvolt", req);
-                // SmartDashboard.putNumber("ReqRotreq", state.angle.getDegrees());
-                // SmartDashboard.putNumber("ReqRotreal", fromEncoder(rotate.getPosition()));
-                // }
+                if (id == 0) {
+                        SmartDashboard.putNumber("ReqRotvolt", req);
+                        SmartDashboard.putNumber("ReqRotreq", state.angle.getDegrees());
+                        SmartDashboard.putNumber("ReqRotreal", fromEncoder(rotate.getPosition()));
+                }
                 if (rotatePID.atSetpoint()) {
                         req = 0;
                 }

@@ -42,7 +42,7 @@ public class Constants {
     public static final double DRIVE_LEFT_Ks = 0.21073;
     public static final double DRIVE_LEFT_Kv = 2.4051;
     public static final double DRIVE_LEFT_Ka = 0.28218;
-    public static final double DRIVE_LEFT_Kp = 1.5962E-05;
+    public static final double DRIVE_LEFT_Kp = 0.0017673; // 1.5962E-05;
     public static final double DRIVE_LEFT_Ki = 0;
     public static final double DRIVE_LEFT_Kd = 0;
 

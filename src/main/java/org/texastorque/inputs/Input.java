@@ -409,7 +409,7 @@ public class Input extends TorqueInputManager {
                 homingDirection = HomingDirection.NONE;
         }
 
-        @Override 
+        @Override
         public void smartDashboard() {
             SmartDashboard.putString("HomingDirection", homingDirection.toString());
         }
@@ -469,10 +469,11 @@ public class Input extends TorqueInputManager {
 
         public double regressionHood(double distance) {
             // past 1.9, just do max
-            if (distance > 1.5)
-                return 50;
-            return TorqueMathUtil.constrain(3.280 * Math.pow(10, distance * 0.7443), Constants.HOOD_MIN,
-                    Constants.HOOD_MAX);
+            // if (distance > 1.5)
+            return Constants.HOOD_MAX;
+            // return TorqueMathUtil.constrain(3.280 * Math.pow(10, distance * 0.7443),
+            // Constants.HOOD_MIN,
+            // Constants.HOOD_MAX);
         }
 
         public HomingDirection getHomingDirection() {

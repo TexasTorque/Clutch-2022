@@ -6,8 +6,8 @@ public class Constants {
     public static final double INCH_TO_FOOT = 1. / 12.;
 
     // Drivebase
-    public static final double DRIVE_WHEEL_RADIUS_METERS = 2 * INCH_TO_FOOT * FOOT_TO_METER; // 1.788 is width with
-                                                                                             // wear
+    public static final double DRIVE_WHEEL_RADIUS_METERS = 1.788 * INCH_TO_FOOT * FOOT_TO_METER; // 1.788 is width with
+    // wear
     public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS_DRIVER = 2 * Math.PI;
 
     public static final double DISTANCE_TO_CENTER_X = 10.875 * INCH_TO_FOOT * FOOT_TO_METER;
@@ -39,17 +39,17 @@ public class Constants {
 
     public static final double DRIVE_ROT_TOLERANCE = 1;
 
-    public static final double DRIVE_LEFT_Ks = 0.3192;
-    public static final double DRIVE_LEFT_Kv = 2.1904;
-    public static final double DRIVE_LEFT_Ka = 0.17902;
+    public static final double DRIVE_LEFT_Ks = 0.21073;
+    public static final double DRIVE_LEFT_Kv = 2.4051;
+    public static final double DRIVE_LEFT_Ka = 0.28218;
     public static final double DRIVE_LEFT_Kp = 1.5962E-05;
     public static final double DRIVE_LEFT_Ki = 0;
     public static final double DRIVE_LEFT_Kd = 0;
 
-    public static final double DRIVE_RIGHT_Ks = 0.24187;
-    public static final double DRIVE_RIGHT_Kv = 2.1974;
-    public static final double DRIVE_RIGHT_Ka = 0.31871;
-    public static final double DRIVE_RIGHT_Kp = 0.00078887;
+    public static final double DRIVE_RIGHT_Ks = DRIVE_LEFT_Ks;
+    public static final double DRIVE_RIGHT_Kv = DRIVE_LEFT_Kv;
+    public static final double DRIVE_RIGHT_Ka = DRIVE_LEFT_Ka;
+    public static final double DRIVE_RIGHT_Kp = DRIVE_LEFT_Kp;
     public static final double DRIVE_RIGHT_Ki = 0;
     public static final double DRIVE_RIGHT_Kd = 0;
 
@@ -69,14 +69,14 @@ public class Constants {
     public static final double INTAKE_ROTARY_MAX_SPEED = .25;
 
     // Shooter
-    public static final double FLYWHEEL_Kv = 0.1376; // Values are for rotations/min
-    public static final double FLYWHEEL_Ka = 0.042938;
-    public static final double FLYWHEEL_Ks = 0.13752;
+    public static final double FLYWHEEL_Ks = 0.37717;
+    public static final double FLYWHEEL_Kv = 0.14042; // Values are for rotations/sec
+    public static final double FLYWHEEL_Ka = 0.016159;
     public static final double FLYWHEEL_Kp = 0.00028;
-    public static final double FLYWHEEL_Ki = 0.0000013;
+    public static final double FLYWHEEL_Ki = 0;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00026;
-    public static final double FLYWHEEL_Iz = 150;
+    public static final double FLYWHEEL_Kf = 0; // 0.00026;
+    public static final double FLYWHEEL_Iz = 100;
     public static final double FLYWHEEEL_MAX_SPEED = 3000;
     public static final double FLYWHEEL_MAX_ACCELERATION = 3000;
     public static final double HOOD_MIN = 0;

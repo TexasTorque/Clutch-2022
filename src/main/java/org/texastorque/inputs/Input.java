@@ -309,7 +309,7 @@ public class Input extends TorqueInputManager {
     public class ShooterInput extends TorqueInput {
         private boolean usingRegression = false;
         private double flywheel; // rpm
-        private double hood; // degrees
+        private double hood;
         private TorqueToggle xFactorToggle;
         private int readyCounter = 0;
         private final int readyCounterNeeded = 10;
@@ -368,7 +368,7 @@ public class Input extends TorqueInputManager {
                             .getLimelightFeedback()
                             .getDistance());
                 } else
-                    setRawValues(1600, Constants.HOOD_MIN);
+                    setRawValues(1600, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.ON);
             }
 

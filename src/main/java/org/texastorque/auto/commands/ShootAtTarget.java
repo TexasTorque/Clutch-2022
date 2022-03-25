@@ -24,6 +24,7 @@ public class ShootAtTarget extends TorqueCommand {
     private boolean turretOn = true;
     private double distance;
     private double outputRPM;
+    private double regressionOffset = 0;
 
     private int readyIterations = 0;
     private final int neededReadyIterations = 4;
@@ -47,6 +48,13 @@ public class ShootAtTarget extends TorqueCommand {
         this.turretOn = turretOn;
     }
 
+    public ShootAtTarget(double magOutputTime, boolean stop, boolean turretOn, double regressionOffset) {
+        this.magOutputTime = magOutputTime;
+        this.stop = stop;
+        this.turretOn = turretOn;
+        this.regressionOffset = regressionOffset;
+    }
+
     @Override
     protected void init() {
         AutoInput.getInstance().setSetTurretPosition(false);
@@ -62,6 +70,7 @@ public class ShootAtTarget extends TorqueCommand {
     protected void continuous() {
         distance = Feedback.getInstance().getLimelightFeedback().getDistance();
         outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+        outputRPM += regressionOffset;
         AutoInput.getInstance().setFlywheelSpeed(outputRPM);
         AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
 

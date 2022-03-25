@@ -23,7 +23,7 @@ public class Mode6Right extends TorqueSequence {
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
                                 new Pathplanner("Mode6Right_1")));
 
-                addBlock(new TorqueBlock((new ShootAtTarget(1, false))));
+                addBlock(new TorqueBlock((new ShootAtTarget(1, false, true, -50))));
 
                 addBlock(new TorqueBlock(
                                 new PrepareTurret(-75),

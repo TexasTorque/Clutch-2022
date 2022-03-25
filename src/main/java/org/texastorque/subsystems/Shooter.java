@@ -23,7 +23,7 @@ public class Shooter extends TorqueSubsystem {
     private TorqueLinearServo hoodLeft, hoodRight;
 
     // setpoints grabbed from input
-    private double hoodPosition;
+    private double hoodPosition = Constants.HOOD_MAX;
     private double flywheelSetpoint;
 
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.FLYWHEEL_Ks,
@@ -86,8 +86,8 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void output() {
-        // hoodRight.setPosition(hoodPosition);
-        // hoodLeft.setPosition(hoodPosition);
+        hoodRight.setPosition(hoodPosition);
+        hoodLeft.setPosition(hoodPosition);
         flywheel.setWithFF(flywheelSetpoint, ControlType.kSmartVelocity, 0,
                 feedforward.calculate(flywheelSetpoint / 60),
                 ArbFFUnits.kVoltage);

@@ -96,9 +96,9 @@ public class Climber extends TorqueSubsystem {
                 .getDirection() *
                 Constants.CLIMBER_SPEED;
         if (Input.getInstance().getClimberInput().runLeft) {
-            climberSpeedsLeft = Constants.CLIMBER_SPEED * .3;
+            climberSpeedsLeft = Constants.CLIMBER_SPEED * .1;
         } else if (Input.getInstance().getClimberInput().runRight) {
-            climberSpeedsRight = Constants.CLIMBER_SPEED * .3;
+            climberSpeedsRight = Constants.CLIMBER_SPEED * .1;
         } else {
             if (left.getPosition() > Constants.CLIMBER_LEFT_LIMIT_HIGH) {
                 climberSpeedsLeft = Math.max(climberSpeeds, 0);

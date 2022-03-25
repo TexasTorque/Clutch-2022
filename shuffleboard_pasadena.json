@@ -1,0 +1,128 @@
+{
+  "tabPane": [
+    {
+      "title": "Texas Torque",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 80.0,
+        "showGrid": true,
+        "hgap": 8.0,
+        "vgap": 8.0,
+        "titleType": 1,
+        "tiles": {
+          "12,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/ShooterRPM",
+              "_title": "Shooter RPM",
+              "Range/Min": 0.0,
+              "Range/Max": 3000.0,
+              "Visuals/Show value": true
+            }
+          },
+          "3,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Climb Started",
+              "_title": "Climb Started",
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
+            }
+          },
+          "12,2": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/Speed",
+              "_title": "Speed Shifter Setting",
+              "Range/Min": 0.0,
+              "Range/Max": 1.0,
+              "Visuals/Show value": true
+            }
+          },
+          "0,5": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/AutoList",
+              "_title": "Auto List"
+            }
+          },
+          "0,0": {
+            "size": [
+              6,
+              5
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://ball_detection_display_left",
+              "_title": "ball_detection_display_left",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": false,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "6,0": {
+            "size": [
+              6,
+              5
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://ball_detection_display_right",
+              "_title": "ball_detection_display_right",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": false,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "12,4": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/RPM Adjust",
+              "_title": "RPM Adjust",
+              "Range/Min": -400.0,
+              "Range/Max": 400.0,
+              "Visuals/Show value": true
+            }
+          }
+        }
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
+    "width": 1295.199951171875,
+    "height": 695.2000122070312
+  }
+}

@@ -315,6 +315,7 @@ public class Input extends TorqueInputManager {
         private final int readyCounterNeeded = 10;
         private boolean prewarm = false;
         private HomingDirection homingDirection = HomingDirection.NONE;
+        private TorqueSpeedSettings rpmAdjust = new TorqueSpeedSettings(0, -400, 400, 10);
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -353,12 +354,10 @@ public class Input extends TorqueInputManager {
             return xFactorToggle.get() && flywheel != 0 && !prewarm;
         }
 
-        private double hoodMiddle;
-
         @Override
         public void update() {
-            hoodMiddle = (Constants.HOOD_MAX - Constants.HOOD_MIN) / 2;
             xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
+            rpmAdjust.update(operator.getRightCenterButton(), operator.getLeftCenterButton(), false, false);
             prewarm = false;
             // Regression
             if (driver.getXButton()) {
@@ -412,6 +411,7 @@ public class Input extends TorqueInputManager {
         @Override
         public void smartDashboard() {
             SmartDashboard.putString("HomingDirection", homingDirection.toString());
+            SmartDashboard.putNumber("RPM Adjust", rpmAdjust.getSpeed());
         }
 
         @Override
@@ -459,7 +459,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((373.7 * distance) + 925, 3000);
+            return TorqueMathUtil.constrain((373.7 * distance) + 925 + rpmAdjust.getSpeed(), 3000);
         }
 
         /**

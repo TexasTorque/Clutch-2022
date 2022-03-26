@@ -287,7 +287,7 @@ public class Feedback {
     }
 
     public boolean isTurretAlligned() {
-        return limelightFeedback.gethOffset() < Constants.TOLERANCE_DEGREES;
+        return limelightFeedback.gethOffset() < Constants.TOLERANCE_DEGREES && limelightFeedback.getTaOffset() > 0;
     }
 
     public GyroFeedback getGyroFeedback() {

@@ -75,17 +75,20 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-            rotarySetPoint = IntakePosition.CLIMB;
+            if (Input.getInstance().getIntakeInput().getPosition() == IntakePosition.DOWN) {
+                rotarySetPoint = IntakePosition.DOWN;
+            } else {
+                rotarySetPoint = IntakePosition.CLIMB;
+            }
             rollerSpeed = 0;
-            return;
+        } else {
+            rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
+            rollerSpeed = -Input.getInstance()
+                    .getIntakeInput()
+                    .getDirection()
+                    .getDirection() *
+                    Constants.INTAKE_ROLLER_SPEED;
         }
-
-        rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
-        rollerSpeed = -Input.getInstance()
-                .getIntakeInput()
-                .getDirection()
-                .getDirection() *
-                Constants.INTAKE_ROLLER_SPEED;
     }
 
     @Override

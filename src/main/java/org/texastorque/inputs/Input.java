@@ -228,6 +228,7 @@ public class Input extends TorqueInputManager {
                 intakePosition = IntakePosition.DOWN;
             else
                 intakePosition = liftedPosition;
+
         }
 
         public IntakeDirection getDirection() {

@@ -1,6 +1,8 @@
 package org.texastorque.inputs;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
+import org.texastorque.constants.Constants;
 import org.texastorque.subsystems.Intake;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
@@ -25,7 +27,7 @@ public class AutoInput {
 
     // Shooter
     private double flywheelSpeed;
-    private double hoodPosition;
+    private double hoodPosition = Constants.HOOD_MAX;
 
     /**
      * @param flywheelSpeed the flywheelSpeed to set

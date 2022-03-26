@@ -19,7 +19,7 @@ public class Mode3Left extends TorqueSequence {
         // Start Intake, Automag
         addBlock(new TorqueBlock(
                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED), new PrepareTurret(0)));
 
         // Run path
         addBlock(new TorqueBlock(new Pathplanner("Mode3Left")));

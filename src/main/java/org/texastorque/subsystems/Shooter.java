@@ -45,8 +45,8 @@ public class Shooter extends TorqueSubsystem {
         hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 5);
         hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 5);
 
-        SmartDashboard.putNumber("RPMSET", 0);
-        SmartDashboard.putNumber("HOODSET", 0);
+        // SmartDashboard.putNumber("RPMSET", 0);
+        // SmartDashboard.putNumber("HOODSET", 0);
     }
 
     @Override

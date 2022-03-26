@@ -228,6 +228,7 @@ public class Input extends TorqueInputManager {
                 intakePosition = IntakePosition.DOWN;
             else
                 intakePosition = liftedPosition;
+
         }
 
         public IntakeDirection getDirection() {
@@ -442,7 +443,7 @@ public class Input extends TorqueInputManager {
          * @param speed RPM
          */
         public void setFlywheelSpeed(double speed) {
-            this.flywheel = Math.min(speed, 4000);
+            this.flywheel = Math.min(speed, Constants.FLYWHEEEL_MAX_SPEED);
         }
 
         /**
@@ -451,7 +452,7 @@ public class Input extends TorqueInputManager {
          * @param hood Hood position
          */
         public void setHood(double hood) {
-            this.hood = TorqueMathUtil.constrain(hood, 0, 50);
+            this.hood = TorqueMathUtil.constrain(hood, Constants.HOOD_MIN, Constants.HOOD_MAX);
         }
 
         /**
@@ -459,7 +460,8 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((373.7 * distance) + 925 + rpmAdjust.getSpeed(), 3000);
+            return TorqueMathUtil.constrain((373.7 * distance) + 925 + rpmAdjust.getSpeed(), 0,
+                    Constants.FLYWHEEEL_MAX_SPEED);
         }
 
         /**

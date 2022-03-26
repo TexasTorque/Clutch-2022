@@ -21,12 +21,13 @@ public class Mode5Right extends TorqueSequence {
                 // Start Intake, Automag
                 addBlock(new TorqueBlock(
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED), new PrepareTurret(-75),
+                                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED), 
+                                new PrepareTurret(-75),
                                 new PrepareShooter(50, 1960),
                                 new Pathplanner("Mode5Right_1")));
 
-                addBlock(new TorqueBlock(
-                                new ShootAtTarget(1, false)));
+                addBlock(new TorqueBlock((new ShootAtTarget(1, false, true, -150))));
+
 
                 addBlock(new TorqueBlock(new Pathplanner("Mode5Right_2", false)));
 

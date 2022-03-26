@@ -26,16 +26,20 @@ public class Mode5Right extends TorqueSequence {
                                 new PrepareShooter(50, 1960),
                                 new Pathplanner("Mode5Right_1")));
 
+                // Shoot preload and pickup
                 addBlock(new TorqueBlock((new ShootAtTarget(1, false, true, -150))));
 
-
+                // Go to human player
                 addBlock(new TorqueBlock(new Pathplanner("Mode5Right_2", false)));
 
+                // Wait for human player
                 addBlock(new TorqueBlock(new Wait(1)));
 
-                addBlock(new TorqueBlock(new PrepareTurret(5), new PrepareShooter(50, 1960),
+                // Go to the last shoot
+                addBlock(new TorqueBlock(new PrepareTurret(-5), new PrepareShooter(50, 1975),
                                 new Pathplanner("Mode5Right_3", false)));
 
+                // Shoot!
                 addBlock(new TorqueBlock(new ShootAtTarget(1.6, true)));
 
                 // Shut off

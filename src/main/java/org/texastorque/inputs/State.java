@@ -1,5 +1,6 @@
 package org.texastorque.inputs;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class State {
@@ -24,7 +25,23 @@ public class State {
     }
 
     public static enum TurretState {
-        OFF, ON, CENTER
+        OFF, ON, CENTER, TO_POSITION
+    }
+
+    private Rotation2d turretToPosition = Rotation2d.fromDegrees(0);
+
+    /**
+     * @return the turretToPosition
+     */
+    public Rotation2d getTurretToPosition() {
+        return turretToPosition;
+    }
+
+    /**
+     * @param turretToPosition the turretToPosition to set
+     */
+    public void setTurretToPosition(Rotation2d turretToPosition) {
+        this.turretToPosition = turretToPosition;
     }
 
     public static enum AutomaticMagazineState {
@@ -82,21 +99,6 @@ public class State {
     public static boolean isRedAlliance() {
         return fetchAllianceColorFromFMS().isRed();
     }
-
-    // public void fetchAllianceColorFromFMS() {
-    //     this.allianceColor = NetworkTableInstance.getDefault()
-    //             .getTable("FMSInfo")
-    //             .getEntry("IsRedAlliance")
-    //             .getBoolean(false)
-    //                     ? AllianceColor.RED
-    //                     : AllianceColor.BLUE;
-    // }
-
-    // public AllianceColor getAllianceColor() {
-    //     if (this.allianceColor == null)
-    //         fetchAllianceColorFromFMS();
-    //     return this.allianceColor;
-    // }
 
     public static enum AutoClimb {
         OFF, ON

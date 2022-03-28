@@ -1,5 +1,7 @@
 package org.texastorque.constants;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 public class Constants {
     // Conversions
     public static final double FOOT_TO_METER = 0.3048;
@@ -98,17 +100,19 @@ public class Constants {
 
     // 63:1 gear ratio
     // Turret
-    public static final double TURRET_Ks = 0.19206;
+    public static final double TURRET_Ks = 0.14066;
     public static final double TURRET_Kv = 0.059555;
     public static final double TURRET_Ka = 0.0029152;
-    public static final double TURRET_Kp = 0.20539;
+    public static final double TURRET_Kp = 0.24539;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 128.4722; // to 1
     public static final double TURRET_CENTER_ROT = 0; // 30 degrees center
     public static final double TURRET_BACK_ROT = 180;
-    public static final double TOLERANCE_DEGREES = 1.3;
+    public static final double TOLERANCE_DEGREES = .8;
+    public static final double TURRET_MAX_ROTATION_LEFT = 93;
+    public static final double TURRET_MAX_ROTATION_RIGHT = -93;
 
     // Information
     public static final double DRIVE_MAX_SPEED_METERS = 4;
@@ -133,5 +137,6 @@ public class Constants {
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 35 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 45;
+    public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
 }

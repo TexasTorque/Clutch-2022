@@ -1,5 +1,7 @@
 package org.texastorque.inputs;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Climber.ServoDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
+import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Lights;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
@@ -26,6 +29,7 @@ import org.texastorque.torquelib.component.TorqueSpeedSettings;
 import org.texastorque.torquelib.controlLoop.TimedTruthy;
 import org.texastorque.torquelib.controlLoop.TorqueSlewLimiter;
 import org.texastorque.torquelib.util.GenericController;
+import org.texastorque.torquelib.util.TorqueClick;
 import org.texastorque.torquelib.util.TorqueLock;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.torquelib.util.TorqueToggle;
@@ -317,6 +321,7 @@ public class Input extends TorqueInputManager {
         private boolean prewarm = false;
         private HomingDirection homingDirection = HomingDirection.NONE;
         private TorqueSpeedSettings rpmAdjust = new TorqueSpeedSettings(0, -400, 400, 10);
+        private TorqueClick startShoot = new TorqueClick();
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -369,8 +374,8 @@ public class Input extends TorqueInputManager {
                             .getLimelightFeedback()
                             .getDistance());
                 } else
-                    setRawValues(1600, Constants.HOOD_MAX);
-                State.getInstance().setTurretState(TurretState.ON);
+                    setFromDist(Constants.HUB_CENTER_POSITION
+                            .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation()));
             }
 
             // Layup
@@ -393,13 +398,14 @@ public class Input extends TorqueInputManager {
             } else {
                 if (operator.getYButton()) {
                     setRawValues(1900, Constants.HOOD_MAX);
-                    State.getInstance().setTurretState(TurretState.ON);
                     prewarm = true;
                 } else {
                     reset();
                 }
 
             }
+            if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
+                updateToPositon();
 
             if (operator.getDPADLeft())
                 homingDirection = HomingDirection.LEFT;
@@ -407,6 +413,25 @@ public class Input extends TorqueInputManager {
                 homingDirection = HomingDirection.RIGHT;
             else
                 homingDirection = HomingDirection.NONE;
+        }
+
+        private void updateToPositon() {
+            Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
+            double x_dist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
+            double y_dist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
+            double robot_angle_from_goal = Math.atan2(y_dist, x_dist);
+
+            if (robot_angle_from_goal < Constants.TURRET_MAX_ROTATION_LEFT
+                    && robot_angle_from_goal > Constants.TURRET_MAX_ROTATION_RIGHT) {
+                Rotation2d rotation = (robotPosition.getRotation().minus(new Rotation2d(robot_angle_from_goal)))
+                        .times(-1);
+                State.getInstance().setTurretState(TurretState.TO_POSITION);
+                State.getInstance()
+                        .setTurretToPosition(rotation);
+
+            } else {
+                State.getInstance().setTurretState(TurretState.ON);
+            }
         }
 
         @Override

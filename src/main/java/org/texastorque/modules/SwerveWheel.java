@@ -151,11 +151,10 @@ public class SwerveWheel {
 
                         double en = -metersPerSecondToEncoderPerMinute(state.speedMetersPerSecond);
                         if (id == 0) {
-                                SmartDashboard.putNumber(id + "en", en);
-                                SmartDashboard.putNumber(id + "speed",
-                                                state.speedMetersPerSecond);
-                                SmartDashboard.putNumber(
-                                                id + "real", encoderPerMinuteToMetersPerSecond(drive.getVelocity()));
+                                // This logs req, real, and residual in the speed of drive motor
+                                SmartDashboard.putNumber("SpeedReq" + id, state.speedMetersPerSecond);
+                                SmartDashboard.putNumber("SpeedReal" + id, encoderPerMinuteToMetersPerSecond(drive.getVelocity()));
+                                SmartDashboard.putNumber("SpeedResidual" + id, encoderPerMinuteToMetersPerSecond(drive.getVelocity()) - state.speedMetersPerSecond);
                         }
                         if (isLeft()) {
                                 drive.setWithFF(en, ControlType.kSmartVelocity, 0,
@@ -193,13 +192,18 @@ public class SwerveWheel {
                 req = TorqueMathUtil.constrain(req + Ks * Math.signum(req), -1, 1);
 
                 if (id == 0) {
-                        SmartDashboard.putNumber("ReqRotvolt", req);
-                        SmartDashboard.putNumber("ReqRotreq", state.angle.getDegrees());
-                        SmartDashboard.putNumber("ReqRotreal", fromEncoder(rotate.getPosition()));
+                        // This logs req, real, and residual in the rotation
+                        SmartDashboard.putNumber("RotReq" + id, state.angle.getDegrees());
+                        SmartDashboard.putNumber("RotReal" + id, fromEncoder(rotate.getPosition()));
+                        SmartDashboard.putNumber("RotResidual" + id, state.angle.getDegrees() - fromEncoder(rotate.getPosition()));
                 }
                 if (rotatePID.atSetpoint()) {
                         req = 0;
                 }
                 rotate.set(req);
+        }
+
+        public void smartDashboard() {
+                
         }
 }

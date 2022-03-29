@@ -8,6 +8,7 @@ import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.AutomaticMagazineState;
 import org.texastorque.inputs.State.TurretState;
+import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.TorqueCommand;
@@ -68,9 +69,26 @@ public class ShootAtTarget extends TorqueCommand {
 
     @Override
     protected void continuous() {
-        distance = Feedback.getInstance().getLimelightFeedback().getDistance();
-        outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
-        outputRPM += regressionOffset;
+        if (Feedback.getInstance()
+        .getLimelightFeedback()
+        .getTaOffset() > 0) {
+            distance = Feedback.getInstance().getLimelightFeedback().getDistance();
+
+            outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+            outputRPM += regressionOffset;
+
+            AutoInput.getInstance().setFlywheelSpeed(outputRPM);
+            AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
+        } else {
+            distance = Constants.HUB_CENTER_POSITION
+                            .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation());
+            outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+            outputRPM += regressionOffset;
+            AutoInput.getInstance().setFlywheelSpeed(outputRPM);
+            AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
+
+        }
+
         AutoInput.getInstance().setFlywheelSpeed(outputRPM);
         AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
 

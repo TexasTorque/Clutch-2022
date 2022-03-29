@@ -365,6 +365,7 @@ public class Input extends TorqueInputManager {
             xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
             rpmAdjust.update(operator.getRightCenterButton(), operator.getLeftCenterButton(), false, false);
             prewarm = false;
+            
             // Regression
             if (driver.getXButton()) {
                 if (Feedback.getInstance()
@@ -383,15 +384,7 @@ public class Input extends TorqueInputManager {
                 setRawValues(1550, Constants.HOOD_MIN);
                 State.getInstance().setTurretState(TurretState.CENTER);
             }
-            // Launchpad (interferes w/ intake toggle)
-            // else if (driver.getAButton()) {
-            // setRawValues(2300, Constants.HOOD_MAX);
-            // State.getInstance().setTurretState(TurretState.CENTER);
-            // }
-            // Tarmac
-            // else if (driver.getAButton()) {
-            // setRawValues(1900, 0);
-            // State.getInstance().setTurretState(TurretState.CENTER);
+  
             else if (driver.getAButton()) {
                 setRawValues(950, Constants.HOOD_MAX);
                 State.getInstance().setTurretState(TurretState.CENTER);

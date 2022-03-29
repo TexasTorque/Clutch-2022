@@ -365,7 +365,7 @@ public class Input extends TorqueInputManager {
             xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
             rpmAdjust.update(operator.getRightCenterButton(), operator.getLeftCenterButton(), false, false);
             prewarm = false;
-            
+
             // Regression
             if (driver.getXButton()) {
                 if (Feedback.getInstance()
@@ -410,18 +410,17 @@ public class Input extends TorqueInputManager {
 
         private void updateToPositon() {
             Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
-            double x_dist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
-            double y_dist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
-            double robot_angle_from_goal = Math.atan2(y_dist, x_dist);
+            double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
+            double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
+            double robotAngleFromGoal = Math.atan2(yDist, xDist);
 
-            if (robot_angle_from_goal < Constants.TURRET_MAX_ROTATION_LEFT
-                    && robot_angle_from_goal > Constants.TURRET_MAX_ROTATION_RIGHT) {
-                Rotation2d rotation = (robotPosition.getRotation().minus(new Rotation2d(robot_angle_from_goal)))
+            if (robotAngleFromGoal < Constants.TURRET_MAX_ROTATION_LEFT
+                    && robotAngleFromGoal > Constants.TURRET_MAX_ROTATION_RIGHT) {
+                Rotation2d rotation = (robotPosition.getRotation().minus(new Rotation2d(robotAngleFromGoal)))
                         .times(-1);
                 State.getInstance().setTurretState(TurretState.TO_POSITION);
                 State.getInstance()
                         .setTurretToPosition(rotation);
-
             } else {
                 State.getInstance().setTurretState(TurretState.ON);
             }

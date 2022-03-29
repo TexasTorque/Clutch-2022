@@ -1,5 +1,6 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
@@ -66,6 +67,9 @@ public class Climber extends TorqueSubsystem {
     private Servo leftServo;
     private Servo rightServo;
 
+    private DigitalInput leftDIO;
+    private DigitalInput rightDIO;
+
     private double climberSpeedsLeft;
     private double climberSpeedsRight;
 
@@ -75,6 +79,8 @@ public class Climber extends TorqueSubsystem {
 
         leftServo = new Servo(Ports.CLIMBER_LEFT_SERVO);
         rightServo = new Servo(Ports.CLIMBER_RIGHT_SERVO);
+
+        // leftDIO = new DigitalInput(channel)
 
         left.tareEncoder();
         right.tareEncoder();

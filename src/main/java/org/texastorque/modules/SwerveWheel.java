@@ -157,7 +157,10 @@ public class SwerveWheel {
                 double newPosition = Math.IEEEremainder(requestedRotationEncoderUnits - rotate.getPosition(),
                                 countPerRev / 2.)
                                 + rotate.getPosition();
-
+                if (id == 0) {
+                        SmartDashboard.putNumber("Requested Position Rotate", newPosition);
+                        SmartDashboard.putNumber("Real Position Rotate", rotate.getPosition());
+                }
                 rotate.set(newPosition, ControlMode.Position);
         }
 }

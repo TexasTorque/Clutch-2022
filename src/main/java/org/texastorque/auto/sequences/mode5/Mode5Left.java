@@ -22,8 +22,7 @@ public class Mode5Left extends TorqueSequence {
                 new PrepareShooter(50, 1960),
                 new Pathplanner("Mode5Left_1")));
 
-        addBlock(new TorqueBlock(
-                new ShootAtTarget(1, false)));
+        addBlock(new TorqueBlock(new ShootConst(1960, 50, 0, false, 1)));
 
         addBlock(new TorqueBlock(new Pathplanner("Mode5Left_2", false)));
 
@@ -32,7 +31,7 @@ public class Mode5Left extends TorqueSequence {
         addBlock(new TorqueBlock(new PrepareTurret(0), new PrepareShooter(50, 1960),
                 new Pathplanner("Mode5Left_3", false)));
 
-        addBlock(new TorqueBlock(new ShootAtTarget(1.6, true)));
+        addBlock(new TorqueBlock(new ShootConst(1960, 50, 0, true, 1.6)));
 
         // Shut off
         addBlock(new TorqueBlock(

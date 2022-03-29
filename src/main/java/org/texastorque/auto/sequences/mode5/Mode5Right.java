@@ -23,11 +23,11 @@ public class Mode5Right extends TorqueSequence {
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED), 
                                 new PrepareTurret(-75),
-                                new PrepareShooter(50, 1960),
+                                new PrepareShooter(50, 1800),
                                 new Pathplanner("Mode5Right_1")));
 
                 // Shoot preload and pickup
-                addBlock(new TorqueBlock((new ShootAtTarget(1, false, true, -150))));
+                addBlock(new TorqueBlock(new ShootConst(1800, 50, -75, false, 1)));
 
                 // Go to human player
                 addBlock(new TorqueBlock(new Pathplanner("Mode5Right_2", false)));
@@ -40,7 +40,8 @@ public class Mode5Right extends TorqueSequence {
                                 new Pathplanner("Mode5Right_3", false)));
 
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootAtTarget(1.6, true)));
+                addBlock(new TorqueBlock(new ShootConst(1975, 50, -5, false, 1.6)));
+
 
                 // Shut off
                 addBlock(new TorqueBlock(

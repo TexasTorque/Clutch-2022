@@ -1,6 +1,7 @@
 package org.texastorque.auto.sequences.mode3;
 
 import org.texastorque.auto.commands.*;
+import org.texastorque.constants.Constants;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
@@ -18,6 +19,8 @@ public class Mode3CenterRight extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(
+                new PrepareTurret(Constants.TURRET_BACK_ROT),
+                new PrepareShooter(50, 1800),
                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
@@ -25,7 +28,8 @@ public class Mode3CenterRight extends TorqueSequence {
         addBlock(new TorqueBlock(new Pathplanner("Mode3CenterRight")));
 
         // Shoot!
-        addBlock(new TorqueBlock(new ShootAtTarget(4, true)));
+        addBlock(new TorqueBlock(new ShootConst(1800, 50, Constants.TURRET_BACK_ROT, true, 1.6)));
+
 
         // Shut off
         addBlock(new TorqueBlock(

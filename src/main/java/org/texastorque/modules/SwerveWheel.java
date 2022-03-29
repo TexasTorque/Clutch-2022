@@ -123,11 +123,13 @@ public class SwerveWheel {
 
                         double en = -metersPerSecondToEncoderPerMinute(state.speedMetersPerSecond);
                         if (id == 0) {
-                                SmartDashboard.putNumber(id + "en", en);
-                                SmartDashboard.putNumber(id + "speed",
-                                                state.speedMetersPerSecond);
-                                SmartDashboard.putNumber(
-                                                id + "real", encoderPerMinuteToMetersPerSecond(drive.getVelocity()));
+                                // This logs req, real, and residual in the speed of drive motor
+                                SmartDashboard.putNumber("SpeedReq" + id, state.speedMetersPerSecond);
+                                SmartDashboard.putNumber("SpeedReal" + id,
+                                                encoderPerMinuteToMetersPerSecond(drive.getVelocity()));
+                                SmartDashboard.putNumber("SpeedResidual" + id,
+                                                encoderPerMinuteToMetersPerSecond(drive.getVelocity())
+                                                                - state.speedMetersPerSecond);
                         }
                         drive.setWithFF(en, ControlType.kSmartVelocity, 0,
                                         -driveFeedforward.calculate(
@@ -158,8 +160,11 @@ public class SwerveWheel {
                                 countPerRev / 2.)
                                 + rotate.getPosition();
                 if (id == 0) {
-                        SmartDashboard.putNumber("Requested Position Rotate", newPosition);
-                        SmartDashboard.putNumber("Real Position Rotate", rotate.getPosition());
+                        // This logs req, real, and residual in the rotation
+                        SmartDashboard.putNumber("RotReq" + id, state.angle.getDegrees());
+                        SmartDashboard.putNumber("RotReal" + id, fromEncoder(rotate.getPosition()));
+                        SmartDashboard.putNumber("RotResidual" + id,
+                                        state.angle.getDegrees() - fromEncoder(rotate.getPosition()));
                 }
                 rotate.set(newPosition, ControlMode.Position);
         }

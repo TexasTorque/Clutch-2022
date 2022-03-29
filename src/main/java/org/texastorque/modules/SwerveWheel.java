@@ -164,7 +164,7 @@ public class SwerveWheel {
                         SmartDashboard.putNumber("RotReq" + id, state.angle.getDegrees());
                         SmartDashboard.putNumber("RotReal" + id, fromEncoder(rotate.getPosition()));
                         SmartDashboard.putNumber("RotResidual" + id,
-                                        state.angle.getDegrees() - fromEncoder(rotate.getPosition()));
+                                        fromEncoder(rotate.getPosition()) - state.angle.getDegrees());
                 }
                 rotate.set(newPosition, ControlMode.Position);
         }

@@ -383,11 +383,6 @@ public class Input extends TorqueInputManager {
             else if (driver.getYButton()) {
                 setRawValues(1550, Constants.HOOD_MIN);
                 State.getInstance().setTurretState(TurretState.CENTER);
-            }
-  
-            else if (driver.getAButton()) {
-                setRawValues(950, Constants.HOOD_MAX);
-                State.getInstance().setTurretState(TurretState.CENTER);
             } else {
                 if (operator.getYButton()) {
                     setRawValues(1900, Constants.HOOD_MAX);
@@ -397,6 +392,10 @@ public class Input extends TorqueInputManager {
                 }
 
             }
+
+            if (driver.getAButton()) 
+                State.getInstance().setTurretState(TurretState.CENTER);
+
             if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
                 updateToPositon();
 

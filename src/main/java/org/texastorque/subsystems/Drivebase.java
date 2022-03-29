@@ -63,26 +63,13 @@ public class Drivebase extends TorqueSubsystem {
 
         private Drivebase() {
                 backLeft = new SwerveWheel(0, Ports.DRIVE_TRANS_LEFT_BACK,
-                                Ports.DRIVE_ROT_LEFT_BACK,
-                                new PIDController(Constants.DRIVE_ROT_LEFT_BACK_Kp, Constants.DRIVE_ROT_LEFT_BACK_Ki,
-                                                Constants.DRIVE_ROT_LEFT_BACK_Kd),
-                                Constants.DRIVE_ROT_LEFT_BACK_Ks);
+                                Ports.DRIVE_ROT_LEFT_BACK);
                 backRight = new SwerveWheel(1, Ports.DRIVE_TRANS_RIGHT_BACK,
-                                Ports.DRIVE_ROT_RIGHT_BACK,
-                                new PIDController(Constants.DRIVE_ROT_RIGHT_BACK_Kp, Constants.DRIVE_ROT_RIGHT_BACK_Ki,
-                                                Constants.DRIVE_ROT_RIGHT_BACK_Kd),
-                                Constants.DRIVE_ROT_RIGHT_BACK_Ks);
+                                Ports.DRIVE_ROT_RIGHT_BACK);
                 frontLeft = new SwerveWheel(2, Ports.DRIVE_TRANS_LEFT_FRONT,
-                                Ports.DRIVE_ROT_LEFT_FRONT,
-                                new PIDController(Constants.DRIVE_ROT_LEFT_FRONT_Kp, Constants.DRIVE_ROT_LEFT_FRONT_Ki,
-                                                Constants.DRIVE_ROT_LEFT_FRONT_Kd),
-                                Constants.DRIVE_ROT_LEFT_FRONT_Ks);
+                                Ports.DRIVE_ROT_LEFT_FRONT);
                 frontRight = new SwerveWheel(3, Ports.DRIVE_TRANS_RIGHT_FRONT,
-                                Ports.DRIVE_ROT_RIGHT_FRONT,
-                                new PIDController(Constants.DRIVE_ROT_RIGHT_FRONT_Kp,
-                                                Constants.DRIVE_ROT_RIGHT_FRONT_Ki,
-                                                Constants.DRIVE_ROT_RIGHT_FRONT_Kd),
-                                Constants.DRIVE_ROT_RIGHT_FRONT_Ks);
+                                Ports.DRIVE_ROT_RIGHT_FRONT);
 
                 kinematics = new SwerveDriveKinematics(locationBackLeft, locationBackRight,
                                 locationFrontLeft, locationFrontRight);

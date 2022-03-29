@@ -19,41 +19,19 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
 
-    public static final double DRIVE_ROT_RIGHT_FRONT_Kp = 0.008;
-    public static final double DRIVE_ROT_RIGHT_FRONT_Ki = 0.;
-    public static final double DRIVE_ROT_RIGHT_FRONT_Kd = 0.;
-    public static final double DRIVE_ROT_RIGHT_FRONT_Ks = 0.03;
-
-    public static final double DRIVE_ROT_LEFT_FRONT_Kp = 0.008;
-    public static final double DRIVE_ROT_LEFT_FRONT_Ki = 0.;
-    public static final double DRIVE_ROT_LEFT_FRONT_Kd = 0.;
-    public static final double DRIVE_ROT_LEFT_FRONT_Ks = 0.03;
-
-    public static final double DRIVE_ROT_RIGHT_BACK_Kp = 0.008;
-    public static final double DRIVE_ROT_RIGHT_BACK_Ki = 0;
-    public static final double DRIVE_ROT_RIGHT_BACK_Kd = 0.;
-    public static final double DRIVE_ROT_RIGHT_BACK_Ks = 0.03;
-
-    public static final double DRIVE_ROT_LEFT_BACK_Kp = 0.008;
-    public static final double DRIVE_ROT_LEFT_BACK_Ki = 0;
-    public static final double DRIVE_ROT_LEFT_BACK_Kd = 0;
-    public static final double DRIVE_ROT_LEFT_BACK_Ks = 0.03;
+    public static final double DRIVE_ROT_Kp = 0.008;
+    public static final double DRIVE_ROT_Ki = 0.;
+    public static final double DRIVE_ROT_Kd = 0.;
+    public static final double DRIVE_ROT_Ks = 0.03;
 
     public static final double DRIVE_ROT_TOLERANCE = 1;
 
-    public static final double DRIVE_LEFT_Ks = 0.21073;
-    public static final double DRIVE_LEFT_Kv = 2.4051;
-    public static final double DRIVE_LEFT_Ka = 0.28218;
-    public static final double DRIVE_LEFT_Kp = 1.5962E-05;
-    public static final double DRIVE_LEFT_Ki = 0;
-    public static final double DRIVE_LEFT_Kd = 0;
-
-    public static final double DRIVE_RIGHT_Ks = DRIVE_LEFT_Ks;
-    public static final double DRIVE_RIGHT_Kv = DRIVE_LEFT_Kv;
-    public static final double DRIVE_RIGHT_Ka = DRIVE_LEFT_Ka;
-    public static final double DRIVE_RIGHT_Kp = DRIVE_LEFT_Kp;
-    public static final double DRIVE_RIGHT_Ki = 0;
-    public static final double DRIVE_RIGHT_Kd = 0;
+    public static final double DRIVE_Ks = 0.21073;
+    public static final double DRIVE_Kv = 2.4051;
+    public static final double DRIVE_Ka = 0.28218;
+    public static final double DRIVE_Kp = 1.5962E-05;
+    public static final double DRIVE_Ki = 0;
+    public static final double DRIVE_Kd = 0;
 
     public static final double DRIVE_ALLOWED_ERROR = 0.1;
     public static final double DRIVE_MINIMUM_VELOCITY = 0.1;

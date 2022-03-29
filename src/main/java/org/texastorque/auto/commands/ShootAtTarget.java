@@ -61,11 +61,6 @@ public class ShootAtTarget extends TorqueCommand {
     @Override
     protected void init() {
         AutoInput.getInstance().setSetTurretPosition(false);
-        if (turretOn) {
-            State.getInstance().setTurretState(TurretState.ON);
-        } else {
-            State.getInstance().setTurretState(TurretState.OFF);
-        }
         State.getInstance().setTurretState(turretOn ? TurretState.TO_POSITION : TurretState.OFF);
         System.out.println("Shoot at target locked & loaded!");
     }
@@ -82,7 +77,7 @@ public class ShootAtTarget extends TorqueCommand {
             AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
         } else {
             distance = Constants.HUB_CENTER_POSITION
-                            .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation());
+                    .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation());
             outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
             outputRPM += regressionOffset;
             AutoInput.getInstance().setFlywheelSpeed(outputRPM);

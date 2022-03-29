@@ -195,7 +195,7 @@ public class SwerveWheel {
                         // This logs req, real, and residual in the rotation
                         SmartDashboard.putNumber("RotReq" + id, state.angle.getDegrees());
                         SmartDashboard.putNumber("RotReal" + id, fromEncoder(rotate.getPosition()));
-                        SmartDashboard.putNumber("RotResidual" + id, state.angle.getDegrees() - fromEncoder(rotate.getPosition()));
+                        SmartDashboard.putNumber("RotResidual" + id,  fromEncoder(rotate.getPosition()) - state.angle.getDegrees());
                 }
                 if (rotatePID.atSetpoint()) {
                         req = 0;

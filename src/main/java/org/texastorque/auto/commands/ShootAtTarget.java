@@ -1,5 +1,7 @@
 package org.texastorque.auto.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.AutoInput;
@@ -64,14 +66,13 @@ public class ShootAtTarget extends TorqueCommand {
         } else {
             State.getInstance().setTurretState(TurretState.OFF);
         }
+        State.getInstance().setTurretState(turretOn ? TurretState.TO_POSITION : TurretState.OFF);
         System.out.println("Shoot at target locked & loaded!");
     }
 
     @Override
     protected void continuous() {
-        if (Feedback.getInstance()
-        .getLimelightFeedback()
-        .getTaOffset() > 0) {
+        if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
             distance = Feedback.getInstance().getLimelightFeedback().getDistance();
 
             outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
@@ -86,11 +87,22 @@ public class ShootAtTarget extends TorqueCommand {
             outputRPM += regressionOffset;
             AutoInput.getInstance().setFlywheelSpeed(outputRPM);
             AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
-
         }
 
-        AutoInput.getInstance().setFlywheelSpeed(outputRPM);
-        AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
+        Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
+        double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
+        double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
+        double robotAngleFromGoal = Math.atan2(yDist, xDist);
+
+        if (robotAngleFromGoal < Constants.TURRET_MAX_ROTATION_LEFT
+                && robotAngleFromGoal > Constants.TURRET_MAX_ROTATION_RIGHT) {
+            Rotation2d rotation = (robotPosition.getRotation().minus(new Rotation2d(robotAngleFromGoal)))
+                    .times(-1);
+            State.getInstance().setTurretState(TurretState.TO_POSITION);
+            State.getInstance().setTurretToPosition(rotation);
+        } else {
+            State.getInstance().setTurretState(TurretState.ON);
+        }
 
         if (!runMag) {
             // check if rpm is in range (+-x)

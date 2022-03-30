@@ -11,6 +11,7 @@ import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.AutomaticMagazineState;
 import org.texastorque.inputs.State.TurretState;
 import org.texastorque.subsystems.Drivebase;
+import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.TorqueCommand;
@@ -60,7 +61,8 @@ public class ShootConst extends TorqueCommand {
     protected void continuous() {
         if (!runMag) {
             // check if rpm is in range (+-x)
-            if (Math.abs(rpm - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR) {
+            if (Math.abs(rpm - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
+                    && Math.abs(Turret.getInstance().getDegrees() - turret) < 5) {
                 if (readyIterations >= neededReadyIterations) {
                     // if so, launch magazine for x seconds
                     runMag = true;

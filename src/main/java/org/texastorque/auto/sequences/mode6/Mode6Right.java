@@ -1,6 +1,7 @@
 package org.texastorque.auto.sequences.mode6;
 
 import org.texastorque.auto.commands.*;
+import org.texastorque.constants.Constants;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
@@ -17,33 +18,21 @@ public class Mode6Right extends TorqueSequence {
         @Override
         protected void init() {
                 addBlock(new TorqueBlock(
-                                new PrepareTurret(-75),
-                                new PrepareShooter(50, 1800),
+                                new PrepareTurret(176.15),
+                                new PrepareShooter(50, 1850),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
                                 new Pathplanner("Mode6Right_1")));
 
-                addBlock(new TorqueBlock((new ShootConst(1810, 50, -75, false, 1))));
+                addBlock(new TorqueBlock((new ShootConst(1850, 50, 176.15, true, 1))));
 
                 addBlock(new TorqueBlock(
-                                new PrepareTurret(-75),
+                                new PrepareTurret(30.6),
                                 new PrepareShooter(50, 1960),
-                                new Pathplanner("Mode6Right_1_5", false)));
-
-                addBlock(new TorqueBlock(new ShootConst(1960, 50, -75, false, .8)));
-
-                // Go to human player
-                addBlock(new TorqueBlock(new Pathplanner("Mode6Right_2", false)));
-
-                // Waiting for human player
-                addBlock(new TorqueBlock(new Wait(1)));
-
-                // Go to the last shoot
-                addBlock(new TorqueBlock(new PrepareTurret(-5), new PrepareShooter(50, 1975),
-                                new Pathplanner("Mode6Right_3", false)));
+                                new Pathplanner("Mode6Right_2", false)));
 
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootConst(1975, 50, -5, true, 1.6)));
+                addBlock(new TorqueBlock(new ShootAtTarget(3), new CreepForward(3)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

@@ -50,7 +50,7 @@ public class Constants {
 
     // Shooter
     public static final double FLYWHEEL_Ks = 0.37717;
-    public static final double FLYWHEEL_Kv = 0.14042; // Values are for rotations/sec
+    public static final double FLYWHEEL_Kv = 0.136042; // Values are for rotations/sec
     public static final double FLYWHEEL_Ka = 0.016159;
     public static final double FLYWHEEL_Kp = 0.00028;
     public static final double FLYWHEEL_Ki = 0;
@@ -94,9 +94,9 @@ public class Constants {
 
     // Information
     public static final double DRIVE_MAX_SPEED_METERS = 4;
-    public static final double DRIVE_MAX_ACCELERATION_METERS = 2.5;
-    public static final double MAX_ANGULAR_SPEED = 3 * Math.PI;
-    public static final double MAX_ANGULAR_ACCELERATION = 2 * Math.PI;
+    public static final double DRIVE_MAX_ACCELERATION_METERS = 2;
+    public static final double MAX_ANGULAR_SPEED = 6 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = 6 * Math.PI;
 
     // Path Planner
     public static final double PATH_PLANNER_X_P = 1;
@@ -107,7 +107,7 @@ public class Constants {
     public static final double PATH_PLANNER_Y_I = 0;
     public static final double PATH_PLANNER_Y_D = 0;
 
-    public static final double PATH_PLANNER_R_P = 3;
+    public static final double PATH_PLANNER_R_P = 2;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 

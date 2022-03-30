@@ -152,6 +152,14 @@ public class Input extends TorqueInputManager {
             return this.ySpeed;
         }
 
+        public void setXSpeed(double xSpeed) {
+            this.xSpeed = xSpeed;
+        }
+
+        public void setYSpeed(double ySpeed) {
+            this.ySpeed = ySpeed;
+        }
+
         @Override
         public void smartDashboard() {
             SmartDashboard.putNumber("Speed", xSpeeds.getSpeed());
@@ -260,7 +268,7 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             autoMag.calc(operator.getAButton());
-            
+
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
             else if (operator.getLeftBumper())

@@ -203,9 +203,13 @@ public class Turret extends TorqueSubsystem {
         return false;
     }
 
-    private double getDegrees() {
+    public double getDegrees() {
         double pos = rotator.getPosition() / Constants.TURRET_RATIO * 360.;
         return pos % 360;
+    }
+
+    public double getRate() {
+        return rotator.getVelocity();
     }
 
     @Override

@@ -126,9 +126,9 @@ public class SwerveWheel {
                                 // This logs req, real, and residual in the speed of drive motor
                                 SmartDashboard.putNumber("SpeedReq" + id, state.speedMetersPerSecond);
                                 SmartDashboard.putNumber("SpeedReal" + id,
-                                                encoderPerMinuteToMetersPerSecond(drive.getVelocity()));
+                                                -encoderPerMinuteToMetersPerSecond(drive.getVelocity()));
                                 SmartDashboard.putNumber("SpeedResidual" + id,
-                                                encoderPerMinuteToMetersPerSecond(drive.getVelocity())
+                                                -encoderPerMinuteToMetersPerSecond(drive.getVelocity())
                                                                 - state.speedMetersPerSecond);
                         }
                         drive.setWithFF(en, ControlType.kSmartVelocity, 0,

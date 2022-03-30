@@ -23,14 +23,14 @@ public class Mode6Right extends TorqueSequence {
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
                                 new Pathplanner("Mode6Right_1")));
 
-                addBlock(new TorqueBlock((new ShootConst(1810, 50, -75, 1))));
+                addBlock(new TorqueBlock((new ShootConst(1810, 50, -75, false, 1))));
 
                 addBlock(new TorqueBlock(
                                 new PrepareTurret(-75),
                                 new PrepareShooter(50, 1960),
                                 new Pathplanner("Mode6Right_1_5", false)));
 
-                addBlock(new TorqueBlock(new ShootConst(1960, 50, -75, .8)));
+                addBlock(new TorqueBlock(new ShootConst(1960, 50, -75, false, .8)));
 
                 // Go to human player
                 addBlock(new TorqueBlock(new Pathplanner("Mode6Right_2", false)));
@@ -43,7 +43,7 @@ public class Mode6Right extends TorqueSequence {
                                 new Pathplanner("Mode6Right_3", false)));
 
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootConst(1975, 50, -5, 1.6)));
+                addBlock(new TorqueBlock(new ShootConst(1975, 50, -5, true, 1.6)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

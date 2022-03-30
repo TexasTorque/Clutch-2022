@@ -18,23 +18,33 @@ import org.texastorque.torquelib.auto.TorqueCommand;
 public class ShootConst extends TorqueCommand {
     private final double magOutputTime;
 
-    private boolean stop = false;
-    private boolean done = false;
-    private boolean runMag = false;
-    private double startMagTime = 0;
-    private double rpm, hood, turret;
+    private boolean stop = false, done = false, runMag = false;
+    private double rpm, hood, turret, startMagTime = 0;
 
     private int readyIterations = 0;
     private final int neededReadyIterations = 4;
 
     public ShootConst(double rpm, double hood, double turret) {
-        this(rpm, hood, turret, 2.);
-    }
-
-    public ShootConst(double rpm, double hood, double turret, double magOutputTime) {
         this.rpm = rpm;
         this.hood = hood;
         this.turret = turret;
+        this.stop = false;
+        this.magOutputTime = 1;
+    }
+
+    public ShootConst(double rpm, double hood, double turret, boolean stop) {
+        this.rpm = rpm;
+        this.hood = hood;
+        this.turret = turret;
+        this.stop = stop;
+        this.magOutputTime = 1;
+    }
+
+    public ShootConst(double rpm, double hood, double turret, boolean stop, double magOutputTime) {
+        this.rpm = rpm;
+        this.hood = hood;
+        this.turret = turret;
+        this.stop = stop;
         this.magOutputTime = magOutputTime;
     }
 

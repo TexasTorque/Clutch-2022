@@ -260,6 +260,7 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             autoMag.calc(operator.getAButton());
+            
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
             else if (operator.getLeftBumper())
@@ -268,14 +269,12 @@ public class Input extends TorqueInputManager {
             // turret is locked
             else if (shooterReady() && !shooterInput.isDoingPrewarm())
                 gateDirection = GateSpeeds.OPEN;
-            else if (autoMag.get())
-                gateDirection = GateSpeeds.CLOSED;
             else
                 gateDirection = GateSpeeds.OFF;
 
             if (operator.getRightTrigger())
                 beltDirection = BeltDirections.OUTTAKE;
-            else if (autoMag.get() || operator.getRightBumper() || shooterReady())
+            else if (operator.getRightBumper() || shooterReady())
                 beltDirection = BeltDirections.INTAKE;
             else
                 beltDirection = BeltDirections.OFF;

@@ -88,6 +88,13 @@ public class Shooter extends TorqueSubsystem {
     public void output() {
         hoodRight.setPosition(hoodPosition);
         hoodLeft.setPosition(hoodPosition);
+        
+        SmartDashboard.putNumber("flywheelSetpoint", flywheelSetpoint);
+        if (flywheelSetpoint == 0) {
+            flywheel.setVoltage(1.5);
+            return;
+        }
+
         flywheel.setWithFF(flywheelSetpoint, ControlType.kSmartVelocity, 0,
                 feedforward.calculate(flywheelSetpoint / 60),
                 ArbFFUnits.kVoltage);

@@ -393,7 +393,7 @@ public class Input extends TorqueInputManager {
 
             }
 
-            if (driver.getAButton()) 
+            if (driver.getAButton())
                 State.getInstance().setTurretState(TurretState.CENTER);
 
             if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
@@ -512,6 +512,7 @@ public class Input extends TorqueInputManager {
         public boolean runRight = false;
 
         private boolean climbHasStarted = false;
+        private boolean hookOverride = false;
 
         public ClimberInput() {
         }
@@ -549,6 +550,8 @@ public class Input extends TorqueInputManager {
                 runRight = true;
             else
                 runRight = false;
+
+            hookOverride = operator.getRightCenterButton();
         }
 
         public ClimberDirection getDirection() {
@@ -564,6 +567,10 @@ public class Input extends TorqueInputManager {
          */
         public ServoDirection getServoDirection() {
             return servoDirection;
+        }
+
+        public boolean getHookOverride() {
+            return hookOverride;
         }
 
         @Override

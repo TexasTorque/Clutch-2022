@@ -19,10 +19,10 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
 
-    public static final double DRIVE_ROT_Kp = 0.8;
+    public static final double DRIVE_ROT_Kp = 0.7;
     public static final double DRIVE_ROT_Ki = 0.;
-    public static final double DRIVE_ROT_Kd = 0.;
-    public static final double DRIVE_ROT_Ks = 0.03;
+    public static final double DRIVE_ROT_Kd = 4.;
+    public static final double DRIVE_ROT_Ks = 0;
 
     public static final double DRIVE_ROT_TOLERANCE = 1;
 

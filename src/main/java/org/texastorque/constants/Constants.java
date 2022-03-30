@@ -26,10 +26,10 @@ public class Constants {
 
     public static final double DRIVE_ROT_TOLERANCE = 1;
 
-    public static final double DRIVE_Ks = 0.22815;
-    public static final double DRIVE_Kv = 0.68312;
-    public static final double DRIVE_Ka = 0.16272;
-    public static final double DRIVE_Kp = 6.3835E-05;
+    public static final double DRIVE_Ks = 0.27024;
+    public static final double DRIVE_Kv = 2.4076;
+    public static final double DRIVE_Ka = 0.5153;
+    public static final double DRIVE_Kp = 0.00048464;
     public static final double DRIVE_Ki = 0;
     public static final double DRIVE_Kd = 0;
 

@@ -63,12 +63,11 @@ public class Intake extends TorqueSubsystem {
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
-        rotary.configurePID(new KPID(0.1, 0.00005, .00002, 0,
+        rotary.configurePID(new KPID(0.05, 0.00005, .00002, 0,
                 Constants.INTAKE_ROTARY_MIN_SPEED,
                 Constants.INTAKE_ROTARY_MAX_SPEED));
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
-        roller.addFollower(Ports.INTAKE_ROLLER_FOLLOWER);
-        roller.invertFollower();
+        roller.invertPolarity(true);
         limitSwitch = new DigitalInput(Ports.ROTARY_LIMIT_SWITCH);
     }
 

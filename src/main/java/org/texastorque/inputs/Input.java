@@ -391,7 +391,6 @@ public class Input extends TorqueInputManager {
             } else 
                 reset();
 
-
             if (driver.getAButton())
                 State.getInstance().setTurretState(TurretState.CENTER);
 
@@ -508,6 +507,7 @@ public class Input extends TorqueInputManager {
 
         private boolean climbHasStarted = false;
         private boolean hookOverride = false;
+        private boolean shreyasApproval = false; // (:
 
         public ClimberInput() {
         }
@@ -546,6 +546,8 @@ public class Input extends TorqueInputManager {
             else
                 runRight = false;
 
+            shreyasApproval = driver.getYButton();
+
             hookOverride = operator.getRightCenterButton();
         }
 
@@ -568,6 +570,10 @@ public class Input extends TorqueInputManager {
             return hookOverride;
         }
 
+        public boolean getShreyasApproval() {
+            return shreyasApproval;
+        }
+
         @Override
         public void smartDashboard() {
             SmartDashboard.putBoolean("Climb Started", climbHasStarted);
@@ -576,6 +582,7 @@ public class Input extends TorqueInputManager {
         @Override
         public void reset() {
         }
+
     }
 
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {

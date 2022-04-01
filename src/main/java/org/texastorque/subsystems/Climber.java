@@ -72,6 +72,7 @@ public class Climber extends TorqueSubsystem {
 
     private double climberSpeedsLeft;
     private double climberSpeedsRight;
+    private double climberSpeeds;
 
     private Climber() {
         left = new TorqueSparkMax(Ports.CLIMBER_LEFT);
@@ -85,23 +86,28 @@ public class Climber extends TorqueSubsystem {
 
         left.tareEncoder();
         right.tareEncoder();
-        SmartDashboard.putNumber("servoLeft", 0.5);
-        SmartDashboard.putNumber("servoRight", 0.5);
+        // SmartDashboard.putNumber("servoLeft", 0.5);
+        // SmartDashboard.putNumber("servoRight", 0.5);
     }
 
     @Override
     public void updateTeleop() {
-        // if (State.getInstance().getAutoClimb() == AutoClimb.ON) {
-        // updateAssist();
-        // return;
-        // }
-        servoDirection = Input.getInstance().getClimberInput().getServoDirection();
+        if (State.getInstance().getAutoClimb() == AutoClimb.ON) {
+            servoDirection = AutoInput.getInstance().getServoDirection();
 
-        double climberSpeeds = Input.getInstance()
-                .getClimberInput()
-                .getDirection()
-                .getDirection() *
-                Constants.CLIMBER_SPEED;
+            climberSpeeds = AutoInput.getInstance()
+                    .getClimberDirection().getDirection() *
+                    Constants.CLIMBER_SPEED;
+        } else {
+            servoDirection = Input.getInstance().getClimberInput().getServoDirection();
+
+            climberSpeeds = Input.getInstance()
+                    .getClimberInput()
+                    .getDirection()
+                    .getDirection() *
+                    Constants.CLIMBER_SPEED;
+        }
+
         if (Input.getInstance().getClimberInput().runLeft) {
             climberSpeedsLeft = Constants.CLIMBER_SPEED * .1;
         } else if (Input.getInstance().getClimberInput().runRight) {
@@ -147,31 +153,14 @@ public class Climber extends TorqueSubsystem {
         }
     }
 
-    public void updateAssist() {
-
-        double climberLeftSetpoint = AutoInput.getInstance().getClimberLeftSetpoint();
-        double climberRightSetpoint = AutoInput.getInstance().getClimberRightSetpoint();
-
-        if (climberLeftSetpoint > left.getPosition()) {
-            climberSpeedsLeft = -Constants.CLIMBER_SPEED; // need to go up
-        } else {
-            climberSpeedsLeft = Constants.CLIMBER_SPEED;
-        }
-
-        if (climberRightSetpoint < right.getPosition()) {
-            climberSpeedsRight = -Constants.CLIMBER_SPEED;
-        } else {
-            climberSpeedsRight = Constants.CLIMBER_SPEED;
-        }
-    }
-
     @Override
     public void updateFeedbackTeleop() {
-
         Feedback.getInstance().getClimberFeedback().setLeftPosition(
                 left.getPosition());
         Feedback.getInstance().getClimberFeedback().setRightPosition(
                 right.getPosition());
+        Feedback.getInstance().getClimberFeedback().setLeftClaw(leftClaw.get());
+        Feedback.getInstance().getClimberFeedback().setRightClaw(rightClaw.get());
     }
 
     @Override
@@ -195,9 +184,6 @@ public class Climber extends TorqueSubsystem {
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Climber]SpeedLeft", climberSpeedsLeft);
         SmartDashboard.putNumber("[Climber]SpeedRight", climberSpeedsRight);
-
-        SmartDashboard.putBoolean("[Climber]ClawLeft", leftClaw.get());
-        SmartDashboard.putBoolean("[Climber]ClawRight", rightClaw.get());
     }
 
     public static synchronized Climber getInstance() {

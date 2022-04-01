@@ -49,10 +49,10 @@ public class Constants {
     public static final double INTAKE_ROTARY_MAX_SPEED = .15;
 
     // Shooter
-    public static final double FLYWHEEL_Ks = 0.37717;
-    public static final double FLYWHEEL_Kv = 0.136042; // Values are for rotations/sec
-    public static final double FLYWHEEL_Ka = 0.016159;
-    public static final double FLYWHEEL_Kp = 0.00028;
+    public static final double FLYWHEEL_Ks = 0.42113;
+    public static final double FLYWHEEL_Kv = 0.17849; // Values are for rotations/sec
+    public static final double FLYWHEEL_Ka = 0.01463;
+    public static final double FLYWHEEL_Kp = 0.0028;
     public static final double FLYWHEEL_Ki = 0;
     public static final double FLYWHEEL_Kd = 0;
     public static final double FLYWHEEL_Kf = 0; // 0.00026;
@@ -60,7 +60,7 @@ public class Constants {
     public static final double FLYWHEEEL_MAX_SPEED = 3500;
     public static final double FLYWHEEL_MAX_ACCELERATION = 3500;
     public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 35;
+    public static final double HOOD_MAX = 40;
     public static final double HOOD_ERROR = 1;
     public static final double SHOOTER_ERROR = 30;
 

@@ -48,6 +48,18 @@ public class AutoClimb extends TorqueSequence {
         addBlock(new TorqueBlock(new ShreyasApproval()));
 
         // Get the climber hooked
+        addBlock(new TorqueBlock(
+                new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_HIGH - 20, Constants.CLIMBER_RIGHT_LIMIT_HIGH - 20)));
+
+        // Detach the servos and go up half way!
+        addBlock(new TorqueBlock(new ClimbToSetpoint(
+                Constants.CLIMBER_LEFT_LIMIT_HIGH / 2, Constants.CLIMBER_RIGHT_LIMIT_HIGH / 2),
+                new SetClimberServos(ServoDirection.DETACH)));
+
+        // Get shreyas approval :)
+        addBlock(new TorqueBlock(new ShreyasApproval()));
+
+        // Pull up to high bar!
         addBlock(new TorqueBlock(new PullUntillLatch()));
 
     }

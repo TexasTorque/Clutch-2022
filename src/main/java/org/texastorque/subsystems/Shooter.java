@@ -1,5 +1,6 @@
 package org.texastorque.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
@@ -41,8 +42,7 @@ public class Shooter extends TorqueSubsystem {
                 10, 0);
 
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
-        hood.setPosition(-3);
-        hood.invertPolarity(true);
+        hood.invertPolarity(false);
         hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.35, .35));
         hood.configureIZone(Constants.HOOD_Iz);
 
@@ -87,7 +87,7 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void output() {
-        hood.setPosition(hoodPosition);
+        hood.set(hoodPosition, ControlType.kPosition);
 
         if (flywheelSetpoint == 0 && !Input.getInstance().getClimberInput().hasClimbStarted()) {
             flywheel.setVoltage(Constants.IDLE_SHOOTER_VOLTS);

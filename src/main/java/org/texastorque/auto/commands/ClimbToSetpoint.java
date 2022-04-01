@@ -5,6 +5,7 @@ import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.AutoClimb;
+import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
 public class ClimbToSetpoint extends TorqueCommand {
@@ -20,9 +21,16 @@ public class ClimbToSetpoint extends TorqueCommand {
 
     @Override
     protected void init() {
+        System.out.println("Starting climb to setpoint!");
         State.getInstance().setAutoClimb(AutoClimb.ON);
+        if (leftSetpoint > Feedback.getInstance().getClimberFeedback().getLeftPosition()) {
+            AutoInput.getInstance().setClimberDirection(ClimberDirection.PUSH);
+        } else {
+            AutoInput.getInstance().setClimberDirection(ClimberDirection.PULL);
+        }
         AutoInput.getInstance().setClimberLeftSetpoint(leftSetpoint);
         AutoInput.getInstance().setClimberRightSetpoint(rightSetpoint);
+
     }
 
     @Override
@@ -42,6 +50,7 @@ public class ClimbToSetpoint extends TorqueCommand {
 
     @Override
     protected void end() {
+        System.out.println("Climb to setpoint done!");
         State.getInstance().setAutoClimb(AutoClimb.OFF);
     }
 }

@@ -43,7 +43,7 @@ public class Shooter extends TorqueSubsystem {
 
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
         hood.invertPolarity(false);
-        hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.35, .35));
+        hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.70, .70));
         hood.configureIZone(Constants.HOOD_Iz);
 
         SmartDashboard.putNumber("RPMSET", 0);

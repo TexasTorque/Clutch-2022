@@ -3,6 +3,8 @@ package org.texastorque.auto.commands;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
+import org.texastorque.inputs.State;
+import org.texastorque.inputs.State.AutoClimb;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
@@ -21,6 +23,8 @@ public class ExtendUpWithIMU extends TorqueCommand {
 
     @Override
     protected void init() {
+        State.getInstance().setAutoClimb(AutoClimb.ON);
+        System.out.println("Extending with IMU!");
         lastTime = Timer.getFPGATimestamp();
         lastPitch = Feedback.getInstance().getGyroFeedback().getPitch();
         lastPitchVelocity = 0;
@@ -36,7 +40,7 @@ public class ExtendUpWithIMU extends TorqueCommand {
         double currentPitchVelocity = (currentPitch - lastPitch) / dt;
         double currentPitchAcceleration = (currentPitchVelocity - lastPitchVelocity) / dt;
 
-        if (Math.signum(currentPitchVelocity) == -1 && Math.signum(currentPitchAcceleration) == 1
+        if (Math.signum(currentPitchVelocity) == -1 && Math.signum(currentPitchAcceleration) == -1
                 && Math.signum(lastPitchAcceleration) == -1) {
             AutoInput.getInstance().setClimberDirection(ClimberDirection.PUSH);
         }
@@ -61,7 +65,9 @@ public class ExtendUpWithIMU extends TorqueCommand {
 
     @Override
     protected void end() {
+        System.out.println("IMU done :)");
         AutoInput.getInstance().setClimberDirection(ClimberDirection.STOP);
+        State.getInstance().setAutoClimb(AutoClimb.OFF);
     }
 
 }

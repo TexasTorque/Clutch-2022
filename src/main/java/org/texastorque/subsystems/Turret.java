@@ -24,26 +24,14 @@ public class Turret extends TorqueSubsystem {
     private final PIDController pidController = new PIDController(
             Constants.TURRET_Kp, Constants.TURRET_Ki, Constants.TURRET_Kd);
 
-    public static enum HomingDirection {
-        LEFT(-1),
-        NONE(0),
-        RIGHT(1);
-
-        private final int direction;
-
-        HomingDirection(int direction) {
-            this.direction = direction;
-        }
-
-        public int getDirection() {
-            return direction;
-        }
+    public enum HomingDirection {
+        LEFT, NONE, RIGHT;
     }
 
-    enum EncoderOverStatus {
+    public enum EncoderOverStatus {
         OFF,
-        TOLEFT(-80, 65),
-        TORIGHT(80, -65),
+        TOLEFT(Constants.TURRET_MAX_ROTATION_RIGHT, 70),
+        TORIGHT(Constants.TURRET_MAX_ROTATION_LEFT, -70),
         HOMING;
         /*
          * Think of these like states of the turret
@@ -104,34 +92,40 @@ public class Turret extends TorqueSubsystem {
 
     public Turret() {
         rotator.setPosition(Constants.TURRET_RATIO * -90. / 360.);
-        SmartDashboard.putData("Rpid", pidController);
     }
 
     public void updateTeleop() {
-        // if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-        // double pidOut = pidController.calculate(
-        // getDegrees(), Constants.TURRET_BACK_ROT);
-        // changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
-        if (State.getInstance().getTurretState() == TurretState.ON) {
+        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
+            double pidOut = pidController.calculate(
+                    getDegrees(), Constants.TURRET_BACK_ROT);
+            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+        } else if (State.getInstance().getTurretState() == TurretState.TO_POSITION) {
+            double pidOut = pidController.calculate(getDegrees(),
+                    State.getInstance().getTurretToPosition().getDegrees());
+            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+            if (Math.abs(State.getInstance().getTurretToPosition().getDegrees()
+                    - getDegrees()) < Constants.TOLERANCE_DEGREES
+                    && Feedback.getInstance().getLimelightFeedback().getTaOffset() != 0) {
+                State.getInstance().setTurretState(TurretState.ON);
+            }
+        } else if (State.getInstance().getTurretState() == TurretState.ON) {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if (!checkOver() && !checkHoming()) {
                     double hOffset = Feedback.getInstance()
                             .getLimelightFeedback()
                             .gethOffset();
-
                     // // be slightly off :) (do a little trolling)
-                    // if (MagazineBallManager.getInstance().isEnemyAlliance()) {
-                    // if (doingSabotage) {
-                    // hOffset = sabotageSetpoint;
-                    // } else {
-                    // doingSabotage = true;
-                    // sabotageSetpoint = 10 * Math.signum(hOffset) + hOffset;
-                    // hOffset = sabotageSetpoint;
+                    // if (MagazineBallManager.getInstance().isEnemyAlliance())
+                    // { if (doingSabotage) { hOffset = sabotageSetpoint; } else
+                    // { doingSabotage = true; sabotageSetpoint = 10 *
+                    // Math.signum(hOffset) + hOffset; hOffset =
+                    // sabotageSetpoint;
                     // }
                     // } else {
                     // doingSabotage = false;
                     // }
 
+                    SmartDashboard.putNumber("Turret HOffset", hOffset);
                     if (Math.abs(hOffset) < Constants.TOLERANCE_DEGREES) {
                         changeRequest = 0;
                     } else {
@@ -143,10 +137,12 @@ public class Turret extends TorqueSubsystem {
             } else if (encoderOverStatus == EncoderOverStatus.HOMING) { // we lost target
                 // :( .. let's find it!
                 if (!checkOver() && checkHoming()) {
-                    if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.RIGHT) {
-                        changeRequest = 5 + Constants.TURRET_Ks;
-                    } else if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.LEFT) {
-                        changeRequest = -5 - Constants.TURRET_Ks;
+                    if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.LEFT) {
+                        changeRequest = 10 + Constants.TURRET_Ks;
+                    } else if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.RIGHT) {
+                        changeRequest = -10 - Constants.TURRET_Ks;
+                    } else {
+                        changeRequest = 10 + Constants.TURRET_Ks;
                     }
                 }
             } else {
@@ -172,13 +168,13 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public void updateAuto() {
-        // if (AutoInput.getInstance().getSettingTurretPosition()) {
-        // double pidOut = pidController.calculate(
-        // getDegrees(), AutoInput.getInstance().getTurretPosition());
-        // changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
-        // } else {
-        // updateTeleop();
-        // }
+        if (AutoInput.getInstance().getSettingTurretPosition()) {
+            double pidOut = pidController.calculate(
+                    getDegrees(), AutoInput.getInstance().getTurretPosition());
+            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+        } else {
+            updateTeleop();
+        }
     }
 
     private boolean checkOver() {
@@ -207,15 +203,21 @@ public class Turret extends TorqueSubsystem {
         return false;
     }
 
-    private double getDegrees() {
+    public double getDegrees() {
         double pos = rotator.getPosition() / Constants.TURRET_RATIO * 360.;
         return pos % 360;
+    }
+
+    public double getRate() {
+        return rotator.getVelocity();
     }
 
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("Turret Position", getDegrees());
         SmartDashboard.putNumber("Turret Voltage", changeRequest);
+        SmartDashboard.putString("Turret State", State.getInstance().getTurretState().name());
+        SmartDashboard.putString("Turret Encoder Over", encoderOverStatus.name());
     }
 
     @Override

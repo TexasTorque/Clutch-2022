@@ -79,7 +79,7 @@ public class Shooter extends TorqueSubsystem {
     public void output() {
         hood.set(hoodPosition, ControlType.kPosition);
         if (flywheelSetpoint == 0) {
-            flywheel.setVoltage(2.);
+            flywheel.setVoltage(Constants.IDLE_SHOOTER_VOLTS);
             return;
         }
 

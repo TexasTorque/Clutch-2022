@@ -1,5 +1,7 @@
 package org.texastorque.constants;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 public class Constants {
     // Conversions
     public static final double FOOT_TO_METER = 0.3048;
@@ -68,6 +70,7 @@ public class Constants {
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 32;
     public static final double SHOOTER_ERROR = 30;
+    public static final double FLYWHEEEL_MAX_SPEED = 4000;
 
     public static final double HOOD_Kp = 0.1;
     public static final double HOOD_Ki = 0.001;
@@ -92,10 +95,14 @@ public class Constants {
     public static final double TURRET_Kp = 0.15539;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
+    public static final double TURRET_MAX_ROTATION_LEFT = 93;
+    public static final double TURRET_MAX_ROTATION_RIGHT = -93;
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 128.4722; // to 1
     public static final double TURRET_CENTER_ROT = 0;
     public static final double TOLERANCE_DEGREES = 1.3;
+
+    public static final double TURRET_BACK_ROT = 180;
 
     // Information
     public static final double TOP_SPEED_FEET = 16.52;
@@ -125,5 +132,8 @@ public class Constants {
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 42.5;
 
+    public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
+
+    public static final double IDLE_SHOOTER_VOLTS = 2.2;
 
 }

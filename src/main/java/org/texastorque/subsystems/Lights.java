@@ -84,7 +84,7 @@ public class Lights extends TorqueSubsystem {
             this.setLightMode(LightMode.TARGET_LOCK);
         else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
             this.setLightMode(LightMode.SHOOTING);
-        else if (Input.getInstance().getClimberInput().getClimbHasStarted()) {
+        else if (Input.getInstance().getClimberInput().hasClimbStarted()) {
             System.out.println("set to endgame");
             this.setLightMode(LightMode.ENDGAME);
         } else

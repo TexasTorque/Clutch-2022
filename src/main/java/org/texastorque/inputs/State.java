@@ -1,5 +1,6 @@
 package org.texastorque.inputs;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class State {
@@ -23,8 +24,25 @@ public class State {
         TELEOP,
         TEST;
     }
+    public static enum TurretState {
+        OFF, ON, CENTER, TO_POSITION
+    }
 
-    public static enum TurretState { OFF, ON, CENTER }
+    private Rotation2d turretToPosition = Rotation2d.fromDegrees(0);
+
+    /**
+     * @return the turretToPosition
+     */
+    public Rotation2d getTurretToPosition() {
+        return turretToPosition;
+    }
+
+    /**
+     * @param turretToPosition the turretToPosition to set
+     */
+    public void setTurretToPosition(Rotation2d turretToPosition) {
+        this.turretToPosition = turretToPosition;
+    }
 
     public static enum AutomaticMagazineState { OFF, SHOOTING, REFLECTING }
 

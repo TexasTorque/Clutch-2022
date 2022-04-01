@@ -1,5 +1,8 @@
 package org.texastorque.inputs;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +15,8 @@ import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Climber.ServoDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
+import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Lights;
-import org.texastorque.subsystems.Lights.LightMode;
 import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.subsystems.Turret.HomingDirection;
@@ -26,6 +29,7 @@ import org.texastorque.torquelib.component.TorqueSpeedSettings;
 import org.texastorque.torquelib.controlLoop.TimedTruthy;
 import org.texastorque.torquelib.controlLoop.TorqueSlewLimiter;
 import org.texastorque.torquelib.util.GenericController;
+import org.texastorque.torquelib.util.TorqueClick;
 import org.texastorque.torquelib.util.TorqueLock;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.torquelib.util.TorqueToggle;
@@ -78,18 +82,18 @@ public class Input extends TorqueInputManager {
         climberInput = new ClimberInput();
         modules.add(climberInput);
 
-        rotateToBall = new TorqueAssist(new AutoReflect(), driveBaseRotationInput);
-        climbAssist = new TorqueAssist(
-                new AutoClimb(), AssistMode.RESET_BLOCK, driveBaseTranslationInput, driveBaseRotationInput,
+        rotateToBall = new TorqueAssist(new RotateToBall(), driveBaseRotationInput);
+        climbAssist = new TorqueAssist(new AutoClimb(), AssistMode.RESET_BLOCK,
+                driveBaseTranslationInput, driveBaseRotationInput,
                 intakeInput, magazineInput, shooterInput, climberInput);
     }
 
     @Override
     public void update() {
-        // rotateToBallToggle.calc(operator.getRightCenterButton());
-        // rotateToBall.run(intakeInput.getPosition() == IntakePosition.DOWN &&
-        // rotateToBallToggle.get()
-        // && !climberInput.getClimbHasStarted());
+        rotateToBallToggle.calc(operator.getBButton());
+        rotateToBall.run(
+                intakeInput.getPosition() == IntakePosition.DOWN
+                        && rotateToBallToggle.get() && !climberInput.hasClimbStarted());
 
         climberToggle.calc(operator.getXButton());
         climbAssist.run(climberToggle.get());
@@ -116,7 +120,6 @@ public class Input extends TorqueInputManager {
         // private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(3, 4);
 
         private DriveBaseTranslationInput() {
-
         }
 
         @Override
@@ -149,12 +152,17 @@ public class Input extends TorqueInputManager {
             return this.ySpeed;
         }
 
+        public void setXSpeed(double xSpeed) {
+            this.xSpeed = xSpeed;
+        }
+
+        public void setYSpeed(double ySpeed) {
+            this.ySpeed = ySpeed;
+        }
+
         @Override
         public void smartDashboard() {
-            // SmartDashboard.putNumber("[Input]X Speed", xSpeed);
-            // SmartDashboard.putNumber("[Input]Y Speed", ySpeed);
             SmartDashboard.putNumber("Speed", xSpeeds.getSpeed());
-
         }
     }
 
@@ -232,6 +240,7 @@ public class Input extends TorqueInputManager {
                 intakePosition = IntakePosition.DOWN;
             else
                 intakePosition = liftedPosition;
+
         }
 
         public IntakeDirection getDirection() {
@@ -251,7 +260,7 @@ public class Input extends TorqueInputManager {
         private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
-        private TorqueToggle autoMag = new TorqueToggle(false);
+        private TorqueToggle autoMag = new TorqueToggle(true);
 
         public MagazineInput() {
         }
@@ -259,28 +268,31 @@ public class Input extends TorqueInputManager {
         @Override
         public void update() {
             autoMag.calc(operator.getAButton());
+
             if (operator.getLeftTrigger())
                 gateDirection = GateSpeeds.OPEN;
+            else if (operator.getLeftBumper())
+                gateDirection = GateSpeeds.CLOSED;
             // If we are asking to shoot and the flywheel is reved and the
             // turret is locked
-            else if (shooterInput.getFlywheel() != 0 &&
-                    shooterInput.isFlywheelReady() &&
-                    (!shooterInput.isUsingRegression() ||
-                            Feedback.getInstance().isTurretAlligned())) {
+            else if (shooterReady() && !shooterInput.isDoingPrewarm())
                 gateDirection = GateSpeeds.OPEN;
-            } else if (autoMag.get())
-                gateDirection = GateSpeeds.CLOSED;
             else
                 gateDirection = GateSpeeds.OFF;
 
-            if (shooterInput.getFlywheel() != 0) 
-                beltDirection = BeltDirections.INTAKE;
-            else if (operator.getRightTrigger())
+            if (operator.getRightTrigger())
                 beltDirection = BeltDirections.OUTTAKE;
-            else if (autoMag.get() || operator.getRightBumper())
+            else if (operator.getRightBumper() || shooterReady())
                 beltDirection = BeltDirections.INTAKE;
             else
                 beltDirection = BeltDirections.OFF;
+        }
+
+        private boolean shooterReady() {
+            return shooterInput.getFlywheel() != 0 &&
+                    shooterInput.isFlywheelReady() &&
+                    (!shooterInput.isUsingRegression() ||
+                            Feedback.getInstance().isTurretAlligned());
         }
 
         public BeltDirections getBeltDirection() {
@@ -309,11 +321,18 @@ public class Input extends TorqueInputManager {
     public class ShooterInput extends TorqueInput {
         private boolean usingRegression = false;
         private double flywheel; // rpm
-        private double hood; // degrees
-
+        private double hood;
+        private TorqueToggle xFactorToggle;
+        private int readyCounter = 0;
+        private final int readyCounterNeeded = 10;
+        private boolean prewarm = false;
         private HomingDirection homingDirection = HomingDirection.NONE;
+        private TorqueSpeedSettings rpmAdjust = new TorqueSpeedSettings(0, -400, 400, 10);
+        private TorqueClick startShoot = new TorqueClick();
 
         public ShooterInput() {
+            xFactorToggle = new TorqueToggle(true);
+            setRawValues(0, Constants.HOOD_MAX);
         }
 
         public boolean isUsingRegression() {
@@ -333,13 +352,27 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean isFlywheelReady() {
-            return Math.abs(
-                    flywheel -
-                            Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
+            if (Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR) {
+                readyCounter++;
+                if (readyCounter > readyCounterNeeded) {
+                    return true;
+                }
+            } else {
+                readyCounter = 0;
+            }
+            return false;
+        }
+
+        public boolean xFactor() {
+            return xFactorToggle.get() && flywheel != 0 && !prewarm;
         }
 
         @Override
         public void update() {
+            xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
+            rpmAdjust.update(operator.getRightCenterButton(), operator.getLeftCenterButton(), false, false);
+            prewarm = false;
+
             // Regression
             if (driver.getXButton()) {
                 if (Feedback.getInstance()
@@ -348,36 +381,53 @@ public class Input extends TorqueInputManager {
                     setFromDist(Feedback.getInstance()
                             .getLimelightFeedback()
                             .getDistance());
-                } else {
-                    setRawValues(1800, 0);
-                }
-                State.getInstance().setTurretState(TurretState.ON);
+                } else
+                    setFromDist(Constants.HUB_CENTER_POSITION
+                            .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation()));
+            } else {
+                if (operator.getYButton()) {
+                    setRawValues(1900, Constants.HOOD_MAX);
+                    prewarm = true;
+                } else
+                    reset();
             }
 
-            // Layup
-            else if (driver.getYButton()) {
-                setRawValues(1800, 0);
+            if (driver.getAButton())
                 State.getInstance().setTurretState(TurretState.CENTER);
-            }
-            // Launchpad
-            else if (driver.getAButton()) {
-                setRawValues(2300, Constants.HOOD_MAX);
-                State.getInstance().setTurretState(TurretState.CENTER);
-            }
-            // Tarmac
-            else if (driver.getBButton()) {
-                setRawValues(2000, Constants.HOOD_MAX);
-                State.getInstance().setTurretState(TurretState.CENTER);
-            } // SmartDashboard
-            else
-                reset();
 
-            if (operator.getDPADDownLeft())
+            if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
+                updateToPositon();
+
+            if (operator.getDPADLeft())
                 homingDirection = HomingDirection.LEFT;
-            else if (operator.getDPADDownRight())
+            else if (operator.getDPADRight())
                 homingDirection = HomingDirection.RIGHT;
             else
                 homingDirection = HomingDirection.NONE;
+        }
+
+        private void updateToPositon() {
+            Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
+            double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
+            double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
+            double robotAngleFromGoal = Math.atan2(yDist, xDist);
+
+            if (robotAngleFromGoal < Constants.TURRET_MAX_ROTATION_LEFT
+                    && robotAngleFromGoal > Constants.TURRET_MAX_ROTATION_RIGHT) {
+                Rotation2d rotation = (robotPosition.getRotation().minus(new Rotation2d(robotAngleFromGoal)))
+                        .times(-1);
+                State.getInstance().setTurretState(TurretState.TO_POSITION);
+                State.getInstance()
+                        .setTurretToPosition(rotation);
+            } else {
+                State.getInstance().setTurretState(TurretState.ON);
+            }
+        }
+
+        @Override
+        public void smartDashboard() {
+            SmartDashboard.putString("HomingDirection", homingDirection.toString());
+            SmartDashboard.putNumber("RPM Adjust", rpmAdjust.getSpeed());
         }
 
         @Override
@@ -408,7 +458,7 @@ public class Input extends TorqueInputManager {
          * @param speed RPM
          */
         public void setFlywheelSpeed(double speed) {
-            this.flywheel = Math.min(speed, 4000);
+            this.flywheel = Math.min(speed, Constants.FLYWHEEEL_MAX_SPEED);
         }
 
         /**
@@ -417,16 +467,16 @@ public class Input extends TorqueInputManager {
          * @param hood Hood position
          */
         public void setHood(double hood) {
-            this.hood = TorqueMathUtil.constrain(hood, 0, Constants.HOOD_MAX);
+            this.hood = TorqueMathUtil.constrain(hood, Constants.HOOD_MIN, Constants.HOOD_MAX);
         }
 
-         /**
+        /**
          * @param distance Distance (m)
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((373.7 * distance) + 925, 0,
-                    4000);
+            return TorqueMathUtil.constrain((373.7 * distance) + 925 + rpmAdjust.getSpeed(), 0,
+                    Constants.FLYWHEEEL_MAX_SPEED);
         }
 
         /**
@@ -436,24 +486,33 @@ public class Input extends TorqueInputManager {
 
         public double regressionHood(double distance) {
             // past 1.9, just do max
-            if (distance > 1.9)
-                return Constants.HOOD_MAX;
-            return TorqueMathUtil.constrain(18.87 * distance - 3.914, Constants.HOOD_MIN, Constants.HOOD_MAX);
+            // if (distance > 1.5)
+            return Constants.HOOD_MAX;
+            // return TorqueMathUtil.constrain(3.280 * Math.pow(10, distance * 0.7443),
+            // Constants.HOOD_MIN,
+            // Constants.HOOD_MAX);
         }
 
         public HomingDirection getHomingDirection() {
             return homingDirection;
+        }
+
+        public boolean isDoingPrewarm() {
+            return prewarm;
         }
     }
 
     public class ClimberInput extends TorqueInput {
         private ClimberDirection direction = ClimberDirection.STOP;
         private ServoDirection servoDirection = ServoDirection.ATTACH;
+
         // ! DEBUG ONLY, PUBLIC SHOULD BE ENCAPSULATED IF PERMANENT
         public boolean runLeft = false;
         public boolean runRight = false;
 
         private boolean climbHasStarted = false;
+        private boolean hookOverride = false;
+        private boolean shreyasApproval = false; // (:
 
         public ClimberInput() {
         }
@@ -492,18 +551,16 @@ public class Input extends TorqueInputManager {
             else
                 runRight = false;
 
-        }
+            shreyasApproval = driver.getYButton();
 
-        @Override
-        public void smartDashboard() {
-            SmartDashboard.putBoolean("Climb Started", climbHasStarted);
+            hookOverride = operator.getRightCenterButton();
         }
 
         public ClimberDirection getDirection() {
             return direction;
         }
 
-        public boolean getClimbHasStarted() {
+        public boolean hasClimbStarted() {
             return climbHasStarted;
         }
 
@@ -514,9 +571,23 @@ public class Input extends TorqueInputManager {
             return servoDirection;
         }
 
+        public boolean getHookOverride() {
+            return hookOverride;
+        }
+
+        public boolean getShreyasApproval() {
+            return shreyasApproval;
+        }
+
+        @Override
+        public void smartDashboard() {
+            SmartDashboard.putBoolean("Climb Started", climbHasStarted);
+        }
+
         @Override
         public void reset() {
         }
+
     }
 
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {

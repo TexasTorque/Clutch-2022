@@ -384,20 +384,12 @@ public class Input extends TorqueInputManager {
                 } else
                     setFromDist(Constants.HUB_CENTER_POSITION
                             .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation()));
-            }
-
-            // Layup
-            else if (driver.getYButton()) {
-                setRawValues(1550, Constants.HOOD_MIN);
-                State.getInstance().setTurretState(TurretState.CENTER);
             } else {
                 if (operator.getYButton()) {
                     setRawValues(1900, Constants.HOOD_MAX);
                     prewarm = true;
-                } else {
+                } else
                     reset();
-                }
-
             }
 
             if (driver.getAButton())
@@ -520,6 +512,7 @@ public class Input extends TorqueInputManager {
 
         private boolean climbHasStarted = false;
         private boolean hookOverride = false;
+        private boolean shreyasApproval = false; // (:
 
         public ClimberInput() {
         }
@@ -558,6 +551,8 @@ public class Input extends TorqueInputManager {
             else
                 runRight = false;
 
+            shreyasApproval = driver.getYButton();
+
             hookOverride = operator.getRightCenterButton();
         }
 
@@ -580,6 +575,10 @@ public class Input extends TorqueInputManager {
             return hookOverride;
         }
 
+        public boolean getShreyasApproval() {
+            return shreyasApproval;
+        }
+
         @Override
         public void smartDashboard() {
             SmartDashboard.putBoolean("Climb Started", climbHasStarted);
@@ -588,6 +587,7 @@ public class Input extends TorqueInputManager {
         @Override
         public void reset() {
         }
+
     }
 
     public DriveBaseTranslationInput getDrivebaseTranslationInput() {

@@ -26,17 +26,18 @@ public class ClimbToSetpoint extends TorqueCommand {
     }
 
     @Override
-    protected void continuous() {}
+    protected void continuous() {
+    }
 
     @Override
     protected boolean endCondition() {
         return Math.abs(Feedback.getInstance()
-                            .getClimberFeedback()
-                            .getLeftPosition() -
-                        leftSetpoint) < allowedError &&
-            Math.abs(
-                Feedback.getInstance().getClimberFeedback().getRightPosition() -
-                rightSetpoint) < allowedError;
+                .getClimberFeedback()
+                .getLeftPosition() -
+                leftSetpoint) < allowedError &&
+                Math.abs(
+                        Feedback.getInstance().getClimberFeedback().getRightPosition() -
+                                rightSetpoint) < allowedError;
     }
 
     @Override

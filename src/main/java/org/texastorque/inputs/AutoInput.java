@@ -4,6 +4,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import org.texastorque.constants.Constants;
 import org.texastorque.subsystems.Intake;
+import org.texastorque.subsystems.Climber.ClimberDirection;
+import org.texastorque.subsystems.Climber.ServoDirection;
 import org.texastorque.subsystems.Intake.IntakeDirection;
 import org.texastorque.subsystems.Intake.IntakePosition;
 import org.texastorque.subsystems.Magazine.BeltDirections;
@@ -125,6 +127,8 @@ public class AutoInput {
 
     private double climberRightSetpoint = 0;
     private double climberLeftSetpoint = 0;
+    private ClimberDirection climberDirection = ClimberDirection.STOP;
+    private ServoDirection servoDirection = ServoDirection.ATTACH;
 
     /**
      * @return the climberLeftSetpoint
@@ -152,6 +156,34 @@ public class AutoInput {
      */
     public void setClimberRightSetpoint(double climberRightSetpoint) {
         this.climberRightSetpoint = climberRightSetpoint;
+    }
+
+    /**
+     * @return the climberDirection
+     */
+    public ClimberDirection getClimberDirection() {
+        return climberDirection;
+    }
+
+    /**
+     * @return the servoDirection
+     */
+    public ServoDirection getServoDirection() {
+        return servoDirection;
+    }
+
+    /**
+     * @param climberDirection the climberDirection to set
+     */
+    public void setClimberDirection(ClimberDirection climberDirection) {
+        this.climberDirection = climberDirection;
+    }
+
+    /**
+     * @param servoDirection the servoDirection to set
+     */
+    public void setServoDirection(ServoDirection servoDirection) {
+        this.servoDirection = servoDirection;
     }
 
     private boolean setTurretPosition = false;

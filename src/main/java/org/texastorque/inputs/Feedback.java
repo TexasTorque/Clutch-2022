@@ -95,6 +95,10 @@ public class Feedback {
             return direction;
         }
 
+        public float getPitch() {
+            return nxGyro.getPitch();
+        }
+
         private float getDegrees() {
             // return nxGyro.getRoll();
             return (nxGyro.getFusedHeading() + angleOffset) % 360;
@@ -247,6 +251,9 @@ public class Feedback {
         private double leftPosition;
         private double rightPosition;
 
+        private boolean leftClaw;
+        private boolean rightClaw;
+
         @Override
         public void update() {
         }
@@ -279,10 +286,34 @@ public class Feedback {
             this.rightPosition = rightPosition;
         }
 
+        /**
+         * @param leftClaw the leftClaw to set
+         */
+        public void setLeftClaw(boolean leftClaw) {
+            this.leftClaw = leftClaw;
+        }
+
+        /**
+         * @param rightClaw the rightClaw to set
+         */
+        public void setRightClaw(boolean rightClaw) {
+            this.rightClaw = rightClaw;
+        }
+
+        public boolean getLeftClaw() {
+            return leftClaw;
+        }
+
+        public boolean getRightClaw() {
+            return rightClaw;
+        }
+
         @Override
         public void smartDashboard() {
             SmartDashboard.putNumber("[Climber]Position Left", leftPosition);
             SmartDashboard.putNumber("[Climber]Position Right", rightPosition);
+            SmartDashboard.putBoolean("[Climber]Claw Left", leftClaw);
+            SmartDashboard.putBoolean("[Climber]Claw Right", rightClaw);
         }
     }
 

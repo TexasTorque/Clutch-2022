@@ -11,7 +11,6 @@ import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.component.TorqueLinearServo;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.util.KPID;
@@ -19,8 +18,7 @@ import org.texastorque.util.KPID;
 public class Shooter extends TorqueSubsystem {
     private static volatile Shooter instance;
 
-    private TorqueSparkMax flywheel;
-    private TorqueLinearServo hoodLeft, hoodRight;
+    private TorqueSparkMax flywheel, hood;
 
     // setpoints grabbed from input
     private double hoodPosition = Constants.HOOD_MAX;
@@ -42,11 +40,14 @@ public class Shooter extends TorqueSubsystem {
         flywheel.configureSmartMotion(Constants.FLYWHEEEL_MAX_SPEED, 0, Constants.FLYWHEEL_MAX_ACCELERATION,
                 10, 0);
 
-        hoodLeft = new TorqueLinearServo(Ports.SHOOTER_HOOD_LEFT, 50, 5);
-        hoodRight = new TorqueLinearServo(Ports.SHOOTER_HOOD_RIGHT, 50, 5);
+        hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
+        hood.setPosition(-3);
+        hood.invertPolarity(true);
+        hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.35, .35));
+        hood.configureIZone(Constants.HOOD_Iz);
 
-        // SmartDashboard.putNumber("RPMSET", 0);
-        // SmartDashboard.putNumber("HOODSET", 0);
+        SmartDashboard.putNumber("RPMSET", 0);
+        SmartDashboard.putNumber("HOODSET", 0);
     }
 
     @Override
@@ -57,12 +58,12 @@ public class Shooter extends TorqueSubsystem {
             return;
         }
 
-        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
-        hoodPosition = TorqueMathUtil.constrain(
-                Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
-                Constants.HOOD_MAX);
-        // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
-        // hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
+        // flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
+        // hoodPosition = TorqueMathUtil.constrain(
+        // Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
+        // Constants.HOOD_MAX);
+        flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
+        hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class Shooter extends TorqueSubsystem {
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(
                 flywheel.getVelocity());
-        Feedback.getInstance().getShooterFeedback().setHoodPosition(hoodRight.get());
+        Feedback.getInstance().getShooterFeedback().setHoodPosition(hood.getPosition());
     }
 
     @Override
@@ -86,12 +87,10 @@ public class Shooter extends TorqueSubsystem {
 
     @Override
     public void output() {
-        hoodRight.setPosition(hoodPosition);
-        hoodLeft.setPosition(hoodPosition);
-        
-        SmartDashboard.putNumber("flywheelSetpoint", flywheelSetpoint);
-        if (flywheelSetpoint == 0) {
-            flywheel.setVoltage(1.5);
+        hood.setPosition(hoodPosition);
+
+        if (flywheelSetpoint == 0 && !Input.getInstance().getClimberInput().hasClimbStarted()) {
+            flywheel.setVoltage(Constants.IDLE_SHOOTER_VOLTS);
             return;
         }
 
@@ -109,8 +108,7 @@ public class Shooter extends TorqueSubsystem {
                 flywheel.getOutputCurrent());
         // SmartDashboard.putNumber("[Shooter] Hood Position", hood.getPosition());
 
-        SmartDashboard.putNumber("Left Hood Position", hoodLeft.getUpdatedPosition());
-        SmartDashboard.putNumber("Right Hood Position", hoodRight.getUpdatedPosition());
+        SmartDashboard.putNumber("Hood Position", hood.getPosition());
     }
 
     public static synchronized Shooter getInstance() {

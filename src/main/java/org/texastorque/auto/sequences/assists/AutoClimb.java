@@ -1,8 +1,13 @@
 package org.texastorque.auto.sequences.assists;
 
+import org.texastorque.auto.commands.PullUntillLatch;
 import org.texastorque.auto.commands.ClimbToSetpoint;
+import org.texastorque.auto.commands.ExtendUpWithIMU;
+import org.texastorque.auto.commands.SetClimberServos;
+import org.texastorque.auto.commands.ShreyasApproval;
 import org.texastorque.auto.commands.Wait;
 import org.texastorque.constants.Constants;
+import org.texastorque.subsystems.Climber.ServoDirection;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 
@@ -11,47 +16,39 @@ import org.texastorque.torquelib.auto.TorqueSequence;
  */
 public class AutoClimb extends TorqueSequence {
 
-    public AutoClimb() { init(); }
+    public AutoClimb() {
+        init();
+    }
 
     @Override
     protected void init() {
         // We are starting with climber fully extended, over mid rung
 
-        // Pull down on mid rung.
+        // Detach servo
+        addBlock(new TorqueBlock(new SetClimberServos(ServoDirection.DETACH)));
+
+        // Climb to half point
         addBlock(new TorqueBlock(
-            new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_LOW,
-                                Constants.CLIMBER_RIGHT_LIMIT_LOW)));
+                new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_HIGH / 2, Constants.CLIMBER_RIGHT_LIMIT_HIGH / 2)));
 
-        // Wait for 2 seconds to avoid over swinging
-        addBlock(new TorqueBlock(new Wait(2)));
+        // Get shreyas approval :)
+        addBlock(new TorqueBlock(new ShreyasApproval()));
 
-        // Bring climber up to high rung.
+        // Hook to mid bar
+        addBlock(new TorqueBlock(new PullUntillLatch()));
+
+        // Extend to intermediate point on high bar
         addBlock(new TorqueBlock(
-            new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_HIGH,
-                                Constants.CLIMBER_RIGHT_LIMIT_HIGH)));
+                new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_HIGH / 2, Constants.CLIMBER_RIGHT_LIMIT_HIGH / 2)));
 
-        // Wait for 2 seconds to avoid over swinging
-        addBlock(new TorqueBlock(new Wait(2)));
+        // Extend out with the IMU
+        addBlock(new TorqueBlock(new ExtendUpWithIMU()));
 
-        // Bring climber down on high rung
-        addBlock(new TorqueBlock(
-            new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_LOW,
-                                Constants.CLIMBER_RIGHT_LIMIT_LOW)));
+        // Get shreyas approval :)
+        addBlock(new TorqueBlock(new ShreyasApproval()));
 
-        // Wait for 2 second to avoid over swinging
-        addBlock(new TorqueBlock(new Wait(2)));
+        // Get the climber hooked
+        addBlock(new TorqueBlock(new PullUntillLatch()));
 
-        // Bring climber up to travesal rung.
-        addBlock(new TorqueBlock(
-            new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_HIGH,
-                                Constants.CLIMBER_RIGHT_LIMIT_HIGH)));
-
-        // Wait for 2 seconds to avoid over swinging
-        addBlock(new TorqueBlock(new Wait(2)));
-
-        // Bring climber down on traversal rung
-        addBlock(new TorqueBlock(
-            new ClimbToSetpoint(Constants.CLIMBER_LEFT_LIMIT_HIGH / 2,
-                                Constants.CLIMBER_RIGHT_LIMIT_HIGH / 2)));
     }
 }

@@ -4,12 +4,14 @@ import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShreyasApproval extends TorqueCommand {
 
     @Override
     protected void init() {
         DriverStation.reportWarning("SHREYAS ACTIVATE MEEEEEE", false);
+        SmartDashboard.putBoolean("Shreyas Approval", true);
     }
 
     @Override
@@ -24,6 +26,7 @@ public class ShreyasApproval extends TorqueCommand {
     @Override
     protected void end() {
         DriverStation.reportWarning("thank you shreyas :)", false);
+        SmartDashboard.putBoolean("Shreyas Approval", false);
     }
 
 }

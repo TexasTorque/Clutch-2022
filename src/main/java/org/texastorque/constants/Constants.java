@@ -8,7 +8,6 @@ public class Constants {
     // Drivebase
     public static final double DRIVE_WHEEL_RADIUS_METERS = 1.788 * INCH_TO_FOOT * FOOT_TO_METER; // 1.788 is width with
                                                                                                  // wear
-    public static final double DRIVE_MAX_SPEED_METERS = 5;
     public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS_DRIVER = 2 * Math.PI;
     public static final double DRIVE_MAX_ANGUAR_SPEED_RADIANS = 4 * Math.PI;
 
@@ -27,6 +26,26 @@ public class Constants {
     public static final double DRIVE_Kd = 0;
     public static final double DRIVE_Kf = 0.0002;
     public static final double DRIVE_KIz = 0.2;
+
+    public static final double DRIVE_ROT_Kp = 0.7;
+    public static final double DRIVE_ROT_Ki = 0.;
+    public static final double DRIVE_ROT_Kd = 4.;
+    public static final double DRIVE_ROT_Ks = 0;
+
+    public static final double DRIVE_ROT_TOLERANCE = 1;
+
+    // public static final double DRIVE_Ks = 0.27024;
+    // public static final double DRIVE_Kv = 2.4076;
+    // public static final double DRIVE_Ka = 0.5153;
+    // public static final double DRIVE_Kp = 0.00048464;
+    // public static final double DRIVE_Ki = 0;
+    // public static final double DRIVE_Kd = 0;
+    // public static final double DRIVE_KIz = 0.2;
+
+    public static final double DRIVE_ALLOWED_ERROR = 0.1;
+    public static final double DRIVE_MINIMUM_VELOCITY = 0.1;
+
+    public static final double DRIVE_GEARING = .1875; // amount of drive rotations per neo rotations
 
     // Magazine
     public static final double MAGAZINE_BELT_SPEED = 1.;
@@ -82,8 +101,11 @@ public class Constants {
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
     public static final double TOP_ACCELERATION_METERS = 2.5;
-    public static final double MAX_ANGULAR_SPEED = 4 * Math.PI;
-    public static final double MAX_ANGULAR_ACCELERATION = Math.PI;
+
+    public static final double DRIVE_MAX_SPEED_METERS = 4;
+    public static final double DRIVE_MAX_ACCELERATION_METERS = 2;
+    public static final double MAX_ANGULAR_SPEED = 6 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = 6 * Math.PI;
 
     // Path Planner
     public static final double PATH_PLANNER_X_P = 1;
@@ -102,4 +124,6 @@ public class Constants {
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 31.9694 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 42.5;
+
+
 }

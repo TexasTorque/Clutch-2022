@@ -275,7 +275,7 @@ public class Input extends TorqueInputManager {
                 gateDirection = GateSpeeds.CLOSED;
             // If we are asking to shoot and the flywheel is reved and the
             // turret is locked
-            else if (shooterReady() && !shooterInput.isDoingPrewarm())
+            else if (shooterReady())
                 gateDirection = GateSpeeds.OPEN;
             else
                 gateDirection = GateSpeeds.OFF;
@@ -325,7 +325,6 @@ public class Input extends TorqueInputManager {
         private TorqueToggle xFactorToggle;
         private int readyCounter = 0;
         private final int readyCounterNeeded = 10;
-        private boolean prewarm = false;
         private HomingDirection homingDirection = HomingDirection.NONE;
         private TorqueSpeedSettings rpmAdjust = new TorqueSpeedSettings(0, -400, 400, 10);
         private TorqueClick startShoot = new TorqueClick();
@@ -364,14 +363,13 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean xFactor() {
-            return xFactorToggle.get() && flywheel != 0 && !prewarm;
+            return xFactorToggle.get() && flywheel != 0;
         }
 
         @Override
         public void update() {
             xFactorToggle.calc(operator.getDPADUp()); // TEMP CONTROL?
             rpmAdjust.update(operator.getRightCenterButton(), operator.getLeftCenterButton(), false, false);
-            prewarm = false;
 
             // Regression
             if (driver.getXButton()) {
@@ -384,13 +382,8 @@ public class Input extends TorqueInputManager {
                 } else
                     setFromDist(Constants.HUB_CENTER_POSITION
                             .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation()));
-            } else {
-                if (operator.getYButton()) {
-                    setRawValues(1900, Constants.HOOD_MAX);
-                    prewarm = true;
-                } else
-                    reset();
-            }
+            } else
+                reset();
 
             if (driver.getAButton())
                 State.getInstance().setTurretState(TurretState.CENTER);
@@ -495,10 +488,6 @@ public class Input extends TorqueInputManager {
 
         public HomingDirection getHomingDirection() {
             return homingDirection;
-        }
-
-        public boolean isDoingPrewarm() {
-            return prewarm;
         }
     }
 

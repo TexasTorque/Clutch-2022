@@ -251,7 +251,7 @@ public class Input extends TorqueInputManager {
         private GateSpeeds gateDirection;
         private BeltDirections beltDirection;
 
-        private TorqueToggle autoMag = new TorqueToggle(true);
+        private TorqueToggle autoMag = new TorqueToggle(false);
 
         public MagazineInput() {
         }
@@ -266,14 +266,16 @@ public class Input extends TorqueInputManager {
             else if (shooterInput.getFlywheel() != 0 &&
                     shooterInput.isFlywheelReady() &&
                     (!shooterInput.isUsingRegression() ||
-                            Feedback.getInstance().isTurretAlligned()))
+                            Feedback.getInstance().isTurretAlligned())) {
                 gateDirection = GateSpeeds.OPEN;
-            else if (autoMag.get())
+            } else if (autoMag.get())
                 gateDirection = GateSpeeds.CLOSED;
             else
                 gateDirection = GateSpeeds.OFF;
 
-            if (operator.getRightTrigger())
+            if (shooterInput.getFlywheel() != 0) 
+                beltDirection = BeltDirections.INTAKE;
+            else if (operator.getRightTrigger())
                 beltDirection = BeltDirections.OUTTAKE;
             else if (autoMag.get() || operator.getRightBumper())
                 beltDirection = BeltDirections.INTAKE;
@@ -418,12 +420,13 @@ public class Input extends TorqueInputManager {
             this.hood = TorqueMathUtil.constrain(hood, 0, Constants.HOOD_MAX);
         }
 
-        /**
+         /**
          * @param distance Distance (m)
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((276.4 * distance) + 1000, 3000);
+            return TorqueMathUtil.constrain((373.7 * distance) + 925, 0,
+                    4000);
         }
 
         /**

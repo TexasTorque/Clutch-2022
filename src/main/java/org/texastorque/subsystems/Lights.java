@@ -87,13 +87,14 @@ public class Lights extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
-            // TARGET LOCK
-            setLights(0, 255, 0);
-        else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
-            // SHOOTING
-            setLights(0, 255, 0, .25);
-        else if (Input.getInstance().getClimberInput().hasClimbStarted())
+        // if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
+        //     // TARGET LOCK
+        //     setLights(0, 255, 0);
+        // else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
+        //     // SHOOTING
+        //     setLights(0, 255, 0, .25);
+        // else 
+        if (Input.getInstance().getClimberInput().hasClimbStarted())
             // ENDGAME RAINBOW
             setRainbow();
         else

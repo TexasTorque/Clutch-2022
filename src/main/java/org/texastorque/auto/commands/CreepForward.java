@@ -14,7 +14,7 @@ public class CreepForward extends TorqueCommand {
 
     public CreepForward(double time) {
         this.time = time;
-        this.speed = .2;
+        this.speed = .4;
     }
 
     public CreepForward(double time, double speed) {

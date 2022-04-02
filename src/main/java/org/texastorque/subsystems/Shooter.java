@@ -46,9 +46,18 @@ public class Shooter extends TorqueSubsystem {
         hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.70, .70));
         hood.configureIZone(Constants.HOOD_Iz);
 
-        SmartDashboard.putNumber("RPMSET", 0);
-        SmartDashboard.putNumber("HOODSET", 0);
+        // SmartDashboard.putNumber("RPMSET", 0);
+        // SmartDashboard.putNumber("HOODSET", 0);
+        // SmartDashboard.putNumber("s kf", Constants.FLYWHEEL_Kf);
+        // SmartDashboard.putNumber("s kp", Constants.FLYWHEEL_Kp);
+        // SmartDashboard.putNumber("s ki", Constants.FLYWHEEL_Ki);
+        // SmartDashboard.putNumber("s kd", Constants.FLYWHEEL_Kd);
     }
+
+    // double kf = Constants.FLYWHEEL_Kf;
+    // double kp = Constants.FLYWHEEL_Kp;
+    // double ki = Constants.FLYWHEEL_Ki;
+    // double kd = Constants.FLYWHEEL_Kd;
 
     @Override
     public void updateTeleop() {
@@ -58,12 +67,29 @@ public class Shooter extends TorqueSubsystem {
             return;
         }
 
-        // flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
-        // hoodPosition = TorqueMathUtil.constrain(
-        // Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
-        // Constants.HOOD_MAX);
-        flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
-        hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
+        // if (SmartDashboard.getNumber("s kf", kf) != kf) {
+        // kf = SmartDashboard.getNumber("s kf", kf);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
+        // if (SmartDashboard.getNumber("s kp", kp) != kp) {
+        // kp = SmartDashboard.getNumber("s kp", kp);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
+        // if (SmartDashboard.getNumber("s ki", ki) != ki) {
+        // ki = SmartDashboard.getNumber("s ki", ki);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
+
+        // if (SmartDashboard.getNumber("s kf", kd) != kd) {
+        // kd = SmartDashboard.getNumber("s kd", kd);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
+        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
+        hoodPosition = TorqueMathUtil.constrain(
+                Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
+                Constants.HOOD_MAX);
+        // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
+        // hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
     }
 
     @Override
@@ -78,6 +104,7 @@ public class Shooter extends TorqueSubsystem {
         Feedback.getInstance().getShooterFeedback().setRPM(
                 flywheel.getVelocity());
         Feedback.getInstance().getShooterFeedback().setHoodPosition(hood.getPosition());
+        SmartDashboard.putNumber("flywheel resid", flywheel.getVelocity() - flywheelSetpoint);
     }
 
     @Override
@@ -97,7 +124,6 @@ public class Shooter extends TorqueSubsystem {
         flywheel.setWithFF(flywheelSetpoint, ControlType.kSmartVelocity, 0,
                 feedforward.calculate(flywheelSetpoint / 60),
                 ArbFFUnits.kVoltage);
-        // flywheel.set(flywheelSetpoint, ControlType.kSmartVelocity);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.texastorque.auto.sequences.mode3;
+package org.texastorque.auto.sequences.mode5;
 
 import org.texastorque.auto.commands.*;
 import org.texastorque.constants.Constants;
@@ -8,8 +8,8 @@ import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.*;
 
-public class Mode3Right extends TorqueSequence {
-    public Mode3Right(String name) {
+public class Mode5CenterRight extends TorqueSequence {
+    public Mode5CenterRight(String name) {
         super(name);
 
         init();
@@ -19,17 +19,23 @@ public class Mode3Right extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
                 new PrepareTurret(Constants.TURRET_BACK_ROT),
                 new PrepareShooter(50, 1800),
-                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
+                new Pathplanner("Mode5CenterRight_1")));
 
-        // Run path
-        addBlock(new TorqueBlock(new Pathplanner("Mode3Right")));
+        // Shoot preload and pickup
+        addBlock(new TorqueBlock(new SetIntake(IntakePosition.PRIME, IntakeDirection.INTAKE),
+                new ShootConst(1800, 50, Constants.TURRET_BACK_ROT, false, 1)));
 
-        // Shoot!
+        // Go to human player
+        addBlock(new TorqueBlock(new SetIntake(IntakePosition.PRIME, IntakeDirection.INTAKE),
+                new Pathplanner("Mode5CenterRight_2", false)));
+
+        // Shoot for the gold
         addBlock(new TorqueBlock(new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
-                new ShootConst(1800, 50, Constants.TURRET_BACK_ROT, true, 1.6)));
+                new ShootConst(1800, 50, Constants.TURRET_BACK_ROT, false, 3)));
 
         // Shut off
         addBlock(new TorqueBlock(

@@ -105,14 +105,14 @@ public class Constants {
     public static final double TURRET_BACK_ROT = 180;
 
     // Information
+    public static final double DRIVE_MAX_SPEED_METERS = 4;
+    public static final double DRIVE_MAX_ACCELERATION_METERS = 2;
+
     public static final double TOP_SPEED_FEET = 16.52;
     public static final double TOP_SPEED_METERS = TOP_SPEED_FEET * FOOT_TO_METER;
     public static final double TOP_ACCELERATION_METERS = 2.5;
-
-    public static final double DRIVE_MAX_SPEED_METERS = 4;
-    public static final double DRIVE_MAX_ACCELERATION_METERS = 2;
-    public static final double MAX_ANGULAR_SPEED = 6 * Math.PI;
-    public static final double MAX_ANGULAR_ACCELERATION = 6 * Math.PI;
+    public static final double MAX_ANGULAR_SPEED = 4 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = Math.PI;
 
     // Path Planner
     public static final double PATH_PLANNER_X_P = 1;

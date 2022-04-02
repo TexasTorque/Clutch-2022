@@ -388,8 +388,8 @@ public class Input extends TorqueInputManager {
             if (driver.getAButton())
                 State.getInstance().setTurretState(TurretState.CENTER);
 
-            if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
-                updateToPositon();
+            // if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
+            //     updateToPositon();
 
             if (operator.getDPADLeft())
                 homingDirection = HomingDirection.LEFT;

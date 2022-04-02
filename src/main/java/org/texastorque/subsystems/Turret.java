@@ -95,20 +95,22 @@ public class Turret extends TorqueSubsystem {
     }
 
     public void updateTeleop() {
-        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-            double pidOut = pidController.calculate(
-                    getDegrees(), Constants.TURRET_BACK_ROT);
-            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
-        } else if (State.getInstance().getTurretState() == TurretState.TO_POSITION) {
-            double pidOut = pidController.calculate(getDegrees(),
-                    State.getInstance().getTurretToPosition().getDegrees());
-            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
-            if (Math.abs(State.getInstance().getTurretToPosition().getDegrees()
-                    - getDegrees()) < Constants.TOLERANCE_DEGREES
-                    && Feedback.getInstance().getLimelightFeedback().getTaOffset() != 0) {
-                State.getInstance().setTurretState(TurretState.ON);
-            }
-        } else if (State.getInstance().getTurretState() == TurretState.ON) {
+        // if (Input.getInstance().getClimberInput().hasClimbStarted()) {
+        //     double pidOut = pidController.calculate(
+        //             getDegrees(), Constants.TURRET_BACK_ROT);
+        //     changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+        // } else 
+        // if (State.getInstance().getTurretState() == TurretState.TO_POSITION) {
+        //     double pidOut = pidController.calculate(getDegrees(),
+        //             State.getInstance().getTurretToPosition().getDegrees());
+        //     changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
+        //     if (Math.abs(State.getInstance().getTurretToPosition().getDegrees()
+        //             - getDegrees()) < Constants.TOLERANCE_DEGREES
+        //             && Feedback.getInstance().getLimelightFeedback().getTaOffset() != 0) {
+        //         State.getInstance().setTurretState(TurretState.ON);
+        //     }
+        // } else 
+        if (State.getInstance().getTurretState() == TurretState.ON) {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if (!checkOver() && !checkHoming()) {
                     double hOffset = Feedback.getInstance()

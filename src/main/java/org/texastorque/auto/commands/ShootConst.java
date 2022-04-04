@@ -23,7 +23,7 @@ public class ShootConst extends TorqueCommand {
     private double rpm, hood, turret, startMagTime = 0;
 
     private int readyIterations = 0;
-    private final int neededReadyIterations = 4;
+    private final int neededReadyIterations = 2;
 
     public ShootConst(double rpm, double hood, double turret) {
         this.rpm = rpm;
@@ -49,16 +49,26 @@ public class ShootConst extends TorqueCommand {
         this.magOutputTime = magOutputTime;
     }
 
+    private double timeMagDown;
+
     @Override
     protected void init() {
         AutoInput.getInstance().setSetTurretPosition(true);
         AutoInput.getInstance().setTurretPosition(turret);
         AutoInput.getInstance().setHoodPosition(hood);
         AutoInput.getInstance().setFlywheelSpeed(rpm);
+        timeMagDown = Timer.getFPGATimestamp();
     }
 
     @Override
     protected void continuous() {
+        if (Timer.getFPGATimestamp() - timeMagDown < .1) {
+            AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
+            AutoInput.getInstance().setBeltDirection(BeltDirections.OUTTAKE);
+        } else {
+            AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
+            AutoInput.getInstance().setBeltDirection(BeltDirections.OFF);
+        }
         if (!runMag) {
             // check if rpm is in range (+-x)
             if (Math.abs(rpm - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR

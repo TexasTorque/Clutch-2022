@@ -55,7 +55,7 @@ public class Constants {
     public static final double FLYWHEEL_Kp = 0.001500000013038516;
     public static final double FLYWHEEL_Ki = 0;
     public static final double FLYWHEEL_Kd = 0.03999998815357685;
-    public static final double FLYWHEEL_Kf = 0.00023999993572942913;
+    public static final double FLYWHEEL_Kf = 0.00024599993572942913;
     public static final double FLYWHEEL_Iz = 150;
     public static final double FLYWHEEEL_MAX_SPEED = 3000;
     public static final double FLYWHEEL_MAX_ACCELERATION = 3000;
@@ -71,8 +71,8 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = 1;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 186;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -183;
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 177;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -177;
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_SERVO_ATTACHED = 0.5;

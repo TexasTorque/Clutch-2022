@@ -32,8 +32,6 @@ public class Mode3Right extends TorqueSequence {
                 new ShootConst(1800, 50, Constants.TURRET_BACK_ROT, true, 1.6)));
 
         // Shut off
-        addBlock(new TorqueBlock(
-                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
-                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+        addBlock(new TorqueBlock(new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

@@ -411,22 +411,21 @@ public class Input extends TorqueInputManager {
 
         private void updateToPositon() {
 
-            // Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
-            // double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
-            // double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
-            // double robotAngleFromGoal = Math.atan2(yDist, xDist);
+            Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
+            double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
+            double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
+            double robotAngleFromGoal = Math.atan2(yDist, xDist);
 
-            // if (robotAngleFromGoal < Constants.TURRET_MAX_ROTATION_LEFT
-            // && robotAngleFromGoal > Constants.TURRET_MAX_ROTATION_RIGHT) {
-            // Rotation2d rotation = (robotPosition.getRotation().minus(new
-            // Rotation2d(robotAngleFromGoal)))
-            // .times(-1);
-            // State.getInstance().setTurretState(TurretState.TO_POSITION);
-            // State.getInstance()
-            // .setTurretToPosition(rotation);
-            // } else {
-            State.getInstance().setTurretState(TurretState.ON);
-            // }
+            if (robotAngleFromGoal < Constants.TURRET_MAX_ROTATION_LEFT
+                    && robotAngleFromGoal > Constants.TURRET_MAX_ROTATION_RIGHT) {
+                Rotation2d rotation = (robotPosition.getRotation().minus(new Rotation2d(robotAngleFromGoal)))
+                        .times(-1);
+                State.getInstance().setTurretState(TurretState.TO_POSITION);
+                State.getInstance()
+                        .setTurretToPosition(rotation);
+            } else {
+                State.getInstance().setTurretState(TurretState.ON);
+            }
         }
 
         @Override

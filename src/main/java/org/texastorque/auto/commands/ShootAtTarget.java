@@ -31,7 +31,7 @@ public class ShootAtTarget extends TorqueCommand {
     private double regressionOffset = 0;
 
     private int readyIterations = 0;
-    private final int neededReadyIterations = 4;
+    private final int neededReadyIterations = 2;
 
     public ShootAtTarget() {
         this.magOutputTime = 2;
@@ -59,15 +59,26 @@ public class ShootAtTarget extends TorqueCommand {
         this.regressionOffset = regressionOffset;
     }
 
+    private double timeMagDown;
+
     @Override
     protected void init() {
         AutoInput.getInstance().setSetTurretPosition(false);
         State.getInstance().setTurretState(turretOn ? TurretState.TO_POSITION : TurretState.OFF);
         System.out.println("Shoot at target locked & loaded!");
+        timeMagDown = Timer.getFPGATimestamp();
     }
 
     @Override
     protected void continuous() {
+        if (Timer.getFPGATimestamp() - timeMagDown < .1) {
+            AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
+            AutoInput.getInstance().setBeltDirection(BeltDirections.OUTTAKE);
+        } else {
+            AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
+            AutoInput.getInstance().setBeltDirection(BeltDirections.OFF);
+        }
+
         if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
             distance = Feedback.getInstance().getLimelightFeedback().getDistance();
 
@@ -104,7 +115,7 @@ public class ShootAtTarget extends TorqueCommand {
             // check if rpm is in range (+-x)
             if (Math.abs(outputRPM -
                     Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
-                    && Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < 1) {
+                    && Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < 10) {
                 if (readyIterations >= neededReadyIterations) {
                     // if so, launch magazine for x seconds
                     runMag = true;

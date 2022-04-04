@@ -326,10 +326,11 @@ public class Input extends TorqueInputManager {
         private double hood;
         private TorqueToggle xFactorToggle;
         private int readyCounter = 0;
-        private final int readyCounterNeeded = 10;
+        private final int readyCounterNeeded = 4;
         private HomingDirection homingDirection = HomingDirection.NONE;
         private TorqueSpeedSettings rpmAdjust = new TorqueSpeedSettings(0, -400, 400, 10);
         private TorqueClick startShoot = new TorqueClick();
+        private TimedTruthy shooterReady = new TimedTruthy();
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -356,12 +357,13 @@ public class Input extends TorqueInputManager {
             if (Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR) {
                 readyCounter++;
                 if (readyCounter > readyCounterNeeded) {
+                    shooterReady.setTime(.5);
                     return true;
+                } else {
+                    readyCounter++;
                 }
-            } else {
-                readyCounter = 0;
             }
-            return false;
+            return shooterReady.calc();
         }
 
         public boolean xFactor() {

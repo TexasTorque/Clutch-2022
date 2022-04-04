@@ -25,9 +25,6 @@ public class Shooter extends TorqueSubsystem {
     private double hoodPosition = Constants.HOOD_MAX;
     private double flywheelSetpoint;
 
-    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.FLYWHEEL_Ks,
-            Constants.FLYWHEEL_Kv);
-
     public Shooter() {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
@@ -36,10 +33,10 @@ public class Shooter extends TorqueSubsystem {
 
         flywheel.configurePID(
                 new KPID(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,
-                        Constants.FLYWHEEL_Kd, 0, -.1, 1));
+                        Constants.FLYWHEEL_Kd, Constants.FLYWHEEL_Kf, -.1, 1));
         flywheel.configureIZone(Constants.FLYWHEEL_Iz);
         flywheel.configureSmartMotion(Constants.FLYWHEEEL_MAX_SPEED, 0, Constants.FLYWHEEL_MAX_ACCELERATION,
-                10, 0);
+                30, 0);
 
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
         hood.invertPolarity(false);
@@ -121,9 +118,7 @@ public class Shooter extends TorqueSubsystem {
             return;
         }
 
-        flywheel.setWithFF(flywheelSetpoint, ControlType.kSmartVelocity, 0,
-                feedforward.calculate(flywheelSetpoint / 60),
-                ArbFFUnits.kVoltage);
+        flywheel.set(flywheelSetpoint, ControlType.kSmartVelocity);
     }
 
     @Override
@@ -132,9 +127,7 @@ public class Shooter extends TorqueSubsystem {
         SmartDashboard.putNumber("[Shooter]Flywheel SetPoint", this.flywheelSetpoint);
         SmartDashboard.putNumber("[Shooter]Flywheel Volt",
                 flywheel.getOutputCurrent());
-        // SmartDashboard.putNumber("[Shooter] Hood Position", hood.getPosition());
-
-        SmartDashboard.putNumber("Hood Position", hood.getPosition());
+        SmartDashboard.putNumber("[Shooter]Hood Position", hood.getPosition());
     }
 
     public static synchronized Shooter getInstance() {

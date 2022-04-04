@@ -52,17 +52,17 @@ public class Constants {
     public static final double FLYWHEEL_Ks = 0.37717;
     public static final double FLYWHEEL_Kv = 0.19542; // Values are for rotations/sec
     public static final double FLYWHEEL_Ka = 0.016159;
-    public static final double FLYWHEEL_Kp = 0.0006;
-    public static final double FLYWHEEL_Ki = 0.0002;
-    public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0; // 0.00026;
+    public static final double FLYWHEEL_Kp = 0.001500000013038516;
+    public static final double FLYWHEEL_Ki = 0;
+    public static final double FLYWHEEL_Kd = 0.03999998815357685;
+    public static final double FLYWHEEL_Kf = 0.00023999993572942913;
     public static final double FLYWHEEL_Iz = 150;
     public static final double FLYWHEEEL_MAX_SPEED = 3000;
     public static final double FLYWHEEL_MAX_ACCELERATION = 3000;
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 40;
     public static final double HOOD_ERROR = 1;
-    public static final double SHOOTER_ERROR = 30;
+    public static final double SHOOTER_ERROR = 45;
 
     public static final double HOOD_Kp = 0.1;
     public static final double HOOD_Ki = 0.001;
@@ -122,6 +122,6 @@ public class Constants {
     public static final double LIMELIGHT_ANGEL_DEG = 45;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
-    public static final double IDLE_SHOOTER_VOLTS = 1.2;
+    public static final double IDLE_SHOOTER_VOLTS = 2.4;
 
 }

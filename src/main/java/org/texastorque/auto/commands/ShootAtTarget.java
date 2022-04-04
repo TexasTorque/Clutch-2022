@@ -104,7 +104,7 @@ public class ShootAtTarget extends TorqueCommand {
             // check if rpm is in range (+-x)
             if (Math.abs(outputRPM -
                     Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
-                    && Turret.getInstance().getRate() < .2) {
+                    && Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < 1) {
                 if (readyIterations >= neededReadyIterations) {
                     // if so, launch magazine for x seconds
                     runMag = true;

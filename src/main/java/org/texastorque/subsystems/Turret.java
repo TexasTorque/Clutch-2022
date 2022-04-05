@@ -30,8 +30,8 @@ public class Turret extends TorqueSubsystem {
 
     public enum EncoderOverStatus {
         OFF,
-        TOLEFT(Constants.TURRET_MAX_ROTATION_RIGHT, 70),
-        TORIGHT(Constants.TURRET_MAX_ROTATION_LEFT, -70),
+        TOLEFT(Constants.TURRET_MAX_ROTATION_RIGHT, -60),
+        TORIGHT(Constants.TURRET_MAX_ROTATION_LEFT, -60),
         HOMING;
         /*
          * Think of these like states of the turret

@@ -95,8 +95,8 @@ public class Constants {
     public static final double TURRET_Kp = 0.15539;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
-    public static final double TURRET_MAX_ROTATION_LEFT = 93;
-    public static final double TURRET_MAX_ROTATION_RIGHT = -93;
+    public static final double TURRET_MAX_ROTATION_LEFT = 60;
+    public static final double TURRET_MAX_ROTATION_RIGHT = -60;
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 128.4722; // to 1
     public static final double TURRET_CENTER_ROT = 0;

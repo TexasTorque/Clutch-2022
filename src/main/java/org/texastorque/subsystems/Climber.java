@@ -130,7 +130,7 @@ public class Climber extends TorqueSubsystem {
             }
 
             // Pull until left claw
-            if (leftClaw.get() &&
+            if (leftClaw.get() && left.getPosition() < 20 &&
                     !Input.getInstance().getClimberInput().getHookOverride()
                     && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
                 climberSpeedsLeft = 0;
@@ -150,7 +150,7 @@ public class Climber extends TorqueSubsystem {
             }
 
             // Pull until right claw
-            if (rightClaw.get() &&
+            if (rightClaw.get() && right.getPosition() > -20 &&
                     !Input.getInstance().getClimberInput().getHookOverride()
                     && Input.getInstance().getClimberInput().getDirection() == ClimberDirection.PULL) {
                 climberSpeedsRight = 0;

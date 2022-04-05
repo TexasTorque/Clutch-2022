@@ -71,8 +71,8 @@ public class Constants {
 
     // Climber
     public static final double CLIMBER_SPEED = 1;
-    public static final double CLIMBER_LEFT_LIMIT_HIGH = 177;
-    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -177;
+    public static final double CLIMBER_LEFT_LIMIT_HIGH = 182;
+    public static final double CLIMBER_RIGHT_LIMIT_HIGH = -182;
     public static final double CLIMBER_LEFT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_LIMIT_LOW = 0;
     public static final double CLIMBER_RIGHT_SERVO_ATTACHED = 0.5;

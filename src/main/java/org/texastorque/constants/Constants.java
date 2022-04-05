@@ -45,8 +45,8 @@ public class Constants {
     // Intake
     public static final double INTAKE_ROLLER_SPEED = 1.0;
 
-    public static final double INTAKE_ROTARY_MIN_SPEED = -.15;
-    public static final double INTAKE_ROTARY_MAX_SPEED = .15;
+    public static final double INTAKE_ROTARY_MIN_SPEED = -.35;
+    public static final double INTAKE_ROTARY_MAX_SPEED = .35;
 
     // Shooter
     public static final double FLYWHEEL_Ks = 0.37717;

@@ -479,7 +479,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((177.5 * distance) + 1316 + rpmAdjust.getSpeed(), 0,
+            return TorqueMathUtil.constrain((173.5 * distance) + 1346 + rpmAdjust.getSpeed(), 0,
                     Constants.FLYWHEEEL_MAX_SPEED);
         }
 
@@ -491,7 +491,7 @@ public class Input extends TorqueInputManager {
         public double regressionHood(double distance) {
             if (distance > 3.5)
                 return Constants.HOOD_MAX;
-            return TorqueMathUtil.constrain(-72.22 * Math.exp(-0.5019 * distance) + 51.42,
+            return TorqueMathUtil.constrain(-72.22 * Math.exp(-0.5019 * distance) + 50.42,
                     Constants.HOOD_MIN,
                     Constants.HOOD_MAX);
         }

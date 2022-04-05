@@ -1,4 +1,4 @@
-package org.texastorque.auto.sequences.mode6;
+package org.texastorque.auto.sequences.mode5;
 
 import org.texastorque.auto.commands.*;
 import org.texastorque.constants.Constants;
@@ -8,8 +8,8 @@ import org.texastorque.subsystems.Magazine.BeltDirections;
 import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.*;
 
-public class Mode6Right extends TorqueSequence {
-        public Mode6Right(String name) {
+public class Mode5Left extends TorqueSequence {
+        public Mode5Left(String name) {
                 super(name);
 
                 init();
@@ -18,23 +18,24 @@ public class Mode6Right extends TorqueSequence {
         @Override
         protected void init() {
                 addBlock(new TorqueBlock(
-                                new PrepareTurret(173.15),
-                                new PrepareShooter(30, 1870),
+                                new PrepareTurret(-171.15),
+                                new PrepareShooter(30, 1840),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
-                                new Pathplanner("Mode6Right_1")));
+                                new Wait(0.8),
+                                new Pathplanner("Mode6Left_1")));
 
-                addBlock(new TorqueBlock(new ShootConst(1870, 30, 173.15, true, 1),
+                addBlock(new TorqueBlock(new ShootConst(1840, 30, -171.15, true, 1),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.STOPPED)));
 
                 addBlock(new TorqueBlock(
-                                new PrepareTurret(42),
-                                new PrepareShooter(34.5, 1800),
+                                new PrepareTurret(38),
+                                new PrepareShooter(28, 1800),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                                new Pathplanner("Mode6Right_2", false)));
+                                new Pathplanner("Mode6Left_2", false)));
 
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootConst(1890, 30, 42, true, 3), new CreepForward(2.5)));
+                addBlock(new TorqueBlock(new ShootConst(1890, 28, 38, true, 3)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

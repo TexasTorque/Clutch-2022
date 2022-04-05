@@ -1,10 +1,7 @@
 package org.texastorque.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -29,8 +26,9 @@ public class Shooter extends TorqueSubsystem {
         flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
         flywheel.invertFollower();
+        flywheel.configureFastLeader();
         flywheel.lowerFollowerCANFrame();
-        flywheel.setSupplyLimit(40);
+        flywheel.setSupplyLimit(35);
 
         flywheel.configurePID(
                 new KPID(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,

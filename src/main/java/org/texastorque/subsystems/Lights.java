@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.constants.Ports;
-import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
@@ -87,13 +86,14 @@ public class Lights extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        // if (Feedback.getInstance().isTurretAlligned() && Feedback.getInstance().getShooterFeedback().getRPM() != 0)
-        //     // TARGET LOCK
-        //     setLights(0, 255, 0);
+        // if (Feedback.getInstance().isTurretAlligned() &&
+        // Feedback.getInstance().getShooterFeedback().getRPM() != 0)
+        // // TARGET LOCK
+        // setLights(0, 255, 0);
         // else if (Input.getInstance().getShooterInput().getFlywheel() != 0)
-        //     // SHOOTING
-        //     setLights(0, 255, 0, .25);
-        // else 
+        // // SHOOTING
+        // setLights(0, 255, 0, .25);
+        // else
         if (Input.getInstance().getClimberInput().hasClimbStarted())
             // ENDGAME RAINBOW
             setRainbow();

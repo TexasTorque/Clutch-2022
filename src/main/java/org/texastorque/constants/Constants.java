@@ -122,6 +122,6 @@ public class Constants {
     public static final double LIMELIGHT_ANGEL_DEG = 45;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
-    public static final double IDLE_SHOOTER_VOLTS = 2.4;
+    public static final double IDLE_SHOOTER_VOLTS = 4;
 
 }

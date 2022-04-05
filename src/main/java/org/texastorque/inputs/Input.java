@@ -112,8 +112,8 @@ public class Input extends TorqueInputManager {
     }
 
     public class DriveBaseTranslationInput extends TorqueInput {
-        private TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
-        private TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.2, 1, .4); // two speeds, 1 and .5
+        private TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2); // 1, .8, .6
+        private TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2); // 1, .8, .6
 
         private double xSpeed = 0;
         private double ySpeed = 0;
@@ -169,7 +169,7 @@ public class Input extends TorqueInputManager {
     }
 
     public class DriveBaseRotationInput extends TorqueInput {
-        private TorqueSpeedSettings rotSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // two speeds, 1 and .5
+        private TorqueSpeedSettings rotSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5 
 
         private double rot = 0;
 

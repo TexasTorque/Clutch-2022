@@ -78,6 +78,9 @@ public class Climber extends TorqueSubsystem {
         left = new TorqueSparkMax(Ports.CLIMBER_LEFT);
         right = new TorqueSparkMax(Ports.CLIMBER_RIGHT);
 
+        left.configurePositionalCANFrame();
+        right.configurePositionalCANFrame();
+
         leftServo = new Servo(Ports.CLIMBER_LEFT_SERVO);
         rightServo = new Servo(Ports.CLIMBER_RIGHT_SERVO);
 

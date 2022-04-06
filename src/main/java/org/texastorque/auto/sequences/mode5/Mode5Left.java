@@ -35,11 +35,12 @@ public class Mode5Left extends TorqueSequence {
                                 new Pathplanner("Mode6Left_2", false)));
 
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootConst(1890, 28, 38, true, 3)));
+                addBlock(new TorqueBlock(
+                        new ShootConst(1890, 28, 38, true, 3),
+                        new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED)));
 
                 // Shut off
                 addBlock(new TorqueBlock(
-                                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
                                 new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
         }
 }

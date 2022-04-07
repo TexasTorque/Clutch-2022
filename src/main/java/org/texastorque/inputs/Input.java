@@ -169,7 +169,7 @@ public class Input extends TorqueInputManager {
     }
 
     public class DriveBaseRotationInput extends TorqueInput {
-        private TorqueSpeedSettings rotSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5 
+        private TorqueSpeedSettings rotSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5
 
         private double rot = 0;
 
@@ -479,7 +479,7 @@ public class Input extends TorqueInputManager {
          * @return RPM the shooter should go at
          */
         public double regressionRPM(double distance) {
-            return TorqueMathUtil.constrain((173.5 * distance) + 1346 + rpmAdjust.getSpeed(), 0,
+            return TorqueMathUtil.constrain((173.5 * distance) + 1316 + rpmAdjust.getSpeed(), 0,
                     Constants.FLYWHEEEL_MAX_SPEED);
         }
 
@@ -491,7 +491,7 @@ public class Input extends TorqueInputManager {
         public double regressionHood(double distance) {
             if (distance > 3.5)
                 return Constants.HOOD_MAX;
-            return TorqueMathUtil.constrain(-72.22 * Math.exp(-0.5019 * distance) + 50.42,
+            return TorqueMathUtil.constrain(-72.22 * Math.exp(-0.5019 * distance) + 50.01,
                     Constants.HOOD_MIN,
                     Constants.HOOD_MAX);
         }

@@ -67,10 +67,15 @@ public class Intake extends TorqueSubsystem {
                 Constants.INTAKE_ROTARY_MIN_SPEED,
                 Constants.INTAKE_ROTARY_MAX_SPEED));
         rotary.configurePositionalCANFrame();
+        rotary.burnFlash();
 
         roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
+        roller.addFollower(Ports.INTAKE_ROLLER_FOLLOWER);
+        roller.lowerFollowerCANFrame();
         roller.invertPolarity(true);
-        roller.configureDumbCANFrame();
+        roller.invertFollower();
+        roller.configureDumbLeaderCANFrame();
+        roller.burnFlash();
 
         limitSwitch = new DigitalInput(Ports.ROTARY_LIMIT_SWITCH);
     }
@@ -78,11 +83,12 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-            if (Input.getInstance().getIntakeInput().getPosition() == IntakePosition.DOWN) {
-                rotarySetPoint = IntakePosition.DOWN;
-            } else {
-                rotarySetPoint = IntakePosition.CLIMB;
-            }
+            // if (Input.getInstance().getIntakeInput().getPosition() ==
+            // IntakePosition.DOWN) {
+            rotarySetPoint = IntakePosition.DOWN;
+            // } else {
+            // rotarySetPoint = IntakePosition.CLIMB;
+            // }
             rollerSpeed = 0;
         } else {
             rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();

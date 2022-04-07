@@ -34,14 +34,16 @@ public class Shooter extends TorqueSubsystem {
                 new KPID(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,
                         Constants.FLYWHEEL_Kd, Constants.FLYWHEEL_Kf, -.1, 1));
         flywheel.configureIZone(Constants.FLYWHEEL_Iz);
-        flywheel.configureSmartMotion(Constants.FLYWHEEEL_MAX_SPEED, 0, Constants.FLYWHEEL_MAX_ACCELERATION,
-                30, 0);
+        flywheel.configureSmartMotion(5000, 0, 6000,
+                5, 0);
+        flywheel.burnFlash();
 
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
         hood.invertPolarity(false);
         hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.70, .70));
         hood.configureIZone(Constants.HOOD_Iz);
         hood.configurePositionalCANFrame();
+        hood.burnFlash();
 
         // SmartDashboard.putNumber("RPMSET", 0);
         // SmartDashboard.putNumber("HOODSET", 0);

@@ -51,11 +51,13 @@ public class SwerveWheel {
                                 metersPerSecondToEncoderPerMinute(Constants.DRIVE_MAX_ACCELERATION_METERS),
                                 metersPerSecondToEncoderPerMinute(Constants.DRIVE_ALLOWED_ERROR), 0);
                 drive.setSupplyLimit(40); // Amperage supply limit
+                drive.burnFlash();
 
                 rotate.configureSupplyLimit(
                                 new SupplyCurrentLimitConfiguration(true, 25, 30, 1));
                 rotate.configurePID(new KPID(Constants.DRIVE_ROT_Kp, Constants.DRIVE_ROT_Ki, Constants.DRIVE_ROT_Kd, 0,
                                 -1, 1));
+
                 // if (id == 0) {
                 // SmartDashboard.putNumber("kp", rotatePID.getP());
                 // SmartDashboard.putNumber("ki", rotatePID.getI());

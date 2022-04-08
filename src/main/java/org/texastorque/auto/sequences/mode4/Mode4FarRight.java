@@ -18,19 +18,19 @@ public class Mode4FarRight extends TorqueSequence {
         protected void init() {
                 addBlock(new TorqueBlock(
                                 new PrepareTurret(-75),
-                                new PrepareShooter(40, 1800),
+                                new PrepareShooter(26, 1800),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
                                 new Pathplanner("Mode4FarRight_1")));
 
-                addBlock(new TorqueBlock(new ShootConst(1800, 50, -75, false, 1)));
+                addBlock(new TorqueBlock(new ShootConst(1800, 26, -75, false, 1)));
 
                 addBlock(new TorqueBlock(
                                 new PrepareTurret(-75),
-                                new PrepareShooter(40, 1960),
+                                new PrepareShooter(26, 1860),
                                 new Pathplanner("Mode4FarRight_2", false)));
 
-                addBlock(new TorqueBlock(new ShootConst(1960, 40, 0, true, .8)));
+                addBlock(new TorqueBlock(new ShootConst(1860, 26, 0, true, 1.5)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

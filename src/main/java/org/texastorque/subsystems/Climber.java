@@ -164,8 +164,6 @@ public class Climber extends TorqueSubsystem {
                 left.getPosition());
         Feedback.getInstance().getClimberFeedback().setRightPosition(
                 right.getPosition());
-        Feedback.getInstance().getClimberFeedback().setLeftClaw(leftClaw.get());
-        Feedback.getInstance().getClimberFeedback().setRightClaw(rightClaw.get());
     }
 
     @Override
@@ -189,6 +187,8 @@ public class Climber extends TorqueSubsystem {
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Climber]SpeedLeft", climberSpeedsLeft);
         SmartDashboard.putNumber("[Climber]SpeedRight", climberSpeedsRight);
+        Feedback.getInstance().getClimberFeedback().setLeftClaw(leftClaw.get());
+        Feedback.getInstance().getClimberFeedback().setRightClaw(rightClaw.get());
     }
 
     public static synchronized Climber getInstance() {

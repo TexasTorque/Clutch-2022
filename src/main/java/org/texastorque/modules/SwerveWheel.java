@@ -54,9 +54,10 @@ public class SwerveWheel {
                 drive.burnFlash();
 
                 rotate.configureSupplyLimit(
-                                new SupplyCurrentLimitConfiguration(true, 25, 30, 1));
+                                new SupplyCurrentLimitConfiguration(true, 5, 10, .03));
                 rotate.configurePID(new KPID(Constants.DRIVE_ROT_Kp, Constants.DRIVE_ROT_Ki, Constants.DRIVE_ROT_Kd, 0,
                                 -1, 1));
+                rotate.zeroEncoder();
 
                 // if (id == 0) {
                 // SmartDashboard.putNumber("kp", rotatePID.getP());

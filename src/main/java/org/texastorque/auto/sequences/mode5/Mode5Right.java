@@ -18,26 +18,26 @@ public class Mode5Right extends TorqueSequence {
     @Override
     protected void init() {
         addBlock(new TorqueBlock(
-            new PrepareTurret(173.15), new PrepareShooter(30, 1870),
-            new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-            new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
-            new Pathplanner("Mode6Right_1")));
+                new PrepareTurret(173.15), new PrepareShooter(26, 1870),
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
+                new Pathplanner("Mode6Right_1")));
 
         addBlock(new TorqueBlock(
-            new ShootConst(1870, 30, 173.15, true, 1),
-            new SetIntake(IntakePosition.DOWN, IntakeDirection.STOPPED)));
+                new ShootConst(1870, 26, 173.15, true, 1),
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.STOPPED)));
 
         addBlock(new TorqueBlock(
-            new PrepareTurret(42), new PrepareShooter(34.5, 1800),
-            new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-            new Pathplanner("Mode6Right_2", false)));
+                new PrepareTurret(42), new PrepareShooter(26, 1800),
+                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                new Pathplanner("Mode6Right_2", false)));
 
         // Shoot!
-        addBlock(new TorqueBlock(new ShootConst(1890, 30, 42, true, 3),
+        addBlock(new TorqueBlock(new ShootConst(1890, 26, 42, true, 3),
                 new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED)));
 
         // Shut off
         addBlock(new TorqueBlock(
-            new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
     }
 }

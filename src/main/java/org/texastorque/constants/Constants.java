@@ -19,9 +19,9 @@ public class Constants {
     public static final double ROTATE_MANAGER_PID_I = 0;
     public static final double ROTATE_MANAGER_PID_D = 0;
 
-    public static final double DRIVE_ROT_Kp = 0.7;
+    public static final double DRIVE_ROT_Kp = 0.3;
     public static final double DRIVE_ROT_Ki = 0.;
-    public static final double DRIVE_ROT_Kd = 4.;
+    public static final double DRIVE_ROT_Kd = 0;
     public static final double DRIVE_ROT_Ks = 0;
 
     public static final double DRIVE_ROT_TOLERANCE = 1;
@@ -55,7 +55,7 @@ public class Constants {
     public static final double FLYWHEEL_Kp = 0.0003800000122282654;
     public static final double FLYWHEEL_Ki = 0;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.00024599992320872843;
+    public static final double FLYWHEEL_Kf = 0.000271599992320872843;
     public static final double FLYWHEEL_Iz = 150;
     public static final double FLYWHEEEL_MAX_SPEED = 3000;
     public static final double FLYWHEEL_MAX_ACCELERATION = 10000;
@@ -122,6 +122,6 @@ public class Constants {
     public static final double LIMELIGHT_ANGEL_DEG = 45;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
-    public static final double IDLE_SHOOTER_VOLTS = 2;
+    public static final double IDLE_SHOOTER_VOLTS = 0;
 
 }

@@ -72,7 +72,7 @@ public class ShootConst extends TorqueCommand {
         if (!runMag) {
             // check if rpm is in range (+-x)
             if (Math.abs(rpm - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
-                    && Math.abs(Turret.getInstance().getDegrees() - turret) < 5) {
+                    && Math.abs(Turret.getInstance().getDegrees() - turret) < 8) {
                 if (readyIterations >= neededReadyIterations) {
                     // if so, launch magazine for x seconds
                     runMag = true;

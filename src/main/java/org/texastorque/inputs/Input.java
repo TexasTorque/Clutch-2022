@@ -491,7 +491,7 @@ public class Input extends TorqueInputManager {
         public double regressionHood(double distance) {
             if (distance > 3.5)
                 return Constants.HOOD_MAX;
-            return TorqueMathUtil.constrain(-72.22 * Math.exp(-0.5019 * distance) + 50.01,
+            return TorqueMathUtil.constrain(-72.22 * Math.exp(-0.5019 * distance) + 46.01,
                     Constants.HOOD_MIN,
                     Constants.HOOD_MAX);
         }

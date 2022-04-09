@@ -2,6 +2,7 @@ package org.texastorque.inputs;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
@@ -231,14 +232,15 @@ public class Input extends TorqueInputManager {
             toggleLifted.calc(driver.getBButton());
             liftedPosition = toggleLifted.get() ? IntakePosition.PRIME : IntakePosition.UP;
 
-            if (driver.getRightTrigger())
+            if (driver.getRightTrigger() || operator.getDPADRight())
                 direction = IntakeDirection.INTAKE;
-            else if (driver.getLeftTrigger())
+            else if (driver.getLeftTrigger() || operator.getDPADLeft())
                 direction = IntakeDirection.OUTAKE;
             else
                 direction = IntakeDirection.STOPPED;
 
-            if (driver.getRightTrigger() || driver.getLeftTrigger())
+            if (driver.getRightTrigger() || driver.getLeftTrigger() || operator.getDPADLeft()
+                    || operator.getDPADRight())
                 intakePosition = IntakePosition.DOWN;
             else
                 intakePosition = liftedPosition;
@@ -331,6 +333,9 @@ public class Input extends TorqueInputManager {
         private TorqueSpeedSettings rpmAdjust = new TorqueSpeedSettings(0, -400, 400, 10);
         private TorqueClick startShoot = new TorqueClick();
         private TimedTruthy shooterReady = new TimedTruthy();
+        private TorqueClick resetOdometryLaunchpad = new TorqueClick();
+        private TorqueToggle justCenter = new TorqueToggle(true);
+        private boolean usingOdometry = false;
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -386,20 +391,33 @@ public class Input extends TorqueInputManager {
                 } else
                     setFromDist(Constants.HUB_CENTER_POSITION
                             .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation()));
+                // Lauch pad
+            } else if (driver.getYButton()) {
+                setRawValues(2119, 38.95);
+                State.getInstance().setTurretState(TurretState.TO_POSITION);
+                usingOdometry = false;
+                State.getInstance().setTurretToPosition(Rotation2d.fromDegrees(-16.166));
+            } else if (driver.getAButton()) {
+                setRawValues(1797, 28);
+                usingOdometry = false;
+                State.getInstance().setTurretState(TurretState.CENTER);
+            } else {
+                reset();
             }
 
-            // Layup
-            else if (driver.getYButton()) {
-                setRawValues(1550, Constants.HOOD_MIN);
-                State.getInstance().setTurretState(TurretState.CENTER);
-            } else
-                reset();
-
-            if (driver.getAButton())
-                State.getInstance().setTurretState(TurretState.CENTER);
-
-            if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
+            justCenter.calc(operator.getDPADDown());
+            if (justCenter.get() && startShoot.calc(driver.getXButton())) {
+                State.getInstance().setTurretState(TurretState.TO_POSITION);
+                State.getInstance().setTurretToPosition(new Rotation2d(0));
+            } else if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
                 updateToPositon();
+
+            if (resetOdometryLaunchpad.calc(driver.getAButton())) {
+                Drivebase.getInstance().odometry.resetPosition(
+                        new Pose2d(new Translation2d(3.75, 5.39),
+                                Feedback.getInstance().getGyroFeedback().getRotation2d()),
+                        Feedback.getInstance().getGyroFeedback().getRotation2d());
+            }
 
             if (operator.getDPADLeft())
                 homingDirection = HomingDirection.LEFT;
@@ -410,7 +428,7 @@ public class Input extends TorqueInputManager {
         }
 
         private void updateToPositon() {
-
+            usingOdometry = true;
             Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
             double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
             double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
@@ -432,11 +450,13 @@ public class Input extends TorqueInputManager {
         public void smartDashboard() {
             SmartDashboard.putString("HomingDirection", homingDirection.toString());
             SmartDashboard.putNumber("RPM Adjust", rpmAdjust.getSpeed());
+            SmartDashboard.putBoolean("Odometry Enabled", justCenter.get());
         }
 
         @Override
         public void reset() {
             flywheel = 0;
+            usingOdometry = false;
             State.getInstance().setTurretState(TurretState.OFF);
         }
 
@@ -481,6 +501,10 @@ public class Input extends TorqueInputManager {
         public double regressionRPM(double distance) {
             return TorqueMathUtil.constrain((173.5 * distance) + 1316 + rpmAdjust.getSpeed(), 0,
                     Constants.FLYWHEEEL_MAX_SPEED);
+        }
+
+        public boolean getUsingOdometry() {
+            return usingOdometry;
         }
 
         /**

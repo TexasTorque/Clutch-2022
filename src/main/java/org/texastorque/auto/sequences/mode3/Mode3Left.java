@@ -19,7 +19,7 @@ public class Mode3Left extends TorqueSequence {
     protected void init() {
         // Start Intake, Automag
         addBlock(new TorqueBlock(
-                new PrepareTurret(175),
+                new PrepareTurret(-168.69),
                 new PrepareShooter(26, 1830),
                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
@@ -29,7 +29,7 @@ public class Mode3Left extends TorqueSequence {
 
         // Shoot!
         addBlock(new TorqueBlock(new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
-                new ShootConst(1830, 26, 175, true, 1.6)));
+                new ShootConst(1830, 26, -168.69, true, 1.6)));
 
         // Shut off
         addBlock(new TorqueBlock(new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));

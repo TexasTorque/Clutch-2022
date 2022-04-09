@@ -30,8 +30,8 @@ public class Turret extends TorqueSubsystem {
 
     public enum EncoderOverStatus {
         OFF,
-        TOLEFT(Constants.TURRET_MAX_ROTATION_RIGHT, 70),
-        TORIGHT(Constants.TURRET_MAX_ROTATION_LEFT, -70),
+        TOLEFT(-45, 35),
+        TORIGHT(45, -35),
         HOMING;
         /*
          * Think of these like states of the turret
@@ -110,7 +110,7 @@ public class Turret extends TorqueSubsystem {
             }
         } else if (State.getInstance().getTurretState() == TurretState.ON) {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
-                if (!checkOver() && !checkHoming()) {
+                if ((Input.getInstance().getShooterInput().getUsingOdometry() || !checkOver()) && !checkHoming()) {
                     double hOffset = Feedback.getInstance()
                             .getLimelightFeedback()
                             .gethOffset();
@@ -138,11 +138,11 @@ public class Turret extends TorqueSubsystem {
                 // :( .. let's find it!
                 if (!checkOver() && checkHoming()) {
                     if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.LEFT) {
-                        changeRequest = 10 + Constants.TURRET_Ks;
+                        changeRequest = 5 + Constants.TURRET_Ks;
                     } else if (Input.getInstance().getShooterInput().getHomingDirection() == HomingDirection.RIGHT) {
-                        changeRequest = -10 - Constants.TURRET_Ks;
+                        changeRequest = -5 - Constants.TURRET_Ks;
                     } else {
-                        changeRequest = 10 + Constants.TURRET_Ks;
+                        changeRequest = 5 + Constants.TURRET_Ks;
                     }
                 }
             } else {

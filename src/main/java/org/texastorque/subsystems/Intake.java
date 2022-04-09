@@ -39,7 +39,7 @@ public class Intake extends TorqueSubsystem {
         CLIMB(.25),
         UP(1.5),
         PRIME(4.4),
-        DOWN(8.6);
+        DOWN(8.3);
         // Intake setpoints
 
         private final double position;
@@ -83,12 +83,11 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-            // if (Input.getInstance().getIntakeInput().getPosition() ==
-            // IntakePosition.DOWN) {
-            rotarySetPoint = IntakePosition.DOWN;
-            // } else {
-            // rotarySetPoint = IntakePosition.CLIMB;
-            // }
+            if (Input.getInstance().getIntakeInput().getPosition() == IntakePosition.DOWN) {
+                rotarySetPoint = IntakePosition.CLIMB;
+            } else {
+                rotarySetPoint = IntakePosition.DOWN;
+            }
             rollerSpeed = 0;
         } else {
             rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();

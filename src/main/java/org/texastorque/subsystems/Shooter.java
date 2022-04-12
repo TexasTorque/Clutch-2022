@@ -81,7 +81,8 @@ public class Shooter extends TorqueSubsystem {
             kd = SmartDashboard.getNumber("s kd", kd);
             flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
         }
-        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
+
+        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel() * Constants.SHOOTER_REDUCTION;
         hoodPosition = TorqueMathUtil.constrain(
             Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
             Constants.HOOD_MAX);

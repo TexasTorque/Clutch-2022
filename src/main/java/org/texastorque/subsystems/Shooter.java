@@ -36,6 +36,9 @@ public class Shooter extends TorqueSubsystem {
                 Constants.FLYWHEEL_Kf, 
                 -.1, 1));
 
+        flywheel.setIZone(Constants.FLYWHEEL_Iz);
+
+
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
         hood.invertPolarity(false);
         hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki, Constants.HOOD_kd, 0, -.70, .70));
@@ -105,8 +108,7 @@ public class Shooter extends TorqueSubsystem {
         hood.set(hoodPosition, ControlType.kPosition);
 
         if (flywheelSetpoint == 0 && !Input.getInstance().getClimberInput().hasClimbStarted()) {
-            // This is going to be setting current not volts. This makes more sense.
-            flywheel.set(Constants.IDLE_SHOOTER_AMPS, ControlMode.Current);
+            flywheel.set(Constants.IDLE_SHOOTER_PERCENT);
             return;
         }
 

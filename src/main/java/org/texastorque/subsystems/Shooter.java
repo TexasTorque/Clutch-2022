@@ -1,7 +1,7 @@
 package org.texastorque.subsystems;
 
 import com.revrobotics.CANSparkMax.ControlType;
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -9,6 +9,7 @@ import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.component.TorqueFalcon;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.util.KPID;
@@ -16,27 +17,24 @@ import org.texastorque.util.KPID;
 public class Shooter extends TorqueSubsystem {
     private static volatile Shooter instance;
 
-    private TorqueSparkMax flywheel, hood;
+    private TorqueSparkMax hood;
+    private TorqueFalcon flywheel;
 
     // setpoints grabbed from input
     private double hoodPosition = Constants.HOOD_MAX;
     private double flywheelSetpoint;
 
     public Shooter() {
-        flywheel = new TorqueSparkMax(Ports.SHOOTER_FLYWHEEL_LEFT);
-        flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT);
-        flywheel.invertFollower();
-        flywheel.configureFastLeader();
-        flywheel.lowerFollowerCANFrame();
-        flywheel.setSupplyLimit(35);
+        flywheel = new TorqueFalcon(Ports.SHOOTER_FLYWHEEL_LEFT);
+        flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT, true);
 
-        flywheel.configurePID(
-                new KPID(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,
-                        Constants.FLYWHEEL_Kd, Constants.FLYWHEEL_Kf, -.1, 1));
-        flywheel.configureIZone(Constants.FLYWHEEL_Iz);
-        flywheel.configureSmartMotion(5000, 0, 6000,
-                5, 0);
-        flywheel.burnFlash();
+        // These numbers are going to suck
+        flywheel.configurePID(new KPID(
+                Constants.FLYWHEEL_Kp, 
+                Constants.FLYWHEEL_Ki,
+                Constants.FLYWHEEL_Kd, 
+                Constants.FLYWHEEL_Kf, 
+                -.1, 1));
 
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
         hood.invertPolarity(false);
@@ -47,16 +45,7 @@ public class Shooter extends TorqueSubsystem {
 
         // SmartDashboard.putNumber("RPMSET", 0);
         // SmartDashboard.putNumber("HOODSET", 0);
-        // SmartDashboard.putNumber("s kf", Constants.FLYWHEEL_Kf);
-        // SmartDashboard.putNumber("s kp", Constants.FLYWHEEL_Kp);
-        // SmartDashboard.putNumber("s ki", Constants.FLYWHEEL_Ki);
-        // SmartDashboard.putNumber("s kd", Constants.FLYWHEEL_Kd);
     }
-
-    // double kf = Constants.FLYWHEEL_Kf;
-    // double kp = Constants.FLYWHEEL_Kp;
-    // double ki = Constants.FLYWHEEL_Ki;
-    // double kd = Constants.FLYWHEEL_Kd;
 
     @Override
     public void updateTeleop() {
@@ -116,19 +105,20 @@ public class Shooter extends TorqueSubsystem {
         hood.set(hoodPosition, ControlType.kPosition);
 
         if (flywheelSetpoint == 0 && !Input.getInstance().getClimberInput().hasClimbStarted()) {
-            flywheel.setVoltage(Constants.IDLE_SHOOTER_VOLTS);
+            // This is going to be setting current not volts. This makes more sense.
+            flywheel.set(Constants.IDLE_SHOOTER_AMPS, ControlMode.Current);
             return;
         }
 
-        flywheel.set(flywheelSetpoint, ControlType.kSmartVelocity);
+        flywheel.set(flywheelSetpoint, ControlMode.Velocity);
     }
 
     @Override
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Shooter]Hood SetPoint", this.hoodPosition);
         SmartDashboard.putNumber("[Shooter]Flywheel SetPoint", this.flywheelSetpoint);
-        SmartDashboard.putNumber("[Shooter]Flywheel Volt",
-                flywheel.getOutputCurrent());
+        // SmartDashboard.putNumber("[Shooter]Flywheel Volt",
+        //         flywheel.getOutputCurrent());
         SmartDashboard.putNumber("[Shooter]Hood Position", hood.getPosition());
     }
 

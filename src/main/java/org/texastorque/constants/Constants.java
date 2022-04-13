@@ -50,7 +50,7 @@ public class Constants {
 
     // Shooter
     // public static final double FLYWHEEL_Ks = 0.0075; //0.37717;
-    // public static final double FLYWHEEL_Kv = 0; //0.19542; // Values are for rotations/sec
+    // public static final double FLYWHEEL_Kv = 0; //0.19542; // Values are for
     // public static final double FLYWHEEL_Ka = 0; //0.016159;
 
     public static final double FLYWHEEL_Kp = 0.0075;

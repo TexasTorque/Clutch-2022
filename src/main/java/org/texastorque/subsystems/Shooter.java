@@ -2,6 +2,7 @@ package org.texastorque.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMax.ControlType;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -29,16 +30,19 @@ public class Shooter extends TorqueSubsystem {
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT, true);
 
         // These numbers are going to suck
-        flywheel.configurePID(
-            new KPID(Constants.FLYWHEEL_Kp, Constants.FLYWHEEL_Ki,
-                     Constants.FLYWHEEL_Kd, Constants.FLYWHEEL_Kf, -.1, 1));
+        flywheel.configurePID(new KPID(
+                Constants.FLYWHEEL_Kp,
+                Constants.FLYWHEEL_Ki,
+                Constants.FLYWHEEL_Kd,
+                Constants.FLYWHEEL_Kf,
+                -.1, 1));
 
-        // flywheel.setIZone(Constants.FLYWHEEL_Iz);
+        // flywheel.setIZone(Constants.Flywheel_I);
 
         hood = new TorqueSparkMax(Ports.SHOOTER_HOOD);
         hood.invertPolarity(false);
         hood.configurePID(new KPID(Constants.HOOD_Kp, Constants.HOOD_Ki,
-                                   Constants.HOOD_kd, 0, -.70, .70));
+                Constants.HOOD_kd, 0, -.70, .70));
         hood.configureIZone(Constants.HOOD_Iz);
         hood.configurePositionalCANFrame();
         hood.burnFlash();
@@ -84,8 +88,8 @@ public class Shooter extends TorqueSubsystem {
 
         flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel() * Constants.SHOOTER_REDUCTION;
         hoodPosition = TorqueMathUtil.constrain(
-            Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
-            Constants.HOOD_MAX);
+                Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
+                Constants.HOOD_MAX);
         // flywheelSetpoint = SmartDashboard.getNumber("RPMSET", 0);
         // hoodPosition = SmartDashboard.getNumber("HOODSET", 0);
     }
@@ -93,19 +97,18 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateAuto() {
         flywheelSetpoint = AutoInput.getInstance().getFlywheelSpeed();
-        hoodPosition =
-            TorqueMathUtil.constrain(AutoInput.getInstance().getHoodPosition(),
-                                     Constants.HOOD_MIN, Constants.HOOD_MAX);
+        hoodPosition = TorqueMathUtil.constrain(AutoInput.getInstance().getHoodPosition(),
+                Constants.HOOD_MIN, Constants.HOOD_MAX);
     }
 
     @Override
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(
-            flywheel.getVelocity());
+                flywheel.getVelocity());
         Feedback.getInstance().getShooterFeedback().setHoodPosition(
-            hood.getPosition());
+                hood.getPosition());
         SmartDashboard.putNumber("flywheel resid",
-                                 flywheel.getVelocity() - flywheelSetpoint);
+                flywheel.getVelocity() - flywheelSetpoint);
     }
 
     @Override
@@ -118,7 +121,7 @@ public class Shooter extends TorqueSubsystem {
         hood.set(hoodPosition, ControlType.kPosition);
 
         if (flywheelSetpoint == 0 &&
-            !Input.getInstance().getClimberInput().hasClimbStarted()) {
+                !Input.getInstance().getClimberInput().hasClimbStarted()) {
             flywheel.set(Constants.IDLE_SHOOTER_PERCENT);
             return;
         }
@@ -130,9 +133,9 @@ public class Shooter extends TorqueSubsystem {
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Shooter]Hood SetPoint", this.hoodPosition);
         SmartDashboard.putNumber("[Shooter]Flywheel SetPoint",
-                                 this.flywheelSetpoint);
+                this.flywheelSetpoint);
         // SmartDashboard.putNumber("[Shooter]Flywheel Volt",
-        //         flywheel.getOutputCurrent());
+        // flywheel.getOutputCurrent());
         SmartDashboard.putNumber("[Shooter]Hood Position", hood.getPosition());
     }
 

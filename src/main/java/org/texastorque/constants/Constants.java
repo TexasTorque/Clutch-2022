@@ -43,7 +43,7 @@ public class Constants {
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROLLER_SPEED = 1.0;
+    public static final double INTAKE_ROLLER_SPEED = .6;
 
     public static final double INTAKE_ROTARY_MIN_SPEED = -.35;
     public static final double INTAKE_ROTARY_MAX_SPEED = .35;
@@ -53,10 +53,10 @@ public class Constants {
     // public static final double FLYWHEEL_Kv = 0; //0.19542; // Values are for
     // public static final double FLYWHEEL_Ka = 0; //0.016159;
 
-    public static final double FLYWHEEL_Kp = 0.0075;
+    public static final double FLYWHEEL_Kp = 0.0999999046;
     public static final double FLYWHEEL_Ki = 0;
     public static final double FLYWHEEL_Kd = 0;
-    public static final double FLYWHEEL_Kf = 0.05033127788;
+    public static final double FLYWHEEL_Kf = 0.0603409074;
 
     // public static final double FLYWHEEL_Iz = 150;
 
@@ -121,8 +121,8 @@ public class Constants {
 
     // Physical
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
-    public static final double HEIGHT_TO_LIMELIGHT_METERS = 35 * INCH_TO_FOOT * FOOT_TO_METER;
-    public static final double LIMELIGHT_ANGEL_DEG = 45;
+    public static final double HEIGHT_TO_LIMELIGHT_METERS = 39 * INCH_TO_FOOT * FOOT_TO_METER;
+    public static final double LIMELIGHT_ANGEL_DEG = 28.5;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
     public static final double IDLE_SHOOTER_PERCENT = .1;

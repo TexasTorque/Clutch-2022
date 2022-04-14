@@ -49,16 +49,16 @@ public class Shooter extends TorqueSubsystem {
 
         SmartDashboard.putNumber("RPMSET", 0);
         SmartDashboard.putNumber("HOODSET", 0);
-        SmartDashboard.putNumber("s kf", Constants.FLYWHEEL_Kf);
-        SmartDashboard.putNumber("s kp", Constants.FLYWHEEL_Kp);
-        SmartDashboard.putNumber("s ki", Constants.FLYWHEEL_Ki);
-        SmartDashboard.putNumber("s kd", Constants.FLYWHEEL_Kd);
+        // SmartDashboard.putNumber("s kf", Constants.FLYWHEEL_Kf);
+        // SmartDashboard.putNumber("s kp", Constants.FLYWHEEL_Kp);
+        // SmartDashboard.putNumber("s ki", Constants.FLYWHEEL_Ki);
+        // SmartDashboard.putNumber("s kd", Constants.FLYWHEEL_Kd);
     }
 
-    double kf = Constants.FLYWHEEL_Kf;
-    double kp = Constants.FLYWHEEL_Kp;
-    double ki = Constants.FLYWHEEL_Ki;
-    double kd = Constants.FLYWHEEL_Kd;
+    // double kf = Constants.FLYWHEEL_Kf;
+    // double kp = Constants.FLYWHEEL_Kp;
+    // double ki = Constants.FLYWHEEL_Ki;
+    // double kd = Constants.FLYWHEEL_Kd;
 
     @Override
     public void updateTeleop() {
@@ -68,25 +68,25 @@ public class Shooter extends TorqueSubsystem {
             return;
         }
 
-        if (SmartDashboard.getNumber("s kf", kf) != kf) {
-            kf = SmartDashboard.getNumber("s kf", kf);
-            flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
-        }
-        if (SmartDashboard.getNumber("s kp", kp) != kp) {
-            kp = SmartDashboard.getNumber("s kp", kp);
-            flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
-        }
-        if (SmartDashboard.getNumber("s ki", ki) != ki) {
-            ki = SmartDashboard.getNumber("s ki", ki);
-            flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
-        }
+        // if (SmartDashboard.getNumber("s kf", kf) != kf) {
+        // kf = SmartDashboard.getNumber("s kf", kf);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
+        // if (SmartDashboard.getNumber("s kp", kp) != kp) {
+        // kp = SmartDashboard.getNumber("s kp", kp);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
+        // if (SmartDashboard.getNumber("s ki", ki) != ki) {
+        // ki = SmartDashboard.getNumber("s ki", ki);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
 
-        if (SmartDashboard.getNumber("s kf", kd) != kd) {
-            kd = SmartDashboard.getNumber("s kd", kd);
-            flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
-        }
+        // if (SmartDashboard.getNumber("s kf", kd) != kd) {
+        // kd = SmartDashboard.getNumber("s kd", kd);
+        // flywheel.configurePID(new KPID(kp, ki, kd, kf, -.3, 1));
+        // }
 
-        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel() * Constants.SHOOTER_REDUCTION;
+        flywheelSetpoint = Input.getInstance().getShooterInput().getFlywheel();
         hoodPosition = TorqueMathUtil.constrain(
                 Input.getInstance().getShooterInput().getHood(), Constants.HOOD_MIN,
                 Constants.HOOD_MAX);
@@ -104,11 +104,11 @@ public class Shooter extends TorqueSubsystem {
     @Override
     public void updateFeedbackTeleop() {
         Feedback.getInstance().getShooterFeedback().setRPM(
-                flywheel.getVelocity());
+                flywheel.getVelocityRPM() * 1 / Constants.SHOOTER_REDUCTION);
         Feedback.getInstance().getShooterFeedback().setHoodPosition(
                 hood.getPosition());
         SmartDashboard.putNumber("flywheel resid",
-                flywheel.getVelocity() - flywheelSetpoint);
+                flywheel.getVelocityRPM() * 1 / Constants.SHOOTER_REDUCTION - flywheelSetpoint);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class Shooter extends TorqueSubsystem {
             return;
         }
 
-        flywheel.set(flywheelSetpoint, ControlMode.Velocity);
+        flywheel.set(flywheelSetpoint / 60. / 10. * 2048 * Constants.SHOOTER_REDUCTION, ControlMode.Velocity);
     }
 
     @Override

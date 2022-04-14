@@ -1,6 +1,9 @@
 package org.texastorque.constants;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 public class Constants {
     // Conversions
@@ -124,8 +127,15 @@ public class Constants {
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 35 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 45;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
+    public static final Pose2d HUB_ORIGIN = new Pose2d(
+        Constants.HUB_CENTER_POSITION.getX(), 
+        Constants.HUB_CENTER_POSITION.getY(), 
+        new Rotation2d()
+    );
+
 
     public static final double IDLE_SHOOTER_PERCENT = .1;
     public static final double SHOOTER_REDUCTION = 5 / 3.;
+    public static final double HUB_RADIUS = Units.inchesToMeters(49.375 / 2.);
 
 }

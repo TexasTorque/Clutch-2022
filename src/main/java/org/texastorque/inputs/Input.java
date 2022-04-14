@@ -3,6 +3,7 @@ package org.texastorque.inputs;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
@@ -412,11 +413,18 @@ public class Input extends TorqueInputManager {
             } else if (startShoot.calc(driver.getXButton() || startShoot.calc(operator.getYButton())))
                 updateToPositon();
 
+            // if (resetOdometryLaunchpad.calc(driver.getAButton())) {
+            //     Drivebase.getInstance().odometry.resetPosition(
+            //             new Pose2d(new Translation2d(3.75, 5.39),
+            //                     Feedback.getInstance().getGyroFeedback().getRotation2d()),
+            //             Feedback.getInstance().getGyroFeedback().getRotation2d());
+            // }
+
             if (resetOdometryLaunchpad.calc(driver.getAButton())) {
-                Drivebase.getInstance().odometry.resetPosition(
-                        new Pose2d(new Translation2d(3.75, 5.39),
-                                Feedback.getInstance().getGyroFeedback().getRotation2d()),
-                        Feedback.getInstance().getGyroFeedback().getRotation2d());
+                State.getInstance().setTurretState(TurretState.TO_POSITION);
+                State.getInstance().setTurretToPosition(new Rotation2d(0));
+                if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0)
+                    resetOdometryWithVision();
             }
 
             if (operator.getDPADLeft())
@@ -425,6 +433,22 @@ public class Input extends TorqueInputManager {
                 homingDirection = HomingDirection.RIGHT;
             else
                 homingDirection = HomingDirection.NONE;
+        }
+
+        private void resetOdometryWithVision() {
+            final double gyroAngle = Feedback.getInstance().getGyroFeedback().getRotation2d().getDegrees();
+            final double turretAngle = Turret.getInstance().getDegrees(); // 0 - 360
+            final double distanceToHubCenter = Feedback.getInstance().getLimelightFeedback().getDistance() + Constants.HUB_RADIUS;
+            final double targetX = Feedback.getInstance().getLimelightFeedback().gethOffset();
+            final Pose2d calculatedPosition = new Pose2d(
+                    distanceToHubCenter * Math.cos(Units.degreesToRadians(gyroAngle + turretAngle - targetX - 180)),
+                    distanceToHubCenter * Math.sin(Units.degreesToRadians(gyroAngle + turretAngle - targetX - 180)),
+                    Rotation2d.fromDegrees(gyroAngle)
+            );
+            Drivebase.getInstance().odometry.resetPosition(
+                    calculatedPosition.relativeTo(Constants.HUB_ORIGIN),
+                    Rotation2d.fromDegrees(gyroAngle)
+            );
         }
 
         private void updateToPositon() {

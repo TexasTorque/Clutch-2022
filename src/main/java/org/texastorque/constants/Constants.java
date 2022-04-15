@@ -126,7 +126,7 @@ public class Constants {
     public static final double LIMELIGHT_DISTANCE_OFFSET = 12 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
-    public static final double IDLE_SHOOTER_PERCENT = .1;
+    public static final double IDLE_SHOOTER_PERCENT = .3;
     public static final double SHOOTER_REDUCTION = 5 / 3.;
 
 }

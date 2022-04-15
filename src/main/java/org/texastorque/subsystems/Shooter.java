@@ -126,7 +126,7 @@ public class Shooter extends TorqueSubsystem {
             return;
         }
 
-        flywheel.set(flywheelSetpoint / 60. / 10. * 2048 * Constants.SHOOTER_REDUCTION, ControlMode.Velocity);
+        flywheel.setRPM(flywheelSetpoint * Constants.SHOOTER_REDUCTION);
     }
 
     @Override

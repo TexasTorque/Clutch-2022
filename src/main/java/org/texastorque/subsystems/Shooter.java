@@ -1,6 +1,9 @@
 package org.texastorque.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,13 +32,16 @@ public class Shooter extends TorqueSubsystem {
         flywheel = new TorqueFalcon(Ports.SHOOTER_FLYWHEEL_LEFT);
         flywheel.addFollower(Ports.SHOOTER_FLYWHEEL_RIGHT, true);
 
-        // These numbers are going to suck
         flywheel.configurePID(new KPID(
                 Constants.FLYWHEEL_Kp,
                 Constants.FLYWHEEL_Ki,
                 Constants.FLYWHEEL_Kd,
                 Constants.FLYWHEEL_Kf,
                 -.1, 1));
+
+        flywheel.setNeutralMode(NeutralMode.Coast);
+        flywheel.configureStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
+        flywheel.configureSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
 
         // flywheel.setIZone(Constants.Flywheel_I);
 

@@ -1,6 +1,9 @@
 package org.texastorque.constants;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 public class Constants {
     // Conversions
@@ -43,7 +46,7 @@ public class Constants {
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROLLER_SPEED = 1;
+    public static final double INTAKE_ROLLER_SPEED = .6;
 
     public static final double INTAKE_ROTARY_MIN_SPEED = -.35;
     public static final double INTAKE_ROTARY_MAX_SPEED = .35;
@@ -121,12 +124,18 @@ public class Constants {
 
     // Physical
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
-    public static final double HEIGHT_TO_LIMELIGHT_METERS = 39 * INCH_TO_FOOT * FOOT_TO_METER;
+    public static final double HEIGHT_TO_LIMELIGHT_METERS = 38.5 * INCH_TO_FOOT * FOOT_TO_METER;
     public static final double LIMELIGHT_ANGEL_DEG = 28.5;
-    public static final double LIMELIGHT_DISTANCE_OFFSET = 12 * INCH_TO_FOOT * FOOT_TO_METER;
+    public static final double LIMELIGHT_DISTANCE_OFFSET = .3556; // 14 inch to meterrs
+    public static final double LIMELIGHT_TO_CENTER_OF_ROBOT = .127; // 5 inches to meter
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
+    public static final Pose2d HUB_ORIGIN = new Pose2d(
+            -Constants.HUB_CENTER_POSITION.getX(),
+            -Constants.HUB_CENTER_POSITION.getY(),
+            new Rotation2d());
+    public static final double HUB_RADIUS = Units.inchesToMeters(49.375 / 2.);
 
-    public static final double IDLE_SHOOTER_PERCENT = .1;
+    public static final double IDLE_SHOOTER_PERCENT = 0;
     public static final double SHOOTER_REDUCTION = 5 / 3.;
 
 }

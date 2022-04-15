@@ -17,21 +17,17 @@ public class Mode6Right extends TorqueSequence {
 
         @Override
         protected void init() {
-                addBlock(new TorqueBlock(
-                                new PrepareShooter(26, 1800),
-                                new Wait(.5)));
-
-                addBlock(new TorqueBlock(
+                addBlock(new TorqueBlock(new PrepareShooter(26, 1750),
                                 new PrepareTurret(173.15),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
                                 new Pathplanner("Mode6Right_1")));
 
-                addBlock(new TorqueBlock(new ShootConst(1800, 26, 173.15, true, 1),
+                addBlock(new TorqueBlock(new ShootConst(1750, 26, 173.15, true, 1),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.STOPPED)));
 
                 addBlock(new TorqueBlock(
-                                new PrepareTurret(46),
+                                new PrepareTurret(35),
                                 new PrepareShooter(26, 1800),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new Pathplanner("Mode6Right_2", false)));
@@ -41,7 +37,8 @@ public class Mode6Right extends TorqueSequence {
                 addBlock(new TorqueBlock(new Pathplanner("Mode6Right_3", false)));
 
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootConst(1800, 26, 46, true, 3), new CreepForward(2.5)));
+                addBlock(new TorqueBlock(new ShootConst(1800, 26, 35, true, 3), new CreepForward(2.5)));
+                // addBlock(new TorqueBlock(new ShootAtTarget(4, true), new CreepForward(2.5)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

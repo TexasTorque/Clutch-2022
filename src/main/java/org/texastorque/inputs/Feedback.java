@@ -200,8 +200,7 @@ public class Feedback {
         private double calcDistance(double ty) {
             return (Constants.HEIGHT_OF_VISION_STRIP_METERS -
                     Constants.HEIGHT_TO_LIMELIGHT_METERS) /
-                    Math.tan(Math.toRadians(Constants.LIMELIGHT_ANGEL_DEG + ty))
-                    - Constants.LIMELIGHT_DISTANCE_OFFSET;
+                    Math.tan(Math.toRadians(Constants.LIMELIGHT_ANGEL_DEG + ty));
         }
 
         public void smartDashboard() {

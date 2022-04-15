@@ -12,7 +12,6 @@ import org.texastorque.constants.Ports;
 import org.texastorque.inputs.AutoInput;
 import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
-import org.texastorque.modules.IMUValidator;
 import org.texastorque.modules.SwerveOdometry;
 import org.texastorque.modules.SwerveWheel;
 import org.texastorque.torquelib.base.TorqueSubsystem;
@@ -143,14 +142,9 @@ public class Drivebase extends TorqueSubsystem {
 
         @Override
         public void updateFeedbackTeleop() {
-                // if
-                // (IMUValidator.calc(Feedback.getInstance().getGyroFeedback().getVelocityX(),
-                // Feedback.getInstance().getGyroFeedback().getVelocityY(),
-                // frontLeft.getState().speedMetersPerSecond)) {
                 odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1),
                                 frontLeft.getState(), frontRight.getState(),
                                 backLeft.getState(), backRight.getState());
-                // }
 
                 SmartDashboard.putNumber("[Real]X", odometry.getPoseMeters().getX());
                 SmartDashboard.putNumber("[Real]Y", odometry.getPoseMeters().getY());

@@ -6,9 +6,13 @@ import org.texastorque.torquelib.auto.TorqueSequence;
 
 public class AutoRelease extends TorqueSequence {
 
+    public AutoRelease() {
+        init();
+    }
+
     @Override
     protected void init() {
-        addBlock(new TorqueBlock(new PullAndRelease(.5, .25)));
+        addBlock(new TorqueBlock(new PullAndRelease(.5, .05)));
     }
 
 }

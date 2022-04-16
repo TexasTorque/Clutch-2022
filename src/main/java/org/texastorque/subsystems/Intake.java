@@ -120,13 +120,12 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void output() {
         // We are at the bottom, staph!
-        if (limitSwitch.get() && rotarySetPoint.getPosition() >= rotary.getPosition()) {
-            SmartDashboard.putBoolean("rotary running", false);
-            rotary.set(0);
-        } else {
-            SmartDashboard.putBoolean("rotary running", true);
-            rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
-        }
+        // if (limitSwitch.get() && rotarySetPoint.getPosition() >=
+        // rotary.getPosition()) {
+        // rotary.set(0);
+        // } else {
+        // rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
+        // }
         roller.set(rollerSpeed);
     }
 

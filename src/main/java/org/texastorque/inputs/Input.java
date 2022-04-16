@@ -99,7 +99,7 @@ public class Input extends TorqueInputManager {
                 intakeInput.getPosition() == IntakePosition.DOWN
                         && rotateToBallToggle.get() && !climberInput.hasClimbStarted());
 
-        autoRelease.run(driver.getRightCenterButton());
+        // autoRelease.run(driver.getRightCenterButton());
 
         climberToggle.calc(operator.getXButton());
         climbAssist.run(climberToggle.get());
@@ -587,6 +587,8 @@ public class Input extends TorqueInputManager {
 
             if (driver.getLeftCenterButton()) {
                 servoDirection = ServoDirection.ATTACH;
+            } else if (driver.getRightCenterButton()) {
+                servoDirection = ServoDirection.DETACH;
             }
 
             // ! DEBUG

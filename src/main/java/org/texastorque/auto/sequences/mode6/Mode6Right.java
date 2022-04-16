@@ -38,7 +38,6 @@ public class Mode6Right extends TorqueSequence {
 
                 // Shoot!
                 addBlock(new TorqueBlock(new ShootConst(1800, 26, 35, true, 3), new CreepForward(2.5)));
-                // addBlock(new TorqueBlock(new ShootAtTarget(4, true), new CreepForward(2.5)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

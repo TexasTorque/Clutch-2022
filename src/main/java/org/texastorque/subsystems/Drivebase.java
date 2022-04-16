@@ -145,7 +145,6 @@ public class Drivebase extends TorqueSubsystem {
                 odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1),
                                 frontLeft.getState(), frontRight.getState(),
                                 backLeft.getState(), backRight.getState());
-
                 SmartDashboard.putNumber("[Real]X", odometry.getPoseMeters().getX());
                 SmartDashboard.putNumber("[Real]Y", odometry.getPoseMeters().getY());
                 SmartDashboard.putNumber("[Real]Rot", odometry.getPoseMeters().getRotation().getDegrees());

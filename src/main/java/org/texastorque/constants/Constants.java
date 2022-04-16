@@ -46,7 +46,8 @@ public class Constants {
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROLLER_SPEED = .6;
+    public static final double INTAKE_ROLLER_SPEED_LOW = .6;
+    public static final double INTAKE_ROLLER_SPEED = 1;
 
     public static final double INTAKE_ROTARY_MIN_SPEED = -.35;
     public static final double INTAKE_ROTARY_MAX_SPEED = .35;

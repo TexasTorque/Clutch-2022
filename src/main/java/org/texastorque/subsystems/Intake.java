@@ -91,11 +91,18 @@ public class Intake extends TorqueSubsystem {
             rollerSpeed = 0;
         } else {
             rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
-            rollerSpeed = -Input.getInstance()
-                    .getIntakeInput()
-                    .getDirection()
-                    .getDirection() *
-                    Constants.INTAKE_ROLLER_SPEED;
+            if (Input.getInstance().getIntakeInput().getDirection() == IntakeDirection.INTAKE) {
+                double reqSpeed = Math.sqrt(Math.pow(Input.getInstance().getDrivebaseTranslationInput().getXSpeed(), 2)
+                        + Math.pow(Input.getInstance().getDrivebaseTranslationInput().getYSpeed(), 2));
+                rollerSpeed = -Math.min(1,
+                        Constants.INTAKE_ROLLER_SPEED_LOW + .4 * (reqSpeed / Constants.DRIVE_MAX_SPEED_METERS));
+            } else {
+                rollerSpeed = -Input.getInstance()
+                        .getIntakeInput()
+                        .getDirection()
+                        .getDirection() *
+                        Constants.INTAKE_ROLLER_SPEED;
+            }
         }
     }
 

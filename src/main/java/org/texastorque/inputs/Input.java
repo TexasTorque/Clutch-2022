@@ -55,6 +55,7 @@ public class Input extends TorqueInputManager {
     // Assists
     private TorqueAssist rotateToBall;
     private TorqueAssist climbAssist;
+    private TorqueAssist autoRelease;
 
     // Etc.
     private TimedTruthy driverRumble = new TimedTruthy();
@@ -88,6 +89,7 @@ public class Input extends TorqueInputManager {
         climbAssist = new TorqueAssist(new AutoClimb(),
                 driveBaseTranslationInput, driveBaseRotationInput,
                 intakeInput, magazineInput, shooterInput, climberInput);
+        autoRelease = new TorqueAssist(new AutoRelease(), climberInput);
     }
 
     @Override
@@ -97,10 +99,10 @@ public class Input extends TorqueInputManager {
                 intakeInput.getPosition() == IntakePosition.DOWN
                         && rotateToBallToggle.get() && !climberInput.hasClimbStarted());
 
+        autoRelease.run(driver.getRightCenterButton());
+
         climberToggle.calc(operator.getXButton());
-        if (climberToggle.get()) {
-            climbAssist.run(true);
-        }
+        climbAssist.run(climberToggle.get());
 
         driver.setRumble(driverRumble.calc());
         operator.setRumble(operatorRumble.calc());
@@ -585,8 +587,6 @@ public class Input extends TorqueInputManager {
 
             if (driver.getLeftCenterButton()) {
                 servoDirection = ServoDirection.ATTACH;
-            } else if (driver.getRightCenterButton()) {
-                servoDirection = ServoDirection.DETACH;
             }
 
             // ! DEBUG
@@ -626,6 +626,14 @@ public class Input extends TorqueInputManager {
 
         public boolean getShreyasApproval() {
             return driver.getYButton();
+        }
+
+        public void setClimberDirection(ClimberDirection cd) {
+            this.direction = cd;
+        }
+
+        public void setServoDirection(ServoDirection sd) {
+            this.servoDirection = sd;
         }
 
         @Override

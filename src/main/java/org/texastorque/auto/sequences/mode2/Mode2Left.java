@@ -25,7 +25,7 @@ public class Mode2Left extends TorqueSequence {
         addBlock(new TorqueBlock(new ShootAtTarget(2, true)));
 
         // Taxi
-        addBlock(new TorqueBlock(new Pathplanner("Mode2Left")));
+        addBlock(new TorqueBlock(new Pathplanner("Mode2Left", true, 1, 1)));
 
         // Stop mag
         addBlock(new TorqueBlock(

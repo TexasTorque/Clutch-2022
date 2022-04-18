@@ -21,6 +21,6 @@ public class Mode1Left extends TorqueSequence {
     protected void init() {
         addBlock(new TorqueBlock(new SetMagazine(BeltDirections.OFF, GateSpeeds.OFF),
                 new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED), new Wait(8)));
-        addBlock(new TorqueBlock(new Pathplanner("Mode1Left")));
+        addBlock(new TorqueBlock(new Pathplanner("Mode1Left", true, 1, 1)));
     }
 }

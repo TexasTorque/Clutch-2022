@@ -35,11 +35,15 @@ public class Pathplanner extends TorqueCommand {
         private final Timer timer = new Timer();
 
         private boolean resetOdometry = true;
+        private String name;
+        private double MAX_SPEED = Constants.DRIVE_MAX_SPEED_METERS;
+        private double MAX_ACCELERATION = Constants.DRIVE_MAX_ACCELERATION_METERS;
 
         public Pathplanner(String name) {
                 thetaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
-                trajectory = PathPlanner.loadPath(name, Constants.DRIVE_MAX_SPEED_METERS,
-                                Constants.DRIVE_MAX_ACCELERATION_METERS);
+                trajectory = PathPlanner.loadPath(name, MAX_SPEED,
+                                MAX_ACCELERATION);
+                this.name = name;
         }
 
         public Pathplanner(String name, boolean resetOdometry) {
@@ -47,9 +51,18 @@ public class Pathplanner extends TorqueCommand {
                 this.resetOdometry = resetOdometry;
         }
 
+        public Pathplanner(String name, boolean resetOdometry, double maxSpeed, double maxAcceleration) {
+                this(name);
+                this.resetOdometry = resetOdometry;
+                this.MAX_SPEED = maxSpeed;
+                this.MAX_ACCELERATION = maxAcceleration;
+                trajectory = PathPlanner.loadPath(name, MAX_SPEED,
+                                MAX_ACCELERATION);
+        }
+
         @Override
         protected void init() {
-                System.out.println("Initializing Pathweaver...");
+                System.out.println("Initializing Pathplanner for " + name + "...");
                 timer.reset();
                 timer.start();
 

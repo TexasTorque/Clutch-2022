@@ -22,8 +22,7 @@ public class Mode6Left extends TorqueSequence {
                                 new PrepareShooter(26, 1840),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
-                                new Wait(0.8),
-                                new Pathplanner("Mode6Left_1")));
+                                new Pathplanner("Mode6Left_1", true, 1.5, 1)));
 
                 addBlock(new TorqueBlock(new ShootConst(1840, 26, -171.15, true, 1),
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.STOPPED)));
@@ -34,8 +33,12 @@ public class Mode6Left extends TorqueSequence {
                                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                                 new Pathplanner("Mode6Left_2", false)));
 
+                addBlock(new TorqueBlock(new Wait(.1)));
+
+                addBlock(new TorqueBlock(new Pathplanner("Mode6Left_3", false)));
+
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootConst(1890, 28, 38, true, 3), new CreepForward(2.5)));
+                addBlock(new TorqueBlock(new ShootAtTarget(4, true, true), new CreepForward(1)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

@@ -29,9 +29,11 @@ public class ShootAtTarget extends TorqueCommand {
     private double distance;
     private double outputRPM;
     private double regressionOffset = 0;
+    private double hoodOffset = 0;
 
     private int readyIterations = 0;
-    private final int neededReadyIterations = 2;
+    private final int neededReadyIterations = 3;
+    private Timer timer;
 
     public ShootAtTarget() {
         this.magOutputTime = 2;
@@ -52,11 +54,13 @@ public class ShootAtTarget extends TorqueCommand {
         this.turretOn = turretOn;
     }
 
-    public ShootAtTarget(double magOutputTime, boolean stop, boolean turretOn, double regressionOffset) {
+    public ShootAtTarget(double magOutputTime, boolean stop, boolean turretOn, double regressionOffset,
+            double hoodOffset) {
         this.magOutputTime = magOutputTime;
         this.stop = stop;
         this.turretOn = turretOn;
         this.regressionOffset = regressionOffset;
+        this.hoodOffset = hoodOffset;
     }
 
     private double timeMagDown;
@@ -64,9 +68,11 @@ public class ShootAtTarget extends TorqueCommand {
     @Override
     protected void init() {
         AutoInput.getInstance().setSetTurretPosition(false);
-        State.getInstance().setTurretState(turretOn ? TurretState.TO_POSITION : TurretState.OFF);
+        State.getInstance().setTurretState(turretOn ? TurretState.ON : TurretState.OFF);
         System.out.println("Shoot at target locked & loaded!");
         timeMagDown = Timer.getFPGATimestamp();
+        timer = new Timer();
+        timer.start();
     }
 
     @Override
@@ -75,47 +81,31 @@ public class ShootAtTarget extends TorqueCommand {
             AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
             AutoInput.getInstance().setBeltDirection(BeltDirections.OUTTAKE);
         } else {
-            AutoInput.getInstance().setGateDirection(GateSpeeds.CLOSED);
+            AutoInput.getInstance().setGateDirection(GateSpeeds.OFF);
             AutoInput.getInstance().setBeltDirection(BeltDirections.OFF);
         }
 
-        if (Feedback.getInstance().getLimelightFeedback().getTaOffset() > 0) {
-            distance = Feedback.getInstance().getLimelightFeedback().getDistance();
+        distance = Feedback.getInstance().getLimelightFeedback().getDistance();
 
-            outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
-            outputRPM += regressionOffset;
+        outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
+        outputRPM += regressionOffset;
 
-            AutoInput.getInstance().setFlywheelSpeed(outputRPM);
-            AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
-        } else {
-            distance = Constants.HUB_CENTER_POSITION
-                    .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation());
-            outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
-            outputRPM += regressionOffset;
-            AutoInput.getInstance().setFlywheelSpeed(outputRPM);
-            AutoInput.getInstance().setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance));
-        }
+        AutoInput.getInstance().setFlywheelSpeed(outputRPM);
+        AutoInput.getInstance()
+                .setHoodPosition(Input.getInstance().getShooterInput().regressionHood(distance) + hoodOffset);
 
-        Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
-        double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
-        double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
-        double robotAngleFromGoal = Math.atan2(yDist, xDist);
-
-        if (robotAngleFromGoal < Constants.TURRET_MAX_ROTATION_LEFT
-                && robotAngleFromGoal > Constants.TURRET_MAX_ROTATION_RIGHT) {
-            Rotation2d rotation = (robotPosition.getRotation().minus(new Rotation2d(robotAngleFromGoal)))
-                    .times(-1);
-            State.getInstance().setTurretState(TurretState.TO_POSITION);
-            State.getInstance().setTurretToPosition(rotation);
-        } else {
-            State.getInstance().setTurretState(TurretState.ON);
-        }
+        State.getInstance().setTurretState(TurretState.ON);
 
         if (!runMag) {
+            if (timer.hasElapsed(1.5)) {
+                System.out.println("Timer elapsed on shoot at target, sending it.");
+                runMag = true;
+                startMagTime = Timer.getFPGATimestamp();
+            }
             // check if rpm is in range (+-x)
-            if (Math.abs(outputRPM -
+            else if (Math.abs(outputRPM -
                     Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
-                    && Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < 10) {
+                    && Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < 3) {
                 if (readyIterations >= neededReadyIterations) {
                     // if so, launch magazine for x seconds
                     runMag = true;

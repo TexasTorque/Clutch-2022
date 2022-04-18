@@ -20,6 +20,6 @@ public class Mode1CenterRight extends TorqueSequence {
     protected void init() {
         addBlock(new TorqueBlock(new SetMagazine(BeltDirections.OFF, GateSpeeds.OFF),
                 new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED), new Wait(8)));
-        addBlock(new TorqueBlock(new Pathplanner("Mode1CenterRight")));
+        addBlock(new TorqueBlock(new Pathplanner("Mode1CenterRight", true, 1, 1)));
     }
 }

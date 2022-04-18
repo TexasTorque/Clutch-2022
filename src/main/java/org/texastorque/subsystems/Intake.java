@@ -17,15 +17,15 @@ public class Intake extends TorqueSubsystem {
     public static enum IntakeDirection {
         INTAKE(1),
         STOPPED(0),
-        OUTAKE(-1);
+        OUTAKE(-.3);
 
-        private final int direction;
+        private final double direction;
 
-        IntakeDirection(int direction) {
+        IntakeDirection(double direction) {
             this.direction = direction;
         }
 
-        public int getDirection() {
+        public double getDirection() {
             return direction;
         }
     }
@@ -110,7 +110,8 @@ public class Intake extends TorqueSubsystem {
     public void updateAuto() {
         rotarySetPoint = AutoInput.getInstance().getIntakePosition();
         rollerSpeed = -AutoInput.getInstance().getIntakeSpeed().getDirection() *
-                Constants.INTAKE_ROLLER_SPEED;
+                Constants.INTAKE_ROLLER_SPEED * .5;
+
     }
 
     @Override
@@ -120,12 +121,11 @@ public class Intake extends TorqueSubsystem {
     @Override
     public void output() {
         // We are at the bottom, staph!
-        // if (limitSwitch.get() && rotarySetPoint.getPosition() >=
-        // rotary.getPosition()) {
-        // rotary.set(0);
-        // } else {
-        // rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
-        // }
+        if (limitSwitch.get() && rotarySetPoint.getPosition() >= rotary.getPosition()) {
+            rotary.set(0);
+        } else {
+            rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
+        }
         roller.set(rollerSpeed);
     }
 

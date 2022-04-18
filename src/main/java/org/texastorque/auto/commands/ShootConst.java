@@ -70,6 +70,11 @@ public class ShootConst extends TorqueCommand {
             AutoInput.getInstance().setBeltDirection(BeltDirections.OFF);
         }
         if (!runMag) {
+            if (Timer.getFPGATimestamp() - timeMagDown >= 1.5) {
+                System.out.println("Timer elapsed on shoot const, sending it.");
+                runMag = true;
+                startMagTime = Timer.getFPGATimestamp();
+            }
             // check if rpm is in range (+-x)
             if (Math.abs(rpm - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
                     && Math.abs(Turret.getInstance().getDegrees() - turret) < 8) {

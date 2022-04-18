@@ -21,11 +21,12 @@ public class Mode3CenterRight extends TorqueSequence {
         addBlock(new TorqueBlock(
                 new PrepareTurret(173),
                 new PrepareShooter(26, 1830),
+                new Wait(2),
                 new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Run path
-        addBlock(new TorqueBlock(new Pathplanner("Mode3CenterRight")));
+        addBlock(new TorqueBlock(new Pathplanner("Mode3CenterRight", true, 1, 1)));
 
         // Shoot!
         addBlock(new TorqueBlock(new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),

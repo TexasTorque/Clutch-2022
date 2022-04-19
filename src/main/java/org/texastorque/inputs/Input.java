@@ -56,6 +56,7 @@ public class Input extends TorqueInputManager {
     private TorqueAssist rotateToBall;
     private TorqueAssist climbAssist;
     private TorqueAssist autoRelease;
+    private TorqueAssist climbMid;
 
     // Etc.
     private TimedTruthy driverRumble = new TimedTruthy();
@@ -90,6 +91,7 @@ public class Input extends TorqueInputManager {
                 driveBaseTranslationInput, driveBaseRotationInput,
                 intakeInput, magazineInput, shooterInput, climberInput);
         autoRelease = new TorqueAssist(new AutoRelease(), climberInput);
+        climbMid = new TorqueAssist(new ClimbSetpoint(), climberInput);
     }
 
     @Override
@@ -108,6 +110,8 @@ public class Input extends TorqueInputManager {
         operator.setRumble(operatorRumble.calc());
 
         modules.forEach(TorqueInput::run);
+
+        climbMid.run(climberInput.hasClimbStarted() && driver.getXButton());
     }
 
     @Override
@@ -126,6 +130,7 @@ public class Input extends TorqueInputManager {
         // private TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(3, 4);
 
         private DriveBaseTranslationInput() {
+            SmartDashboard.putNumber("Speed Shifter", xSpeeds.getSpeed());
         }
 
         @Override
@@ -168,7 +173,7 @@ public class Input extends TorqueInputManager {
 
         @Override
         public void smartDashboard() {
-            SmartDashboard.putNumber("Speed", xSpeeds.getSpeed());
+            SmartDashboard.putNumber("Speed Shifter", xSpeeds.getSpeed());
         }
     }
 
@@ -566,6 +571,7 @@ public class Input extends TorqueInputManager {
         private boolean shreyasApproval = false; // (:
 
         public ClimberInput() {
+            SmartDashboard.putBoolean("Climb Started", climbHasStarted);
         }
 
         @Override

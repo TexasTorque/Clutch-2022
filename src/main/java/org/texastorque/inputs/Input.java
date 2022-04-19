@@ -571,7 +571,6 @@ public class Input extends TorqueInputManager {
         private boolean shreyasApproval = false; // (:
 
         public ClimberInput() {
-            SmartDashboard.putBoolean("Climb Started", climbHasStarted);
         }
 
         @Override
@@ -647,6 +646,8 @@ public class Input extends TorqueInputManager {
         @Override
         public void smartDashboard() {
             SmartDashboard.putBoolean("Climb Started", climbHasStarted);
+            SmartDashboard.putBoolean("AHHH", driver.getDPADDown());
+            SmartDashboard.putNumber("Direction", getDirection().getDirection());
         }
 
         @Override

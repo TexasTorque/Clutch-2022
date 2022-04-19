@@ -25,7 +25,7 @@ public class Mode3Left extends TorqueSequence {
                 new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED)));
 
         // Run path
-        addBlock(new TorqueBlock(new Pathplanner("Mode3Left", true, 1.5, 1)));
+        addBlock(new TorqueBlock(new Pathplanner("Mode3Left", true, 1, 1)));
 
         // Shoot!
         addBlock(new TorqueBlock(new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),

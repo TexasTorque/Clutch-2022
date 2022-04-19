@@ -9,35 +9,39 @@ import org.texastorque.subsystems.Magazine.GateSpeeds;
 import org.texastorque.torquelib.auto.*;
 
 public class Mode5Right extends TorqueSequence {
-    public Mode5Right(String name) {
-        super(name);
+        public Mode5Right(String name) {
+                super(name);
 
-        init();
-    }
+                init();
+        }
 
-    @Override
-    protected void init() {
-        addBlock(new TorqueBlock(
-                new PrepareTurret(173.15), new PrepareShooter(26, 1870),
-                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
-                new Pathplanner("Mode6Right_1")));
+        @Override
+        protected void init() {
+                addBlock(new TorqueBlock(new PrepareShooter(26, 1700),
+                                new PrepareTurret(172.15),
+                                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                                new SetMagazine(BeltDirections.INTAKE, GateSpeeds.CLOSED),
+                                new Pathplanner("Mode6Right_1")));
 
-        addBlock(new TorqueBlock(
-                new ShootConst(1870, 26, 173.15, true, 1),
-                new SetIntake(IntakePosition.DOWN, IntakeDirection.STOPPED)));
+                addBlock(new TorqueBlock(new ShootConst(1700, 26, 172.15, true, 1),
+                                new SetIntake(IntakePosition.DOWN, IntakeDirection.STOPPED)));
 
-        addBlock(new TorqueBlock(
-                new PrepareTurret(42), new PrepareShooter(26, 1800),
-                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
-                new Pathplanner("Mode6Right_2", false)));
+                addBlock(new TorqueBlock(
+                                new PrepareTurret(39.5),
+                                new PrepareShooter(26, 1800),
+                                new SetIntake(IntakePosition.DOWN, IntakeDirection.INTAKE),
+                                new Pathplanner("Mode6Right_2", false)));
 
-        // Shoot!
-        addBlock(new TorqueBlock(new ShootConst(1890, 26, 42, true, 3),
-                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED)));
+                addBlock(new TorqueBlock(new Wait(1)));
 
-        // Shut off
-        addBlock(new TorqueBlock(
-                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
-    }
+                addBlock(new TorqueBlock(new Pathplanner("Mode6Right_3", false)));
+
+                // Shoot!
+                addBlock(new TorqueBlock(new ShootAtTarget(4, true, true, -100, -5)));
+
+                // Shut off
+                addBlock(new TorqueBlock(
+                                new SetIntake(IntakePosition.PRIME, IntakeDirection.STOPPED),
+                                new SetMagazine(BeltDirections.OFF, GateSpeeds.CLOSED)));
+        }
 }

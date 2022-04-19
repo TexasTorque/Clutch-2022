@@ -38,7 +38,7 @@ public class Mode6Left extends TorqueSequence {
                 addBlock(new TorqueBlock(new Pathplanner("Mode6Left_3", false)));
 
                 // Shoot!
-                addBlock(new TorqueBlock(new ShootAtTarget(4, true, true), new CreepForward(1)));
+                addBlock(new TorqueBlock(new ShootAtTarget(4, true, true, -100, -5), new CreepForward(1)));
 
                 // Shut off
                 addBlock(new TorqueBlock(

@@ -126,7 +126,7 @@ public class Constants {
     // Physical
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
     public static final double HEIGHT_TO_LIMELIGHT_METERS = 38.5 * INCH_TO_FOOT * FOOT_TO_METER;
-    public static final double LIMELIGHT_ANGEL_DEG = 28.5;
+    public static final double LIMELIGHT_ANGEL_DEG = 29.0;
     public static final double LIMELIGHT_DISTANCE_OFFSET = .3556; // 14 inch to meterrs
     public static final double LIMELIGHT_TO_CENTER_OF_ROBOT = .127; // 5 inches to meter
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);

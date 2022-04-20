@@ -122,7 +122,7 @@ public class Intake extends TorqueSubsystem {
     public void output() {
         // We are at the bottom, staph!
         if (limitSwitch.get() && rotarySetPoint.getPosition() >= rotary.getPosition()) {
-            rotary.set(0);
+            rotary.set(.5, ControlType.kCurrent);
         } else {
             rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
         }
@@ -137,6 +137,7 @@ public class Intake extends TorqueSubsystem {
         SmartDashboard.putNumber("[Intake]Rotary Set Point",
                 rotarySetPoint.getPosition());
         SmartDashboard.putBoolean("[Intake]Limit switch", limitSwitch.get());
+        SmartDashboard.putNumber("[Intake]Rotary Temperature", rotary.getTemperature());
     }
 
     public static synchronized Intake getInstance() {

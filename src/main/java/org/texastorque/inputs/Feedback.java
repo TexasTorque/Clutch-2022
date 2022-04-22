@@ -107,6 +107,18 @@ public class Feedback {
             return nxGyro.getVelocityY();
         }
 
+        public double getAcceleartionX() {
+            return nxGyro.getWorldLinearAccelX();
+        }
+
+        public double getAcceleartionY() {
+            return nxGyro.getWorldLinearAccelY();
+        }
+
+        public double getAcceleartionZ() {
+            return nxGyro.getWorldLinearAccelZ();
+        }
+
         private float getDegrees() {
             // return nxGyro.getRoll();
             return (nxGyro.getFusedHeading() + angleOffset) % 360;

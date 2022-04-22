@@ -104,8 +104,7 @@ public class Turret extends TorqueSubsystem {
                     State.getInstance().getTurretToPosition().getDegrees());
             changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
             if (Math.abs(State.getInstance().getTurretToPosition().getDegrees()
-                    - getDegrees()) < Constants.TOLERANCE_DEGREES
-                    && Feedback.getInstance().getLimelightFeedback().getTaOffset() != 0) {
+                    - getDegrees()) < 5) {
                 State.getInstance().setTurretState(TurretState.ON);
             }
         } else if (State.getInstance().getTurretState() == TurretState.ON) {

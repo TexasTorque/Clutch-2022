@@ -46,7 +46,7 @@ public class Constants {
     public static final double MAGAZINE_BELT_SPEED = 1.;
 
     // Intake
-    public static final double INTAKE_ROLLER_SPEED_LOW = .7;
+    public static final double INTAKE_ROLLER_SPEED_LOW = .8;
     public static final double INTAKE_ROLLER_SPEED = 1;
 
     public static final double INTAKE_ROTARY_MIN_SPEED = -.35;
@@ -119,7 +119,7 @@ public class Constants {
     public static final double PATH_PLANNER_Y_I = 0;
     public static final double PATH_PLANNER_Y_D = 0;
 
-    public static final double PATH_PLANNER_R_P = 2;
+    public static final double PATH_PLANNER_R_P = 4;
     public static final double PATH_PANNER_R_I = 0;
     public static final double PATH_PLANNER_R_D = 0;
 

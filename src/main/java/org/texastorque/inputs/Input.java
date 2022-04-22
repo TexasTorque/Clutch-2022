@@ -12,6 +12,7 @@ import org.texastorque.auto.sequences.assists.*;
 import org.texastorque.auto.sequences.assists.AutoClimb;
 import org.texastorque.constants.Constants;
 import org.texastorque.inputs.State.*;
+import org.texastorque.modules.Latch;
 import org.texastorque.modules.MagazineBallManager;
 import org.texastorque.subsystems.Climber.ClimberDirection;
 import org.texastorque.subsystems.Climber.ServoDirection;
@@ -336,7 +337,7 @@ public class Input extends TorqueInputManager {
         private double hood;
         private TorqueToggle xFactorToggle;
         private int readyCounter = 0;
-        private final int readyCounterNeeded = 4;
+        private final int readyCounterNeeded = 10;
         private HomingDirection homingDirection = HomingDirection.NONE;
         private TorqueSpeedSettings rpmAdjust = new TorqueSpeedSettings(0, -400, 400, 10);
         private TorqueClick startShoot = new TorqueClick();
@@ -344,6 +345,7 @@ public class Input extends TorqueInputManager {
         private TorqueClick resetOdometryLaunchpad = new TorqueClick();
         private TorqueToggle justCenter = new TorqueToggle(true);
         private boolean usingOdometry = false;
+        private double lastDistance = 3;
 
         public ShooterInput() {
             xFactorToggle = new TorqueToggle(true);
@@ -367,18 +369,26 @@ public class Input extends TorqueInputManager {
         }
 
         public boolean isFlywheelReady() {
-            if (Math.abs(flywheel - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
+            SmartDashboard.putNumber("turretRate", Turret.getInstance().getRate());
+            if (flywheelReady()
                     && Feedback.getInstance().getLimelightFeedback().getTaOffset() != 0
-                    && Feedback.getInstance().getLimelightFeedback().gethOffset() < Constants.TOLERANCE_DEGREES) {
-                readyCounter++;
+                    && Feedback.getInstance().getLimelightFeedback().gethOffset() < Constants.TOLERANCE_DEGREES
+                    && Turret.getInstance().getRate() < 140) {
                 if (readyCounter > readyCounterNeeded) {
                     shooterReady.setTime(.5);
                     return true;
                 } else {
                     readyCounter++;
                 }
+            } else {
+                readyCounter = 0;
             }
             return shooterReady.calc();
+        }
+
+        private boolean flywheelReady() {
+            return Math.abs(flywheel
+                    - Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR;
         }
 
         public boolean xFactor() {
@@ -395,12 +405,12 @@ public class Input extends TorqueInputManager {
                 if (Feedback.getInstance()
                         .getLimelightFeedback()
                         .getTaOffset() > 0) {
-                    setFromDist(Feedback.getInstance()
+                    lastDistance = Feedback.getInstance()
                             .getLimelightFeedback()
-                            .getDistance() - Constants.LIMELIGHT_DISTANCE_OFFSET);
+                            .getDistance() - Constants.LIMELIGHT_DISTANCE_OFFSET;
+                    setFromDist(lastDistance);
                 } else
-                    setFromDist(Constants.HUB_CENTER_POSITION
-                            .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation()));
+                    setFromDist(lastDistance);
                 // Lauch pad
             } else if (driver.getYButton()) {
                 setFromDist(3.96);

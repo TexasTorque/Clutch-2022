@@ -403,7 +403,7 @@ public class Input extends TorqueInputManager {
                             .getDistance(Drivebase.getInstance().odometry.getPoseMeters().getTranslation()));
                 // Lauch pad
             } else if (driver.getYButton()) {
-                setRawValues(2119, 38.95);
+                setFromDist(3.96);
                 State.getInstance().setTurretState(TurretState.TO_POSITION);
                 usingOdometry = false;
                 State.getInstance().setTurretToPosition(Rotation2d.fromDegrees(-16.166));

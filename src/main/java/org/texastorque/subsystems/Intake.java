@@ -95,7 +95,8 @@ public class Intake extends TorqueSubsystem {
                 double reqSpeed = Math.sqrt(Math.pow(Input.getInstance().getDrivebaseTranslationInput().getXSpeed(), 2)
                         + Math.pow(Input.getInstance().getDrivebaseTranslationInput().getYSpeed(), 2));
                 rollerSpeed = -Math.min(1,
-                        Constants.INTAKE_ROLLER_SPEED_LOW + .4 * (reqSpeed / Constants.DRIVE_MAX_SPEED_METERS));
+                        Constants.INTAKE_ROLLER_SPEED_LOW + (1. - Constants.INTAKE_ROLLER_SPEED_LOW)
+                                * (reqSpeed / Constants.DRIVE_MAX_SPEED_METERS));
             } else {
                 rollerSpeed = -Input.getInstance()
                         .getIntakeInput()
@@ -122,7 +123,11 @@ public class Intake extends TorqueSubsystem {
     public void output() {
         // We are at the bottom, staph!
         if (limitSwitch.get() && rotarySetPoint.getPosition() >= rotary.getPosition()) {
-            rotary.set(.5, ControlType.kCurrent);
+            if (Input.getInstance().getClimberInput().hasClimbStarted()) {
+                rotary.set(0);
+            } else {
+                rotary.set(.5, ControlType.kCurrent);
+            }
         } else {
             rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
         }

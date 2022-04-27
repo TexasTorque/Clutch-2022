@@ -2,6 +2,28 @@
 
 Texas Torque's main robot code for the 2022 Rapid React season!
 
+## New project structure
+
+```
+.
+|-- Main
+|-- Robot
+|-- Input
+|-- Ports
+|-- subsystems
+    |-- Drivebase extends TorqueSubsystem
+    | ..`
+|-- auto
+    |-- AutoManager extends TorqueAutoManager
+    |-- commands
+        |-- SampleCommand extends TorqueCommand
+        | ...
+    |-- sequences
+        |-- SampleSequence extends TorqueSequence
+        | ...
+|-- torquelib (submodule)
+```
+
 ## Controls
 
 Please publish major control changes to the [Google Drive folder](https://drive.google.com/drive/folders/1bb2S4_d-e_ZlqMYT-pupsMfWWjnk1Fzt), and inform other programmers and driveteam.

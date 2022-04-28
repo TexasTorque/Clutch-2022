@@ -85,7 +85,7 @@ public class ShootAtTarget extends TorqueCommand {
             AutoInput.getInstance().setBeltDirection(BeltDirections.OFF);
         }
 
-        distance = Feedback.getInstance().getLimelightFeedback().getDistance();
+        distance = Feedback.getInstance().getTorquelightFeedback().getDistance();
 
         outputRPM = Input.getInstance().getShooterInput().regressionRPM(distance);
         outputRPM += regressionOffset;
@@ -105,7 +105,7 @@ public class ShootAtTarget extends TorqueCommand {
             // check if rpm is in range (+-x)
             else if (Math.abs(outputRPM -
                     Feedback.getInstance().getShooterFeedback().getRPM()) < Constants.SHOOTER_ERROR
-                    && Math.abs(Feedback.getInstance().getLimelightFeedback().gethOffset()) < 3) {
+                    && Math.abs(Feedback.getInstance().getTorquelightFeedback().getTargetYaw()) < 3) {
                 if (readyIterations >= neededReadyIterations) {
                     // if so, launch magazine for x seconds
                     runMag = true;

@@ -371,9 +371,10 @@ public class Input extends TorqueInputManager {
         public boolean isFlywheelReady() {
             SmartDashboard.putNumber("turretRate", Turret.getInstance().getRate());
             if (flywheelReady()
-                    && Feedback.getInstance().getLimelightFeedback().getTaOffset() != 0
-                    && Feedback.getInstance().getLimelightFeedback().gethOffset() < Constants.TOLERANCE_DEGREES
-                    && Turret.getInstance().getRate() < 140) {
+                    && Feedback.getInstance().getTorquelightFeedback().hasTargets()
+                    && Math.abs(Feedback.getInstance().getTorquelightFeedback()
+                            .getTargetYaw()) < Constants.TOLERANCE_DEGREES
+                    && Math.abs(Turret.getInstance().getRate()) < 180) {
                 if (readyCounter > readyCounterNeeded) {
                     shooterReady.setTime(.5);
                     return true;
@@ -402,11 +403,9 @@ public class Input extends TorqueInputManager {
 
             // Regression
             if (driver.getXButton()) {
-                if (Feedback.getInstance()
-                        .getLimelightFeedback()
-                        .getTaOffset() > 0) {
+                if (Feedback.getInstance().getTorquelightFeedback().hasTargets()) {
                     lastDistance = Feedback.getInstance()
-                            .getLimelightFeedback()
+                            .getTorquelightFeedback()
                             .getDistance() - Constants.LIMELIGHT_DISTANCE_OFFSET;
                     setFromDist(lastDistance);
                 } else
@@ -435,7 +434,7 @@ public class Input extends TorqueInputManager {
             }
 
             if (resetOdometryLaunchpad.calc(driver.getAButton())) {
-                Drivebase.getInstance().odometry.resetPosition(
+                Drivebase.getInstance().poseEstimator.resetPosition(
                         new Pose2d(new Translation2d(3.75, 5.39),
                                 Feedback.getInstance().getGyroFeedback().getRotation2d()),
                         Feedback.getInstance().getGyroFeedback().getRotation2d());
@@ -451,7 +450,7 @@ public class Input extends TorqueInputManager {
 
         private void updateToPositon() {
             usingOdometry = true;
-            Pose2d robotPosition = Drivebase.getInstance().odometry.getPoseMeters();
+            Pose2d robotPosition = Drivebase.getInstance().getEstimatedPosition();
             double xDist = Constants.HUB_CENTER_POSITION.getX() - robotPosition.getX();
             double yDist = Constants.HUB_CENTER_POSITION.getY() - robotPosition.getY();
             double robotAngleFromGoal = Math.atan2(yDist, xDist);
@@ -469,13 +468,13 @@ public class Input extends TorqueInputManager {
         }
 
         private void resetOdometryWithVision() {
-            if (Feedback.getInstance().getLimelightFeedback().getTaOffset() <= 0)
+            if (!Feedback.getInstance().getTorquelightFeedback().hasTargets())
                 return;
             final double gyroAngle = Feedback.getInstance().getGyroFeedback().getCCWRotation2d().getDegrees();
             final double turretAngle = Turret.getInstance().getDegrees(); // 0 - 360
-            final double distanceToHubCenter = Feedback.getInstance().getLimelightFeedback().getDistance()
+            final double distanceToHubCenter = Feedback.getInstance().getTorquelightFeedback().getDistance()
                     + Constants.HUB_RADIUS - Constants.LIMELIGHT_TO_CENTER_OF_ROBOT;
-            final double targetX = Feedback.getInstance().getLimelightFeedback().gethOffset();
+            final double targetX = Feedback.getInstance().getTorquelightFeedback().getTargetYaw();
             SmartDashboard.putNumber("Angle to goal", gyroAngle + turretAngle - targetX - 180);
             final Pose2d calculatedPosition = (new Pose2d(
                     distanceToHubCenter * Math.cos(Units.degreesToRadians(gyroAngle + turretAngle - targetX - 180)),

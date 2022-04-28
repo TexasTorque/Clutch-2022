@@ -70,10 +70,10 @@ public class Pathplanner extends TorqueCommand {
                         float offset = 360f - (float) trajectory.getInitialPose().getRotation().getDegrees();
 
                         Feedback.getInstance().getGyroFeedback().setAngleOffset(offset);
-                        Drivebase.getInstance().odometry.resetPosition(trajectory.getInitialState().poseMeters,
+                        Drivebase.getInstance().poseEstimator.resetPosition(trajectory.getInitialState().poseMeters,
                                         trajectory.getInitialState().holonomicRotation);
 
-                        System.out.println("My initial: " + Drivebase.getInstance().odometry.getPoseMeters()
+                        System.out.println("My initial: " + Drivebase.getInstance().getEstimatedPosition()
                                         .getRotation()
                                         .getDegrees());
 
@@ -97,7 +97,7 @@ public class Pathplanner extends TorqueCommand {
                                 currentTrajectory.poseMeters.getRotation().getDegrees());
 
                 ChassisSpeeds chassisSpeeds = hController.calculate(
-                                Drivebase.getInstance().odometry.getPoseMeters(), currentTrajectory,
+                                Drivebase.getInstance().getEstimatedPosition(), currentTrajectory,
                                 currentTrajectory.holonomicRotation);
                 chassisSpeeds = new ChassisSpeeds(-chassisSpeeds.vxMetersPerSecond,
                                 chassisSpeeds.vyMetersPerSecond,

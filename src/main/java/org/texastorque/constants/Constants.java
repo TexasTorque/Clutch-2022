@@ -58,11 +58,10 @@ public class Constants {
     // public static final double FLYWHEEL_Ka = 0; //0.016159;
 
     public static final double FLYWHEEL_Kp = 0.0999999046;
-    public static final double FLYWHEEL_Ki = 0;
+    public static final double FLYWHEEL_Ki = 5e-05;
     public static final double FLYWHEEL_Kd = 0;
     public static final double FLYWHEEL_Kf = 0.0603409074;
-
-    // public static final double FLYWHEEL_Iz = 150;
+    public static final double FLYWHEEL_Iz = 1000;
 
     public static final double FLYWHEEEL_MAX_SPEED = 3000;
     public static final double FLYWHEEL_MAX_ACCELERATION = 10000;
@@ -93,14 +92,14 @@ public class Constants {
     public static final double TURRET_Ks = 0.14066;
     public static final double TURRET_Kv = 0.059555;
     public static final double TURRET_Ka = 0.0029152;
-    public static final double TURRET_Kp = 0.24539;
+    public static final double TURRET_Kp = 0.1039;
     public static final double TURRET_Ki = 0;
     public static final double TURRET_Kd = 0;
     // public static final double TURRET_Kd = 0.033865;
     public static final double TURRET_RATIO = 128.4722; // to 1
     public static final double TURRET_CENTER_ROT = 0; // 30 degrees center
     public static final double TURRET_BACK_ROT = 180;
-    public static final double TOLERANCE_DEGREES = .8;
+    public static final double TOLERANCE_DEGREES = 1.5;
     public static final double TURRET_MAX_ROTATION_LEFT = 93;
     public static final double TURRET_MAX_ROTATION_RIGHT = -93;
 
@@ -125,8 +124,8 @@ public class Constants {
 
     // Physical
     public static final double HEIGHT_OF_VISION_STRIP_METERS = 2.6416;
-    public static final double HEIGHT_TO_LIMELIGHT_METERS = 38.5 * INCH_TO_FOOT * FOOT_TO_METER;
-    public static final double LIMELIGHT_ANGEL_DEG = 30.0;
+    public static final double CAMERA_HEIGHT = Units.inchesToMeters(38.5);
+    public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30.0);
     public static final double LIMELIGHT_DISTANCE_OFFSET = .3556; // 14 inch to meterrs
     public static final double LIMELIGHT_TO_CENTER_OF_ROBOT = .127; // 5 inches to meter
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);

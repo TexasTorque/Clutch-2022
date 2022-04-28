@@ -111,8 +111,8 @@ public class Turret extends TorqueSubsystem {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if ((Input.getInstance().getShooterInput().getUsingOdometry() || !checkOver()) && !checkHoming()) {
                     double hOffset = Feedback.getInstance()
-                            .getLimelightFeedback()
-                            .gethOffset();
+                            .getTorquelightFeedback()
+                            .getTargetYaw();
                     // // be slightly off :) (do a little trolling)
                     // if (MagazineBallManager.getInstance().isEnemyAlliance())
                     // { if (doingSabotage) { hOffset = sabotageSetpoint; } else
@@ -194,7 +194,7 @@ public class Turret extends TorqueSubsystem {
     }
 
     private boolean checkHoming() {
-        if (Feedback.getInstance().getLimelightFeedback().getTaOffset() == 0) {
+        if (!Feedback.getInstance().getTorquelightFeedback().hasTargets()) {
             encoderOverStatus = EncoderOverStatus.HOMING;
             return true;
         }

@@ -126,7 +126,7 @@ public class Intake extends TorqueSubsystem {
             if (Input.getInstance().getClimberInput().hasClimbStarted()) {
                 rotary.set(0);
             } else {
-                rotary.set(.5, ControlType.kCurrent);
+                rotary.set(.1, ControlType.kCurrent);
             }
         } else {
             rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);

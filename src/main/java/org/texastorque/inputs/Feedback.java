@@ -1,12 +1,21 @@
 package org.texastorque.inputs;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import org.texastorque.constants.Constants;
 import org.texastorque.torquelib.base.TorqueFeedback;
 import org.texastorque.torquelib.util.RollingMedian;
@@ -20,27 +29,27 @@ public class Feedback {
     }
 
     private GyroFeedback gyroFeedback;
-    private LimelightFeedback limelightFeedback;
+    private TorqueLightFeedback torqueLightFeedback;
     private ShooterFeedback shooterFeedback;
     private ClimberFeedback climberFeedback;
 
     private Feedback() {
         gyroFeedback = new GyroFeedback();
-        limelightFeedback = new LimelightFeedback();
+        torqueLightFeedback = new TorqueLightFeedback();
         shooterFeedback = new ShooterFeedback();
         climberFeedback = new ClimberFeedback();
     }
 
     public void update() {
         gyroFeedback.update();
-        limelightFeedback.update();
+        torqueLightFeedback.update();
         shooterFeedback.update();
         climberFeedback.update();
     }
 
     public void smartDashboard() {
         gyroFeedback.smartDashboard();
-        limelightFeedback.smartDashboard();
+        torqueLightFeedback.smartDashboard();
         shooterFeedback.smartDashboard();
         climberFeedback.smartDashboard();
     }
@@ -145,82 +154,56 @@ public class Feedback {
         }
     }
 
-    public class LimelightFeedback extends TorqueFeedback {
-        private NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
-        private NetworkTableEntry tx = limelightTable.getEntry("tx");
-        private NetworkTableEntry ty = limelightTable.getEntry("ty");
-        private NetworkTableEntry ta = limelightTable.getEntry("ta");
+    public class TorqueLightFeedback extends TorqueFeedback {
 
-        private double hOffset;
-        private double vOffset;
-        private double taOffset;
+        private final PhotonCamera torqueCam = new PhotonCamera(NetworkTableInstance.getDefault(),
+                "torquecam");
 
-        private RollingMedian vMedian;
-        private RollingMedian hMedian;
-        private RollingMedian taMedian;
-
-        private double distance;
-
-        public LimelightFeedback() {
-            vMedian = new RollingMedian(4);
-            hMedian = new RollingMedian(4);
-            taMedian = new RollingMedian(4);
-        }
+        private PhotonPipelineResult result = new PhotonPipelineResult();
+        private PhotonTrackedTarget bestTarget = new PhotonTrackedTarget();
 
         @Override
         public void update() {
-            hOffset = hMedian.calculate(tx.getDouble(0));
-            vOffset = vMedian.calculate(ty.getDouble(0));
-            taOffset = taMedian.calculate(ta.getDouble(0));
-            distance = calcDistance(vOffset);
+            result = torqueCam.getLatestResult();
+            if (result.hasTargets())
+                bestTarget = result.getBestTarget();
         }
 
-        /**
-         * @return the hOffset
-         */
-        public double gethOffset() {
-            return hOffset;
+        public boolean hasTargets() {
+            return result.hasTargets();
         }
 
-        /**
-         * @return the vOffset
-         */
-        public double getvOffset() {
-            return vOffset;
+        public double getTargetArea() {
+            return bestTarget.getArea();
         }
 
-        /**
-         * @return the taOffset
-         */
-        public double getTaOffset() {
-            return taOffset;
+        public double getTargetYaw() {
+            return bestTarget.getYaw();
         }
 
-        /**
-         * @return Median calculated distance to target
-         */
+        public double getTargetPitch() {
+            return bestTarget.getPitch();
+        }
+
+        public Transform2d getCameraToTarget() {
+            return bestTarget.getCameraToTarget();
+        }
+
         public double getDistance() {
-            return distance;
-        }
-
-        /**
-         * Calculate distance
-         *
-         * @param ty Vert degree offset
-         * @return distance (m)
-         */
-        private double calcDistance(double ty) {
-            return (Constants.HEIGHT_OF_VISION_STRIP_METERS -
-                    Constants.HEIGHT_TO_LIMELIGHT_METERS) /
-                    Math.tan(Math.toRadians(Constants.LIMELIGHT_ANGEL_DEG + ty));
+            return PhotonUtils.calculateDistanceToTargetMeters(Constants.CAMERA_HEIGHT,
+                    Constants.HEIGHT_OF_VISION_STRIP_METERS, Constants.CAMERA_ANGLE.getRadians(),
+                    Units.degreesToRadians(getTargetPitch()));
         }
 
         public void smartDashboard() {
-            SmartDashboard.putNumber("hOffset", hOffset);
-            SmartDashboard.putNumber("vOffset", vOffset);
-            SmartDashboard.putNumber("taOffset", taOffset);
-            SmartDashboard.putNumber("distance", distance);
+            SmartDashboard.putBoolean("[TorqueLight]hasTarget", hasTargets());
+            SmartDashboard.putNumber("[TorqueLight]targetArea", getTargetArea());
+            SmartDashboard.putNumber("[TorqueLight]targetYaw", getTargetYaw());
+            SmartDashboard.putNumber("[TorqueLight]targetPitch", getTargetPitch());
+            SmartDashboard.putNumber("[TorqueLight]targetDistance", getDistance());
+
         }
+
     }
 
     public class ShooterFeedback extends TorqueFeedback {
@@ -338,15 +321,16 @@ public class Feedback {
     }
 
     public boolean isTurretAlligned() {
-        return limelightFeedback.gethOffset() < Constants.TOLERANCE_DEGREES && limelightFeedback.getTaOffset() > 0;
+        return Math.abs(torqueLightFeedback.getTargetYaw()) < Constants.TOLERANCE_DEGREES
+                && torqueLightFeedback.hasTargets();
     }
 
     public GyroFeedback getGyroFeedback() {
         return gyroFeedback;
     }
 
-    public LimelightFeedback getLimelightFeedback() {
-        return limelightFeedback;
+    public TorqueLightFeedback getTorquelightFeedback() {
+        return torqueLightFeedback;
     }
 
     public ShooterFeedback getShooterFeedback() {

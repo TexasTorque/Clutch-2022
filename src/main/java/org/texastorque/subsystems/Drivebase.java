@@ -1,11 +1,18 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -40,10 +47,9 @@ public class Drivebase extends TorqueSubsystem {
         public final SwerveDriveKinematics kinematics;
 
         /**
-         * Odometry
+         * Pose estimator
          */
-        public final SwerveOdometry odometry;
-
+        public final SwerveDrivePoseEstimator poseEstimator;
         /**
          * Modules
          */
@@ -74,8 +80,10 @@ public class Drivebase extends TorqueSubsystem {
                 kinematics = new SwerveDriveKinematics(locationBackLeft, locationBackRight,
                                 locationFrontLeft, locationFrontRight);
 
-                odometry = new SwerveOdometry(
-                                kinematics, feedback.getGyroFeedback().getRotation2d());
+                poseEstimator = new SwerveDrivePoseEstimator(Feedback.getInstance().getGyroFeedback().getRotation2d(),
+                                new Pose2d(), kinematics, new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2),
+                                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
+                                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
         }
 
         private void reset() {
@@ -142,12 +150,22 @@ public class Drivebase extends TorqueSubsystem {
 
         @Override
         public void updateFeedbackTeleop() {
-                odometry.update(feedback.getGyroFeedback().getRotation2d().times(-1),
+                poseEstimator.update(feedback.getGyroFeedback().getRotation2d().times(-1),
                                 frontLeft.getState(), frontRight.getState(),
                                 backLeft.getState(), backRight.getState());
-                SmartDashboard.putNumber("[Real]X", odometry.getPoseMeters().getX());
-                SmartDashboard.putNumber("[Real]Y", odometry.getPoseMeters().getY());
-                SmartDashboard.putNumber("[Real]Rot", odometry.getPoseMeters().getRotation().getDegrees());
+                SmartDashboard.putNumber("[Real]X", getEstimatedPosition().getX());
+                SmartDashboard.putNumber("[Real]Y", getEstimatedPosition().getY());
+                SmartDashboard.putNumber("[Real]Rot", getEstimatedPosition().getRotation().getDegrees());
+        }
+
+        public Pose2d getEstimatedPosition() {
+                return poseEstimator.getEstimatedPosition();
+        }
+
+        public void updateWithVision(Pose2d visionRobotPoseMeters) {
+                // poseEstimator.addVisionMeasurement(visionRobotPoseMeters,
+                // Timer.getFPGATimestamp()
+                // - .001 * Feedback.getInstance().getLimelightFeedback().getTl() - .0011);
         }
 
         @Override

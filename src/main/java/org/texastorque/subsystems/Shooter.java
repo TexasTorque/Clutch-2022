@@ -38,7 +38,7 @@ public class Shooter extends TorqueSubsystem {
                 Constants.FLYWHEEL_Kd,
                 Constants.FLYWHEEL_Kf,
                 -.1, 1));
-
+        flywheel.setIZone(Constants.FLYWHEEL_Iz);
         flywheel.setNeutralMode(NeutralMode.Coast);
         flywheel.configureStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
         flywheel.configureSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));

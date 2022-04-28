@@ -1,5 +1,6 @@
 package org.texastorque;
 
+import org.texastorque.auto.AutoManager;
 import org.texastorque.torquelib.base.*;
 
 import java.util.ArrayList;
@@ -7,16 +8,19 @@ import java.util.ArrayList;
 
 public class Robot extends TorqueIterative {
 
+    private Input input = Input.getInstance();
+    private AutoManager autoManager = AutoManager.getInstance();
+
     private ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
 
     @Override
     public void robotInit() {
-    
+        
     }
 
     @Override
     public void alwaysContinuous() {
-        subsystems.forEach(TorqueSubsystem::updateSmartDashboard);
+        subsystems.forEach(TorqueSubsystem::smartDashboard);
     }
 
     @Override

@@ -28,6 +28,10 @@ public class Drivebase extends TorqueSubsystem {
         X_FACTOR
     }
 
+    public static final double DRIVE_MAX_TRANSLATIONAL_SPEED = 4;
+    public static final double DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2;
+    public static final double DRIVE_MAX_ROTATIONAL_SPEED = 0;
+
     private static final double DRIVE_GEARING = .1875; // Drive rotations per motor rotations
     private static final double DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788);
 
@@ -48,15 +52,17 @@ public class Drivebase extends TorqueSubsystem {
     private DrivebaseState state = DrivebaseState.FIELD_RELATIVE;
     private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
 
+    private TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
+        return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS,
+                TorqueSwerveModule2021.DEFAULT_DRIVE_PID, TorqueSwerveModule2021.DEFAULT_ROTATE_PID, 
+                DRIVE_MAX_TRANSLATIONAL_SPEED, DRIVE_MAX_TRANSLATIONAL_ACCELERATION, TorqueSwerveModule2021.DEFAULT_DRIVE_FEED_FORWARD);
+    }
+
     private Drivebase() {
-        backLeft = new TorqueSwerveModule2021(0, Ports.DRIVE_TRANS_LEFT_BACK, Ports.DRIVE_ROT_LEFT_BACK, 
-                DRIVE_GEARING, DRIVE_WHEEL_RADIUS);
-        backRight = new TorqueSwerveModule2021(1, Ports.DRIVE_TRANS_RIGHT_BACK, Ports.DRIVE_ROT_RIGHT_BACK,
-                DRIVE_GEARING, DRIVE_WHEEL_RADIUS);
-        frontLeft = new TorqueSwerveModule2021(2, Ports.DRIVE_TRANS_LEFT_FRONT, Ports.DRIVE_ROT_LEFT_FRONT,
-                DRIVE_GEARING, DRIVE_WHEEL_RADIUS);
-        frontRight = new TorqueSwerveModule2021(3, Ports.DRIVE_TRANS_RIGHT_FRONT, Ports.DRIVE_ROT_RIGHT_FRONT,
-                DRIVE_GEARING, DRIVE_WHEEL_RADIUS);
+        backLeft = buildSwerveModule(0, Ports.DRIVE_TRANS_LEFT_BACK, Ports.DRIVE_ROT_LEFT_BACK);
+        backRight = buildSwerveModule(1, Ports.DRIVE_TRANS_RIGHT_BACK, Ports.DRIVE_ROT_RIGHT_BACK);
+        frontLeft = buildSwerveModule(2, Ports.DRIVE_TRANS_LEFT_FRONT, Ports.DRIVE_ROT_LEFT_FRONT);
+        frontRight = buildSwerveModule(3, Ports.DRIVE_TRANS_RIGHT_FRONT, Ports.DRIVE_ROT_RIGHT_FRONT);
 
         kinematics = new SwerveDriveKinematics(locationBackLeft, locationBackRight,
                 locationFrontLeft, locationFrontRight);

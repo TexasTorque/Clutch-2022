@@ -43,7 +43,6 @@ public class Robot extends TorqueIterative {
         input.update();
         input.smartDashboard();
         subsystems.forEach(TorqueSubsystem::updateTeleop);
-        subsystems.forEach(TorqueSubsystem::output);
     }
 
     @Override
@@ -66,7 +65,6 @@ public class Robot extends TorqueIterative {
     public void autoContinuous() {
         autoManager.runCurrentSequence();
         subsystems.forEach(TorqueSubsystem::updateAuto);
-        subsystems.forEach(TorqueSubsystem::output);
     }
 
     @Override

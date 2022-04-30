@@ -1,11 +1,13 @@
 package org.texastorque.subsystems;
 
-import org.texastorque.constants.Ports;
+import org.texastorque.Ports;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
+import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,6 +40,10 @@ public class Drivebase extends TorqueSubsystem {
     private static final double DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875);
     private static final double DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
 
+    public final static KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2);
+    public final static SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
+    public final static KPID ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
+
     private final Translation2d locationBackLeft = new Translation2d(DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y);
     private final Translation2d locationBackRight = new Translation2d(DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
     private final Translation2d locationFrontLeft = new Translation2d(-DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y);
@@ -54,15 +60,14 @@ public class Drivebase extends TorqueSubsystem {
 
     private TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
         return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS,
-                TorqueSwerveModule2021.DEFAULT_DRIVE_PID, TorqueSwerveModule2021.DEFAULT_ROTATE_PID, 
-                DRIVE_MAX_TRANSLATIONAL_SPEED, DRIVE_MAX_TRANSLATIONAL_ACCELERATION, TorqueSwerveModule2021.DEFAULT_DRIVE_FEED_FORWARD);
+                DRIVE_PID, ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED, DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
     }
 
     private Drivebase() {
-        backLeft = buildSwerveModule(0, Ports.DRIVE_TRANS_LEFT_BACK, Ports.DRIVE_ROT_LEFT_BACK);
-        backRight = buildSwerveModule(1, Ports.DRIVE_TRANS_RIGHT_BACK, Ports.DRIVE_ROT_RIGHT_BACK);
-        frontLeft = buildSwerveModule(2, Ports.DRIVE_TRANS_LEFT_FRONT, Ports.DRIVE_ROT_LEFT_FRONT);
-        frontRight = buildSwerveModule(3, Ports.DRIVE_TRANS_RIGHT_FRONT, Ports.DRIVE_ROT_RIGHT_FRONT);
+        backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
+        backRight = buildSwerveModule(1, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.BACK, Ports.DRIVEBASE.ROTATIONAL.RIGHT.BACK);
+        frontLeft = buildSwerveModule(2, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.FRONT, Ports.DRIVEBASE.ROTATIONAL.LEFT.FRONT);
+        frontRight = buildSwerveModule(3, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.FRONT, Ports.DRIVEBASE.ROTATIONAL.RIGHT.FRONT);
 
         kinematics = new SwerveDriveKinematics(locationBackLeft, locationBackRight,
                 locationFrontLeft, locationFrontRight);

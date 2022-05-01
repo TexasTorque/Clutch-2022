@@ -24,7 +24,7 @@ import edu.wpi.first.math.util.Units;
 public class Drivebase extends TorqueSubsystem {
     private static volatile Drivebase instance;
 
-    public enum DrivebaseState {
+    public enum DrivebaseState implements TorqueSubsystemState {
         ROBOT_RELATIVE,
         FIELD_RELATIVE,
         X_FACTOR
@@ -85,6 +85,10 @@ public class Drivebase extends TorqueSubsystem {
 
     public void setSpeeds(final ChassisSpeeds speeds) {
         this.speeds = speeds;
+    }
+
+    public ChassisSpeeds getSpeeds() {
+        return speeds;
     }
 
     @Override

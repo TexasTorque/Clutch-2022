@@ -16,7 +16,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 
-public class FollowPathPlanner extends TorqueCommand {
+public final class FollowPathPlanner extends TorqueCommand {
 
     private final PIDController xController = new PIDController(1, 0, 0);
     private final PIDController yController = new PIDController(1, 0, 0);

@@ -1,33 +1,33 @@
 package org.texastorque;
 
-public class Ports {
+public final class Ports {
 
-    public class DRIVEBASE {
-        public class TRANSLATIONAL {
-            public class RIGHT {
+    public final class DRIVEBASE {
+        public final class TRANSLATIONAL {
+            public final class RIGHT {
                 public static final int FRONT = 1;
                 public static final int BACK = 2;
             }
-            public class LEFT {
+            public final class LEFT {
                 public static final int FRONT = 3;
                 public static final int BACK = 4;
             }
         }
-        public class ROTATIONAL {
-            public class RIGHT {
+        public final class ROTATIONAL {
+            public final class RIGHT {
                 public static final int FRONT = 5;
                 public static final int BACK = 6;
             }
-            public class LEFT {
+            public final class LEFT {
                 public static final int FRONT = 7;
                 public static final int BACK = 8;
             }
         }
     }
 
-    public class INTAKE {
+    public final class INTAKE {
         public static final int ROTARY = 9;
-        public class ROLLER {
+        public final class ROLLER {
             public static final int LEFT = 19;
             public static final int RIGHT = 10;
         }   

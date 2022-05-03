@@ -25,7 +25,7 @@ import edu.wpi.first.math.util.Units;
  * @author Jack Pittenger
  * @author Justus Languell
  */
-public class Drivebase extends TorqueSubsystem {
+public final class Drivebase extends TorqueSubsystem {
     private static volatile Drivebase instance;
 
     public enum DrivebaseState implements TorqueSubsystemState {

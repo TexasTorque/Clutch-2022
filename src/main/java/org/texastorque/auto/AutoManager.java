@@ -2,7 +2,7 @@ package org.texastorque.auto;
 
 import org.texastorque.torquelib.auto.*;
 
-public class AutoManager extends TorqueAutoManager {
+public final class AutoManager extends TorqueAutoManager {
     private static volatile AutoManager instance;
 
     @Override

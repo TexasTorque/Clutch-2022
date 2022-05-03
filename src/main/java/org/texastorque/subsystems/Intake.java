@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * @author Jack Pittenger
  * @author Justus Languell
  */
-public class Intake extends TorqueSubsystem {
+public final class Intake extends TorqueSubsystem {
     private static volatile Intake instance;
 
     public enum IntakeDirection implements TorqueSubsystemState {

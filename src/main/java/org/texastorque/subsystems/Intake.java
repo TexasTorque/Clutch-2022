@@ -2,19 +2,9 @@ package org.texastorque.subsystems;
 
 import org.texastorque.Ports;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
-import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;
-import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
@@ -129,17 +119,33 @@ public class Intake extends TorqueSubsystem {
                         * (ROLLER_MAX_SPEED - ROLLER_MIN_SPEED) 
                         + ROLLER_MIN_SPEED, ROLLER_MAX_SPEED) 
                 : direction.getDirection());
+
+        // The above one liner but readable
+        // final double xSpeed = Drivebase.getInstance().getSpeeds().vxMetersPerSecond;
+        // final double ySpeed = Drivebase.getInstance().getSpeeds().vyMetersPerSecond;
+        // final double speed = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+        // final double percent = speed / Drivebase.DRIVE_MAX_ROTATIONAL_SPEED;
+        // final double intake = Math.min(percent * (ROLLER_MAX_SPEED - ROLLER_MIN_SPEED) + ROLLER_MIN_SPEED, ROLLER_MAX_SPEED);
+        // rollers.setPercent(direction.getDirection() > 0 ? intake : -direction.getDirection());
     }
 
     @Override
     public void initAuto() {
         
+        
     }
 
     @Override
     public void updateAuto() {
+        if (limitSwitch.get() && position.getPosition() >= rotary.getPosition()) 
+            rotary.setCurrent(.1);
+        else
+            rotary.setPosition(position.getPosition());
         
+        rollers.setPercent(direction.getDirection());
     }
+
+
 
     public static synchronized Intake getInstance() {
         return instance == null ? instance = new Intake() : instance;

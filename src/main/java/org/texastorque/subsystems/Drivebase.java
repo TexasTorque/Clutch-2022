@@ -7,7 +7,11 @@ import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -51,6 +55,7 @@ public class Drivebase extends TorqueSubsystem {
 
     private final SwerveDriveKinematics kinematics;
     private final TorqueSwerveOdometry odometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
 
     private final TorqueSwerveModule2021 backLeft, backRight, frontLeft, frontRight;
     private SwerveModuleState[] swerveModuleStates; // This can be made better
@@ -73,6 +78,11 @@ public class Drivebase extends TorqueSubsystem {
                 locationFrontLeft, locationFrontRight);
 
         odometry = new TorqueSwerveOdometry(kinematics, TorqueNavXGyro.getInstance().getRotation2dClockwise());
+
+        poseEstimator = new SwerveDrivePoseEstimator(TorqueNavXGyro.getInstance().getRotation2dCounterClockwise(),
+                new Pose2d(), kinematics, new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2),
+                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
+                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
     }
 
     public void setState(final DrivebaseState state) {
@@ -117,16 +127,22 @@ public class Drivebase extends TorqueSubsystem {
         frontRight.setDesiredState(swerveModuleStates[1]);
         backLeft.setDesiredState(swerveModuleStates[2]);
         backRight.setDesiredState(swerveModuleStates[3]);
+
+        odometry.update(TorqueNavXGyro.getInstance().getRotation2dClockwise(),  // .times(-1) ?
+                frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+
+        poseEstimator.update(TorqueNavXGyro.getInstance().getRotation2dClockwise().times(-1),
+                frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
     }
 
     @Override
     public void initAuto() {
-        
+        initTeleop(); 
     }
 
     @Override
     public void updateAuto() {
-        
+        updateTeleop();
     }
 
     public SwerveDriveKinematics getKinematics() {
@@ -135,6 +151,10 @@ public class Drivebase extends TorqueSubsystem {
 
     public TorqueSwerveOdometry getOdometry() {
         return odometry;
+    }
+
+    public SwerveDrivePoseEstimator getPoseEstimator() {
+        return poseEstimator;
     }
 
     public static synchronized Drivebase getInstance() {

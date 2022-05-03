@@ -103,7 +103,8 @@ public class Drivebase extends TorqueSubsystem {
 
     @Override
     public void initTeleop() {
-        speeds = new ChassisSpeeds(0, 0, 0);
+        reset();
+        state = DrivebaseState.FIELD_RELATIVE;
     }
 
     @Override
@@ -128,6 +129,8 @@ public class Drivebase extends TorqueSubsystem {
         backLeft.setDesiredState(swerveModuleStates[2]);
         backRight.setDesiredState(swerveModuleStates[3]);
 
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
+
         odometry.update(TorqueNavXGyro.getInstance().getRotation2dClockwise(),  // .times(-1) ?
                 frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
 
@@ -137,7 +140,8 @@ public class Drivebase extends TorqueSubsystem {
 
     @Override
     public void initAuto() {
-        initTeleop(); 
+        reset();        
+        state = DrivebaseState.ROBOT_RELATIVE;
     }
 
     @Override
@@ -155,6 +159,10 @@ public class Drivebase extends TorqueSubsystem {
 
     public SwerveDrivePoseEstimator getPoseEstimator() {
         return poseEstimator;
+    }
+
+    public void reset() {
+        speeds = new ChassisSpeeds(0, 0, 0); 
     }
 
     public static synchronized Drivebase getInstance() {

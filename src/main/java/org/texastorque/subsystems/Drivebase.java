@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The drivebase subsystem. Drives with 4 2021 swerve modules.
@@ -83,6 +84,8 @@ public final class Drivebase extends TorqueSubsystem {
                 new Pose2d(), kinematics, new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2),
                 new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
+        
+        reset();
     }
 
     public void setState(final DrivebaseState state) {
@@ -136,6 +139,8 @@ public final class Drivebase extends TorqueSubsystem {
 
         poseEstimator.update(TorqueNavXGyro.getInstance().getRotation2dClockwise().times(-1),
                 frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+
+        SmartDashboard.putNumber("Rot3", backLeft.getRotation().getDegrees());
     }
 
     @Override

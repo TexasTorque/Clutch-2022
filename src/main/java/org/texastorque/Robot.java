@@ -1,12 +1,13 @@
 package org.texastorque;
 
 import org.texastorque.auto.AutoManager;
+import org.texastorque.subsystems.*;
 import org.texastorque.torquelib.base.*;
 
 import java.util.ArrayList;
 
 
-public class Robot extends TorqueIterative {
+public final class Robot extends TorqueIterative {
 
     private Input input = Input.getInstance();
     private AutoManager autoManager = AutoManager.getInstance();
@@ -15,7 +16,8 @@ public class Robot extends TorqueIterative {
 
     @Override
     public void robotInit() {
-         
+        subsystems.add(Drivebase.getInstance());
+        // subsystems.add(Intake.getInstance());
     }
 
     @Override

@@ -26,9 +26,9 @@ public class Input extends TorqueInputManager {
         Drivebase.getInstance().setSpeeds(new ChassisSpeeds(
                 driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED
                         * xSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(),false, false),
-                driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED
+                -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED
                         * ySpeeds.update(driver.getRightBumper(), driver.getLeftBumper(),false, false),
-                driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED
+                -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED
                         * rSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(),false, false)
         ));
     }

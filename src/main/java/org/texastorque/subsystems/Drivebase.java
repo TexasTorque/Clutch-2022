@@ -37,7 +37,7 @@ public final class Drivebase extends TorqueSubsystem {
 
     public static final double DRIVE_MAX_TRANSLATIONAL_SPEED = 4;
     public static final double DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2;
-    public static final double DRIVE_MAX_ROTATIONAL_SPEED = 0;
+    public static final double DRIVE_MAX_ROTATIONAL_SPEED = 6;
 
     private static final double DRIVE_GEARING = .1875; // Drive rotations per motor rotations
     private static final double DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788);
@@ -70,6 +70,8 @@ public final class Drivebase extends TorqueSubsystem {
     }
 
     private Drivebase() {
+
+      
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
         backRight = buildSwerveModule(1, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.BACK, Ports.DRIVEBASE.ROTATIONAL.RIGHT.BACK);
         frontLeft = buildSwerveModule(2, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.FRONT, Ports.DRIVEBASE.ROTATIONAL.LEFT.FRONT);
@@ -112,6 +114,12 @@ public final class Drivebase extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
+        SmartDashboard.putNumber("x", speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("y", speeds.vyMetersPerSecond);
+        SmartDashboard.putNumber("r", speeds.omegaRadiansPerSecond);
+
+
+
         if (state == DrivebaseState.X_FACTOR) {
             swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
             swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
@@ -127,9 +135,9 @@ public final class Drivebase extends TorqueSubsystem {
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 
-        frontLeft.setDesiredState(swerveModuleStates[0]);
+        frontLeft.setDesiredState(swerveModuleStates[2]);
         frontRight.setDesiredState(swerveModuleStates[1]);
-        backLeft.setDesiredState(swerveModuleStates[2]);
+        backLeft.setDesiredState(swerveModuleStates[0]);
         backRight.setDesiredState(swerveModuleStates[3]);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);

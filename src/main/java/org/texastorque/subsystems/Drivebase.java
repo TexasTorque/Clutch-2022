@@ -70,8 +70,6 @@ public final class Drivebase extends TorqueSubsystem {
     }
 
     private Drivebase() {
-
-      
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
         backRight = buildSwerveModule(1, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.BACK, Ports.DRIVEBASE.ROTATIONAL.RIGHT.BACK);
         frontLeft = buildSwerveModule(2, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.FRONT, Ports.DRIVEBASE.ROTATIONAL.LEFT.FRONT);
@@ -118,8 +116,6 @@ public final class Drivebase extends TorqueSubsystem {
         SmartDashboard.putNumber("y", speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("r", speeds.omegaRadiansPerSecond);
 
-
-
         if (state == DrivebaseState.X_FACTOR) {
             swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
             swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
@@ -135,6 +131,8 @@ public final class Drivebase extends TorqueSubsystem {
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 
+        TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
+
         frontLeft.setDesiredState(swerveModuleStates[2]);
         frontRight.setDesiredState(swerveModuleStates[1]);
         backLeft.setDesiredState(swerveModuleStates[0]);
@@ -147,6 +145,7 @@ public final class Drivebase extends TorqueSubsystem {
 
         poseEstimator.update(TorqueNavXGyro.getInstance().getRotation2dClockwise().times(-1),
                 frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+        // The order of these might be wrong
 
         SmartDashboard.putNumber("Rot3", backLeft.getRotation().getDegrees());
     }

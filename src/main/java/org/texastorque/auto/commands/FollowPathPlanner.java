@@ -17,7 +17,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 
 public final class FollowPathPlanner extends TorqueCommand {
-
     private final PIDController xController = new PIDController(1, 0, 0);
     private final PIDController yController = new PIDController(1, 0, 0);
     private final ProfiledPIDController thetaController = new ProfiledPIDController(4, 0, 0, 
@@ -79,6 +78,5 @@ public final class FollowPathPlanner extends TorqueCommand {
     protected void end() {
         timer.stop();
         Drivebase.getInstance().reset();
-
     }
 }

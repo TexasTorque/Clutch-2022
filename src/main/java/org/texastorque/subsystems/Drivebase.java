@@ -71,6 +71,7 @@ public final class Drivebase extends TorqueSubsystem {
 
     private Drivebase() {
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
+        backLeft.setLogging(true);
         backRight = buildSwerveModule(1, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.BACK, Ports.DRIVEBASE.ROTATIONAL.RIGHT.BACK);
         frontLeft = buildSwerveModule(2, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.FRONT, Ports.DRIVEBASE.ROTATIONAL.LEFT.FRONT);
         frontRight = buildSwerveModule(3, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.FRONT, Ports.DRIVEBASE.ROTATIONAL.RIGHT.FRONT);
@@ -131,14 +132,14 @@ public final class Drivebase extends TorqueSubsystem {
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 
-        TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
+        // I think this does the same thing ):
+        // TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
 
         frontLeft.setDesiredState(swerveModuleStates[2]);
         frontRight.setDesiredState(swerveModuleStates[1]);
         backLeft.setDesiredState(swerveModuleStates[0]);
         backRight.setDesiredState(swerveModuleStates[3]);
-
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
 
         odometry.update(TorqueNavXGyro.getInstance().getRotation2dClockwise(),  // .times(-1) ?
                 frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
@@ -147,7 +148,7 @@ public final class Drivebase extends TorqueSubsystem {
                 frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
         // The order of these might be wrong
 
-        SmartDashboard.putNumber("Rot3", backLeft.getRotation().getDegrees());
+        // SmartDashboard.putNumber("Rot3", backLeft.getRotation().getDegrees());
     }
 
     @Override

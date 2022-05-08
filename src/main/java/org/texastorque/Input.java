@@ -1,7 +1,13 @@
 package org.texastorque;
 
 import org.texastorque.subsystems.Drivebase;
+import org.texastorque.subsystems.Intake;
+import org.texastorque.subsystems.Magazine;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
+import org.texastorque.subsystems.Intake.IntakeDirection;
+import org.texastorque.subsystems.Intake.IntakePosition;
+import org.texastorque.subsystems.Magazine.BeltDirection;
+import org.texastorque.subsystems.Magazine.GateDirection;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueSpeedSettings;
@@ -31,6 +37,28 @@ public class Input extends TorqueInputManager {
                 -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED
                         * rSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(),false, false)
         ));
+
+        if (driver.getRightTrigger())
+            Intake.getInstance().setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
+        else if (driver.getLeftTrigger())
+            Intake.getInstance().setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
+        else
+            Intake.getInstance().setState(IntakeDirection.STOPPED, IntakePosition.UP);
+
+        if (operator.getRightBumper())
+            Magazine.getInstance().setBeltDirection(BeltDirection.UP);
+        else if (operator.getRightTrigger())
+            Magazine.getInstance().setBeltDirection(BeltDirection.DOWN);
+        else
+            Magazine.getInstance().setBeltDirection(BeltDirection.OFF);
+
+        if (operator.getLeftBumper())
+            Magazine.getInstance().setGateDirection(GateDirection.FORWARD);
+        else if (operator.getLeftTrigger())
+            Magazine.getInstance().setGateDirection(GateDirection.REVERSE);
+        else
+            Magazine.getInstance().setGateDirection(GateDirection.OFF);
+
     }
 
     public static synchronized Input getInstance() {

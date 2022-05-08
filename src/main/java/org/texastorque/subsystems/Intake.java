@@ -6,6 +6,7 @@ import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The intake subsystem. 
@@ -17,9 +18,9 @@ public final class Intake extends TorqueSubsystem {
     private static volatile Intake instance;
 
     public enum IntakeDirection implements TorqueSubsystemState {
-        INTAKE(1),
+        INTAKE(-1),
         STOPPED(0),
-        OUTAKE(-.3);
+        OUTAKE(.3);
 
         private final double direction;
 
@@ -68,8 +69,8 @@ public final class Intake extends TorqueSubsystem {
         rotary.burnFlash();
 
         rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER.LEFT);
-        rollers.addFollower(Ports.INTAKE.ROLLER.RIGHT);
-        rollers.configureDumbLeaderCANFrame();
+        // rollers.addFollower(Ports.INTAKE.ROLLER.RIGHT);
+        // rollers.configureDumbLeaderCANFrame();
         rollers.burnFlash();
 
         limitSwitch = new DigitalInput(Ports.INTAKE.SWITCH);
@@ -96,6 +97,10 @@ public final class Intake extends TorqueSubsystem {
         return position;
     }
 
+    public boolean isIntaking() {
+        return direction == IntakeDirection.INTAKE && position == IntakePosition.DOWN;
+    }
+
     @Override
     public void initTeleop() {
     }
@@ -103,22 +108,23 @@ public final class Intake extends TorqueSubsystem {
     @Override
     public void updateTeleop() {
         // Needs climber logic
-        if (limitSwitch.get() && position.getPosition() >= rotary.getPosition()) 
-            rotary.setCurrent(.1);
-        else
-            rotary.setPosition(position.getPosition());
+        // if (limitSwitch.get() && position.getPosition() >= rotary.getPosition()) 
+        //     rotary.setCurrent(.1);
+        // else
+        //     rotary.setPosition(position.getPosition());
+
+        rollers.setPercent(direction.getDirection());
        
-        if (position != IntakePosition.DOWN) return;
         // Amazing one liner (;
-        rollers.setPercent(direction.getDirection() > 0 
-                ? -Math.min(
-                        (Math.sqrt(
-                                Math.pow(Drivebase.getInstance().getSpeeds().vxMetersPerSecond, 2)
-                                + Math.pow(Drivebase.getInstance().getSpeeds().vyMetersPerSecond, 2)
-                        ) / Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED) 
-                        * (ROLLER_MAX_SPEED - ROLLER_MIN_SPEED) 
-                        + ROLLER_MIN_SPEED, ROLLER_MAX_SPEED) 
-                : direction.getDirection());
+        // rollers.setPercent(direction.getDirection() != 0 
+        //         ? -Math.min(
+        //                 (Math.sqrt(
+        //                         Math.pow(Drivebase.getInstance().getSpeeds().vxMetersPerSecond, 2)
+        //                         + Math.pow(Drivebase.getInstance().getSpeeds().vyMetersPerSecond, 2)
+        //                 ) / Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED) 
+        //                 * (ROLLER_MAX_SPEED - ROLLER_MIN_SPEED) 
+        //                 + ROLLER_MIN_SPEED, ROLLER_MAX_SPEED) 
+        //         : direction.getDirection());
 
         // The above one liner but readable
         // final double xSpeed = Drivebase.getInstance().getSpeeds().vxMetersPerSecond;
@@ -144,8 +150,6 @@ public final class Intake extends TorqueSubsystem {
         
         rollers.setPercent(direction.getDirection());
     }
-
-
 
     public static synchronized Intake getInstance() {
         return instance == null ? instance = new Intake() : instance;

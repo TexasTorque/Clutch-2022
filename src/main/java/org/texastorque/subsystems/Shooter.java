@@ -2,6 +2,7 @@ package org.texastorque.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import org.texastorque.Ports;
 import org.texastorque.torquelib.base.TorqueState;
@@ -26,8 +27,8 @@ public final class Shooter extends TorqueSubsystem {
 
         flywheel.configurePID(new KPID(0.0999999046, 5e-05, 0, 0.0603409074, -1, 1, 1000));
         flywheel.setNeutralMode(NeutralMode.Coast);
-        flywheel.configureStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
-        flywheel.configureSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
+        flywheel.setStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
+        flywheel.setSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
 
         hood = new TorqueSparkMax(Ports.SHOOTER.HOOD);
         hood.configurePID(new KPID(.1, .001,0, 0, -.70, .70, .3));

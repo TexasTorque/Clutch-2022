@@ -34,8 +34,6 @@ public final class Shooter extends TorqueSubsystem {
         hood.configurePID(new KPID(.1, .001,0, 0, -.70, .70, .3));
         hood.configurePositionalCANFrame();
         hood.burnFlash();
-
-
     }
 
     @Override

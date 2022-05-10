@@ -87,8 +87,6 @@ public class Input extends TorqueInputManager {
             Shooter.getInstance().setState(ShooterState.OFF);
     }
 
-
-
     public static synchronized Input getInstance() {
         return instance == null ? instance = new Input() : instance;
     }

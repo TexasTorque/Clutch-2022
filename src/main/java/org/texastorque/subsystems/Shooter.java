@@ -109,28 +109,15 @@ public final class Shooter extends TorqueSubsystem {
 
     @Override
     public void updateAuto() {
-        camera.update();
+        updateTeleop();
+    }
 
-        if (state == ShooterState.REGRESSION) {
-            distance = camera.getDistance();
-            flywheelSpeed = regressionRPM(distance);
-            hoodSetpoint = regressionHood(distance);
-        } else if (state == ShooterState.DISTANCE) {
-            flywheelSpeed = regressionRPM(distance);
-            hoodSetpoint = regressionHood(distance);
-        } else if (state == ShooterState.SETPOINT) {
-
-        } else {
-            flywheel.setPercent(FLYWHEEEL_IDLE);
-            return;
-        }
-
-        flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
-        hood.setPosition(clampHood(hoodSetpoint));
+    public boolean isShooting() {
+        return state != ShooterState.OFF;
     }
 
     public boolean isReady() {
-        return state != ShooterState.OFF && Math.abs(flywheelSpeed - flywheel.getVelocityRPM()) < ERROR;
+        return isShooting() && Math.abs(flywheelSpeed - flywheel.getVelocityRPM()) < ERROR;
     }
 
     /**
@@ -145,7 +132,6 @@ public final class Shooter extends TorqueSubsystem {
      * @param distance Distance (m)
      * @return Hood the shooter should go at
      */
-
     private double regressionHood(final double distance) {
         if (distance > 3.5) return HOOD_MAX;
         return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 46.01);
@@ -157,6 +143,10 @@ public final class Shooter extends TorqueSubsystem {
 
     private double clampHood(final double hood) {
         return TorqueMathUtil.constrain(hood, HOOD_MIN, HOOD_MAX);
+    }
+
+    public TorqueLight getCamera() {
+        return camera;
     }
 
     public static synchronized Shooter getInstance() {

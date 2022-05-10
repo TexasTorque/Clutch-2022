@@ -81,7 +81,7 @@ public class Magazine extends TorqueSubsystem {
         if (Intake.getInstance().isIntaking())
             beltDirection = BeltDirection.UP;
 
-        if (Shooter.getInstance().isReady())
+        if (Shooter.getInstance().isReady() && Turret.getInstance().isLocked())
             gateDirection = GateDirection.FORWARD;
 
         belt.setPercent(beltDirection.getDirection());

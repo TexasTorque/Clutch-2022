@@ -47,7 +47,7 @@ public final class FollowPathPlanner extends TorqueCommand {
     } 
 
     @Override
-    protected void init() {
+    protected final void init() {
         timer.reset();
         timer.start();
         if (!resetOdometry) return;
@@ -59,7 +59,7 @@ public final class FollowPathPlanner extends TorqueCommand {
     }
 
     @Override
-    protected void continuous() {
+    protected final void continuous() {
         final PathPlannerState current = (PathPlannerState) trajectory.sample(timer.get());
         ChassisSpeeds speeds = controller.calculate(
                 Drivebase.getInstance().getPoseEstimator().getEstimatedPosition(),
@@ -70,12 +70,12 @@ public final class FollowPathPlanner extends TorqueCommand {
     }
 
     @Override
-    protected boolean endCondition() {
+    protected final boolean endCondition() {
         return timer.hasElapsed(trajectory.getTotalTimeSeconds());
     }
 
     @Override
-    protected void end() {
+    protected final void end() {
         timer.stop();
         Drivebase.getInstance().reset();
     }

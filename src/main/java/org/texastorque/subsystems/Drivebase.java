@@ -2,6 +2,7 @@ package org.texastorque.subsystems;
 
 import org.texastorque.Ports;
 import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;

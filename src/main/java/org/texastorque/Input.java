@@ -19,9 +19,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class Input extends TorqueInputManager {
     private static volatile Input instance;
 
-    private TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2); // 1, .8, .6
-    private TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2); // 1, .8, .6
-    private TorqueSpeedSettings rSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5
+    private final TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2); // 1, .8, .6
+    private final TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2); // 1, .8, .6
+    private final TorqueSpeedSettings rSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -49,42 +49,46 @@ public class Input extends TorqueInputManager {
     }
 
     private void updateIntake() {
-        if (driver.getRightTrigger())
+        if (driver.getRightTrigger()) {
             Intake.getInstance().setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
-        else if (driver.getLeftTrigger())
+        } else if (driver.getLeftTrigger()) {
             Intake.getInstance().setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
-        else
+        } else {
             Intake.getInstance().setState(IntakeDirection.STOPPED, IntakePosition.UP);
+        }
     }
 
     private void updateMagazine() {
-        if (operator.getRightBumper())
+        if (operator.getRightBumper()) {
             Magazine.getInstance().setBeltDirection(BeltDirection.UP);
-        else if (operator.getRightTrigger())
+        } else if (operator.getRightTrigger()) {
             Magazine.getInstance().setBeltDirection(BeltDirection.DOWN);
-        else
+        } else {
             Magazine.getInstance().setBeltDirection(BeltDirection.OFF);
+        }
 
-        if (operator.getLeftBumper())
+        if (operator.getLeftBumper()) {
             Magazine.getInstance().setGateDirection(GateDirection.FORWARD);
-        else if (operator.getLeftTrigger())
+        } else if (operator.getLeftTrigger()) {
             Magazine.getInstance().setGateDirection(GateDirection.REVERSE);
-        else
+        } else {
             Magazine.getInstance().setGateDirection(GateDirection.OFF);
+        }
     }
 
     private void updateShooter() {
-        if (driver.getXButton())
+        if (driver.getXButton()) {
             Shooter.getInstance().setState(ShooterState.REGRESSION);
-        else if (driver.getAButton()) {
+        } else if (driver.getAButton()) {
             Shooter.getInstance().setState(ShooterState.SETPOINT);
             Shooter.getInstance().setFlywheelSpeed(1500);
             Shooter.getInstance().setHoodPosition(Shooter.HOOD_MAX);
         } else if (driver.getYButton()) {
             Shooter.getInstance().setState(ShooterState.DISTANCE);
             Shooter.getInstance().setDistance(3);
-        } else
+        } else {
             Shooter.getInstance().setState(ShooterState.OFF);
+        }
     }
 
     public static synchronized Input getInstance() {

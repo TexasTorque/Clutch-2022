@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import org.texastorque.Ports;
-import org.texastorque.torquelib.base.TorqueState;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
@@ -30,7 +30,7 @@ public final class Shooter extends TorqueSubsystem {
     public static final double TARGET_HEIGHT = 2.6416;
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
-    public enum ShooterState implements TorqueState {
+    public enum ShooterState implements TorqueSubsystemState {
         OFF, REGRESSION, SETPOINT, DISTANCE;
     }
 
@@ -104,12 +104,14 @@ public final class Shooter extends TorqueSubsystem {
         flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
         hood.setPosition(clampHood(hoodSetpoint));
 
+        TorqueSubsystemState.logState(state);
+
         SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
 
         SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
-        SmartDashboard.putBoolean("IsShooting", isShooting());
-        SmartDashboard.putBoolean("IsReady", isReady());
+        SmartDashboard.putBoolean("Is Shooting", isShooting());
+        SmartDashboard.putBoolean("Is Ready", isReady());
     }
 
     @Override

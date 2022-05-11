@@ -2,11 +2,13 @@ package org.texastorque.subsystems;
 
 import org.texastorque.Ports;
 import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret extends TorqueSubsystem {
     private static volatile Turret instance;
@@ -76,6 +78,11 @@ public class Turret extends TorqueSubsystem {
             requested = formatRequested(-DIRECTIONAL);
 
         rotator.setVoltage(Math.signum(requested) * Math.min(Math.abs(requested), MAX_VOLTS));
+
+        TorqueSubsystemState.logState(state);
+        SmartDashboard.putNumber("Turret Req", requested);
+        SmartDashboard.putNumber("Turret Deg", getDegrees());
+        SmartDashboard.putBoolean("Turret Locked", isLocked());
     }
 
     @Override

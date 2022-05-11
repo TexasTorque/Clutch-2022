@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Enum",
+      "request": "launch",
+      "mainClass": "org.texastorque.subsystems.Enum",
+      "projectName": "TexasTorque2022++"
+    },
+    {
+      "type": "java",
       "name": "Launch SwerveModuleTests",
       "request": "launch",
       "mainClass": "org.texastorque.torquelib.modules.test.SwerveModuleTests",

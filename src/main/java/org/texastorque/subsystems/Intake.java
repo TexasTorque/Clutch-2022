@@ -1,6 +1,7 @@
 package org.texastorque.subsystems;
 
 import org.texastorque.Ports;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
@@ -114,6 +115,11 @@ public final class Intake extends TorqueSubsystem {
         //     rotary.setPosition(position.getPosition());
 
         rollers.setPercent(direction.getDirection());
+
+        TorqueSubsystemState.logState(direction);
+        TorqueSubsystemState.logState(position);
+
+        SmartDashboard.putNumber("Rotary Position", rotary.getPosition());
        
         // Amazing one liner (;
         // rollers.setPercent(direction.getDirection() != 0 

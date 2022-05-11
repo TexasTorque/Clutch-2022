@@ -1,11 +1,9 @@
 package org.texastorque;
 
+import java.util.ArrayList;
 import org.texastorque.auto.AutoManager;
 import org.texastorque.subsystems.*;
 import org.texastorque.torquelib.base.*;
-
-import java.util.ArrayList;
-
 
 public final class Robot extends TorqueIterative {
 
@@ -74,12 +72,12 @@ public final class Robot extends TorqueIterative {
     @Override
     public final void endCompetition() {
         System.out.printf("     _______              _______                 \n"
-                + "    |__   __|            |__   __|                                \n"
-                + "       | | _____  ____ _ ___| | ___  _ __ __ _ _   _  ___         \n"
-                + "       | |/ _ \\ \\/ / _` / __| |/ _ \\| '__/ _` | | | |/ _ \\    \n"
-                + "       | |  __/>  < (_| \\__ \\ | (_) | | | (_| | |_| |  __/      \n"
-                + "       |_|\\___/_/\\_\\__,_|___/_|\\___/|_|  \\__, |\\__,_|\\___| \n"
-                + "                                            | |                   \n"
-                + "                                            |_|                   \n");
+                          + "    |__   __|            |__   __|                                \n"
+                          + "       | | _____  ____ _ ___| | ___  _ __ __ _ _   _  ___         \n"
+                          + "       | |/ _ \\ \\/ / _` / __| |/ _ \\| '__/ _` | | | |/ _ \\    \n"
+                          + "       | |  __/>  < (_| \\__ \\ | (_) | | | (_| | |_| |  __/      \n"
+                          + "       |_|\\___/_/\\_\\__,_|___/_|\\___/|_|  \\__, |\\__,_|\\___| \n"
+                          + "                                            | |                   \n"
+                          + "                                            |_|                   \n");
     }
 }

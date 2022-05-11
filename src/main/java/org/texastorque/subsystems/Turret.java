@@ -1,14 +1,13 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.TorqueMathUtil;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret extends TorqueSubsystem {
     private static volatile Turret instance;
@@ -24,9 +23,11 @@ public class Turret extends TorqueSubsystem {
     private static final double MAX_RIGHT = -93;
     private static final double DIRECTIONAL = 5;
 
-
     public enum TurretState implements TorqueSubsystemState {
-        CENTER, TRACK, POSITIONAL, OFF;
+        CENTER,
+        TRACK,
+        POSITIONAL,
+        OFF;
     }
 
     private final TorqueLight camera;
@@ -43,13 +44,9 @@ public class Turret extends TorqueSubsystem {
         camera = Shooter.getInstance().getCamera();
     }
 
-    public final void setState(final TurretState state) {
-        this.state = state;
-    }
+    public final void setState(final TurretState state) { this.state = state; }
 
-    public final void setPosition(final double position) {
-        this.position = position;
-    }
+    public final void setPosition(final double position) { this.position = position; }
 
     @Override
     public final void initTeleop() {
@@ -95,9 +92,7 @@ public class Turret extends TorqueSubsystem {
         updateTeleop();
     }
 
-    public final double getDegrees() {
-        return (rotator.getPosition() / RATIO * 360.) % 360;
-    }
+    public final double getDegrees() { return (rotator.getPosition() / RATIO * 360.) % 360; }
 
     private final double calculateRequested(final double requested) {
         return calculateRequested(getDegrees(), requested);
@@ -107,12 +102,10 @@ public class Turret extends TorqueSubsystem {
         return formatRequested(pidController.calculate(real, requested));
     }
 
-    private final double formatRequested(final double requested) {
-        return KS * Math.signum(requested) + requested;
-    }
+    private final double formatRequested(final double requested) { return KS * Math.signum(requested) + requested; }
 
     public final boolean isLocked() {
-        //return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
+        // return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
         return true;
     }
 

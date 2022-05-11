@@ -1,11 +1,10 @@
 package org.texastorque.subsystems;
 
-import org.texastorque.Ports;
-import org.texastorque.torquelib.base.TorqueSubsystemState;
-import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.motors.TorqueSparkMax;
-
 import edu.wpi.first.wpilibj.Timer;
+import org.texastorque.Ports;
+import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.motors.TorqueSparkMax;
 
 public class Magazine extends TorqueSubsystem {
     private static volatile Magazine instance;
@@ -17,13 +16,9 @@ public class Magazine extends TorqueSubsystem {
 
         private final double direction;
 
-        GateDirection(final double direction) {
-            this.direction = direction;
-        }
+        GateDirection(final double direction) { this.direction = direction; }
 
-        public final double getDirection() {
-            return this.direction;
-        }
+        public final double getDirection() { return this.direction; }
     }
 
     public static enum BeltDirection implements TorqueSubsystemState {
@@ -34,13 +29,9 @@ public class Magazine extends TorqueSubsystem {
 
         private final double direction;
 
-        BeltDirection(final double direction) {
-            this.direction = direction;
-        }
+        BeltDirection(final double direction) { this.direction = direction; }
 
-        public final double getDirection() {
-            return this.direction;
-        }
+        public final double getDirection() { return this.direction; }
     }
 
     private final TorqueSparkMax belt, gate;
@@ -59,13 +50,9 @@ public class Magazine extends TorqueSubsystem {
         this.gateDirection = direction;
     }
 
-    public final void setBeltDirection(final BeltDirection direction) {
-        this.beltDirection = direction;
-    }
+    public final void setBeltDirection(final BeltDirection direction) { this.beltDirection = direction; }
 
-    public final void setGateDirection(final GateDirection direction) {
-        this.gateDirection = direction;
-    }
+    public final void setGateDirection(final GateDirection direction) { this.gateDirection = direction; }
 
     private final void reset() {
         this.beltDirection = BeltDirection.OFF;
@@ -83,15 +70,13 @@ public class Magazine extends TorqueSubsystem {
 
     @Override
     public final void updateTeleop() {
-        if (Intake.getInstance().isIntaking()) {
-            beltDirection = BeltDirection.INTAKING;
-        }
+        if (Intake.getInstance().isIntaking()) { beltDirection = BeltDirection.INTAKING; }
 
         if (Shooter.getInstance().isShooting()) {
             if (!shootingStarted) {
                 shootingStarted = true;
                 shootingStartedTime = Timer.getFPGATimestamp();
-            } 
+            }
             if (Timer.getFPGATimestamp() - shootingStartedTime <= DROP_TIME) {
                 beltDirection = BeltDirection.DOWN;
                 gateDirection = GateDirection.REVERSE;
@@ -119,7 +104,7 @@ public class Magazine extends TorqueSubsystem {
 
     @Override
     public final void updateAuto() {
-        updateTeleop();  
+        updateTeleop();
     }
 
     public static final synchronized Magazine getInstance() {

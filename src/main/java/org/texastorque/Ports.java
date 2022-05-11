@@ -30,7 +30,7 @@ public final class Ports {
         public final class ROLLER {
             public static final int LEFT = 19;
             public static final int RIGHT = 10;
-        }   
+        }
         public static final int SWITCH = 3;
     }
 

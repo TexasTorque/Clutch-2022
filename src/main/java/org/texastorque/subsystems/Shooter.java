@@ -3,19 +3,17 @@ package org.texastorque.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
-import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Shooter extends TorqueSubsystem {
     private static volatile Shooter instance;
@@ -31,7 +29,10 @@ public final class Shooter extends TorqueSubsystem {
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
     public enum ShooterState implements TorqueSubsystemState {
-        OFF, REGRESSION, SETPOINT, DISTANCE;
+        OFF,
+        REGRESSION,
+        SETPOINT,
+        DISTANCE;
     }
 
     private final TorqueLight camera;
@@ -55,30 +56,22 @@ public final class Shooter extends TorqueSubsystem {
         flywheel.setSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
 
         hood = new TorqueSparkMax(Ports.SHOOTER.HOOD);
-        hood.configurePID(new KPID(.1, .001,0, 0, -.70, .70, .3));
+        hood.configurePID(new KPID(.1, .001, 0, 0, -.70, .70, .3));
         hood.configurePositionalCANFrame();
         hood.burnFlash();
     }
 
-    public final void setState(final ShooterState state) { 
-        this.state = state; 
-    }
+    public final void setState(final ShooterState state) { this.state = state; }
 
-    public final void setHoodPosition(final double hoodSetpoint) {
-        this.hoodSetpoint = hoodSetpoint;
-    }
+    public final void setHoodPosition(final double hoodSetpoint) { this.hoodSetpoint = hoodSetpoint; }
 
-    public final void setFlywheelSpeed(final double flywheelSpeed) {
-        this.flywheelSpeed = flywheelSpeed;
-    }
+    public final void setFlywheelSpeed(final double flywheelSpeed) { this.flywheelSpeed = flywheelSpeed; }
 
-    public final void setDistance(final double distance) {
-        this.distance = distance;
-    }
+    public final void setDistance(final double distance) { this.distance = distance; }
 
     @Override
     public final void initTeleop() {
-        state = ShooterState.OFF; 
+        state = ShooterState.OFF;
     }
 
     @Override
@@ -116,7 +109,7 @@ public final class Shooter extends TorqueSubsystem {
 
     @Override
     public final void initAuto() {
-        state = ShooterState.OFF; 
+        state = ShooterState.OFF;
     }
 
     @Override
@@ -124,9 +117,7 @@ public final class Shooter extends TorqueSubsystem {
         updateTeleop();
     }
 
-    public final boolean isShooting() {
-        return state != ShooterState.OFF;
-    }
+    public final boolean isShooting() { return state != ShooterState.OFF; }
 
     public final boolean isReady() {
         return isShooting() && Math.abs(flywheelSpeed - flywheel.getVelocityRPM()) < ERROR;
@@ -136,9 +127,7 @@ public final class Shooter extends TorqueSubsystem {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) {
-        return clampRPM((173.5 * distance) + 1316);
-    }
+    private final double regressionRPM(final double distance) { return clampRPM((173.5 * distance) + 1316); }
 
     /**
      * @param distance Distance (m)
@@ -153,13 +142,9 @@ public final class Shooter extends TorqueSubsystem {
         return TorqueMathUtil.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX);
     }
 
-    private final double clampHood(final double hood) {
-        return TorqueMathUtil.constrain(hood, HOOD_MIN, HOOD_MAX);
-    }
+    private final double clampHood(final double hood) { return TorqueMathUtil.constrain(hood, HOOD_MIN, HOOD_MAX); }
 
-    public final TorqueLight getCamera() {
-        return camera;
-    }
+    public final TorqueLight getCamera() { return camera; }
 
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;

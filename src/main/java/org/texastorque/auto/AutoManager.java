@@ -6,8 +6,7 @@ public final class AutoManager extends TorqueAutoManager {
     private static volatile AutoManager instance;
 
     @Override
-    public final void init() {
-    }
+    public final void init() {}
 
     /**
      * Get the AutoManager instance

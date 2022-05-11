@@ -36,6 +36,13 @@ Before you do anything, check the project board and issues tab. If you are addin
 
 I do not care, I will format with Clang-Format regardless 🙃.
 
+Just remember the order of modifiers (from left to right):
+
+- `private`, `protected`, or `public`
+- `static`
+- `final`
+- `volatile` or `synchronized`
+
 ~~To acquire the formatter in VSCode, download [this extension](https://marketplace.visualstudio.com/items?itemName=redhat.java).~~
 
 ~~Then, go to `Settings -> Text Editor -> Formatting` and enable "Format on Paste" and "Fromat on Save". Additionally, search for "default formatter" and select "Language Support for Java(TM) by Red Hat".~~

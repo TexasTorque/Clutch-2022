@@ -15,13 +15,14 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Shooter extends TorqueSubsystem {
     private static volatile Shooter instance;
 
     public static final double HOOD_MIN = 0;
     public static final double HOOD_MAX = 40;
-    public static final double ERROR = 45;
+    public static final double ERROR = 83.24;
     public static final double FLYWHEEEL_MAX = 3000;
     public static final double FLYWHEEEL_IDLE = 0;
     public static final double FLYWHEEEL_REDUCTION = 5 / 3.;
@@ -82,10 +83,11 @@ public final class Shooter extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        camera.update();
+        // camera.update();
 
         if (state == ShooterState.REGRESSION) {
-            distance = camera.getDistance();
+            // distance = camera.getDistance();
+            distance = 0;
             flywheelSpeed = regressionRPM(distance);
             hoodSetpoint = regressionHood(distance);
         } else if (state == ShooterState.DISTANCE) {
@@ -94,12 +96,20 @@ public final class Shooter extends TorqueSubsystem {
         } else if (state == ShooterState.SETPOINT) {
 
         } else {
+            flywheelSpeed = 0;
             flywheel.setPercent(FLYWHEEEL_IDLE);
             return;
         }
 
         flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
         hood.setPosition(clampHood(hoodSetpoint));
+
+        SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
+        SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
+
+        SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
+        SmartDashboard.putBoolean("IsShooting", isShooting());
+        SmartDashboard.putBoolean("IsReady", isReady());
     }
 
     @Override
@@ -138,7 +148,7 @@ public final class Shooter extends TorqueSubsystem {
     }
 
     private double clampRPM(final double rpm) {
-        return TorqueMathUtil.constrain(rpm, 0, FLYWHEEEL_MAX);
+        return TorqueMathUtil.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX);
     }
 
     private double clampHood(final double hood) {

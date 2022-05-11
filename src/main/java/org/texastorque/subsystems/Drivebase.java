@@ -113,9 +113,9 @@ public final class Drivebase extends TorqueSubsystem {
 
     @Override
     public void updateTeleop() {
-        SmartDashboard.putNumber("x", speeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("y", speeds.vyMetersPerSecond);
-        SmartDashboard.putNumber("r", speeds.omegaRadiansPerSecond);
+        SmartDashboard.putNumber("Speed X", speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("Speed Y", speeds.vyMetersPerSecond);
+        SmartDashboard.putNumber("Speed R", speeds.omegaRadiansPerSecond);
 
         if (state == DrivebaseState.X_FACTOR) {
             swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);

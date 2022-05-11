@@ -105,7 +105,8 @@ public class Turret extends TorqueSubsystem {
     }
 
     public boolean isLocked() {
-        return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
+        //return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
+        return true;
     }
 
     public static synchronized Turret getInstance() {

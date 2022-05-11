@@ -29,7 +29,7 @@ public final class Intake extends TorqueSubsystem {
             this.direction = direction;
         }
 
-        public double getDirection() {
+        public final double getDirection() {
             return direction;
         }
     }
@@ -46,7 +46,7 @@ public final class Intake extends TorqueSubsystem {
             this.position = position;
         }
 
-        public double getPosition() {
+        public final double getPosition() {
             return position;
         }
     }
@@ -59,8 +59,8 @@ public final class Intake extends TorqueSubsystem {
     private IntakeDirection direction;
     private IntakePosition position;
 
-    private TorqueSparkMax rotary, rollers;
-    private DigitalInput limitSwitch;
+    private final TorqueSparkMax rotary, rollers;
+    private final DigitalInput limitSwitch;
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
@@ -77,37 +77,37 @@ public final class Intake extends TorqueSubsystem {
         limitSwitch = new DigitalInput(Ports.INTAKE.SWITCH);
     }
 
-    public void setState(final IntakeDirection direction, final IntakePosition position) {
+    public final void setState(final IntakeDirection direction, final IntakePosition position) {
         this.direction = direction;
         this.position = position;
     }
 
-    public void setDirection(final IntakeDirection direction) {
+    public final void setDirection(final IntakeDirection direction) {
         this.direction = direction;
     }
 
-    public void setPosition(final IntakePosition position) {
+    public final void setPosition(final IntakePosition position) {
         this.position = position;
     }
 
-    public IntakeDirection getDirection() {
+    public final IntakeDirection getDirection() {
         return direction;
     }
 
-    public IntakePosition getPosition() {
+    public final IntakePosition getPosition() {
         return position;
     }
 
-    public boolean isIntaking() {
+    public final boolean isIntaking() {
         return direction == IntakeDirection.INTAKE && position == IntakePosition.DOWN;
     }
 
     @Override
-    public void initTeleop() {
+    public final void initTeleop() {
     }
 
     @Override
-    public void updateTeleop() {
+    public final void updateTeleop() {
         // Needs climber logic
         // if (limitSwitch.get() && position.getPosition() >= rotary.getPosition()) 
         //     rotary.setCurrent(.1);
@@ -142,13 +142,13 @@ public final class Intake extends TorqueSubsystem {
     }
 
     @Override
-    public void initAuto() {
+    public final void initAuto() {
         
         
     }
 
     @Override
-    public void updateAuto() {
+    public final void updateAuto() {
         if (limitSwitch.get() && position.getPosition() >= rotary.getPosition()) 
             rotary.setCurrent(.1);
         else
@@ -157,7 +157,7 @@ public final class Intake extends TorqueSubsystem {
         rollers.setPercent(direction.getDirection());
     }
 
-    public static synchronized Intake getInstance() {
+    public static final synchronized Intake getInstance() {
         return instance == null ? instance = new Intake() : instance;
     }
 }

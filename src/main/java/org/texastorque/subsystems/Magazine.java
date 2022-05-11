@@ -21,7 +21,7 @@ public class Magazine extends TorqueSubsystem {
             this.direction = direction;
         }
 
-        public double getDirection() {
+        public final double getDirection() {
             return this.direction;
         }
     }
@@ -38,12 +38,12 @@ public class Magazine extends TorqueSubsystem {
             this.direction = direction;
         }
 
-        public double getDirection() {
+        public final double getDirection() {
             return this.direction;
         }
     }
 
-    private TorqueSparkMax belt, gate;
+    private final TorqueSparkMax belt, gate;
     private BeltDirection beltDirection;
     private GateDirection gateDirection;
 
@@ -54,26 +54,26 @@ public class Magazine extends TorqueSubsystem {
         gate.configureDumbCANFrame();
     }
 
-    public void setState(final BeltDirection state, final GateDirection direction) {
+    public final void setState(final BeltDirection state, final GateDirection direction) {
         this.beltDirection = state;
         this.gateDirection = direction;
     }
 
-    public void setBeltDirection(final BeltDirection direction) {
+    public final void setBeltDirection(final BeltDirection direction) {
         this.beltDirection = direction;
     }
 
-    public void setGateDirection(final GateDirection direction) {
+    public final void setGateDirection(final GateDirection direction) {
         this.gateDirection = direction;
     }
 
-    private void reset() {
+    private final void reset() {
         this.beltDirection = BeltDirection.OFF;
         this.gateDirection = GateDirection.OFF;
     }
 
     @Override
-    public void initTeleop() {
+    public final void initTeleop() {
         reset();
     }
 
@@ -82,7 +82,7 @@ public class Magazine extends TorqueSubsystem {
     private final double DROP_TIME = .5;
 
     @Override
-    public void updateTeleop() {
+    public final void updateTeleop() {
         if (Intake.getInstance().isIntaking()) {
             beltDirection = BeltDirection.INTAKING;
         }
@@ -113,16 +113,16 @@ public class Magazine extends TorqueSubsystem {
     }
 
     @Override
-    public void initAuto() {
+    public final void initAuto() {
         reset();
     }
 
     @Override
-    public void updateAuto() {
+    public final void updateAuto() {
         updateTeleop();  
     }
 
-    public static synchronized Magazine getInstance() {
+    public static final synchronized Magazine getInstance() {
         return instance == null ? instance = new Magazine() : instance;
     }
 }

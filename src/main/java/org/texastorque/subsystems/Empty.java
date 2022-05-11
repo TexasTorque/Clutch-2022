@@ -10,26 +10,26 @@ public class Empty extends TorqueSubsystem {
     }
 
     @Override
-    public void initTeleop() {
+    public final void initTeleop() {
         
     }
 
     @Override
-    public void updateTeleop() {
+    public final void updateTeleop() {
         
     }
 
     @Override
-    public void initAuto() {
+    public final void initAuto() {
         
     }
 
     @Override
-    public void updateAuto() {
+    public final void updateAuto() {
         
     }
 
-    public static synchronized Empty getInstance() {
+    public static final synchronized Empty getInstance() {
         return instance == null ? instance = new Empty() : instance;
     }
 }

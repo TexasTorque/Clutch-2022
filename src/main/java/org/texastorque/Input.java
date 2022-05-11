@@ -16,6 +16,7 @@ import org.texastorque.torquelib.util.TorqueSpeedSettings;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
+@SuppressWarnings("deprecation")
 public class Input extends TorqueInputManager {
     private static volatile Input instance;
 
@@ -29,14 +30,14 @@ public class Input extends TorqueInputManager {
     }
 
     @Override
-    public void update() {
+    public final void update() {
         updateDrivebase();
         updateIntake();
         updateMagazine();
         updateShooter();
     }
 
-    private void updateDrivebase() {
+    private final void updateDrivebase() {
         Drivebase.getInstance().setState(DrivebaseState.FIELD_RELATIVE);
         Drivebase.getInstance().setSpeeds(new ChassisSpeeds(
                 driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED
@@ -48,7 +49,7 @@ public class Input extends TorqueInputManager {
         ));
     }
 
-    private void updateIntake() {
+    private final void updateIntake() {
         if (driver.getRightTrigger()) {
             Intake.getInstance().setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
         } else if (driver.getLeftTrigger()) {
@@ -58,7 +59,7 @@ public class Input extends TorqueInputManager {
         }
     }
 
-    private void updateMagazine() {
+    private final void updateMagazine() {
         if (operator.getRightBumper()) {
             Magazine.getInstance().setBeltDirection(BeltDirection.UP);
         } else if (operator.getRightTrigger()) {
@@ -76,7 +77,7 @@ public class Input extends TorqueInputManager {
         }
     }
 
-    private void updateShooter() {
+    private final void updateShooter() {
         if (driver.getXButton()) {
             Shooter.getInstance().setState(ShooterState.REGRESSION);
         } else if (driver.getAButton()) {
@@ -91,7 +92,7 @@ public class Input extends TorqueInputManager {
         }
     }
 
-    public static synchronized Input getInstance() {
+    public static final synchronized Input getInstance() {
         return instance == null ? instance = new Input() : instance;
     }
 }

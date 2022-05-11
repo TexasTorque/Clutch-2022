@@ -43,28 +43,28 @@ public class Turret extends TorqueSubsystem {
         camera = Shooter.getInstance().getCamera();
     }
 
-    public void setState(final TurretState state) {
+    public final void setState(final TurretState state) {
         this.state = state;
     }
 
-    public void setPosition(final double position) {
+    public final void setPosition(final double position) {
         this.position = position;
     }
 
     @Override
-    public void initTeleop() {
+    public final void initTeleop() {
         state = TurretState.OFF;
     }
 
     @Override
-    public void updateTeleop() {
-        if (state == TurretState.OFF)
+    public final void updateTeleop() {
+        if (state == TurretState.OFF) {
             requested = 0;
-        else if (state == TurretState.CENTER)
+        } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);
-        else if (state == TurretState.POSITIONAL)
+        } else if (state == TurretState.POSITIONAL) {
             requested = calculateRequested(TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
-        else if (state == TurretState.TRACK) {
+        } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
                 requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
             else
@@ -86,37 +86,37 @@ public class Turret extends TorqueSubsystem {
     }
 
     @Override
-    public void initAuto() {
+    public final void initAuto() {
         state = TurretState.OFF;
     }
 
     @Override
-    public void updateAuto() {
+    public final void updateAuto() {
         updateTeleop();
     }
 
-    public double getDegrees() {
+    public final double getDegrees() {
         return (rotator.getPosition() / RATIO * 360.) % 360;
     }
 
-    private double calculateRequested(final double requested) {
+    private final double calculateRequested(final double requested) {
         return calculateRequested(getDegrees(), requested);
     }
 
-    private double calculateRequested(final double real, final double requested) {
+    private final double calculateRequested(final double real, final double requested) {
         return formatRequested(pidController.calculate(real, requested));
     }
 
-    private double formatRequested(final double requested) {
+    private final double formatRequested(final double requested) {
         return KS * Math.signum(requested) + requested;
     }
 
-    public boolean isLocked() {
+    public final boolean isLocked() {
         //return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
         return true;
     }
 
-    public static synchronized Turret getInstance() {
+    public static final synchronized Turret getInstance() {
         return instance == null ? instance = new Turret() : instance;
     }
 }

@@ -15,7 +15,7 @@ public final class Robot extends TorqueIterative {
     private ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
 
     @Override
-    public void robotInit() {
+    public final void robotInit() {
         subsystems.add(Drivebase.getInstance());
         subsystems.add(Intake.getInstance());
         subsystems.add(Magazine.getInstance());
@@ -23,56 +23,56 @@ public final class Robot extends TorqueIterative {
     }
 
     @Override
-    public void alwaysContinuous() {
+    public final void alwaysContinuous() {
         subsystems.forEach(TorqueSubsystem::smartDashboard);
     }
 
     @Override
-    public void disabledInit() {
+    public final void disabledInit() {
         subsystems.forEach(TorqueSubsystem::initDisabled);
     }
 
     @Override
-    public void disabledContinuous() {
+    public final void disabledContinuous() {
         subsystems.forEach(TorqueSubsystem::updateDisabled);
     }
 
     @Override
-    public void teleopInit() {
+    public final void teleopInit() {
         subsystems.forEach(TorqueSubsystem::initTeleop);
     }
 
     @Override
-    public void teleopContinuous() {
+    public final void teleopContinuous() {
         input.update();
         input.smartDashboard();
         subsystems.forEach(TorqueSubsystem::updateTeleop);
     }
 
     @Override
-    public void autoInit() {
+    public final void autoInit() {
         autoManager.chooseCurrentSequence();
         subsystems.forEach(TorqueSubsystem::initAuto);
     }
 
     @Override
-    public void testContinuous() {
+    public final void testContinuous() {
         teleopContinuous();
     }
 
     @Override
-    public void testInit() {
+    public final void testInit() {
         teleopInit();
     }
 
     @Override
-    public void autoContinuous() {
+    public final void autoContinuous() {
         autoManager.runCurrentSequence();
         subsystems.forEach(TorqueSubsystem::updateAuto);
     }
 
     @Override
-    public void endCompetition() {
+    public final void endCompetition() {
         System.out.printf("     _______              _______                 \n"
                 + "    |__   __|            |__   __|                                \n"
                 + "       | | _____  ____ _ ___| | ___  _ __ __ _ _   _  ___         \n"

@@ -46,9 +46,9 @@ public final class Drivebase extends TorqueSubsystem {
     private static final double DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875);
     private static final double DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
 
-    public final static KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2);
-    public final static SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
-    public final static KPID ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
+    public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2);
+    public static final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
+    public static final KPID ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
 
     private final Translation2d locationBackLeft = new Translation2d(DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y);
     private final Translation2d locationBackRight = new Translation2d(DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
@@ -65,7 +65,7 @@ public final class Drivebase extends TorqueSubsystem {
     private DrivebaseState state = DrivebaseState.FIELD_RELATIVE;
     private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
 
-    private TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
+    private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
         return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS,
                 DRIVE_PID, ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED, DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
     }
@@ -90,30 +90,30 @@ public final class Drivebase extends TorqueSubsystem {
         reset();
     }
 
-    public void setState(final DrivebaseState state) {
+    public final void setState(final DrivebaseState state) {
         this.state = state;
     }
 
-    public DrivebaseState getState() {
+    public final DrivebaseState getState() {
         return state;
     }
 
-    public void setSpeeds(final ChassisSpeeds speeds) {
+    public final void setSpeeds(final ChassisSpeeds speeds) {
         this.speeds = speeds;
     }
 
-    public ChassisSpeeds getSpeeds() {
+    public final ChassisSpeeds getSpeeds() {
         return speeds;
     }
 
     @Override
-    public void initTeleop() {
+    public final void initTeleop() {
         reset();
         state = DrivebaseState.FIELD_RELATIVE;
     }
 
     @Override
-    public void updateTeleop() {
+    public final void updateTeleop() {
         SmartDashboard.putNumber("Speed X", speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Speed Y", speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("Speed R", speeds.omegaRadiansPerSecond);
@@ -153,33 +153,33 @@ public final class Drivebase extends TorqueSubsystem {
     }
 
     @Override
-    public void initAuto() {
+    public final void initAuto() {
         reset();        
         state = DrivebaseState.ROBOT_RELATIVE;
     }
 
     @Override
-    public void updateAuto() {
+    public final void updateAuto() {
         updateTeleop();
     }
 
-    public SwerveDriveKinematics getKinematics() {
+    public final SwerveDriveKinematics getKinematics() {
         return kinematics;
     }
 
-    public TorqueSwerveOdometry getOdometry() {
+    public final TorqueSwerveOdometry getOdometry() {
         return odometry;
     }
 
-    public SwerveDrivePoseEstimator getPoseEstimator() {
+    public final SwerveDrivePoseEstimator getPoseEstimator() {
         return poseEstimator;
     }
 
-    public void reset() {
+    public final void reset() {
         speeds = new ChassisSpeeds(0, 0, 0); 
     }
 
-    public static synchronized Drivebase getInstance() {
+    public static final synchronized Drivebase getInstance() {
         return instance == null ? instance = new Drivebase() : instance;
     }
 }

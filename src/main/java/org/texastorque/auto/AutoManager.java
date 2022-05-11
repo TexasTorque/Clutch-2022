@@ -6,7 +6,7 @@ public final class AutoManager extends TorqueAutoManager {
     private static volatile AutoManager instance;
 
     @Override
-    public void init() {
+    public final void init() {
     }
 
     /**
@@ -14,7 +14,7 @@ public final class AutoManager extends TorqueAutoManager {
      *
      * @return AutoManager
      */
-    public static synchronized AutoManager getInstance() {
+    public static final synchronized AutoManager getInstance() {
         return instance == null ? instance = new AutoManager() : instance;
     }
 }

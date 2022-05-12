@@ -10,7 +10,9 @@ import org.texastorque.subsystems.Magazine;
 import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.subsystems.Magazine.GateDirection;
 import org.texastorque.subsystems.Shooter;
+import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Shooter.ShooterState;
+import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInputManager;
 import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueSpeedSettings;
@@ -78,15 +80,26 @@ public class Input extends TorqueInputManager {
     private final void updateShooter() {
         if (driver.getXButton()) {
             Shooter.getInstance().setState(ShooterState.REGRESSION);
+            //Turret.getInstance().setState(TurretState.TRACK);
         } else if (driver.getAButton()) {
             Shooter.getInstance().setState(ShooterState.SETPOINT);
-            Shooter.getInstance().setFlywheelSpeed(1500);
+            Shooter.getInstance().setFlywheelSpeed(2400);
             Shooter.getInstance().setHoodPosition(Shooter.HOOD_MAX);
+            Turret.getInstance().setState(TurretState.CENTER);
         } else if (driver.getYButton()) {
             Shooter.getInstance().setState(ShooterState.DISTANCE);
             Shooter.getInstance().setDistance(3);
+            Turret.getInstance().setState(TurretState.CENTER);
         } else {
             Shooter.getInstance().setState(ShooterState.OFF);
+        }
+
+        if (operator.getXButton()) {
+            Turret.getInstance().setState(TurretState.POSITIONAL);
+            Turret.getInstance().setPosition(-20);
+        } else if (operator.getBButton()) {
+            Turret.getInstance().setState(TurretState.POSITIONAL);
+            Turret.getInstance().setPosition(20);
         }
     }
 

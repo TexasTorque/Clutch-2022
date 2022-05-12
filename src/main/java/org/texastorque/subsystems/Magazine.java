@@ -1,6 +1,8 @@
 package org.texastorque.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.texastorque.Ports;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
@@ -66,11 +68,11 @@ public class Magazine extends TorqueSubsystem {
 
     private boolean shootingStarted = false;
     private double shootingStartedTime = 0;
-    private final double DROP_TIME = .5;
+    private final double DROP_TIME = .2;
 
     @Override
     public final void updateTeleop() {
-        if (Intake.getInstance().isIntaking()) { beltDirection = BeltDirection.INTAKING; }
+        if (Intake.getInstance().isIntaking()) { beltDirection = BeltDirection.UP; }
 
         if (Shooter.getInstance().isShooting()) {
             if (!shootingStarted) {
@@ -95,6 +97,8 @@ public class Magazine extends TorqueSubsystem {
 
         TorqueSubsystemState.logState(beltDirection);
         TorqueSubsystemState.logState(gateDirection);
+
+        SmartDashboard.putNumber("Belt Amps", belt.getCurrent());
     }
 
     @Override

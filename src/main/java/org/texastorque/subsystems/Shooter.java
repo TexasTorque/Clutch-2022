@@ -50,7 +50,8 @@ public final class Shooter extends TorqueSubsystem {
         flywheel = new TorqueFalcon(Ports.SHOOTER.FLYWHEEL.LEFT);
         flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
 
-        flywheel.configurePID(new KPID(0.0999999046, 5e-05, 0, 0.0603409074, -1, 1, 1000));
+        //flywheel.configurePID(new KPID(0.0999999046, 5e-05, 0, 0.0603409074, -1, 1, 1000));
+        flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
         flywheel.setNeutralMode(NeutralMode.Coast);
         flywheel.setStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
         flywheel.setSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
@@ -91,10 +92,11 @@ public final class Shooter extends TorqueSubsystem {
         } else {
             flywheelSpeed = 0;
             flywheel.setPercent(FLYWHEEEL_IDLE);
-            return;
         }
 
-        flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
+        if (state != ShooterState.OFF) {
+            flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
+        }
         hood.setPosition(clampHood(hoodSetpoint));
 
         TorqueSubsystemState.logState(state);

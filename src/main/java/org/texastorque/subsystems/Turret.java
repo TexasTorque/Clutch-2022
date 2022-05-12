@@ -12,9 +12,10 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 public class Turret extends TorqueSubsystem {
     private static volatile Turret instance;
 
-    private static final double MAX_VOLTS = 11;
+    private static final double MAX_VOLTS = 12;
     private static final double RATIO = 128.4722;
-    private static final double KS = 0.14066;
+    //private static final double KS = 0.14066;
+    private static final double KS = 0.4;
 
     private static final double ROT_CENTER = 0;
     private static final double ROT_BACK = 180;
@@ -33,7 +34,7 @@ public class Turret extends TorqueSubsystem {
     private final TorqueLight camera;
     private final TorqueSparkMax rotator;
 
-    private final PIDController pidController = new PIDController(0.1039, 0, 0);
+    private final PIDController pidController = new PIDController(0.5, 0, 0);
 
     private double requested = 0;
     private TurretState state = TurretState.OFF;
@@ -42,6 +43,7 @@ public class Turret extends TorqueSubsystem {
     private Turret() {
         rotator = new TorqueSparkMax(Ports.TURRET);
         camera = Shooter.getInstance().getCamera();
+        rotator.setEncoderZero(RATIO * -90 / 360);
     }
 
     public final void setState(final TurretState state) { this.state = state; }
@@ -55,6 +57,13 @@ public class Turret extends TorqueSubsystem {
 
     @Override
     public final void updateTeleop() {
+        if (getDegrees() > MAX_LEFT)
+            state = TurretState.CENTER;
+            //requested = formatRequested(-DIRECTIONAL);
+        else if (getDegrees() < MAX_RIGHT)
+            state = TurretState.CENTER;
+            //requested = formatRequested(DIRECTIONAL);
+
         if (state == TurretState.OFF) {
             requested = 0;
         } else if (state == TurretState.CENTER) {
@@ -69,14 +78,10 @@ public class Turret extends TorqueSubsystem {
         } else
             requested = 0;
 
-        if (getDegrees() > MAX_LEFT)
-            requested = formatRequested(DIRECTIONAL);
-        else if (getDegrees() < MAX_RIGHT)
-            requested = formatRequested(-DIRECTIONAL);
-
         rotator.setVoltage(Math.signum(requested) * Math.min(Math.abs(requested), MAX_VOLTS));
 
         TorqueSubsystemState.logState(state);
+        
         SmartDashboard.putNumber("Turret Req", requested);
         SmartDashboard.putNumber("Turret Deg", getDegrees());
         SmartDashboard.putBoolean("Turret Locked", isLocked());

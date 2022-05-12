@@ -18,6 +18,7 @@ public final class Robot extends TorqueIterative {
         subsystems.add(Intake.getInstance());
         subsystems.add(Magazine.getInstance());
         subsystems.add(Shooter.getInstance());
+        subsystems.add(Turret.getInstance());
     }
 
     @Override

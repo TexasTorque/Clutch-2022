@@ -18,7 +18,7 @@ import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueSpeedSettings;
 
 @SuppressWarnings("deprecation")
-public class Input extends TorqueInputManager {
+public final class Input extends TorqueInputManager {
     private static volatile Input instance;
 
     private final TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6

@@ -8,7 +8,7 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 
-public class Magazine extends TorqueSubsystem {
+public final class Magazine extends TorqueSubsystem {
     private static volatile Magazine instance;
 
     public static enum GateDirection implements TorqueSubsystemState {

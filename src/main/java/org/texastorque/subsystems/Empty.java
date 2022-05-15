@@ -1,8 +1,9 @@
 package org.texastorque.subsystems;
 
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 
-public final class Empty extends TorqueSubsystem {
+public final class Empty extends TorqueSubsystem implements Subsystems {
     private static volatile Empty instance;
 
     private Empty() {}

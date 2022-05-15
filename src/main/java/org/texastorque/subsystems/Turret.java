@@ -3,13 +3,14 @@ package org.texastorque.subsystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
-public class Turret extends TorqueSubsystem {
+public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
     private static final double MAX_VOLTS = 12;
@@ -42,7 +43,7 @@ public class Turret extends TorqueSubsystem {
 
     private Turret() {
         rotator = new TorqueSparkMax(Ports.TURRET);
-        camera = Shooter.getInstance().getCamera();
+        camera = shooter.getCamera();
         rotator.setEncoderZero(RATIO * -90 / 360);
     }
 

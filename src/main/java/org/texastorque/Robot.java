@@ -2,23 +2,22 @@ package org.texastorque;
 
 import java.util.ArrayList;
 import org.texastorque.auto.AutoManager;
-import org.texastorque.subsystems.*;
 import org.texastorque.torquelib.base.*;
 
-public final class Robot extends TorqueIterative {
+public final class Robot extends TorqueIterative implements Subsystems {
 
-    private Input input = Input.getInstance();
-    private AutoManager autoManager = AutoManager.getInstance();
+    private final Input input = Input.getInstance();
+    private final AutoManager autoManager = AutoManager.getInstance();
 
-    private ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
+    private final ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
 
     @Override
     public final void robotInit() {
-        subsystems.add(Drivebase.getInstance());
-        subsystems.add(Intake.getInstance());
-        subsystems.add(Magazine.getInstance());
-        subsystems.add(Shooter.getInstance());
-        subsystems.add(Turret.getInstance());
+        subsystems.add(drivebase);
+        subsystems.add(intake);
+        subsystems.add(magazine);
+        subsystems.add(shooter);
+        subsystems.add(turret);
     }
 
     @Override

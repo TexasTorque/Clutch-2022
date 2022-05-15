@@ -18,7 +18,7 @@ import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueSpeedSettings;
 
 @SuppressWarnings("deprecation")
-public final class Input extends TorqueInputManager {
+public final class Input extends TorqueInputManager implements Subsystems {
     private static volatile Input instance;
 
     private final TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6
@@ -39,8 +39,8 @@ public final class Input extends TorqueInputManager {
     }
 
     private final void updateDrivebase() {
-        Drivebase.getInstance().setState(DrivebaseState.FIELD_RELATIVE);
-        Drivebase.getInstance().setSpeeds(new ChassisSpeeds(
+        drivebase.setState(DrivebaseState.FIELD_RELATIVE);
+        drivebase.setSpeeds(new ChassisSpeeds(
                 driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
                         xSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false),
                 -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
@@ -51,55 +51,55 @@ public final class Input extends TorqueInputManager {
 
     private final void updateIntake() {
         if (driver.getRightTrigger()) {
-            Intake.getInstance().setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
+            intake.setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
         } else if (driver.getLeftTrigger()) {
-            Intake.getInstance().setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
+            intake.setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
         } else {
-            Intake.getInstance().setState(IntakeDirection.STOPPED, IntakePosition.UP);
+            intake.setState(IntakeDirection.STOPPED, IntakePosition.UP);
         }
     }
 
     private final void updateMagazine() {
         if (operator.getRightBumper()) {
-            Magazine.getInstance().setBeltDirection(BeltDirection.UP);
+            magazine.setBeltDirection(BeltDirection.UP);
         } else if (operator.getRightTrigger()) {
-            Magazine.getInstance().setBeltDirection(BeltDirection.DOWN);
+            magazine.setBeltDirection(BeltDirection.DOWN);
         } else {
-            Magazine.getInstance().setBeltDirection(BeltDirection.OFF);
+            magazine.setBeltDirection(BeltDirection.OFF);
         }
 
         if (operator.getLeftBumper()) {
-            Magazine.getInstance().setGateDirection(GateDirection.FORWARD);
+            magazine.setGateDirection(GateDirection.FORWARD);
         } else if (operator.getLeftTrigger()) {
-            Magazine.getInstance().setGateDirection(GateDirection.REVERSE);
+            magazine.setGateDirection(GateDirection.REVERSE);
         } else {
-            Magazine.getInstance().setGateDirection(GateDirection.OFF);
+            magazine.setGateDirection(GateDirection.OFF);
         }
     }
 
     private final void updateShooter() {
         if (driver.getXButton()) {
-            Shooter.getInstance().setState(ShooterState.REGRESSION);
-            //Turret.getInstance().setState(TurretState.TRACK);
+            shooter.setState(ShooterState.REGRESSION);
+            //turret.setState(TurretState.TRACK);
         } else if (driver.getAButton()) {
-            Shooter.getInstance().setState(ShooterState.SETPOINT);
-            Shooter.getInstance().setFlywheelSpeed(2400);
-            Shooter.getInstance().setHoodPosition(Shooter.HOOD_MAX);
-            Turret.getInstance().setState(TurretState.CENTER);
+            shooter.setState(ShooterState.SETPOINT);
+            shooter.setFlywheelSpeed(2400);
+            shooter.setHoodPosition(Shooter.HOOD_MAX);
+            turret.setState(TurretState.CENTER);
         } else if (driver.getYButton()) {
-            Shooter.getInstance().setState(ShooterState.DISTANCE);
-            Shooter.getInstance().setDistance(3);
-            Turret.getInstance().setState(TurretState.CENTER);
+            shooter.setState(ShooterState.DISTANCE);
+            shooter.setDistance(3);
+            turret.setState(TurretState.CENTER);
         } else {
-            Shooter.getInstance().setState(ShooterState.OFF);
+            shooter.setState(ShooterState.OFF);
         }
 
         if (operator.getXButton()) {
-            Turret.getInstance().setState(TurretState.POSITIONAL);
-            Turret.getInstance().setPosition(-20);
+            turret.setState(TurretState.POSITIONAL);
+            turret.setPosition(-20);
         } else if (operator.getBButton()) {
-            Turret.getInstance().setState(TurretState.POSITIONAL);
-            Turret.getInstance().setPosition(20);
+            turret.setState(TurretState.POSITIONAL);
+            turret.setPosition(20);
         }
     }
 

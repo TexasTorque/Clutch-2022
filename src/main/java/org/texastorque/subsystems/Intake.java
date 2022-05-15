@@ -3,6 +3,7 @@ package org.texastorque.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
@@ -14,7 +15,7 @@ import org.texastorque.torquelib.util.KPID;
  * @author Jack Pittenger
  * @author Justus Languell
  */
-public final class Intake extends TorqueSubsystem {
+public final class Intake extends TorqueSubsystem implements Subsystems {
     private static volatile Intake instance;
 
     public enum IntakeDirection implements TorqueSubsystemState {
@@ -104,16 +105,16 @@ public final class Intake extends TorqueSubsystem {
         // rollers.setPercent(direction.getDirection() != 0
         //         ? -Math.min(
         //                 (Math.sqrt(
-        //                         Math.pow(Drivebase.getInstance().getSpeeds().vxMetersPerSecond, 2)
-        //                         + Math.pow(Drivebase.getInstance().getSpeeds().vyMetersPerSecond, 2)
+        //                         Math.pow(drivebase.getSpeeds().vxMetersPerSecond, 2)
+        //                         + Math.pow(drivebase.getSpeeds().vyMetersPerSecond, 2)
         //                 ) / Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED)
         //                 * (ROLLER_MAX_SPEED - ROLLER_MIN_SPEED)
         //                 + ROLLER_MIN_SPEED, ROLLER_MAX_SPEED)
         //         : direction.getDirection());
 
         // The above one liner but readable
-        // final double xSpeed = Drivebase.getInstance().getSpeeds().vxMetersPerSecond;
-        // final double ySpeed = Drivebase.getInstance().getSpeeds().vyMetersPerSecond;
+        // final double xSpeed = drivebase.getSpeeds().vxMetersPerSecond;
+        // final double ySpeed = drivebase.getSpeeds().vyMetersPerSecond;
         // final double speed = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
         // final double percent = speed / Drivebase.DRIVE_MAX_ROTATIONAL_SPEED;
         // final double intake = Math.min(percent * (ROLLER_MAX_SPEED - ROLLER_MIN_SPEED) + ROLLER_MIN_SPEED,

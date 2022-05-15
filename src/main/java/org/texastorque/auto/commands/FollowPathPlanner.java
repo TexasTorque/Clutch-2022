@@ -9,12 +9,14 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+
+import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.torquelib.auto.TorqueCommand;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 
-public final class FollowPathPlanner extends TorqueCommand {
+public final class FollowPathPlanner extends TorqueCommand implements Subsystems {
     private final PIDController xController = new PIDController(1, 0, 0);
     private final PIDController yController = new PIDController(1, 0, 0);
     private final ProfiledPIDController thetaController =
@@ -54,18 +56,18 @@ public final class FollowPathPlanner extends TorqueCommand {
         if (!resetOdometry) return;
 
         TorqueNavXGyro.getInstance().setAngleOffset(360 - trajectory.getInitialPose().getRotation().getDegrees());
-        Drivebase.getInstance().getPoseEstimator().resetPosition(trajectory.getInitialState().poseMeters,
+        drivebase.getPoseEstimator().resetPosition(trajectory.getInitialState().poseMeters,
                                                                  trajectory.getInitialState().holonomicRotation);
-        Drivebase.getInstance().setState(DrivebaseState.ROBOT_RELATIVE);
+        drivebase.setState(DrivebaseState.ROBOT_RELATIVE);
     }
 
     @Override
     protected final void continuous() {
         final PathPlannerState current = (PathPlannerState)trajectory.sample(timer.get());
-        ChassisSpeeds speeds = controller.calculate(Drivebase.getInstance().getPoseEstimator().getEstimatedPosition(),
+        ChassisSpeeds speeds = controller.calculate(drivebase.getPoseEstimator().getEstimatedPosition(),
                                                     current, current.holonomicRotation);
         speeds = new ChassisSpeeds(-speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
-        Drivebase.getInstance().setSpeeds(speeds);
+        drivebase.setSpeeds(speeds);
     }
 
     @Override
@@ -76,6 +78,6 @@ public final class FollowPathPlanner extends TorqueCommand {
     @Override
     protected final void end() {
         timer.stop();
-        Drivebase.getInstance().reset();
+        drivebase.reset();
     }
 }

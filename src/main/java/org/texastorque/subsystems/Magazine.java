@@ -4,11 +4,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.texastorque.Ports;
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 
-public final class Magazine extends TorqueSubsystem {
+public final class Magazine extends TorqueSubsystem implements Subsystems {
     private static volatile Magazine instance;
 
     public static enum GateDirection implements TorqueSubsystemState {
@@ -72,9 +73,9 @@ public final class Magazine extends TorqueSubsystem {
 
     @Override
     public final void updateTeleop() {
-        if (Intake.getInstance().isIntaking()) { beltDirection = BeltDirection.UP; }
+        if (intake.isIntaking()) { beltDirection = BeltDirection.UP; }
 
-        if (Shooter.getInstance().isShooting()) {
+        if (shooter.isShooting()) {
             if (!shootingStarted) {
                 shootingStarted = true;
                 shootingStartedTime = Timer.getFPGATimestamp();
@@ -87,7 +88,7 @@ public final class Magazine extends TorqueSubsystem {
             shootingStarted = false;
         }
 
-        if (Shooter.getInstance().isReady() && Turret.getInstance().isLocked()) {
+        if (shooter.isReady() && turret.isLocked()) {
             beltDirection = BeltDirection.UP;
             gateDirection = GateDirection.FORWARD;
         }

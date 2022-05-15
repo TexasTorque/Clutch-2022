@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
@@ -26,7 +27,7 @@ import org.texastorque.torquelib.util.TorqueSwerveOdometry;
  * @author Jack Pittenger
  * @author Justus Languell
  */
-public final class Drivebase extends TorqueSubsystem {
+public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static volatile Drivebase instance;
 
     public enum DrivebaseState implements TorqueSubsystemState { ROBOT_RELATIVE, FIELD_RELATIVE, X_FACTOR }
@@ -60,6 +61,8 @@ public final class Drivebase extends TorqueSubsystem {
     private DrivebaseState state = DrivebaseState.FIELD_RELATIVE;
     private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
 
+    private final TorqueNavXGyro gyro = TorqueNavXGyro.getInstance();
+
     private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
         return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
                                           ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
@@ -79,10 +82,10 @@ public final class Drivebase extends TorqueSubsystem {
         kinematics =
                 new SwerveDriveKinematics(locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
 
-        odometry = new TorqueSwerveOdometry(kinematics, TorqueNavXGyro.getInstance().getRotation2dClockwise());
+        odometry = new TorqueSwerveOdometry(kinematics, gyro.getRotation2dClockwise());
 
         poseEstimator = new SwerveDrivePoseEstimator(
-                TorqueNavXGyro.getInstance().getRotation2dCounterClockwise(), new Pose2d(), kinematics,
+                gyro.getRotation2dCounterClockwise(), new Pose2d(), kinematics,
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2), new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
 
@@ -119,7 +122,7 @@ public final class Drivebase extends TorqueSubsystem {
         else if (state == DrivebaseState.FIELD_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
                     speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond,
-                    TorqueNavXGyro.getInstance().getRotation2dClockwise()));
+                    gyro.getRotation2dClockwise()));
 
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
@@ -133,10 +136,10 @@ public final class Drivebase extends TorqueSubsystem {
         backLeft.setDesiredState(swerveModuleStates[0]);
         backRight.setDesiredState(swerveModuleStates[3]);
 
-        odometry.update(TorqueNavXGyro.getInstance().getRotation2dClockwise(), // .times(-1) ?
+        odometry.update(gyro.getRotation2dClockwise(), // .times(-1) ?
                         frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
 
-        poseEstimator.update(TorqueNavXGyro.getInstance().getRotation2dClockwise().times(-1), frontLeft.getState(),
+        poseEstimator.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(),
                              frontRight.getState(), backLeft.getState(), backRight.getState());
         // The order of these might be wrong
 
@@ -159,6 +162,8 @@ public final class Drivebase extends TorqueSubsystem {
     public final TorqueSwerveOdometry getOdometry() { return odometry; }
 
     public final SwerveDrivePoseEstimator getPoseEstimator() { return poseEstimator; }
+
+    public final TorqueNavXGyro getGyro() { return gyro; }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }
 

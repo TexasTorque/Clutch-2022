@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.constants.Constants;
 import org.texastorque.constants.Ports;
@@ -50,6 +51,8 @@ public class Drivebase extends TorqueSubsystem {
          * Pose estimator
          */
         public final SwerveDrivePoseEstimator poseEstimator;
+        private final Field2d field2d;
+
         /**
          * Modules
          */
@@ -81,9 +84,10 @@ public class Drivebase extends TorqueSubsystem {
                                 locationFrontLeft, locationFrontRight);
 
                 poseEstimator = new SwerveDrivePoseEstimator(Feedback.getInstance().getGyroFeedback().getRotation2d(),
-                                new Pose2d(), kinematics, new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2),
-                                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
-                                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
+                                new Pose2d(), kinematics, new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, .9),
+                                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.1),
+                                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, 1));
+                field2d = new Field2d();
         }
 
         private void reset() {
@@ -153,6 +157,8 @@ public class Drivebase extends TorqueSubsystem {
                 poseEstimator.update(feedback.getGyroFeedback().getRotation2d().times(-1),
                                 frontLeft.getState(), frontRight.getState(),
                                 backLeft.getState(), backRight.getState());
+                field2d.setRobotPose(poseEstimator.getEstimatedPosition());
+                SmartDashboard.putData("Field", field2d);
                 SmartDashboard.putNumber("[Real]X", getEstimatedPosition().getX());
                 SmartDashboard.putNumber("[Real]Y", getEstimatedPosition().getY());
                 SmartDashboard.putNumber("[Real]Rot", getEstimatedPosition().getRotation().getDegrees());
@@ -163,9 +169,16 @@ public class Drivebase extends TorqueSubsystem {
         }
 
         public void updateWithVision(Pose2d visionRobotPoseMeters) {
-                // poseEstimator.addVisionMeasurement(visionRobotPoseMeters,
-                // Timer.getFPGATimestamp()
-                // - .001 * Feedback.getInstance().getLimelightFeedback().getTl() - .0011);
+                try {
+                        poseEstimator.addVisionMeasurement(visionRobotPoseMeters,
+                                        Timer.getFPGATimestamp()
+                                                        - Feedback.getInstance().getTorquelightFeedback().getLatency()
+                                                        - .0011);
+                } catch (Exception e) {
+                        System.out.println(
+                                        "Failed to add vision measurement to pose estimator. Likely due to Cholesky decomposition failing due to it not being the sqrt method. Full details on the error: \n"
+                                                        + e.getMessage());
+                }
         }
 
         @Override

@@ -9,7 +9,6 @@ import org.texastorque.inputs.Feedback;
 import org.texastorque.inputs.Input;
 import org.texastorque.inputs.State;
 import org.texastorque.inputs.State.TurretState;
-import org.texastorque.modules.MagazineBallManager;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.component.TorqueSparkMax;
 
@@ -30,8 +29,8 @@ public class Turret extends TorqueSubsystem {
 
     public enum EncoderOverStatus {
         OFF,
-        TOLEFT(-90, 80),
-        TORIGHT(90, -80),
+        TOLEFT(Constants.TURRET_MAX_ROTATION_RIGHT, Constants.TURRET_MAX_ROTATION_LEFT - 10),
+        TORIGHT(Constants.TURRET_MAX_ROTATION_LEFT, Constants.TURRET_MAX_ROTATION_RIGHT + 10),
         HOMING;
         /*
          * Think of these like states of the turret
@@ -87,9 +86,6 @@ public class Turret extends TorqueSubsystem {
 
     private EncoderOverStatus encoderOverStatus = EncoderOverStatus.OFF;
 
-    private boolean doingSabotage = false;
-    private double sabotageSetpoint = 0;
-
     public Turret() {
         rotator.setPosition(Constants.TURRET_RATIO * -90. / 360.);
     }
@@ -107,22 +103,16 @@ public class Turret extends TorqueSubsystem {
                     - getDegrees()) < 5) {
                 State.getInstance().setTurretState(TurretState.ON);
             }
+        } else if (State.getInstance().getTurretState() == TurretState.ODOMETRY) {
+            double pidOut = pidController.calculate(getDegrees(),
+                    State.getInstance().getTurretToPosition().getDegrees());
+            changeRequest = Constants.TURRET_Ks * Math.signum(pidOut) + pidOut;
         } else if (State.getInstance().getTurretState() == TurretState.ON) {
             if (encoderOverStatus == EncoderOverStatus.OFF) { // turret is tracking tape
                 if ((Input.getInstance().getShooterInput().getUsingOdometry() || !checkOver()) && !checkHoming()) {
                     double hOffset = Feedback.getInstance()
                             .getTorquelightFeedback()
                             .getTargetYaw();
-                    // // be slightly off :) (do a little trolling)
-                    // if (MagazineBallManager.getInstance().isEnemyAlliance())
-                    // { if (doingSabotage) { hOffset = sabotageSetpoint; } else
-                    // { doingSabotage = true; sabotageSetpoint = 10 *
-                    // Math.signum(hOffset) + hOffset; hOffset =
-                    // sabotageSetpoint;
-                    // }
-                    // } else {
-                    // doingSabotage = false;
-                    // }
 
                     SmartDashboard.putNumber("Turret HOffset", hOffset);
                     if (Math.abs(hOffset) < Constants.TOLERANCE_DEGREES) {

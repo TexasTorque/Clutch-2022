@@ -25,7 +25,7 @@ public class State {
     }
 
     public static enum TurretState {
-        OFF, ON, CENTER, TO_POSITION
+        OFF, ON, CENTER, TO_POSITION, ODOMETRY
     }
 
     private Rotation2d turretToPosition = Rotation2d.fromDegrees(0);

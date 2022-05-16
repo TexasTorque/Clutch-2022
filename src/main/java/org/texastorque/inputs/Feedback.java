@@ -17,6 +17,7 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.texastorque.constants.Constants;
+import org.texastorque.subsystems.Turret;
 import org.texastorque.torquelib.base.TorqueFeedback;
 import org.texastorque.torquelib.util.RollingMedian;
 
@@ -189,10 +190,20 @@ public class Feedback {
             return bestTarget.getCameraToTarget();
         }
 
+        public double getLatency() {
+            return result.getLatencyMillis();
+        }
+
         public double getDistance() {
             return PhotonUtils.calculateDistanceToTargetMeters(Constants.CAMERA_HEIGHT,
                     Constants.HEIGHT_OF_VISION_STRIP_METERS, Constants.CAMERA_ANGLE.getRadians(),
                     Units.degreesToRadians(getTargetPitch()));
+        }
+
+        public Pose2d getEstimatedPositionRelativeToRobot() {
+            return PhotonUtils.estimateFieldToRobot(bestTarget.getCameraToTarget(), Constants.HUB_ORIGIN,
+                    new Transform2d(Constants.CAMERA_TO_ROBOT,
+                            Rotation2d.fromDegrees(-Turret.getInstance().getDegrees())));
         }
 
         public void smartDashboard() {

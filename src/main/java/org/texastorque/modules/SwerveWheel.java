@@ -51,13 +51,15 @@ public class SwerveWheel {
                                 metersPerSecondToEncoderPerMinute(Constants.DRIVE_MAX_ACCELERATION_METERS),
                                 metersPerSecondToEncoderPerMinute(Constants.DRIVE_ALLOWED_ERROR), 0);
                 drive.setSupplyLimit(40); // Amperage supply limit
+                drive.invertPolarity(false);
                 drive.burnFlash();
 
                 rotate.configureSupplyLimit(
                                 new SupplyCurrentLimitConfiguration(true, 5, 10, .03));
                 rotate.configurePID(new KPID(Constants.DRIVE_ROT_Kp, Constants.DRIVE_ROT_Ki, Constants.DRIVE_ROT_Kd, 0,
                                 -1, 1));
-                rotate.zeroEncoder();
+                rotate.setInverted(false);
+                // rotate.zeroEncoder();
 
                 // if (id == 0) {
                 // SmartDashboard.putNumber("kp", rotatePID.getP());
@@ -85,7 +87,7 @@ public class SwerveWheel {
         }
 
         public Rotation2d getRotation() {
-                return Rotation2d.fromDegrees(fromEncoder(rotate.getPosition()));
+                return Rotation2d.fromDegrees(fromEncoder(rotate.getPosition())).times(-1);
         }
 
         public SwerveModuleState getState() {
@@ -115,7 +117,8 @@ public class SwerveWheel {
         }
 
         public void setDesiredState(SwerveModuleState desiredState) {
-                SwerveModuleState state = SwerveModuleState.optimize(desiredState, getRotation());
+                SwerveModuleState state = SwerveModuleState.optimize(desiredState,
+                                Rotation2d.fromDegrees(fromEncoder(rotate.getPosition())));
 
                 if (DriverStation.isTeleop()) {
                         drive.set(state.speedMetersPerSecond * -1 /

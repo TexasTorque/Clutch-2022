@@ -1,151 +1,162 @@
 package org.texastorque.subsystems;
 
-import com.revrobotics.CANSparkMax.ControlType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.texastorque.constants.Constants;
-import org.texastorque.constants.Ports;
-import org.texastorque.inputs.AutoInput;
-import org.texastorque.inputs.Input;
+import org.texastorque.Ports;
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.component.TorqueSparkMax;
-import org.texastorque.util.KPID;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.motors.TorqueSparkMax;
+import org.texastorque.torquelib.util.KPID;
 
-public class Intake extends TorqueSubsystem {
-    private volatile static Intake instance = null;
+/**
+ * The intake subsystem.
+ *
+ * @author Jack Pittenger
+ * @author Justus Languell
+ */
+public final class Intake extends TorqueSubsystem implements Subsystems {
+    private static volatile Intake instance;
 
-    public static enum IntakeDirection {
-        INTAKE(1),
+    public enum IntakeDirection implements TorqueSubsystemState {
+        INTAKE(-1),
         STOPPED(0),
-        OUTAKE(-.3);
+        OUTAKE(.3);
 
         private final double direction;
 
-        IntakeDirection(double direction) {
+        IntakeDirection(final double direction) {
             this.direction = direction;
         }
 
-        public double getDirection() {
+        public final double getDirection() {
             return direction;
         }
     }
 
-    public static enum IntakePosition {
-        // This is a new setpoint for the intake while climbing.
-        // Since the turret is reversed in climb, we can go basiclly
-        // all the way up. Idealy, it should be 0. During the next
-        // climb test, we need to test this value as high as we can
-        // get it safely.
+    public static enum IntakePosition implements TorqueSubsystemState {
         CLIMB(.25),
         UP(1.5),
         PRIME(4.4),
         DOWN(8.3);
-        // Intake setpoints
 
         private final double position;
 
-        IntakePosition(double position) {
+        IntakePosition(final double position) {
             this.position = position;
         }
 
-        public double getPosition() {
+        public final double getPosition() {
             return position;
         }
     }
 
-    private TorqueSparkMax rotary;
-    private TorqueSparkMax roller;
+    private static final double ROTARY_MIN_SPEED = -.35;
+    private static final double ROTARY_MAX_SPEED = .35;
+    private static final double ROLLER_MIN_SPEED = .8;
+    private static final double ROLLER_MAX_SPEED = 1;
 
-    private DigitalInput limitSwitch;
+    private IntakeDirection direction;
+    private IntakePosition position;
 
-    private IntakePosition rotarySetPoint = IntakePosition.PRIME;
-    private double rollerSpeed;
+    private final TorqueSparkMax rotary, rollers;
+    private final DigitalInput limitSwitch;
 
     private Intake() {
-        rotary = new TorqueSparkMax(Ports.INTAKE_ROTARY);
-        rotary.configurePID(new KPID(0.1, 0.00005, .00002, 0,
-                Constants.INTAKE_ROTARY_MIN_SPEED,
-                Constants.INTAKE_ROTARY_MAX_SPEED));
+        rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
+        rotary.configurePID(new KPID(0.1, 0.00005, .00002, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
         rotary.configurePositionalCANFrame();
         rotary.burnFlash();
 
-        roller = new TorqueSparkMax(Ports.INTAKE_ROLLER);
-        roller.addFollower(Ports.INTAKE_ROLLER_FOLLOWER);
-        roller.lowerFollowerCANFrame();
-        roller.invertPolarity(true);
-        roller.invertFollower();
-        roller.configureDumbLeaderCANFrame();
-        roller.burnFlash();
+        rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER.LEFT);
+        // rollers.addFollower(Ports.INTAKE.ROLLER.RIGHT);
+        // rollers.configureDumbLeaderCANFrame();
+        rollers.burnFlash();
 
-        limitSwitch = new DigitalInput(Ports.ROTARY_LIMIT_SWITCH);
+        limitSwitch = new DigitalInput(Ports.INTAKE.SWITCH);
+    }
+
+    public final void setState(final IntakeDirection direction, final IntakePosition position) {
+        this.direction = direction;
+        this.position = position;
+    }
+
+    public final void setDirection(final IntakeDirection direction) {
+        this.direction = direction;
+    }
+
+    public final void setPosition(final IntakePosition position) {
+        this.position = position;
+    }
+
+    public final IntakeDirection getDirection() {
+        return direction;
+    }
+
+    public final IntakePosition getPosition() {
+        return position;
+    }
+
+    public final boolean isIntaking() {
+        return direction == IntakeDirection.INTAKE && position == IntakePosition.DOWN;
     }
 
     @Override
-    public void updateTeleop() {
-        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-            if (Input.getInstance().getIntakeInput().getPosition() == IntakePosition.DOWN) {
-                rotarySetPoint = IntakePosition.CLIMB;
-            } else {
-                rotarySetPoint = IntakePosition.DOWN;
-            }
-            rollerSpeed = 0;
-        } else {
-            rotarySetPoint = Input.getInstance().getIntakeInput().getPosition();
-            if (Input.getInstance().getIntakeInput().getDirection() == IntakeDirection.INTAKE) {
-                double reqSpeed = Math.sqrt(Math.pow(Input.getInstance().getDrivebaseTranslationInput().getXSpeed(), 2)
-                        + Math.pow(Input.getInstance().getDrivebaseTranslationInput().getYSpeed(), 2));
-                rollerSpeed = -Math.min(1,
-                        Constants.INTAKE_ROLLER_SPEED_LOW + (1. - Constants.INTAKE_ROLLER_SPEED_LOW)
-                                * (reqSpeed / Constants.DRIVE_MAX_SPEED_METERS));
-            } else {
-                rollerSpeed = -Input.getInstance()
-                        .getIntakeInput()
-                        .getDirection()
-                        .getDirection() *
-                        Constants.INTAKE_ROLLER_SPEED;
-            }
-        }
+    public final void initTeleop() {
     }
 
     @Override
-    public void updateAuto() {
-        rotarySetPoint = AutoInput.getInstance().getIntakePosition();
-        rollerSpeed = -AutoInput.getInstance().getIntakeSpeed().getDirection() *
-                Constants.INTAKE_ROLLER_SPEED * .5;
+    public final void updateTeleop() {
+        // Needs climber logic
+        // if (limitSwitch.get() && position.getPosition() >= rotary.getPosition())
+        // rotary.setCurrent(.1);
+        // else
+        // rotary.setPosition(position.getPosition());
 
+        rollers.setPercent(direction.getDirection());
+
+        TorqueSubsystemState.logState(direction);
+        TorqueSubsystemState.logState(position);
+
+        SmartDashboard.putNumber("Rotary Position", rotary.getPosition());
+
+        // Amazing one liner (;
+        // rollers.setPercent(direction.getDirection() != 0
+        // ? -Math.min(
+        // (Math.sqrt(
+        // Math.pow(drivebase.getSpeeds().vxMetersPerSecond, 2)
+        // + Math.pow(drivebase.getSpeeds().vyMetersPerSecond, 2)
+        // ) / Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED)
+        // * (ROLLER_MAX_SPEED - ROLLER_MIN_SPEED)
+        // + ROLLER_MIN_SPEED, ROLLER_MAX_SPEED)
+        // : direction.getDirection());
+
+        // The above one liner but readable
+        // final double xSpeed = drivebase.getSpeeds().vxMetersPerSecond;
+        // final double ySpeed = drivebase.getSpeeds().vyMetersPerSecond;
+        // final double speed = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+        // final double percent = speed / Drivebase.DRIVE_MAX_ROTATIONAL_SPEED;
+        // final double intake = Math.min(percent * (ROLLER_MAX_SPEED -
+        // ROLLER_MIN_SPEED) + ROLLER_MIN_SPEED,
+        // ROLLER_MAX_SPEED); rollers.setPercent(direction.getDirection() > 0 ? intake :
+        // -direction.getDirection());
     }
 
     @Override
-    public void updateFeedbackTeleop() {
+    public final void initAuto() {
     }
 
     @Override
-    public void output() {
-        // We are at the bottom, staph!
-        if (limitSwitch.get() && rotarySetPoint.getPosition() >= rotary.getPosition()) {
-            if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-                rotary.set(0);
-            } else {
-                rotary.set(.1, ControlType.kCurrent);
-            }
-        } else {
-            rotary.set(rotarySetPoint.getPosition(), ControlType.kPosition);
-        }
-        roller.set(rollerSpeed);
+    public final void updateAuto() {
+        if (limitSwitch.get() && position.getPosition() >= rotary.getPosition())
+            rotary.setCurrent(.1);
+        else
+            rotary.setPosition(position.getPosition());
+
+        rollers.setPercent(direction.getDirection());
     }
 
-    @Override
-    public void updateSmartDashboard() {
-        SmartDashboard.putNumber("[Intake]Roller Speed", rollerSpeed);
-        SmartDashboard.putNumber("[Intake]Rotary Position",
-                rotary.getPosition());
-        SmartDashboard.putNumber("[Intake]Rotary Set Point",
-                rotarySetPoint.getPosition());
-        SmartDashboard.putBoolean("[Intake]Limit switch", limitSwitch.get());
-        SmartDashboard.putNumber("[Intake]Rotary Temperature", rotary.getTemperature());
-    }
-
-    public static synchronized Intake getInstance() {
+    public static final synchronized Intake getInstance() {
         return instance == null ? instance = new Intake() : instance;
     }
 }

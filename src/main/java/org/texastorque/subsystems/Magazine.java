@@ -1,102 +1,118 @@
 package org.texastorque.subsystems;
 
-import org.texastorque.constants.Constants;
-import org.texastorque.constants.Ports;
-import org.texastorque.inputs.AutoInput;
-import org.texastorque.inputs.Input;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.texastorque.Ports;
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.component.TorqueSparkMax;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.motors.TorqueSparkMax;
 
-public class Magazine extends TorqueSubsystem {
-    private volatile static Magazine instance = null;
+public final class Magazine extends TorqueSubsystem implements Subsystems {
+    private static volatile Magazine instance;
 
-    public static enum GateSpeeds {
-        OPEN(1),
-        CLOSED(-.4),
+    public static enum GateDirection implements TorqueSubsystemState {
+        FORWARD(1),
+        REVERSE(-.4),
         OFF(0);
 
-        private final double speed;
+        private final double direction;
 
-        GateSpeeds(double speed) {
-            this.speed = speed;
-        }
+        GateDirection(final double direction) { this.direction = direction; }
 
-        public double getSpeed() {
-            return this.speed;
-        }
+        public final double getDirection() { return this.direction; }
     }
 
-    public static enum BeltDirections {
-        OFF(0),
-        OUTTAKE(1),
-        INTAKE(-1);
+    public static enum BeltDirection implements TorqueSubsystemState {
+        UP(-1),
+        INTAKING(-.5),
+        DOWN(1),
+        OFF(0);
 
-        private final int direction;
+        private final double direction;
 
-        BeltDirections(int direction) {
-            this.direction = direction;
-        }
+        BeltDirection(final double direction) { this.direction = direction; }
 
-        public int getDirection() {
-            return this.direction;
-        }
+        public final double getDirection() { return this.direction; }
     }
 
-    private TorqueSparkMax belt;
-    private TorqueSparkMax gate;
-
-    private double beltSpeed;
-    private double gateSpeed;
+    private final TorqueSparkMax belt, gate;
+    private BeltDirection beltDirection;
+    private GateDirection gateDirection;
 
     private Magazine() {
-        belt = new TorqueSparkMax(Ports.MAGAZINE_BELT);
+        belt = new TorqueSparkMax(Ports.MAGAZINE.BELT);
         belt.configureDumbCANFrame();
-
-        gate = new TorqueSparkMax(Ports.MAGAZINE_GATE);
+        gate = new TorqueSparkMax(Ports.MAGAZINE.GATE);
         gate.configureDumbCANFrame();
     }
 
+    public final void setState(final BeltDirection state, final GateDirection direction) {
+        this.beltDirection = state;
+        this.gateDirection = direction;
+    }
+
+    public final void setBeltDirection(final BeltDirection direction) { this.beltDirection = direction; }
+
+    public final void setGateDirection(final GateDirection direction) { this.gateDirection = direction; }
+
+    private final void reset() {
+        this.beltDirection = BeltDirection.OFF;
+        this.gateDirection = GateDirection.OFF;
+    }
+
     @Override
-    public void updateTeleop() {
-        if (Input.getInstance().getClimberInput().hasClimbStarted()) {
-            gateSpeed = 0;
-            beltSpeed = 0;
-            return;
+    public final void initTeleop() {
+        reset();
+    }
+
+    private boolean shootingStarted = false;
+    private double shootingStartedTime = 0;
+    private final double DROP_TIME = .2;
+
+    @Override
+    public final void updateTeleop() {
+        if (intake.isIntaking()) { beltDirection = BeltDirection.UP; }
+
+        if (shooter.isShooting()) {
+            if (!shootingStarted) {
+                shootingStarted = true;
+                shootingStartedTime = Timer.getFPGATimestamp();
+            }
+            if (Timer.getFPGATimestamp() - shootingStartedTime <= DROP_TIME) {
+                beltDirection = BeltDirection.DOWN;
+                gateDirection = GateDirection.REVERSE;
+            }
+        } else {
+            shootingStarted = false;
         }
 
-        gateSpeed = Input.getInstance()
-                .getMagazineInput()
-                .getGateDirection()
-                .getSpeed();
-        beltSpeed = Input.getInstance()
-                .getMagazineInput()
-                .getBeltDirection()
-                .getDirection() *
-                Constants.MAGAZINE_BELT_SPEED;
+        if (shooter.isReady() && turret.isLocked()) {
+            beltDirection = BeltDirection.UP;
+            gateDirection = GateDirection.FORWARD;
+        }
+
+        belt.setPercent(beltDirection.getDirection());
+        gate.setPercent(gateDirection.getDirection());
+
+        TorqueSubsystemState.logState(beltDirection);
+        TorqueSubsystemState.logState(gateDirection);
+
+        SmartDashboard.putNumber("Belt Amps", belt.getCurrent());
     }
 
     @Override
-    public void updateAuto() {
-        gateSpeed = AutoInput.getInstance().getGateDirection().getSpeed();
-        beltSpeed = AutoInput.getInstance().getBeltDirection().getDirection() *
-                Constants.MAGAZINE_BELT_SPEED;
+    public final void initAuto() {
+        reset();
     }
 
     @Override
-    public void updateFeedbackTeleop() {
+    public final void updateAuto() {
+        updateTeleop();
     }
 
-    @Override
-    public void output() {
-        gate.set(gateSpeed);
-        belt.set(beltSpeed);
-    }
-
-    @Override
-    public void updateSmartDashboard() {
-    }
-
-    public static synchronized Magazine getInstance() {
+    public static final synchronized Magazine getInstance() {
         return instance == null ? instance = new Magazine() : instance;
     }
 }

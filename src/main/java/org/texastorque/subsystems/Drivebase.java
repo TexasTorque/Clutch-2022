@@ -1,8 +1,8 @@
 package org.texastorque.subsystems;
 
 import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,174 +10,164 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.texastorque.constants.Constants;
-import org.texastorque.constants.Ports;
-import org.texastorque.inputs.AutoInput;
-import org.texastorque.inputs.Feedback;
-import org.texastorque.inputs.Input;
-import org.texastorque.modules.SwerveOdometry;
-import org.texastorque.modules.SwerveWheel;
+import org.texastorque.Ports;
+import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
+import org.texastorque.torquelib.sensors.TorqueNavXGyro;
+import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
-public class Drivebase extends TorqueSubsystem {
-        private static volatile Drivebase instance;
+/**
+ * The drivebase subsystem. Drives with 4 2021 swerve modules.
+ *
+ * @author Jack Pittenger
+ * @author Justus Languell
+ */
+public final class Drivebase extends TorqueSubsystem implements Subsystems {
+    private static volatile Drivebase instance;
 
-        private final Feedback feedback = Feedback.getInstance();
-        private final Input input = Input.getInstance();
+    public enum DrivebaseState implements TorqueSubsystemState { ROBOT_RELATIVE, FIELD_RELATIVE, X_FACTOR }
 
-        /**
-         * Locations of wheel modules
-         */
-        private final Translation2d locationBackLeft = new Translation2d(
-                        Constants.DISTANCE_TO_CENTER_X, -Constants.DISTANCE_TO_CENTER_Y);
-        private final Translation2d locationBackRight = new Translation2d(
-                        Constants.DISTANCE_TO_CENTER_X, Constants.DISTANCE_TO_CENTER_Y);
-        private final Translation2d locationFrontLeft = new Translation2d(
-                        -Constants.DISTANCE_TO_CENTER_X, -Constants.DISTANCE_TO_CENTER_Y);
-        private final Translation2d locationFrontRight = new Translation2d(
-                        -Constants.DISTANCE_TO_CENTER_X, Constants.DISTANCE_TO_CENTER_Y);
+    public static final double DRIVE_MAX_TRANSLATIONAL_SPEED = 4;
+    public static final double DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2;
+    public static final double DRIVE_MAX_ROTATIONAL_SPEED = 6;
 
-        /**
-         * Kinematics
-         */
-        public final SwerveDriveKinematics kinematics;
+    private static final double DRIVE_GEARING = .1875; // Drive rotations per motor rotations
+    private static final double DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788);
 
-        /**
-         * Pose estimator
-         */
-        public final SwerveDrivePoseEstimator poseEstimator;
-        /**
-         * Modules
-         */
-        private SwerveWheel backLeft;
-        private SwerveWheel backRight;
-        private SwerveWheel frontLeft;
-        private SwerveWheel frontRight;
+    private static final double DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875);
+    private static final double DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
 
-        /**
-         * Variables
-         */
-        private double xSpeed = 0;
-        private double ySpeed = 0;
-        private double rotation = 0;
-        private boolean fieldRelative = false;
-        private SwerveModuleState[] swerveModuleStates;
+    public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2);
+    public static final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
+    public static final KPID ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
 
-        private Drivebase() {
-                backLeft = new SwerveWheel(0, Ports.DRIVE_TRANS_LEFT_BACK,
-                                Ports.DRIVE_ROT_LEFT_BACK);
-                backRight = new SwerveWheel(1, Ports.DRIVE_TRANS_RIGHT_BACK,
-                                Ports.DRIVE_ROT_RIGHT_BACK);
-                frontLeft = new SwerveWheel(2, Ports.DRIVE_TRANS_LEFT_FRONT,
-                                Ports.DRIVE_ROT_LEFT_FRONT);
-                frontRight = new SwerveWheel(3, Ports.DRIVE_TRANS_RIGHT_FRONT,
-                                Ports.DRIVE_ROT_RIGHT_FRONT);
+    private final Translation2d locationBackLeft = new Translation2d(DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationBackRight = new Translation2d(DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationFrontLeft = new Translation2d(-DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationFrontRight = new Translation2d(-DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
 
-                kinematics = new SwerveDriveKinematics(locationBackLeft, locationBackRight,
-                                locationFrontLeft, locationFrontRight);
+    private final SwerveDriveKinematics kinematics;
+    private final TorqueSwerveOdometry odometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
 
-                poseEstimator = new SwerveDrivePoseEstimator(Feedback.getInstance().getGyroFeedback().getRotation2d(),
-                                new Pose2d(), kinematics, new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2),
-                                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
-                                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
+    private final TorqueSwerveModule2021 backLeft, backRight, frontLeft, frontRight;
+    private SwerveModuleState[] swerveModuleStates; // This can be made better
+
+    private DrivebaseState state = DrivebaseState.FIELD_RELATIVE;
+    private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
+
+    private final TorqueNavXGyro gyro = TorqueNavXGyro.getInstance();
+
+    private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
+        return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
+                                          ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
+                                          DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
+    }
+
+    private Drivebase() {
+        backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
+        backLeft.setLogging(true);
+        backRight =
+                buildSwerveModule(1, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.BACK, Ports.DRIVEBASE.ROTATIONAL.RIGHT.BACK);
+        frontLeft =
+                buildSwerveModule(2, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.FRONT, Ports.DRIVEBASE.ROTATIONAL.LEFT.FRONT);
+        frontRight =
+                buildSwerveModule(3, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.FRONT, Ports.DRIVEBASE.ROTATIONAL.RIGHT.FRONT);
+
+        kinematics =
+                new SwerveDriveKinematics(locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
+
+        odometry = new TorqueSwerveOdometry(kinematics, gyro.getRotation2dClockwise());
+
+        poseEstimator = new SwerveDrivePoseEstimator(
+                gyro.getRotation2dCounterClockwise(), new Pose2d(), kinematics,
+                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2), new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
+                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
+
+        reset();
+    }
+
+    public final void setState(final DrivebaseState state) { this.state = state; }
+
+    public final DrivebaseState getState() { return state; }
+
+    public final void setSpeeds(final ChassisSpeeds speeds) { this.speeds = speeds; }
+
+    public final ChassisSpeeds getSpeeds() { return speeds; }
+
+    @Override
+    public final void initTeleop() {
+        reset();
+        state = DrivebaseState.FIELD_RELATIVE;
+    }
+
+    @Override
+    public final void updateTeleop() {
+        SmartDashboard.putNumber("Speed X", speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("Speed Y", speeds.vyMetersPerSecond);
+        SmartDashboard.putNumber("Speed R", speeds.omegaRadiansPerSecond);
+
+        if (state == DrivebaseState.X_FACTOR) {
+            swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
+            swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
+            swerveModuleStates[2].angle = Rotation2d.fromDegrees(45);
+            swerveModuleStates[3].angle = Rotation2d.fromDegrees(135);
         }
 
-        private void reset() {
-                xSpeed = 0;
-                ySpeed = 0;
-                rotation = 0;
-                fieldRelative = false;
-        }
+        else if (state == DrivebaseState.FIELD_RELATIVE)
+            swerveModuleStates = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond,
+                    gyro.getRotation2dClockwise()));
 
-        @Override
-        public void initTeleop() {
-                reset();
-        }
+        else if (state == DrivebaseState.ROBOT_RELATIVE)
+            swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 
-        @Override
-        public void initAuto() {
-                reset();
-        }
+        // I think this does the same thing ):
+        // TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
 
-        @Override
-        public void updateTeleop() {
-                xSpeed = input.getDrivebaseTranslationInput().getXSpeed();
-                ySpeed = input.getDrivebaseTranslationInput().getYSpeed();
-                rotation = input.getDrivebaseRotationInput().getRot();
-                fieldRelative = true;
+        frontLeft.setDesiredState(swerveModuleStates[2]);
+        frontRight.setDesiredState(swerveModuleStates[1]);
+        backLeft.setDesiredState(swerveModuleStates[0]);
+        backRight.setDesiredState(swerveModuleStates[3]);
 
-                swerveModuleStates = kinematics.toSwerveModuleStates(
-                                fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                                xSpeed, ySpeed, rotation,
-                                                feedback.getGyroFeedback().getRotation2d())
-                                                : new ChassisSpeeds(xSpeed, ySpeed, rotation));
+        odometry.update(gyro.getRotation2dClockwise(), // .times(-1) ?
+                        frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
 
-                SwerveDriveKinematics.desaturateWheelSpeeds(
-                                swerveModuleStates, Constants.DRIVE_MAX_SPEED_METERS);
-        }
+        poseEstimator.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(),
+                             frontRight.getState(), backLeft.getState(), backRight.getState());
+        // The order of these might be wrong
 
-        @Override
-        public void updateAuto() {
-                swerveModuleStates = AutoInput.getInstance().getDriveStates();
-                outputAuto();
-        }
+        // SmartDashboard.putNumber("Rot3", backLeft.getRotation().getDegrees());
+    }
 
-        @Override
-        public void output() {
-                if (Input.getInstance().getShooterInput().xFactor()) {
-                        swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
-                        swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
-                        swerveModuleStates[2].angle = Rotation2d.fromDegrees(45);
-                        swerveModuleStates[3].angle = Rotation2d.fromDegrees(135);
-                }
+    @Override
+    public final void initAuto() {
+        reset();
+        state = DrivebaseState.ROBOT_RELATIVE;
+    }
 
-                frontLeft.setDesiredState(swerveModuleStates[0]);
-                frontRight.setDesiredState(swerveModuleStates[1]);
-                backLeft.setDesiredState(swerveModuleStates[2]);
-                backRight.setDesiredState(swerveModuleStates[3]);
-        }
+    @Override
+    public final void updateAuto() {
+        updateTeleop();
+    }
 
-        public void outputAuto() {
-                frontLeft.setDesiredState(swerveModuleStates[0]);
-                frontRight.setDesiredState(swerveModuleStates[1]);
-                backLeft.setDesiredState(swerveModuleStates[2]);
-                backRight.setDesiredState(swerveModuleStates[3]);
-        }
+    public final SwerveDriveKinematics getKinematics() { return kinematics; }
 
-        @Override
-        public void updateFeedbackTeleop() {
-                poseEstimator.update(feedback.getGyroFeedback().getRotation2d().times(-1),
-                                frontLeft.getState(), frontRight.getState(),
-                                backLeft.getState(), backRight.getState());
-                SmartDashboard.putNumber("[Real]X", getEstimatedPosition().getX());
-                SmartDashboard.putNumber("[Real]Y", getEstimatedPosition().getY());
-                SmartDashboard.putNumber("[Real]Rot", getEstimatedPosition().getRotation().getDegrees());
-        }
+    public final TorqueSwerveOdometry getOdometry() { return odometry; }
 
-        public Pose2d getEstimatedPosition() {
-                return poseEstimator.getEstimatedPosition();
-        }
+    public final SwerveDrivePoseEstimator getPoseEstimator() { return poseEstimator; }
 
-        public void updateWithVision(Pose2d visionRobotPoseMeters) {
-                // poseEstimator.addVisionMeasurement(visionRobotPoseMeters,
-                // Timer.getFPGATimestamp()
-                // - .001 * Feedback.getInstance().getLimelightFeedback().getTl() - .0011);
-        }
+    public final TorqueNavXGyro getGyro() { return gyro; }
 
-        @Override
-        public void updateFeedbackAuto() {
-                updateFeedbackTeleop();
-        }
+    public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }
 
-        @Override
-        public void updateSmartDashboard() {
-        }
-
-        public static synchronized Drivebase getInstance() {
-                return (instance == null) ? instance = new Drivebase() : instance;
-        }
+    public static final synchronized Drivebase getInstance() {
+        return instance == null ? instance = new Drivebase() : instance;
+    }
 }

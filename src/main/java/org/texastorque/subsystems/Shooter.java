@@ -87,11 +87,10 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void updateTeleop() {
-        // camera.update();
+        camera.update(true);
 
         if (state == ShooterState.REGRESSION) {
-            // distance = camera.getDistance();
-            distance = 0;
+            distance = camera.getDistance();
             flywheelSpeed = regressionRPM(distance);
             hoodSetpoint = regressionHood(distance);
         } else if (state == ShooterState.DISTANCE) {

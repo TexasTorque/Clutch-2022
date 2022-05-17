@@ -80,7 +80,7 @@ public final class Input extends TorqueInputManager implements Subsystems {
     private final void updateShooter() {
         if (driver.getXButton()) {
             shooter.setState(ShooterState.REGRESSION);
-            //turret.setState(TurretState.TRACK);
+            turret.setState(TurretState.TRACK);
         } else if (driver.getAButton()) {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(2400);
@@ -92,6 +92,7 @@ public final class Input extends TorqueInputManager implements Subsystems {
             turret.setState(TurretState.CENTER);
         } else {
             shooter.setState(ShooterState.OFF);
+            turret.setState(TurretState.OFF);
         }
 
         if (operator.getXButton()) {

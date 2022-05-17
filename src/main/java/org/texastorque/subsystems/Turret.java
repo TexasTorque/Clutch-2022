@@ -35,7 +35,8 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private final TorqueLight camera;
     private final TorqueSparkMax rotator;
 
-    private final PIDController pidController = new PIDController(0.5, 0, 0);
+    // Needs to be played with
+    private final PIDController pidController = new PIDController(0.15, 0, 0);
 
     private double requested = 0;
     private TurretState state = TurretState.OFF;
@@ -62,6 +63,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void updateTeleop() {
+        // These should be inside tracking logic
         if (getDegrees() > MAX_LEFT)
             state = TurretState.CENTER;
         // requested = formatRequested(-DIRECTIONAL);
@@ -76,6 +78,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.POSITIONAL) {
             requested = calculateRequested(TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
         } else if (state == TurretState.TRACK) {
+            SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
             if (camera.hasTargets())
                 requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
             else
@@ -119,8 +122,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     }
 
     public final boolean isLocked() {
-        // return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
-        return true;
+        return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
     }
 
     public static final synchronized Turret getInstance() {

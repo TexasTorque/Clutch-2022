@@ -1,10 +1,6 @@
 package org.texastorque;
 
-import org.texastorque.subsystems.Drivebase;
-import org.texastorque.subsystems.Intake;
-import org.texastorque.subsystems.Magazine;
-import org.texastorque.subsystems.Shooter;
-import org.texastorque.subsystems.Turret;
+import org.texastorque.subsystems.*;
 
 /**
  * Interface that holds references to the instances of subsystems.

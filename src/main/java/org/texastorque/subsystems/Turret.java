@@ -26,10 +26,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private static final double DIRECTIONAL = 5;
 
     public enum TurretState implements TorqueSubsystemState {
-        CENTER,
-        TRACK,
-        POSITIONAL,
-        OFF;
+        CENTER, TRACK, POSITIONAL, OFF;
     }
 
     private final TorqueLight camera;

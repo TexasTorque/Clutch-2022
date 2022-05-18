@@ -13,12 +13,13 @@ import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
-import org.texastorque.torquelib.base.TorqueInputManager;
+import org.texastorque.torquelib.base.TorqueInput;
+import org.texastorque.torquelib.base.TorqueInputModule;
 import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueSpeedSettings;
 
 @SuppressWarnings("deprecation")
-public final class Input extends TorqueInputManager implements Subsystems {
+public final class Input extends TorqueInput implements Subsystems {
     private static volatile Input instance;
 
     private final TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6

@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
+import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
@@ -15,12 +16,12 @@ public class Turret extends TorqueSubsystem implements Subsystems {
 
     private static final double MAX_VOLTS = 12;
     private static final double RATIO = 128.4722;
-    // private static final double KS = 0.14066;
-    private static final double KS = 0.4;
+    private static final double KS = 0.14066;
+    //private static final double KS = 0.4;
 
     private static final double ROT_CENTER = 0;
     private static final double ROT_BACK = 180;
-    private static final double TOLERANCE = 1.5;
+    private static final double TOLERANCE = 5;
     private static final double MAX_LEFT = 93;
     private static final double MAX_RIGHT = -93;
     private static final double DIRECTIONAL = 5;
@@ -119,7 +120,8 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     }
 
     public final boolean isLocked() {
-        return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
+        return !(shooter.getState() == ShooterState.REGRESSION) ||
+            camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
     }
 
     public static final synchronized Turret getInstance() {

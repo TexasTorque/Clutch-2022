@@ -33,7 +33,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         OFF,
         REGRESSION,
         SETPOINT,
-        DISTANCE;
+        DISTANCE,
+        MEGA_SHOT;
     }
 
     private final TorqueLight camera;
@@ -98,6 +99,9 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
             hoodSetpoint = regressionHood(distance);
         } else if (state == ShooterState.SETPOINT) {
 
+        } else if (state == ShooterState.MEGA_SHOT) {
+            flywheelSpeed = 100000;
+            flywheel.setPercent(1);
         } else {
             flywheelSpeed = 0;
             flywheel.setPercent(FLYWHEEEL_IDLE);
@@ -141,7 +145,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @return RPM the shooter should go at
      */
     private final double regressionRPM(final double distance) {
-        return clampRPM((173.5 * distance) + 1316);
+        return clampRPM((173.5 * distance) + 1000);
     }
 
     /**
@@ -164,6 +168,10 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public final TorqueLight getCamera() {
         return camera;
+    }
+
+    public final ShooterState getState() {
+        return state;
     }
 
     public static final synchronized Shooter getInstance() {

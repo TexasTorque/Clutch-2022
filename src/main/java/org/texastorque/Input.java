@@ -83,9 +83,7 @@ public final class Input extends TorqueInput implements Subsystems {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(TurretState.TRACK);
         } else if (driver.getAButton()) {
-            shooter.setState(ShooterState.SETPOINT);
-            shooter.setFlywheelSpeed(2400);
-            shooter.setHoodPosition(Shooter.HOOD_MAX);
+            shooter.setState(ShooterState.MEGA_SHOT);
             turret.setState(TurretState.CENTER);
         } else if (driver.getYButton()) {
             shooter.setState(ShooterState.DISTANCE);

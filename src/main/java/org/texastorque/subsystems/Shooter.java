@@ -19,14 +19,15 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
-    public static final double HOOD_MIN = 0;
-    public static final double HOOD_MAX = 40;
-    public static final double ERROR = 83.24;
-    public static final double FLYWHEEEL_MAX = 3000;
-    public static final double FLYWHEEEL_IDLE = 0;
-    public static final double FLYWHEEEL_REDUCTION = 5 / 3.;
-    public static final double CAMERA_HEIGHT = Units.inchesToMeters(38.5);
-    public static final double TARGET_HEIGHT = 2.6416;
+    public static final double  HOOD_MIN = 0,
+                                HOOD_MAX = 40,
+                                ERROR = 83.24,
+                                FLYWHEEEL_MAX = 3000,
+                                FLYWHEEEL_IDLE = 0,
+                                FLYWHEEEL_REDUCTION = 5 / 3.,
+                                CAMERA_HEIGHT = Units.inchesToMeters(38.5),
+                                TARGET_HEIGHT = 2.6416;
+
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
     public enum ShooterState implements TorqueSubsystemState {

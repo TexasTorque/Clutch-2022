@@ -14,17 +14,16 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
-    private static final double MAX_VOLTS = 12;
-    private static final double RATIO = 128.4722;
-    private static final double KS = 0.14066;
-    //private static final double KS = 0.4;
-
-    private static final double ROT_CENTER = 0;
-    private static final double ROT_BACK = 180;
-    private static final double TOLERANCE = 5;
-    private static final double MAX_LEFT = 93;
-    private static final double MAX_RIGHT = -93;
-    private static final double DIRECTIONAL = 5;
+    private static final double MAX_VOLTS = 12, 
+                                RATIO = 128.4722, 
+                                KS = 0.14066,
+                                // KS = 0.4,
+                                ROT_CENTER = 0,
+                                ROT_BACK = 180,
+                                TOLERANCE = 5, 
+                                MAX_LEFT = 93,
+                                MAX_RIGHT = -93,
+                                DIRECTIONAL = 5;
 
     public enum TurretState implements TorqueSubsystemState {
         CENTER, TRACK, POSITIONAL, OFF;

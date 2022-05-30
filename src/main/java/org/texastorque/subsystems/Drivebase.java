@@ -34,24 +34,24 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         ROBOT_RELATIVE, FIELD_RELATIVE, X_FACTOR
     }
 
-    public static final double DRIVE_MAX_TRANSLATIONAL_SPEED = 4;
-    public static final double DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2;
-    public static final double DRIVE_MAX_ROTATIONAL_SPEED = 6;
+    public static final double  DRIVE_MAX_TRANSLATIONAL_SPEED = 4,
+                                DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2,
+                                DRIVE_MAX_ROTATIONAL_SPEED = 6;
 
-    private static final double DRIVE_GEARING = .1875; // Drive rotations per motor rotations
-    private static final double DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788);
+    private static final double DRIVE_GEARING = .1875, // Drive rotations per motor rotations
+                                DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788),
+                                DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875),
+                                DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
 
-    private static final double DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875);
-    private static final double DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
+    public static final KPID    DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2),
+                                ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
 
-    public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2);
     public static final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
-    public static final KPID ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
 
-    private final Translation2d locationBackLeft = new Translation2d(DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationBackRight = new Translation2d(DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationFrontLeft = new Translation2d(-DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y);
-    private final Translation2d locationFrontRight = new Translation2d(-DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
+    private final Translation2d locationBackLeft = new Translation2d(DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y),
+                                locationBackRight = new Translation2d(DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y),
+                                locationFrontLeft = new Translation2d(-DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y),
+                                locationFrontRight = new Translation2d(-DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
 
     private final SwerveDriveKinematics kinematics;
     private final TorqueSwerveOdometry odometry;

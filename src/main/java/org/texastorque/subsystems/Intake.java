@@ -51,10 +51,10 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         }
     }
 
-    private static final double ROTARY_MIN_SPEED = -.35;
-    private static final double ROTARY_MAX_SPEED = .35;
-    private static final double ROLLER_MIN_SPEED = .8;
-    private static final double ROLLER_MAX_SPEED = 1;
+    private static final double ROTARY_MIN_SPEED = -.35,
+                                ROTARY_MAX_SPEED = .35,
+                                ROLLER_MIN_SPEED = .8,
+                                ROLLER_MAX_SPEED = 1;
 
     private IntakeDirection direction;
     private IntakePosition position;

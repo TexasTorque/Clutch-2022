@@ -15,8 +15,8 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputModule;
+import org.texastorque.torquelib.control.complex.TorqueSpeedSettings;
 import org.texastorque.torquelib.util.GenericController;
-import org.texastorque.torquelib.util.TorqueSpeedSettings;
 
 @SuppressWarnings("deprecation")
 public final class Input extends TorqueInput implements Subsystems {

@@ -6,6 +6,41 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Test",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.control.Test",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
+      "name": "Launch ControlTests",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.util.ControlTests",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
+      "name": "Launch TorqueMathUtil",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.util.TorqueMathUtil",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
+      "name": "Launch TorqueUtils",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.util.TorqueUtils",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
+      "name": "Launch TorqueMathUtilTests",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.util.TorqueMathUtilTests",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
       "name": "Launch Enum",
       "request": "launch",
       "mainClass": "org.texastorque.subsystems.Enum",

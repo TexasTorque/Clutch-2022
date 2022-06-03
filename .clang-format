@@ -1,3 +1,6 @@
+# Standard .clang-format for C++ and Java.
+# Official formatting configuration for Texas Torque.
+# Copyright (C) Justus Languell 2020.
 BasedOnStyle: LLVM    
 IndentWidth: 4    
 ---

@@ -19,14 +19,9 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
-    public static final double  HOOD_MIN = 0,
-                                HOOD_MAX = 40,
-                                ERROR = 83.24,
-                                FLYWHEEEL_MAX = 3000,
-                                FLYWHEEEL_IDLE = 0,
-                                FLYWHEEEL_REDUCTION = 5 / 3.,
-                                CAMERA_HEIGHT = Units.inchesToMeters(38.5),
-                                TARGET_HEIGHT = 2.6416;
+    public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 83.24, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
+                               FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(38.5),
+                               TARGET_HEIGHT = 2.6416;
 
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
@@ -66,21 +61,13 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         hood.burnFlash();
     }
 
-    public final void setState(final ShooterState state) {
-        this.state = state;
-    }
+    public final void setState(final ShooterState state) { this.state = state; }
 
-    public final void setHoodPosition(final double hoodSetpoint) {
-        this.hoodSetpoint = hoodSetpoint;
-    }
+    public final void setHoodPosition(final double hoodSetpoint) { this.hoodSetpoint = hoodSetpoint; }
 
-    public final void setFlywheelSpeed(final double flywheelSpeed) {
-        this.flywheelSpeed = flywheelSpeed;
-    }
+    public final void setFlywheelSpeed(final double flywheelSpeed) { this.flywheelSpeed = flywheelSpeed; }
 
-    public final void setDistance(final double distance) {
-        this.distance = distance;
-    }
+    public final void setDistance(final double distance) { this.distance = distance; }
 
     @Override
     public final void initTeleop() {
@@ -108,9 +95,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
             flywheel.setPercent(FLYWHEEEL_IDLE);
         }
 
-        if (state != ShooterState.OFF) {
-            flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
-        }
+        if (state != ShooterState.OFF) { flywheel.setVelocityRPM(clampRPM(flywheelSpeed)); }
         hood.setPosition(clampHood(hoodSetpoint));
 
         TorqueSubsystemState.logState(state);
@@ -133,9 +118,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         updateTeleop();
     }
 
-    public final boolean isShooting() {
-        return state != ShooterState.OFF;
-    }
+    public final boolean isShooting() { return state != ShooterState.OFF; }
 
     public final boolean isReady() {
         return isShooting() && Math.abs(flywheelSpeed - flywheel.getVelocityRPM()) < ERROR;
@@ -145,17 +128,14 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) {
-        return clampRPM((173.5 * distance) + 1000);
-    }
+    private final double regressionRPM(final double distance) { return clampRPM((173.5 * distance) + 1000); }
 
     /**
      * @param distance Distance (m)
      * @return Hood the shooter should go at
      */
     private final double regressionHood(final double distance) {
-        if (distance > 3.5)
-            return HOOD_MAX;
+        if (distance > 3.5) return HOOD_MAX;
         return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 46.01);
     }
 
@@ -163,17 +143,11 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         return TorqueMathUtil.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX);
     }
 
-    private final double clampHood(final double hood) {
-        return TorqueMathUtil.constrain(hood, HOOD_MIN, HOOD_MAX);
-    }
+    private final double clampHood(final double hood) { return TorqueMathUtil.constrain(hood, HOOD_MIN, HOOD_MAX); }
 
-    public final TorqueLight getCamera() {
-        return camera;
-    }
+    public final TorqueLight getCamera() { return camera; }
 
-    public final ShooterState getState() {
-        return state;
-    }
+    public final ShooterState getState() { return state; }
 
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;

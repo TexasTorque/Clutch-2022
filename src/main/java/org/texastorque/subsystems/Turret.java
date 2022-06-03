@@ -14,19 +14,15 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
-    private static final double MAX_VOLTS = 12, 
-                                RATIO = 128.4722, 
-                                KS = 0.14066,
+    private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.14066,
                                 // KS = 0.4,
-                                ROT_CENTER = 0,
-                                ROT_BACK = 180,
-                                TOLERANCE = 5, 
-                                MAX_LEFT = 93,
-                                MAX_RIGHT = -93,
-                                DIRECTIONAL = 5;
+            ROT_CENTER = 0, ROT_BACK = 180, TOLERANCE = 5, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
 
     public enum TurretState implements TorqueSubsystemState {
-        CENTER, TRACK, POSITIONAL, OFF;
+        CENTER,
+        TRACK,
+        POSITIONAL,
+        OFF;
     }
 
     private final TorqueLight camera;
@@ -45,13 +41,9 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         rotator.setEncoderZero(RATIO * -90 / 360);
     }
 
-    public final void setState(final TurretState state) {
-        this.state = state;
-    }
+    public final void setState(final TurretState state) { this.state = state; }
 
-    public final void setPosition(final double position) {
-        this.position = position;
-    }
+    public final void setPosition(final double position) { this.position = position; }
 
     @Override
     public final void initTeleop() {
@@ -61,8 +53,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     @Override
     public final void updateTeleop() {
         // These should be inside tracking logic
-        if (getDegrees() > MAX_LEFT)
-            state = TurretState.CENTER;
+        if (getDegrees() > MAX_LEFT) state = TurretState.CENTER;
         // requested = formatRequested(-DIRECTIONAL);
         else if (getDegrees() < MAX_RIGHT)
             state = TurretState.CENTER;
@@ -102,9 +93,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         updateTeleop();
     }
 
-    public final double getDegrees() {
-        return (rotator.getPosition() / RATIO * 360.) % 360;
-    }
+    public final double getDegrees() { return (rotator.getPosition() / RATIO * 360.) % 360; }
 
     private final double calculateRequested(final double requested) {
         return calculateRequested(getDegrees(), requested);
@@ -114,13 +103,11 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         return formatRequested(pidController.calculate(real, requested));
     }
 
-    private final double formatRequested(final double requested) {
-        return KS * Math.signum(requested) + requested;
-    }
+    private final double formatRequested(final double requested) { return KS * Math.signum(requested) + requested; }
 
     public final boolean isLocked() {
         return !(shooter.getState() == ShooterState.REGRESSION) ||
-            camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
+                camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
     }
 
     public static final synchronized Turret getInstance() {

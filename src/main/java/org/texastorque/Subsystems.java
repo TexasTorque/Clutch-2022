@@ -6,7 +6,7 @@ import org.texastorque.subsystems.*;
  * Interface that holds references to the instances of subsystems.
  * A class that implements this interface has direct access to the subsystems,
  * without the need for a static .getInstance() call.
- * 
+ *
  * @author Justus Languell
  */
 public interface Subsystems {

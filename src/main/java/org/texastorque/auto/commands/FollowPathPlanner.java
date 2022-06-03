@@ -9,7 +9,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
@@ -57,15 +56,15 @@ public final class FollowPathPlanner extends TorqueCommand implements Subsystems
 
         TorqueNavXGyro.getInstance().setAngleOffset(360 - trajectory.getInitialPose().getRotation().getDegrees());
         drivebase.getPoseEstimator().resetPosition(trajectory.getInitialState().poseMeters,
-                                                                 trajectory.getInitialState().holonomicRotation);
+                                                   trajectory.getInitialState().holonomicRotation);
         drivebase.setState(DrivebaseState.ROBOT_RELATIVE);
     }
 
     @Override
     protected final void continuous() {
         final PathPlannerState current = (PathPlannerState)trajectory.sample(timer.get());
-        ChassisSpeeds speeds = controller.calculate(drivebase.getPoseEstimator().getEstimatedPosition(),
-                                                    current, current.holonomicRotation);
+        ChassisSpeeds speeds = controller.calculate(drivebase.getPoseEstimator().getEstimatedPosition(), current,
+                                                    current.holonomicRotation);
         speeds = new ChassisSpeeds(-speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
         drivebase.setSpeeds(speeds);
     }

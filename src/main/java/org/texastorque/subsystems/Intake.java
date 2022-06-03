@@ -25,13 +25,9 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
         private final double direction;
 
-        IntakeDirection(final double direction) {
-            this.direction = direction;
-        }
+        IntakeDirection(final double direction) { this.direction = direction; }
 
-        public final double getDirection() {
-            return direction;
-        }
+        public final double getDirection() { return direction; }
     }
 
     public static enum IntakePosition implements TorqueSubsystemState {
@@ -42,18 +38,12 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
         private final double position;
 
-        IntakePosition(final double position) {
-            this.position = position;
-        }
+        IntakePosition(final double position) { this.position = position; }
 
-        public final double getPosition() {
-            return position;
-        }
+        public final double getPosition() { return position; }
     }
 
-    private static final double ROTARY_MIN_SPEED = -.35,
-                                ROTARY_MAX_SPEED = .35,
-                                ROLLER_MIN_SPEED = .8,
+    private static final double ROTARY_MIN_SPEED = -.35, ROTARY_MAX_SPEED = .35, ROLLER_MIN_SPEED = .8,
                                 ROLLER_MAX_SPEED = 1;
 
     private IntakeDirection direction;
@@ -81,29 +71,18 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         this.position = position;
     }
 
-    public final void setDirection(final IntakeDirection direction) {
-        this.direction = direction;
-    }
+    public final void setDirection(final IntakeDirection direction) { this.direction = direction; }
 
-    public final void setPosition(final IntakePosition position) {
-        this.position = position;
-    }
+    public final void setPosition(final IntakePosition position) { this.position = position; }
 
-    public final IntakeDirection getDirection() {
-        return direction;
-    }
+    public final IntakeDirection getDirection() { return direction; }
 
-    public final IntakePosition getPosition() {
-        return position;
-    }
+    public final IntakePosition getPosition() { return position; }
 
-    public final boolean isIntaking() {
-        return direction == IntakeDirection.INTAKE && position == IntakePosition.DOWN;
-    }
+    public final boolean isIntaking() { return direction == IntakeDirection.INTAKE && position == IntakePosition.DOWN; }
 
     @Override
-    public final void initTeleop() {
-    }
+    public final void initTeleop() {}
 
     @Override
     public final void updateTeleop() {
@@ -143,8 +122,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     }
 
     @Override
-    public final void initAuto() {
-    }
+    public final void initAuto() {}
 
     @Override
     public final void updateAuto() {

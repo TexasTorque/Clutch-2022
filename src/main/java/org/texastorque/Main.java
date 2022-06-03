@@ -10,10 +10,8 @@ public final class Main {
 
     /**
      * Do not modify this function.
-     * 
+     *
      * @param args Command line arguments.
      */
-    public final static void main(final String... args) { 
-        RobotBase.startRobot(Robot::new); 
-    }
+    public final static void main(final String... args) { RobotBase.startRobot(Robot::new); }
 }

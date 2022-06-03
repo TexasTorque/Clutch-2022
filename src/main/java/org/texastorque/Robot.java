@@ -21,16 +21,13 @@ public final class Robot extends TorqueIterative implements Subsystems {
     }
 
     @Override
-    public final void alwaysContinuous() {
-    }
+    public final void alwaysContinuous() {}
 
     @Override
-    public final void disabledInit() {
-    }
+    public final void disabledInit() {}
 
     @Override
-    public final void disabledContinuous() {
-    }
+    public final void disabledContinuous() {}
 
     @Override
     public final void teleopInit() {
@@ -65,8 +62,6 @@ public final class Robot extends TorqueIterative implements Subsystems {
         teleopInit();
     }
 
-
     @Override
-    public final void endCompetition() {
-    }
+    public final void endCompetition() {}
 }

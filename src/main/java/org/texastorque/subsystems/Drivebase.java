@@ -27,6 +27,7 @@ import org.texastorque.torquelib.util.TorqueSwerveOdometry;
  * @author Jack Pittenger
  * @author Justus Languell
  */
+@SuppressWarnings("deprecation")
 public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static volatile Drivebase instance;
 

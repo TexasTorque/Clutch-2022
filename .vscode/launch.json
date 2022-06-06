@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch TorqueMiscUtils",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.util.TorqueMiscUtils",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
       "name": "Launch Test",
       "request": "launch",
       "mainClass": "org.texastorque.torquelib.control.Test",

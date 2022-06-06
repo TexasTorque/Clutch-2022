@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch TorqueSwerveModule2021",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.modules.TorqueSwerveModule2021",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
       "name": "Launch TorqueMiscUtils",
       "request": "launch",
       "mainClass": "org.texastorque.torquelib.util.TorqueMiscUtils",

@@ -131,9 +131,9 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         // DRIVE_MAX_TRANSLATIONAL_SPEED);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
 
-        frontLeft.setDesiredState(swerveModuleStates[2]);
+        frontLeft.setDesiredState(swerveModuleStates[0]);
         frontRight.setDesiredState(swerveModuleStates[1]);
-        backLeft.setDesiredState(swerveModuleStates[0]);
+        backLeft.setDesiredState(swerveModuleStates[2]);
         backRight.setDesiredState(swerveModuleStates[3]);
 
         odometry.update(gyro.getRotation2dClockwise(), // .times(-1) ?
@@ -141,9 +141,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
         poseEstimator.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(), frontRight.getState(),
                              backLeft.getState(), backRight.getState());
-        // The order of these might be wrong
-
-        // SmartDashboard.putNumber("Rot3", backLeft.getRotation().getDegrees());
+        // The order of these might be wrong – Shouldn't be now.
     }
 
     public final void initAuto() {
@@ -163,6 +161,12 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     public final SwerveDrivePoseEstimator getPoseEstimator() { return poseEstimator; }
 
     public final TorqueNavXGyro getGyro() { return gyro; }
+
+    public final void log() {
+        SmartDashboard.putString("OdomPos", String.format("(%02.5f, %02.5f)", 
+                odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY()));
+
+    }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }
 

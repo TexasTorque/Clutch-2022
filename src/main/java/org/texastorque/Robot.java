@@ -18,6 +18,7 @@ public final class Robot extends TorqueIterative implements Subsystems {
         subsystems.add(magazine);
         subsystems.add(shooter);
         subsystems.add(turret);
+        subsystems.add(climber);
     }
 
     @Override

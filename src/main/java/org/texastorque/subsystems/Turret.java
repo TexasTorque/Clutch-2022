@@ -59,7 +59,9 @@ public class Turret extends TorqueSubsystem implements Subsystems {
             state = TurretState.CENTER;
         // requested = formatRequested(DIRECTIONAL);
 
-        if (state == TurretState.OFF) {
+        if (climber.hasStarted()) {
+            requested = calculateRequested(ROT_BACK);
+        } else if (state == TurretState.OFF) {
             requested = 0;
         } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);

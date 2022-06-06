@@ -15,4 +15,5 @@ public interface Subsystems {
     public final Magazine magazine = Magazine.getInstance();
     public final Shooter shooter = Shooter.getInstance();
     public final Turret turret = Turret.getInstance();
+    public final Climber climber = Climber.getInstance();
 }

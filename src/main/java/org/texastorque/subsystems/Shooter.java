@@ -81,7 +81,10 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     public final void updateTeleop() {
         camera.update(true);
 
-        if (state == ShooterState.REGRESSION) {
+        if (climber.hasStarted()) {
+           flywheelSpeed = 0;
+           hoodSetpoint = HOOD_MIN;
+        } else if (state == ShooterState.REGRESSION) {
             distance = camera.getDistance();
             flywheelSpeed = regressionRPM(distance);
             hoodSetpoint = regressionHood(distance);

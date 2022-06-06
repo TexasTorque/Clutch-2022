@@ -3,6 +3,8 @@ package org.texastorque.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +17,7 @@ import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
+import org.texastorque.torquelib.util.TorqueMiscUtils;
 
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
@@ -148,6 +151,15 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     public final TorqueLight getCamera() { return camera; }
 
     public final ShooterState getState() { return state; }
+
+    public final Pose2d getVisionPositionEstimate() {
+        TorqueMiscUtils.notImplemented();
+
+        if (!camera.hasTargets()) return new Pose2d();
+        final double gryoAngle = drivebase.getGyro().getAngle();
+        final double turretAngle = turret.getDegrees();
+        return new Pose2d();
+    }
 
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;

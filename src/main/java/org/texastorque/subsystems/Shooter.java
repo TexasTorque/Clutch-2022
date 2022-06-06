@@ -17,7 +17,7 @@ import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
-import org.texastorque.torquelib.util.TorqueMiscUtils;
+import org.texastorque.torquelib.util.TorqueMiscUtil;
 
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
@@ -156,7 +156,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     public final ShooterState getState() { return state; }
 
     public final Pose2d getVisionPositionEstimate() {
-        TorqueMiscUtils.notImplemented();
+        TorqueMiscUtil.notImplemented();
 
         if (!camera.hasTargets()) return new Pose2d();
         final double gryoAngle = drivebase.getGyro().getAngle();

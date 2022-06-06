@@ -107,10 +107,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void updateTeleop() {
-        SmartDashboard.putNumber("Speed X", speeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("Speed Y", speeds.vyMetersPerSecond);
-        SmartDashboard.putNumber("Speed R", speeds.omegaRadiansPerSecond);
-
         if (state == DrivebaseState.X_FACTOR) {
             swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
             swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
@@ -142,6 +138,8 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         poseEstimator.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(), frontRight.getState(),
                              backLeft.getState(), backRight.getState());
         // The order of these might be wrong – Shouldn't be now.
+
+        log();
     }
 
     public final void initAuto() {
@@ -163,9 +161,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     public final TorqueNavXGyro getGyro() { return gyro; }
 
     public final void log() {
-        SmartDashboard.putString("OdomPos", String.format("(%02.5f, %02.5f)", 
+        SmartDashboard.putString("OdomPos", String.format("(%02.3f, %02.3f)", 
                 odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY()));
 
+        SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", 
+                speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }

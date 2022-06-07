@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
@@ -56,14 +57,10 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
     public final void setGateDirection(final GateDirection direction) { this.gateDirection = direction; }
 
-    private final void reset() {
+    @Override
+    public final void initialize(final TorqueMode mode) {
         this.beltDirection = BeltDirection.OFF;
         this.gateDirection = GateDirection.OFF;
-    }
-
-    @Override
-    public final void initTeleop() {
-        reset();
     }
 
     private boolean shootingStarted = false;
@@ -71,7 +68,7 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
     private final double DROP_TIME = .2;
 
     @Override
-    public final void updateTeleop() {
+    public final void update(final TorqueMode mode) {
         if (intake.isIntaking()) { beltDirection = BeltDirection.UP; }
 
         if (shooter.isShooting()) {
@@ -101,15 +98,6 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putNumber("Belt Amps", belt.getCurrent());
     }
 
-    @Override
-    public final void initAuto() {
-        reset();
-    }
-
-    @Override
-    public final void updateAuto() {
-        updateTeleop();
-    }
 
     public static final synchronized Magazine getInstance() {
         return instance == null ? instance = new Magazine() : instance;

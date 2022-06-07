@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
@@ -100,13 +101,14 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     public final ChassisSpeeds getSpeeds() { return speeds; }
 
     @Override
-    public final void initTeleop() {
+    public final void initialize(final TorqueMode mode) {
         reset();
-        state = DrivebaseState.FIELD_RELATIVE;
+        state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE : DrivebaseState.ROBOT_RELATIVE;
     }
 
     @Override
-    public final void updateTeleop() {
+    public final void update(final TorqueMode mode)  {
+
         if (state == DrivebaseState.X_FACTOR) {
             swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
             swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
@@ -140,16 +142,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         // The order of these might be wrong – Shouldn't be now.
 
         log();
-    }
-
-    public final void initAuto() {
-        reset();
-        state = DrivebaseState.ROBOT_RELATIVE;
-    }
-
-    @Override
-    public final void updateAuto() {
-        updateTeleop();
     }
 
     public final SwerveDriveKinematics getKinematics() { return kinematics; }

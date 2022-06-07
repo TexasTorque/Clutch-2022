@@ -25,44 +25,50 @@ public final class Robot extends TorqueIterative implements Subsystems {
     public final void alwaysContinuous() {}
 
     @Override
-    public final void disabledInit() {}
+    public final void disabledInit() {
+        // This makes no sense
+        //subsystems.forEach(subsystem -> subsystem.initialize(TorqueMode.DISABLED));
+    }
 
     @Override
-    public final void disabledContinuous() {}
+    public final void disabledContinuous() {
+        // This makes no sense
+        //subsystems.forEach(subsystem -> subsystem.update(TorqueMode.DISABLED));
+    }
 
     @Override
     public final void teleopInit() {
-        subsystems.forEach(TorqueSubsystem::initTeleop);
+        subsystems.forEach(subsystem -> subsystem.initialize(TorqueMode.TELEOP));
     }
 
     @Override
     public final void teleopContinuous() {
         input.update();
-        subsystems.forEach(TorqueSubsystem::updateTeleop);
+        subsystems.forEach(subsystem -> subsystem.update(TorqueMode.TELEOP));
     }
 
     @Override
     public final void autoInit() {
         autoManager.chooseCurrentSequence();
-        subsystems.forEach(TorqueSubsystem::initAuto);
+        subsystems.forEach(subsystem -> subsystem.initialize(TorqueMode.AUTO));
     }
 
     @Override
     public final void autoContinuous() {
         autoManager.runCurrentSequence();
-        subsystems.forEach(TorqueSubsystem::updateAuto);
-    }
-
-    @Override
-    public final void testContinuous() {
-        teleopContinuous();
+        subsystems.forEach(subsystem -> subsystem.update(TorqueMode.AUTO));
     }
 
     @Override
     public final void testInit() {
-        teleopInit();
+        subsystems.forEach(subsystem -> subsystem.initialize(TorqueMode.TEST));
     }
 
+    @Override
+    public final void testContinuous() {
+        input.update();
+        subsystems.forEach(subsystem -> subsystem.update(TorqueMode.TEST));
+    }
     @Override
     public final void endCompetition() {}
 }

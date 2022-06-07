@@ -2,6 +2,7 @@ package org.texastorque.subsystems;
 
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
@@ -55,18 +56,20 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private Climber() {
-   
         this.left = setupWinchMotor(Ports.CLIMBER.WINCH.LEFT);
         this.right = setupWinchMotor(Ports.CLIMBER.WINCH.RIGHT);
     }
 
     @Override
-    public final void initTeleop() {
+    public final void initialize(final TorqueMode mode) {
+        if (mode != TorqueMode.TELEOP) return;
         reset();
     }
 
     @Override
-    public final void updateTeleop() {
+    public final void update(final TorqueMode mode) {
+        if (mode != TorqueMode.TELEOP) return;
+
         if (!started && state != ClimberState.OFF)
             started = true;
         
@@ -79,12 +82,6 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(state);
         SmartDashboard.putString("Winch", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
     }
-
-    @Override
-    public final void initAuto() {}
-
-    @Override
-    public final void updateAuto() {}
 
     public static final synchronized Climber getInstance() {
         return instance == null ? instance = new Climber() : instance;

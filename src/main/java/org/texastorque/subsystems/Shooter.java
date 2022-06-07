@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueFalcon;
@@ -73,12 +74,12 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     public final void setDistance(final double distance) { this.distance = distance; }
 
     @Override
-    public final void initTeleop() {
+    public final void initialize(final TorqueMode mode) {
         state = ShooterState.OFF;
     }
 
     @Override
-    public final void updateTeleop() {
+    public final void update(final TorqueMode mode) {
         camera.update(true);
 
         if (climber.hasStarted()) {
@@ -112,16 +113,6 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
         SmartDashboard.putBoolean("Is Shooting", isShooting());
         SmartDashboard.putBoolean("Is Ready", isReady());
-    }
-
-    @Override
-    public final void initAuto() {
-        state = ShooterState.OFF;
-    }
-
-    @Override
-    public final void updateAuto() {
-        updateTeleop();
     }
 
     public final boolean isShooting() { return state != ShooterState.OFF; }

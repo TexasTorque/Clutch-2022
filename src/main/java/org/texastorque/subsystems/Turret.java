@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Shooter.ShooterState;
+import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
@@ -46,12 +47,12 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     public final void setPosition(final double position) { this.position = position; }
 
     @Override
-    public final void initTeleop() {
+    public final void initialize(final TorqueMode mode) {
         state = TurretState.OFF;
     }
 
     @Override
-    public final void updateTeleop() {
+    public final void update(final TorqueMode mode) {
         // These should be inside tracking logic
         if (getDegrees() > MAX_LEFT) state = TurretState.CENTER;
         // requested = formatRequested(-DIRECTIONAL);
@@ -83,16 +84,6 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putNumber("Turret Req", requested);
         SmartDashboard.putNumber("Turret Deg", getDegrees());
         SmartDashboard.putBoolean("Turret Locked", isLocked());
-    }
-
-    @Override
-    public final void initAuto() {
-        state = TurretState.OFF;
-    }
-
-    @Override
-    public final void updateAuto() {
-        updateTeleop();
     }
 
     public final double getDegrees() { return (rotator.getPosition() / RATIO * 360.) % 360; }

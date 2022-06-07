@@ -55,6 +55,8 @@ public final class FollowPathPlanner extends TorqueCommand implements Subsystems
         if (!resetOdometry) return;
 
         TorqueNavXGyro.getInstance().setAngleOffset(360 - trajectory.getInitialPose().getRotation().getDegrees());
+        drivebase.getOdometry().resetPosition(trajectory.getInitialState().poseMeters,
+                                                   trajectory.getInitialState().holonomicRotation);
         drivebase.getPoseEstimator().resetPosition(trajectory.getInitialState().poseMeters,
                                                    trajectory.getInitialState().holonomicRotation);
         drivebase.setState(DrivebaseState.ROBOT_RELATIVE);
@@ -65,7 +67,7 @@ public final class FollowPathPlanner extends TorqueCommand implements Subsystems
         final PathPlannerState current = (PathPlannerState)trajectory.sample(timer.get());
         ChassisSpeeds speeds = controller.calculate(drivebase.getPoseEstimator().getEstimatedPosition(), current,
                                                     current.holonomicRotation);
-        speeds = new ChassisSpeeds(-speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+        speeds = new ChassisSpeeds(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
         drivebase.setSpeeds(speeds);
     }
 

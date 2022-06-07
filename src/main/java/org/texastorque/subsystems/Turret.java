@@ -60,9 +60,10 @@ public class Turret extends TorqueSubsystem implements Subsystems {
             state = TurretState.CENTER;
         // requested = formatRequested(DIRECTIONAL);
 
-        if (climber.hasStarted()) {
-            requested = calculateRequested(ROT_BACK);
-        } else if (state == TurretState.OFF) {
+        // if (climber.hasStarted()) {
+            // requested = calculateRequested(ROT_BACK);
+        // } else 
+        if (state == TurretState.OFF) {
             requested = 0;
         } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);
@@ -77,7 +78,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         } else
             requested = 0;
 
-        rotator.setVoltage(Math.signum(requested) * Math.min(Math.abs(requested), MAX_VOLTS));
+        // rotator.setVoltage(Math.signum(requested) * Math.min(Math.abs(requested), MAX_VOLTS));
 
         TorqueSubsystemState.logState(state);
 

@@ -69,6 +69,9 @@ public class Drivebase extends TorqueSubsystem {
         private double rotation = 0;
         private boolean fieldRelative = false;
         private SwerveModuleState[] swerveModuleStates;
+        private Matrix<N3, N1> stateStds = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, .9);
+        private Matrix<N1, N1> localStds = new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.1);
+        private Matrix<N3, N1> visionStds = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, 1);
 
         private Drivebase() {
                 backLeft = new SwerveWheel(0, Ports.DRIVE_TRANS_LEFT_BACK,
@@ -84,9 +87,8 @@ public class Drivebase extends TorqueSubsystem {
                                 locationFrontLeft, locationFrontRight);
 
                 poseEstimator = new SwerveDrivePoseEstimator(Feedback.getInstance().getGyroFeedback().getRotation2d(),
-                                new Pose2d(), kinematics, new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, .9),
-                                new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.1),
-                                new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, 1));
+                                new Pose2d(), kinematics, stateStds,
+                                localStds, visionStds);
                 field2d = new Field2d();
         }
 
@@ -170,15 +172,37 @@ public class Drivebase extends TorqueSubsystem {
 
         public void updateWithVision(Pose2d visionRobotPoseMeters) {
                 try {
-                        poseEstimator.addVisionMeasurement(visionRobotPoseMeters,
-                                        Timer.getFPGATimestamp()
-                                                        - Feedback.getInstance().getTorquelightFeedback().getLatency()
-                                                        - .0011);
+                        if (choleskyErrorUnlikely(visionRobotPoseMeters)) {
+                                poseEstimator.addVisionMeasurement(visionRobotPoseMeters,
+                                                Timer.getFPGATimestamp()
+                                                                - Feedback.getInstance().getTorquelightFeedback()
+                                                                                .getLatency()
+                                                                - .0011);
+                        }
                 } catch (Exception e) {
                         System.out.println(
                                         "Failed to add vision measurement to pose estimator. Likely due to Cholesky decomposition failing due to it not being the sqrt method. Full details on the error: \n"
                                                         + e.getMessage());
                 }
+        }
+
+        /**
+         * In a nutshell, we want to prevent cholesky decomposition failures by limiting
+         * the addition of vision to joint probabilistic space (+- 2 std)
+         * 
+         * @return if it is highly likely that cholesky decomposition will pass
+         */
+        private boolean choleskyErrorUnlikely(Pose2d visionRobotPoseMeters) {
+                Pose2d estimatedPosition = poseEstimator.getEstimatedPosition();
+                /**
+                 * +
+                 * + +
+                 * + +
+                 * 
+                 */
+                double diff_x = Math.abs(estimatedPosition.getX() - visionRobotPoseMeters.getX());
+                double diff_y = Math.abs(estimatedPosition.getY() - visionRobotPoseMeters.getY());
+                return (diff_x < visionStds.get(1, 1) * 2) && (diff_y < visionStds.get(2, 1) * 2);
         }
 
         @Override

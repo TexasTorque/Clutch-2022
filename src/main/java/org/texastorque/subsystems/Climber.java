@@ -31,6 +31,10 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
         public final double getLeft() { return left; }
         public final double getRight() { return right; }
+
+        public final boolean needsConstraint() {
+            return this == BOTH_UP || this == BOTH_DOWN;
+        }
     }
 
     private final TorqueSparkMax left, right;
@@ -72,15 +76,11 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(state);
         SmartDashboard.putString("Winch", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
+        left.setPercent(!state.needsConstraint() ? state.getLeft()
+                : TorqueMathUtil.linearConstraint(state.getLeft(), left.getPosition(), 0, MAX_LEFT));
 
-
-        // if (state == ClimberState.OFF || state == ClimberState.ZERO_LEFT 
-        //         || TorqueMathUtil.constrained(left.getPosition(), 0., MAX_LEFT))
-        //     this.left.setPercent(this.state.getLeft());
-        // if (state == ClimberState.OFF || state == ClimberState.ZERO_RIGHT 
-        //         || TorqueMathUtil.constrained(right.getPosition(), MAX_RIGHT, 0))
-        //     this.right.setPercent(this.state.getRight());
-
+        right.setPercent(!state.needsConstraint() ? state.getRight()
+                : TorqueMathUtil.linearConstraint(state.getRight(), right.getPosition(), MAX_RIGHT, 0));
     }
 
     public static final synchronized Climber getInstance() {

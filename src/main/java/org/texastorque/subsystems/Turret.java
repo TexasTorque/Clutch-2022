@@ -15,8 +15,7 @@ import org.texastorque.torquelib.util.TorqueMathUtil;
 public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
-    private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.14066,
-                                // KS = 0.4,
+    private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.2,
             ROT_CENTER = 0, ROT_BACK = 180, TOLERANCE = 5, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
 
     public enum TurretState implements TorqueSubsystemState {
@@ -54,15 +53,17 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     @Override
     public final void update(final TorqueMode mode) {
         // These should be inside tracking logic
-        if (getDegrees() > MAX_LEFT) state = TurretState.CENTER;
+        // if (getDegrees() > MAX_LEFT) state = TurretState.CENTER;
         // requested = formatRequested(-DIRECTIONAL);
-        else if (getDegrees() < MAX_RIGHT)
-            state = TurretState.CENTER;
+        // else if (getDegrees() < MAX_RIGHT)
+            // state = TurretState.CENTER;
         // requested = formatRequested(DIRECTIONAL);
 
         // if (climber.hasStarted()) {
             // requested = calculateRequested(ROT_BACK);
         // } else 
+        SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
+
         if (state == TurretState.OFF) {
             requested = 0;
         } else if (state == TurretState.CENTER) {
@@ -70,15 +71,15 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.POSITIONAL) {
             requested = calculateRequested(TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
         } else if (state == TurretState.TRACK) {
-            SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
             if (camera.hasTargets())
+                // is this good, idk?    
                 requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
             else
                 requested = calculateRequested(ROT_CENTER);
         } else
             requested = 0;
 
-        // rotator.setVoltage(Math.signum(requested) * Math.min(Math.abs(requested), MAX_VOLTS));
+        rotator.setVoltage(Math.signum(requested) * Math.min(Math.abs(requested), MAX_VOLTS));
 
         TorqueSubsystemState.logState(state);
 
@@ -100,8 +101,9 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private final double formatRequested(final double requested) { return KS * Math.signum(requested) + requested; }
 
     public final boolean isLocked() {
-        return !(shooter.getState() == ShooterState.REGRESSION) ||
-                camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
+        // return !(shooter.getState() == ShooterState.REGRESSION) ||
+        SmartDashboard.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));
+        return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
     }
 
     public static final synchronized Turret getInstance() {

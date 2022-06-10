@@ -109,9 +109,7 @@ public final class Input extends TorqueInput implements Subsystems {
         if (driver.getRightCenterButton())
             climber.reset();
 
-        if (driver.getLeftCenterButton()) {
-            climber.setState(ClimberState.OFF);
-        } else if (driver.getDPADUp())
+        if (driver.getDPADUp())
             climber.setState(ClimberState.BOTH_UP);
         else if (driver.getDPADDown())
             climber.setState(ClimberState.BOTH_DOWN);

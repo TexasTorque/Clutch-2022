@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch ClimberTest",
+      "request": "launch",
+      "mainClass": "org.texastorque.subsystems.test.ClimberTest",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
       "name": "Launch TorqueSwerveModule2021",
       "request": "launch",
       "mainClass": "org.texastorque.torquelib.modules.TorqueSwerveModule2021",

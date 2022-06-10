@@ -107,7 +107,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putString("Winch", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
         left.setPercent(state.getLeft().calculate(left.getPosition()));
-        right.setPercent(state.getLeft().calculate(right.getPosition()));
+        right.setPercent(state.getRight().calculate(right.getPosition()));
     }
 
     public static final synchronized Climber getInstance() {

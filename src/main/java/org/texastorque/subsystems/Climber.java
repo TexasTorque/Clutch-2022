@@ -13,30 +13,64 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
-    private final double MAX_LEFT = 184, MAX_RIGHT = -184;
+    private static final double MAX_LEFT = 184, MAX_RIGHT = -184;
+
+    public static abstract class ArmConfig {
+        protected final double speed;
+
+        protected ArmConfig(final double speed) {
+            this.speed = speed;
+        }
+
+        public abstract double calculate(final double current);
+    }
+
+    public static final class NonConstrainedArmConfig extends ArmConfig {
+        public NonConstrainedArmConfig(final double speed) {
+            super(speed);
+        } 
+
+        @Override
+        public final double calculate(final double current) {
+            return speed;
+        }
+    }
+
+    public static final class ConstrainedArmConfig extends ArmConfig {
+        protected final double min, max;
+
+        public ConstrainedArmConfig(final double speed, final double min, final double max) {
+            super(speed);
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public final double calculate(final double current) {
+            return TorqueMathUtil.linearConstraint(speed, current, min, max);
+        }
+    }
 
     public static enum ClimberState implements TorqueSubsystemState {
-        OFF(0, 0),
-        BOTH_UP(1, -1),
-        BOTH_DOWN(-1, 1),
-        ZERO_RIGHT(0, .3),
-        ZERO_LEFT(-.3, 0);
+        OFF(new NonConstrainedArmConfig(0), new NonConstrainedArmConfig(0)),
+        BOTH_UP(new ConstrainedArmConfig(1, 0, MAX_LEFT), 
+                new ConstrainedArmConfig(-1, MAX_RIGHT, 0)),
+        BOTH_DOWN(new ConstrainedArmConfig(-1, 0, MAX_LEFT), 
+                new ConstrainedArmConfig(1, MAX_RIGHT, 0)),
+        ZERO_LEFT(new NonConstrainedArmConfig(-.3), new NonConstrainedArmConfig(0)),
+        ZERO_RIGHT(new NonConstrainedArmConfig(0), new NonConstrainedArmConfig(.3));
 
-        private final double left, right;
+        private final ArmConfig left, right;
 
-        ClimberState(final double left, final double right) { 
+        ClimberState(final ArmConfig left, final ArmConfig right) {
             this.left = left;
             this.right = right;
         }
 
-        public final double getLeft() { return left; }
-        public final double getRight() { return right; }
-
-        public final boolean needsConstraint() {
-            return this == BOTH_UP || this == BOTH_DOWN;
-        }
+        public final ArmConfig getLeft() { return left; }
+        public final ArmConfig getRight() { return right; }
     }
-
+        
     private final TorqueSparkMax left, right;
 
     private boolean started = false;
@@ -54,9 +88,6 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         return motor;
     }
 
-    public final void zeroWinchMotors() {
-    }
-
     private Climber() {
         this.left = setupWinchMotor(Ports.CLIMBER.WINCH.LEFT);
         this.right = setupWinchMotor(Ports.CLIMBER.WINCH.RIGHT);
@@ -70,20 +101,17 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        if (!started && state != ClimberState.OFF)
-            started = true;
+        if (!started && state != ClimberState.OFF) started = true;
         
         TorqueSubsystemState.logState(state);
         SmartDashboard.putString("Winch", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
-        left.setPercent(!state.needsConstraint() ? state.getLeft()
-                : TorqueMathUtil.linearConstraint(state.getLeft(), left.getPosition(), 0, MAX_LEFT));
-
-        right.setPercent(!state.needsConstraint() ? state.getRight()
-                : TorqueMathUtil.linearConstraint(state.getRight(), right.getPosition(), MAX_RIGHT, 0));
+        left.setPercent(state.getLeft().calculate(left.getPosition()));
+        right.setPercent(state.getLeft().calculate(right.getPosition()));
     }
 
     public static final synchronized Climber getInstance() {
         return instance == null ? instance = new Climber() : instance;
     }
+
 }

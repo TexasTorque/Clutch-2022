@@ -48,7 +48,7 @@ public final class Ports {
     }
 
     public final class CLIMBER {
-        public final class WINCH {
+        public final class ARMS {
             public static final int LEFT = 16;
             public static final int RIGHT = 17;
         }
@@ -60,6 +60,7 @@ public final class Ports {
             public static final int LEFT = 1;
             public static final int RIGHT = 2;
         }
+        public static final int WINCH = 20;
     }
 
     public static final int TURRET = 18;

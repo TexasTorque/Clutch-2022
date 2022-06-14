@@ -106,8 +106,15 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final void updateClimber() {
-        if (driver.getRightCenterButton())
+        if (driver.getRightCenterButton() && driver.getLeftCenterButton())
             climber.reset();
+
+        if (driver.getRightCenterButton())
+            climber._servo = false;
+        if (driver.getLeftCenterButton())
+            climber._servo = true;
+
+        if (!driver.getRightStickClick()) // debug
 
         if (driver.getDPADUp())
             climber.setState(ClimberState.BOTH_UP);
@@ -119,6 +126,21 @@ public final class Input extends TorqueInput implements Subsystems {
             climber.setState(ClimberState.ZERO_RIGHT);
         else
             climber.setState(ClimberState.OFF);
+
+        else // debug
+            climber.setState(ClimberState.OFF); // debug
+
+
+        if (driver.getRightStickClick())
+            if (driver.getDPADUp())
+                climber._winchState = -.2;
+            else if (driver.getDPADDown())
+                climber._winchState = .2;
+            else 
+                climber._winchState = 0;
+        else
+            climber._winchState = 0;
+
     }
 
     public static final synchronized Input getInstance() {

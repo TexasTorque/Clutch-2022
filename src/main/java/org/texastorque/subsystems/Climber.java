@@ -6,14 +6,16 @@ import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
+import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
-    private static final double MAX_LEFT = 184, MAX_RIGHT = -184;
+    private static final double MAX_LEFT = 183, MAX_RIGHT = -184.74;
 
     public static abstract class ArmConfig {
         protected final double speed;
@@ -70,8 +72,12 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         public final ArmConfig getLeft() { return left; }
         public final ArmConfig getRight() { return right; }
     }
+
+    public double _winchState = 0;
+    public boolean _servo = false;
         
-    private final TorqueSparkMax left, right;
+    private final TorqueSparkMax left, right, winch;
+    private final Servo leftServo, rightServo;
 
     private boolean started = false;
     public final boolean hasStarted() { return started; }
@@ -81,7 +87,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     public final void setState(final ClimberState state) { this.state = state; }
     public final ClimberState getState() { return this.state; }
 
-    private final TorqueSparkMax setupWinchMotor(final int port) {
+    private final TorqueSparkMax setupArmMotors(final int port) {
         final TorqueSparkMax motor = new TorqueSparkMax(port);
         motor.configurePositionalCANFrame();
         motor.setEncoderZero(0);
@@ -89,8 +95,19 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private Climber() {
-        this.left = setupWinchMotor(Ports.CLIMBER.WINCH.LEFT);
-        this.right = setupWinchMotor(Ports.CLIMBER.WINCH.RIGHT);
+        this.left = setupArmMotors(Ports.CLIMBER.ARMS.LEFT);
+        this.right = setupArmMotors(Ports.CLIMBER.ARMS.RIGHT);
+        
+        // Positive is pull together
+        this.winch = new TorqueSparkMax(Ports.CLIMBER.WINCH);
+        // Guess and check until they stop yelling at me
+        this.winch.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
+        this.winch.configurePositionalCANFrame();
+        this.winch.setEncoderZero(0);
+        this.winch.burnFlash();
+        
+        this.leftServo = new Servo(Ports.CLIMBER.SERVO.LEFT);
+        this.rightServo = new Servo(Ports.CLIMBER.SERVO.RIGHT);
     }
 
     @Override
@@ -104,10 +121,17 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (!started && state != ClimberState.OFF) started = true;
         
         TorqueSubsystemState.logState(state);
-        SmartDashboard.putString("Winch", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
+        SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
         left.setPercent(state.getLeft().calculate(left.getPosition()));
         right.setPercent(state.getRight().calculate(right.getPosition()));
+
+        winch.setPercent(Math.max(Math.min(_winchState, 1), -1));
+
+        SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
+
+        leftServo.set(_servo ? .5 : .9);
+        rightServo.set(_servo ? .5 : .1);
     }
 
     public static final synchronized Climber getInstance() {

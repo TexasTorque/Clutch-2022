@@ -1,10 +1,13 @@
 package org.texastorque.inputs;
 
+import javax.xml.crypto.dsig.Transform;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -200,10 +203,24 @@ public class Feedback {
                     Units.degreesToRadians(getTargetPitch()));
         }
 
+        private final Transform2d transformAdjustmnet = new Transform2d(new Translation2d(.9, 0), new Rotation2d());
+
         public Pose2d getEstimatedPositionRelativeToRobot() {
-            return PhotonUtils.estimateFieldToRobot(bestTarget.getCameraToTarget(), Constants.HUB_ORIGIN,
+            // Push forward the detection .9 on the x to track the center of the hub rather
+            // than the tape.
+            Transform2d targetRelativeToCamera = bestTarget.getCameraToTarget();
+            Transform2d targetRelativeToCenterOfHub = targetRelativeToCamera.plus(transformAdjustmnet);
+            SmartDashboard.putString("TargetRelCamera",
+                    targetRelativeToCamera.getX() + "," + targetRelativeToCamera.getY());
+            SmartDashboard.putString("TargetRelCenterHub",
+                    targetRelativeToCenterOfHub.getX() + "," + targetRelativeToCenterOfHub.getY());
+            Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(targetRelativeToCenterOfHub,
+                    Constants.HUB_ORIGIN,
                     new Transform2d(Constants.CAMERA_TO_ROBOT,
                             Rotation2d.fromDegrees(-Turret.getInstance().getDegrees())));
+            SmartDashboard.putString("EstimatedRobotPositionVision",
+                    estimatedPositionOfRobot.getX() + "," + estimatedPositionOfRobot.getY());
+            return estimatedPositionOfRobot;
         }
 
         public void smartDashboard() {

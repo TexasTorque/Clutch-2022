@@ -69,9 +69,9 @@ public class Drivebase extends TorqueSubsystem {
         private double rotation = 0;
         private boolean fieldRelative = false;
         private SwerveModuleState[] swerveModuleStates;
-        private Matrix<N3, N1> stateStds = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, .9);
-        private Matrix<N1, N1> localStds = new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.1);
-        private Matrix<N3, N1> visionStds = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, 1);
+        private Matrix<N3, N1> stateStds = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.4, 0.4, .9);
+        private Matrix<N1, N1> localStds = new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.3);
+        private Matrix<N3, N1> visionStds = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.5, .5, 1);
 
         private Drivebase() {
                 backLeft = new SwerveWheel(0, Ports.DRIVE_TRANS_LEFT_BACK,

@@ -24,7 +24,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
             this.speed = speed;
         }
 
-        public abstract double calculate(final double current);
+        public abstract double calculate(final double current, final boolean limitSwitch);
     }
 
     public static final class NonConstrainedArmConfig extends ArmConfig {
@@ -33,7 +33,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         } 
 
         @Override
-        public final double calculate(final double current) {
+        public final double calculate(final double current, final boolean limitSwitch) {
             return speed;
         }
     }
@@ -48,9 +48,36 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         }
 
         @Override
-        public final double calculate(final double current) {
+        public final double calculate(final double current, final boolean limitSwitch) {
             return TorqueMathUtil.linearConstraint(speed, current, min, max);
         }
+    }
+
+    public static final class LimitedArmConfig extends ArmConfig {
+
+        protected final double min, max;
+        protected LimitedArmConfig(final double speed, final double min, final double max) {
+            super(speed);
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public double calculate(final double current, final boolean limitSwitch) {
+            double ret = 0.0;
+            if (limitSwitch) {
+                if ((this.min > this.max) && current < 0) {
+                    return 0.0;
+                } else if ((this.min < this.max) && current > 0) {
+                    return 0.0;
+                }te
+            } else {
+                return TorqueMathUtil.linearConstraint(speed, current, min, max);
+            }
+            return ret;
+
+        }
+        
     }
 
     public static enum ClimberState implements TorqueSubsystemState {
@@ -60,8 +87,12 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         BOTH_DOWN(new ConstrainedArmConfig(-1, 0, MAX_LEFT), 
                 new ConstrainedArmConfig(1, MAX_RIGHT, 0)),
         ZERO_LEFT(new NonConstrainedArmConfig(-.3), new NonConstrainedArmConfig(0)),
-        ZERO_RIGHT(new NonConstrainedArmConfig(0), new NonConstrainedArmConfig(.3));
-
+        ZERO_RIGHT(new NonConstrainedArmConfig(0), new NonConstrainedArmConfig(.3)),
+        BOTH_UP_LIMIT(new LimitedArmConfig(1, 0, MAX_LEFT), 
+                new LimitedArmConfig(-1, MAX_RIGHT, 0)),
+        BOTH_DOWN_LIMIT(new LimitedArmConfig(-1, 0, MAX_LEFT), 
+                new LimitedArmConfig(1, MAX_RIGHT, 0));
+                
         private final ArmConfig left, right;
 
         ClimberState(final ArmConfig left, final ArmConfig right) {
@@ -123,8 +154,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(state);
         SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
-        left.setPercent(state.getLeft().calculate(left.getPosition()));
-        right.setPercent(state.getRight().calculate(right.getPosition()));
+        left.setPercent(state.getLeft().calculate(left.getPosition(), _servo));
+        right.setPercent(state.getRight().calculate(right.getPosition(), _servo));
 
         winch.setPercent(Math.max(Math.min(_winchState, 1), -1));
 

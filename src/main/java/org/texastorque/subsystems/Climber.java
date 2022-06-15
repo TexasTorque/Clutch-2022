@@ -70,7 +70,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
                     return 0.0;
                 } else if ((this.min < this.max) && current > 0) {
                     return 0.0;
-                }te
+                }
             } else {
                 return TorqueMathUtil.linearConstraint(speed, current, min, max);
             }

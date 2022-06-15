@@ -58,13 +58,12 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         // else if (getDegrees() < MAX_RIGHT)
             // state = TurretState.CENTER;
         // requested = formatRequested(DIRECTIONAL);
-
-        // if (climber.hasStarted()) {
-            // requested = calculateRequested(ROT_BACK);
-        // } else 
+       
         SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
 
-        if (state == TurretState.OFF) {
+        if (climber.hasStarted()) {
+            requested = calculateRequested(ROT_BACK);
+        } else if (state == TurretState.OFF) {
             requested = 0;
         } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);

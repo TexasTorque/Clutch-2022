@@ -9,38 +9,25 @@ import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
-    private static final double MAX_LEFT = 183, MAX_RIGHT = -184.74;
+    private static final double MAX_LEFT = 183, MAX_RIGHT = 184.74;
 
-    public static abstract class ArmConfig {
+    public static class ArmConfig {
         protected final double speed;
-
-        protected ArmConfig(final double speed) {
-            this.speed = speed;
-        }
-
-        public abstract double calculate(final double current);
-    }
-
-    public static final class NonConstrainedArmConfig extends ArmConfig {
-        public NonConstrainedArmConfig(final double speed) {
-            super(speed);
-        } 
-
-        @Override
-        public final double calculate(final double current) {
+        public ArmConfig(final double speed) { this.speed = speed; } 
+        public double calculate(final double current, final boolean limit) {
             return speed;
         }
     }
 
-    public static final class ConstrainedArmConfig extends ArmConfig {
+    public static class ConstrainedArmConfig extends ArmConfig {
         protected final double min, max;
-
         public ConstrainedArmConfig(final double speed, final double min, final double max) {
             super(speed);
             this.min = min;
@@ -48,20 +35,34 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         }
 
         @Override
-        public final double calculate(final double current) {
+        public double calculate(final double current, final boolean limit) {
             return TorqueMathUtil.linearConstraint(speed, current, min, max);
         }
     }
 
-    public static enum ClimberState implements TorqueSubsystemState {
-        OFF(new NonConstrainedArmConfig(0), new NonConstrainedArmConfig(0)),
-        BOTH_UP(new ConstrainedArmConfig(1, 0, MAX_LEFT), 
-                new ConstrainedArmConfig(-1, MAX_RIGHT, 0)),
-        BOTH_DOWN(new ConstrainedArmConfig(-1, 0, MAX_LEFT), 
-                new ConstrainedArmConfig(1, MAX_RIGHT, 0)),
-        ZERO_LEFT(new NonConstrainedArmConfig(-.3), new NonConstrainedArmConfig(0)),
-        ZERO_RIGHT(new NonConstrainedArmConfig(0), new NonConstrainedArmConfig(.3));
+    public static class LimitedArmConfig extends ConstrainedArmConfig {
+        protected final boolean upper;
+        protected LimitedArmConfig(final double speed, final double min, final double max, final boolean upper) {
+            super(speed, min, max);
+            this.upper = upper;
+        }
 
+        @Override
+        public double calculate(final double current, final boolean limit) {
+            return TorqueMathUtil.linearConstraint(limit ? (upper ? max : min) : speed, current, min, max);
+        }
+        
+    }
+
+    public static enum ClimberState implements TorqueSubsystemState {
+        OFF(new ArmConfig(0), new ArmConfig(0)),
+        BOTH_UP(new ConstrainedArmConfig(1, 0, MAX_LEFT), 
+                new ConstrainedArmConfig(1, 0, MAX_RIGHT)),
+        BOTH_DOWN(new LimitedArmConfig(-1, 0, MAX_LEFT, false), 
+                new LimitedArmConfig(-1, 0, MAX_RIGHT, false)),
+        ZERO_LEFT(new ArmConfig(-.3), new ArmConfig(0)),
+        ZERO_RIGHT(new ArmConfig(0), new ArmConfig(-.3));
+       
         private final ArmConfig left, right;
 
         ClimberState(final ArmConfig left, final ArmConfig right) {
@@ -78,6 +79,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         
     private final TorqueSparkMax left, right, winch;
     private final Servo leftServo, rightServo;
+    private final DigitalInput leftSwitch, rightSwitch;
 
     private boolean started = false;
     public final boolean hasStarted() { return started; }
@@ -95,19 +97,22 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private Climber() {
-        this.left = setupArmMotors(Ports.CLIMBER.ARMS.LEFT);
-        this.right = setupArmMotors(Ports.CLIMBER.ARMS.RIGHT);
+        left = setupArmMotors(Ports.CLIMBER.ARMS.LEFT);
+        right = setupArmMotors(Ports.CLIMBER.ARMS.RIGHT);
         
         // Positive is pull together
-        this.winch = new TorqueSparkMax(Ports.CLIMBER.WINCH);
+        winch = new TorqueSparkMax(Ports.CLIMBER.WINCH);
         // Guess and check until they stop yelling at me
-        this.winch.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
-        this.winch.configurePositionalCANFrame();
-        this.winch.setEncoderZero(0);
-        this.winch.burnFlash();
+        winch.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
+        winch.configurePositionalCANFrame();
+        winch.setEncoderZero(0);
+        winch.burnFlash();
         
-        this.leftServo = new Servo(Ports.CLIMBER.SERVO.LEFT);
-        this.rightServo = new Servo(Ports.CLIMBER.SERVO.RIGHT);
+        leftServo = new Servo(Ports.CLIMBER.SERVO.LEFT);
+        rightServo = new Servo(Ports.CLIMBER.SERVO.RIGHT);
+
+        leftSwitch = new DigitalInput(Ports.CLIMBER.CLAW.LEFT);
+        rightSwitch = new DigitalInput(Ports.CLIMBER.CLAW.RIGHT);
     }
 
     @Override
@@ -123,8 +128,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(state);
         SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
-        left.setPercent(state.getLeft().calculate(left.getPosition()));
-        right.setPercent(state.getRight().calculate(right.getPosition()));
+        left.setPercent(state.getLeft().calculate(left.getPosition(), leftSwitch.get()));
+        right.setPercent(-state.getRight().calculate(-right.getPosition(), rightSwitch.get()));
 
         winch.setPercent(Math.max(Math.min(_winchState, 1), -1));
 

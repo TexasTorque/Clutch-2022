@@ -125,7 +125,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) { return clampRPM((173.5 * distance) + 1000); }
+    private final double regressionRPM(final double distance) { return clampRPM((150 * distance) + 1000); }
 
     /**
      * @param distance Distance (m)

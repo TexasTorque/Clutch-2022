@@ -55,7 +55,7 @@ public final class Input extends TorqueInput implements Subsystems {
     private final void updateIntake() {
         if (driver.getRightTrigger()) {
             intake.setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
-        } else if (driver.getLeftTrigger()) {
+        } else if (driver.getXButton()) {
             intake.setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
         } else {
             intake.setState(IntakeDirection.STOPPED, IntakePosition.UP);
@@ -81,16 +81,9 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final void updateShooter() {
-        if (driver.getXButton()) {
+        if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(TurretState.TRACK);
-        } else if (driver.getAButton()) {
-            shooter.setState(ShooterState.MEGA_SHOT);
-            turret.setState(TurretState.CENTER);
-        } else if (driver.getYButton()) {
-            shooter.setState(ShooterState.DISTANCE);
-            shooter.setDistance(3);
-            turret.setState(TurretState.CENTER);
         } else {
             shooter.setState(ShooterState.OFF);
             turret.setState(TurretState.OFF);

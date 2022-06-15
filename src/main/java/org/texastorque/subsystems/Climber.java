@@ -5,73 +5,30 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorqueClick;
+import org.texastorque.torquelib.control.TorqueToggle;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
-    private static final double MAX_LEFT = 183, MAX_RIGHT = 184.74;
-
-    public static class ArmConfig {
-        protected final double speed;
-        public ArmConfig(final double speed) { this.speed = speed; } 
-        public double calculate(final double current, final boolean limit) {
-            return speed;
-        }
-    }
-
-    public static class ConstrainedArmConfig extends ArmConfig {
-        protected final double min, max;
-        public ConstrainedArmConfig(final double speed, final double min, final double max) {
-            super(speed);
-            this.min = min;
-            this.max = max;
-        }
-
-        @Override
-        public double calculate(final double current, final boolean limit) {
-            return TorqueMathUtil.linearConstraint(speed, current, min, max);
-        }
-    }
-
-    public static class LimitedArmConfig extends ConstrainedArmConfig {
-        protected final boolean upper;
-        protected LimitedArmConfig(final double speed, final double min, final double max, final boolean upper) {
-            super(speed, min, max);
-            this.upper = upper;
-        }
-
-        @Override
-        public double calculate(final double current, final boolean limit) {
-            return TorqueMathUtil.linearConstraint(limit ? (upper ? max : min) : speed, current, min, max);
-        }
-        
-    }
+    private static final double MAX_LEFT = 183, MAX_RIGHT = 184.74, 
+            LEFT_SERVO_ENGAGED = .5, LEFT_SERVO_DISENGAGED = .9,
+            RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1;
 
     public static enum ClimberState implements TorqueSubsystemState {
-        OFF(new ArmConfig(0), new ArmConfig(0)),
-        BOTH_UP(new ConstrainedArmConfig(1, 0, MAX_LEFT), 
-                new ConstrainedArmConfig(1, 0, MAX_RIGHT)),
-        BOTH_DOWN(new LimitedArmConfig(-1, 0, MAX_LEFT, false), 
-                new LimitedArmConfig(-1, 0, MAX_RIGHT, false)),
-        ZERO_LEFT(new ArmConfig(-.3), new ArmConfig(0)),
-        ZERO_RIGHT(new ArmConfig(0), new ArmConfig(-.3));
-       
-        private final ArmConfig left, right;
+        OFF, INIT_PUSH, INIT_PULL, TILT_OUT, TILT_IN, ADVANCE;
 
-        ClimberState(final ArmConfig left, final ArmConfig right) {
-            this.left = left;
-            this.right = right;
+        public final ClimberState next() {
+            return values()[(this.ordinal() + 1) % values().length];
         }
-
-        public final ArmConfig getLeft() { return left; }
-        public final ArmConfig getRight() { return right; }
     }
 
     public double _winchState = 0;
@@ -83,17 +40,32 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     private boolean started = false;
     public final boolean hasStarted() { return started; }
-    public final void reset() { started = false; }
+
+    private TorqueToggle approved = new TorqueToggle(false);
+    public final void setApproved(final boolean approved) { this.approved.set(approved); }
+
+    public final void reset() { started = false; approved = new TorqueToggle(false); }
 
     private ClimberState state = ClimberState.OFF;
-    public final void setState(final ClimberState state) { this.state = state; }
-    public final ClimberState getState() { return this.state; }
 
     private final TorqueSparkMax setupArmMotors(final int port) {
         final TorqueSparkMax motor = new TorqueSparkMax(port);
+        motor.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
         motor.configurePositionalCANFrame();
         motor.setEncoderZero(0);
         return motor;
+    }
+
+    /**
+     * Set the servos on the claws.
+     * 
+     * @param engaged If they will attach or not. 
+     * 
+     * @apiNote False is to release.
+     */
+    private final void setServos(final boolean engaged) {
+        leftServo.set(engaged ? LEFT_SERVO_ENGAGED : LEFT_SERVO_DISENGAGED);
+        rightServo.set(engaged ? RIGHT_SERVO_ENGAGED : RIGHT_SERVO_DISENGAGED);
     }
 
     private Climber() {
@@ -102,7 +74,6 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         
         // Positive is pull together
         winch = new TorqueSparkMax(Ports.CLIMBER.WINCH);
-        // Guess and check until they stop yelling at me
         winch.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
         winch.configurePositionalCANFrame();
         winch.setEncoderZero(0);
@@ -128,15 +99,110 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(state);
         SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
-        left.setPercent(state.getLeft().calculate(left.getPosition(), leftSwitch.get()));
-        right.setPercent(-state.getRight().calculate(-right.getPosition(), rightSwitch.get()));
-
-        winch.setPercent(Math.max(Math.min(_winchState, 1), -1));
+        // left.setPercent(state.getLeft().calculate(left.getPosition(), leftSwitch.get()));
+        // right.setPercent(-state.getRight().calculate(-right.getPosition(), rightSwitch.get()));
+        // winch.setPercent(Math.max(Math.min(_winchState, 1), -1));
 
         SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
 
-        leftServo.set(_servo ? .5 : .9);
-        rightServo.set(_servo ? .5 : .1);
+        if (state == ClimberState.OFF) handleOff();
+        else if (state == ClimberState.INIT_PUSH) handleInitPush();
+        else if (state == ClimberState.INIT_PULL) handleInitPull();
+        else if (state == ClimberState.TILT_OUT) handleTiltOut();
+        else if (state == ClimberState.TILT_IN) handleTiltIn();
+        else if (state == ClimberState.ADVANCE) handleAdvance();
+        else ;
+    }
+
+    private final void handleOff() {
+        left.setPercent(0);
+        right.setPercent(0);
+
+        if (approved.get()) state = state.next();
+    }
+
+    private final void handleInitPush() { 
+        final double toLeft = MAX_LEFT, toRight = MAX_RIGHT;
+        left.setPosition(toLeft);
+        right.setPosition(-toRight);
+
+        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved.get()) 
+            state = state.next();
+    }
+
+    private final void handleInitPull() { 
+        if (leftSwitch.get()) left.setPercent(0);
+        else left.setPosition(0);
+
+        if (rightSwitch.get()) right.setPercent(0);
+        else right.setPosition(0);
+
+        if (leftSwitch.get() && rightSwitch.get() && approved.get())
+            state = state.next();
+    }
+
+    private final void handleTiltOut() {
+        final double OFFSET = 40, toLeft = MAX_LEFT - OFFSET, toRight = MAX_RIGHT - OFFSET, toWinch = -85;
+
+        winch.setPosition(toWinch);
+        left.setPosition(toLeft);
+        right.setPosition(-toRight);
+
+        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved.get()
+                && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2)) 
+            state = state.next();
+    }
+
+    private final void handleTiltIn() { 
+        final double offset = 15, toLeft = MAX_LEFT, toRight = MAX_RIGHT, toWinch = -83;
+
+        if (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset) 
+            winch.setPosition(toWinch);
+        
+        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved.get()
+                && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2))
+            state = state.next();
+    }
+
+    private final void handleAdvance() {
+        final double offsetRelease = 40, 
+                     leftRelease = MAX_LEFT - offsetRelease,
+                     rightRelease = MAX_RIGHT - offsetRelease,
+                     offsetWinch = 80,
+                     leftWinch = MAX_LEFT - offsetWinch,
+                     rightWinch = MAX_RIGHT - offsetWinch,
+                     toWinch = -10,
+                     leftWait = 30,
+                     rightWait = 30;
+
+        final boolean winchGood = TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2);
+
+        if (left.getPosition() <= leftWinch && -right.getPosition() <= rightWinch)
+            winch.setPosition(toWinch);
+        else
+            winch.setPercent(0);
+
+        if (left.getPosition() <= leftWait && -right.getPosition() <= rightWait) {
+            setServos(true);
+            if (!winchGood) {
+                left.setPercent(0);
+                right.setPercent(0);
+                return;
+            }
+        }
+
+        if (TorqueMathUtil.toleranced(left.getPosition(), leftRelease, 5) 
+                && TorqueMathUtil.toleranced(-right.getPosition(), rightRelease, 5))
+            setServos(false); 
+
+        if (leftSwitch.get()) left.setPercent(0);
+        else left.setPosition(0);
+
+        if (rightSwitch.get()) right.setPercent(0);
+        else right.setPosition(0);
+
+        if (leftSwitch.get() && rightSwitch.get() && approved.get())
+            state = state.next();
     }
 
     public static final synchronized Climber getInstance() {

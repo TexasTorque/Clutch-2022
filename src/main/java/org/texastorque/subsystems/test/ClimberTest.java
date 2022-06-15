@@ -2,6 +2,8 @@ package org.texastorque.subsystems.test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,15 +28,16 @@ public class ClimberTest {
 
     public static final void main(final String[] arguments) { new ClimberTest(); }
 
-    public static final String input() {
+    public static final ArrayList<String> input() {
         try {
+            final ArrayList<String> ls = new ArrayList<String>();
             final Scanner s = new Scanner(new File(TEST_FILE_PATH));
-            if (!s.hasNext()) return "";
-            return s.next();
+            while (s.hasNext()) ls.add(s.next());
+            return ls;
         } catch (final FileNotFoundException e) {
             e.printStackTrace();
             System.exit(1);
-            return "";
+            return null;
         }
     }
 
@@ -55,21 +58,23 @@ public class ClimberTest {
     private ClimberState state = ClimberState.OFF;
 
     private final void update() {
-        if (input().equals("up"))
+        final ArrayList<String> in = input();
+
+        if (in.get(0).equals("up"))
             state = ClimberState.BOTH_UP;
-        else if (input().equals("down"))
+        else if (in.get(0).equals("down"))
             state = ClimberState.BOTH_DOWN;
-        else if (input().equals("right"))
+        else if (in.get(0).equals("right"))
             state = ClimberState.ZERO_RIGHT;
-        else if (input().equals("left"))
+        else if (in.get(0).equals("left"))
             state = ClimberState.ZERO_LEFT;
         else 
             state = ClimberState.OFF;
 
-        double l = state.getLeft().calculate(left.getPosition());
+        double l = state.getLeft().calculate(left.getPosition(), in.get(1).equals("yes"));
         left.setPercent(l);
-        double r = state.getRight().calculate(right.getPosition());
-        right.setPercent(r);
+        double r = state.getRight().calculate(-right.getPosition(), in.get(2).equals("yes"));
+        right.setPercent(-r);
 
         System.out.printf("%s: (%03.2f, %03.2f) & (%03.2f, %03.2f)\n", state,
                 l, r, left.getPosition(), right.getPosition());

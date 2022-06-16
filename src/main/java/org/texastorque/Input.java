@@ -16,7 +16,7 @@ import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Climber.AutoClimbState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
-import org.texastorque.torquelib.base.TorqueInputModule;
+import org.texastorque.torquelib.control.TorqueClick;
 import org.texastorque.torquelib.control.TorqueToggle;
 import org.texastorque.torquelib.control.complex.TorqueSpeedSettings;
 import org.texastorque.torquelib.util.GenericController;
@@ -29,7 +29,6 @@ public final class Input extends TorqueInput implements Subsystems {
     private final TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6
     private final TorqueSpeedSettings rSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5
 
-    private final TorqueToggle climberHooks = new TorqueToggle(false);
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -102,6 +101,9 @@ public final class Input extends TorqueInput implements Subsystems {
         }
     }
 
+    private final TorqueClick toggleClimberHooks = new TorqueClick();
+    private boolean servoEnabled = false;
+
     private final void updateClimber() {
         if (driver.getRightCenterButton() && driver.getLeftCenterButton())
             climber.reset();
@@ -119,7 +121,8 @@ public final class Input extends TorqueInput implements Subsystems {
 
         climber.setAuto(driver.getXButton());
 
-        climber.setServos(climberHooks.get());
+        if (toggleClimberHooks.calculate(driver.getYButton()))
+            climber.setServos(servoEnabled = !servoEnabled);
     }
 
     public static final synchronized Input getInstance() {

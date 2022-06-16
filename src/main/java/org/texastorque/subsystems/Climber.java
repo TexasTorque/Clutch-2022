@@ -38,13 +38,18 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     private final Servo leftServo, rightServo;
     private final DigitalInput leftSwitch, rightSwitch;
 
-    private boolean started = false;
+    private boolean started = false, approved = false, climb = false;
+    private TorqueClick approvalReset = new TorqueClick();
+
+    public final void set(final boolean climb) {
+        this.climb = climb;
+        if (!started && climb) started = true;
+        if (approvalReset.calculate(climb)) approved = true;
+    }
+
     public final boolean hasStarted() { return started; }
 
-    private TorqueToggle approved = new TorqueToggle(false);
-    public final void setApproved(final boolean approved) { this.approved.set(approved); }
-
-    public final void reset() { started = false; approved = new TorqueToggle(false); }
+    public final void reset() { started = false; approved = false; climb = false; }
 
     private ClimberState state = ClimberState.OFF;
 
@@ -94,31 +99,31 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        if (!started && state != ClimberState.OFF) started = true;
-        
         TorqueSubsystemState.logState(state);
         SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
-        // left.setPercent(state.getLeft().calculate(left.getPosition(), leftSwitch.get()));
-        // right.setPercent(-state.getRight().calculate(-right.getPosition(), rightSwitch.get()));
-        // winch.setPercent(Math.max(Math.min(_winchState, 1), -1));
-
         SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
 
-        if (state == ClimberState.OFF) handleOff();
-        else if (state == ClimberState.INIT_PUSH) handleInitPush();
-        else if (state == ClimberState.INIT_PULL) handleInitPull();
-        else if (state == ClimberState.TILT_OUT) handleTiltOut();
-        else if (state == ClimberState.TILT_IN) handleTiltIn();
-        else if (state == ClimberState.ADVANCE) handleAdvance();
-        else ;
+        if (climb)
+            if (state == ClimberState.OFF) handleOff();
+            else if (state == ClimberState.INIT_PUSH) handleInitPush();
+            else if (state == ClimberState.INIT_PULL) handleInitPull();
+            else if (state == ClimberState.TILT_OUT) handleTiltOut();
+            else if (state == ClimberState.TILT_IN) handleTiltIn();
+            else if (state == ClimberState.ADVANCE) handleAdvance();
+            else killMotors();
+        else killMotors();
+    }
+
+    private final void killMotors() {
+        left.setPercent(0);
+        right.setPercent(0);
+        winch.setPercent(0);
     }
 
     private final void handleOff() {
-        left.setPercent(0);
-        right.setPercent(0);
-
-        if (approved.get()) state = state.next();
+        killMotors();
+        if (approved) state = state.next();
     }
 
     private final void handleInitPush() { 
@@ -126,7 +131,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         left.setPosition(toLeft);
         right.setPosition(-toRight);
 
-        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved.get()) 
+        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved) 
             state = state.next();
     }
 
@@ -137,7 +142,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (rightSwitch.get()) right.setPercent(0);
         else right.setPosition(0);
 
-        if (leftSwitch.get() && rightSwitch.get() && approved.get())
+        if (leftSwitch.get() && rightSwitch.get() && approved)
             state = state.next();
     }
 
@@ -148,7 +153,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         left.setPosition(toLeft);
         right.setPosition(-toRight);
 
-        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved.get()
+        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved
                 && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2)) 
             state = state.next();
     }
@@ -159,7 +164,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset) 
             winch.setPosition(toWinch);
         
-        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved.get()
+        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved
                 && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2))
             state = state.next();
     }
@@ -171,7 +176,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
                      offsetWinch = 80,
                      leftWinch = MAX_LEFT - offsetWinch,
                      rightWinch = MAX_RIGHT - offsetWinch,
-                     toWinch = -10,
+                     toWinch = 0,
                      leftWait = 30,
                      rightWait = 30;
 
@@ -201,7 +206,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (rightSwitch.get()) right.setPercent(0);
         else right.setPosition(0);
 
-        if (leftSwitch.get() && rightSwitch.get() && approved.get())
+        if (leftSwitch.get() && rightSwitch.get() && approved)
             state = state.next();
     }
 

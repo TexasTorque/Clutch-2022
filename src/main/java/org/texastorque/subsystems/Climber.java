@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
+    public double _winch = 0;
+
     private static final double MAX_LEFT = 183, MAX_RIGHT = 184.74, 
             LEFT_SERVO_ENGAGED = .5, LEFT_SERVO_DISENGAGED = .9,
             RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1;
@@ -62,7 +64,14 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     public final boolean hasStarted() { return started; }
 
-    public final void reset() { started = false; approved = false; running = false; }
+    public final void reset() { 
+        started = false;
+        approved = false;
+        running = false; 
+        state = AutoClimbState.OFF; 
+        initPullRightHasGoneTooLow = false;
+        initPullLeftHasGoneTooLow = false;
+    }
 
     private final void advance() {
         state = state.next();
@@ -123,8 +132,16 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
 
+        SmartDashboard.putBoolean("Approved", approved);
+        SmartDashboard.putBoolean("Running", running);
+
+        SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
+        SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
+        if (_winch != 0) { winch.setPercent(_winch); return; }
+
         if (running) handleAutoClimb();
         else handleManualState();
+
     }
 
     private final void handleAutoClimb() {
@@ -159,30 +176,39 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         left.setPosition(toLeft);
         right.setPosition(-toRight);
 
-        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved) 
+        if (TorqueMathUtil.toleranced(left.getPosition(), toLeft, 3) && TorqueMathUtil.toleranced(-right.getPosition(), toRight, 3) && approved) 
             advance();
     }
 
+    private boolean initPullRightHasGoneTooLow = false, initPullLeftHasGoneTooLow = false;
+
     private final void handleInitPull() { 
         if (leftSwitch.get()) left.setPercent(0);
+        else if (initPullLeftHasGoneTooLow) left.setPosition(15);
         else left.setPosition(0);
 
         if (rightSwitch.get()) right.setPercent(0);
+        else if (initPullRightHasGoneTooLow) right.setPosition(15);
         else right.setPosition(0);
+
+        if (left.getPosition() <= 4)
+            initPullLeftHasGoneTooLow = true;
+        if (-right.getPosition() <= 4)
+            initPullRightHasGoneTooLow = true;
 
         if (leftSwitch.get() && rightSwitch.get() && approved)
             advance();
     }
 
     private final void handleTiltOut() {
-        final double OFFSET = 40, toLeft = MAX_LEFT - OFFSET, toRight = MAX_RIGHT - OFFSET, toWinch = -85;
+        final double OFFSET = 40, toLeft = MAX_LEFT - OFFSET, toRight = MAX_RIGHT - OFFSET, toWinch = -80;
 
         winch.setPosition(toWinch);
         left.setPosition(toLeft);
         right.setPosition(-toRight);
 
-        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved
-                && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2)) 
+        if (TorqueMathUtil.toleranced(left.getPosition(), toLeft, 3) && TorqueMathUtil.toleranced(-right.getPosition(), toRight, 3) && approved
+                && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 4)) 
             advance();
     }
 
@@ -192,8 +218,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset) 
             winch.setPosition(toWinch);
         
-        if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved
-                && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2))
+        if (TorqueMathUtil.toleranced(left.getPosition(), toLeft, 5) && TorqueMathUtil.toleranced(-right.getPosition(), toRight, 5) && approved
+                && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 4))
             advance();
     }
 
@@ -241,5 +267,4 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     public static final synchronized Climber getInstance() {
         return instance == null ? instance = new Climber() : instance;
     }
-
 }

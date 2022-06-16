@@ -56,7 +56,7 @@ public class ClimberTest {
         right = new Winch(8);
     }
 
-    private ClimberState state = ClimberState.OFF;
+    private AutoClimbState state = AutoClimbState.OFF;
 
     private boolean started = false, approved = false, climb = false;
     private TorqueClick approvalReset = new TorqueClick();

@@ -12,7 +12,8 @@ import org.texastorque.subsystems.Magazine.GateDirection;
 import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret;
-import org.texastorque.subsystems.Climber.ClimberState;
+import org.texastorque.subsystems.Climber.ManualClimbState;
+import org.texastorque.subsystems.Climber.AutoClimbState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.base.TorqueInputModule;
@@ -102,7 +103,18 @@ public final class Input extends TorqueInput implements Subsystems {
         if (driver.getRightCenterButton() && driver.getLeftCenterButton())
             climber.reset();
 
-        climber.set(driver.getXButton());
+        if (driver.getDPADDown()) 
+            climber.setManual(ManualClimbState.BOTH_DOWN);
+        else if (driver.getDPADUp()) 
+            climber.setManual(ManualClimbState.BOTH_UP);
+        else if (driver.getDPADRight()) 
+            climber.setManual(ManualClimbState.ZERO_RIGHT);
+        else if (driver.getDPADLeft()) 
+            climber.setManual(ManualClimbState.ZERO_LEFT);
+        else 
+            climber.setManual(ManualClimbState.OFF);
+
+        climber.setAuto(driver.getXButton());
     }
 
     public static final synchronized Input getInstance() {

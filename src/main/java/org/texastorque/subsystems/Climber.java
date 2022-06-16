@@ -6,14 +6,12 @@ import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorqueClick;
-import org.texastorque.torquelib.control.TorqueToggle;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Climber extends TorqueSubsystem implements Subsystems {
@@ -23,17 +21,28 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
             LEFT_SERVO_ENGAGED = .5, LEFT_SERVO_DISENGAGED = .9,
             RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1;
 
-    public static enum ClimberState implements TorqueSubsystemState {
+    public static enum AutoClimbState implements TorqueSubsystemState {
         OFF, INIT_PUSH, INIT_PULL, TILT_OUT, TILT_IN, ADVANCE;
 
-        public final ClimberState next() {
+        public final AutoClimbState next() {
             return values()[(this.ordinal() + 1) % values().length];
         }
     }
 
-    public double _winchState = 0;
-    public boolean _servo = false;
-        
+    public static enum ManualClimbState implements TorqueSubsystemState {
+        OFF(0, 0),
+        ZERO_LEFT(-.3, 0),
+        ZERO_RIGHT(0, -.3),
+        BOTH_UP(1, 1),
+        BOTH_DOWN(-1, -1);
+
+        public final double left, right;
+
+        ManualClimbState(final double left, final double right) {
+            this.left = left; this.right = right;
+        }
+    }
+
     private final TorqueSparkMax left, right, winch;
     private final Servo leftServo, rightServo;
     private final DigitalInput leftSwitch, rightSwitch;
@@ -41,17 +50,27 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     private boolean started = false, approved = false, climb = false;
     private TorqueClick approvalReset = new TorqueClick();
 
-    public final void set(final boolean climb) {
+    public final void setAuto(final boolean climb) {
         this.climb = climb;
         if (!started && climb) started = true;
         if (approvalReset.calculate(climb)) approved = true;
+    }
+
+    public final void setManual(final ManualClimbState manual) {
+        this.manual = manual;
     }
 
     public final boolean hasStarted() { return started; }
 
     public final void reset() { started = false; approved = false; climb = false; }
 
-    private ClimberState state = ClimberState.OFF;
+    private final void advance() {
+        state = state.next();
+        approved = false;
+    }
+
+    private AutoClimbState state = AutoClimbState.OFF;
+    private ManualClimbState manual = ManualClimbState.OFF;
 
     private final TorqueSparkMax setupArmMotors(final int port) {
         final TorqueSparkMax motor = new TorqueSparkMax(port);
@@ -104,15 +123,24 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
 
-        if (climb)
-            if (state == ClimberState.OFF) handleOff();
-            else if (state == ClimberState.INIT_PUSH) handleInitPush();
-            else if (state == ClimberState.INIT_PULL) handleInitPull();
-            else if (state == ClimberState.TILT_OUT) handleTiltOut();
-            else if (state == ClimberState.TILT_IN) handleTiltIn();
-            else if (state == ClimberState.ADVANCE) handleAdvance();
-            else killMotors();
+        if (climb) handleAutoClimb();
+        else handleManualState();
+    }
+
+    private final void handleAutoClimb() {
+        if (state == AutoClimbState.OFF) handleOff();
+        else if (state == AutoClimbState.INIT_PUSH) handleInitPush();
+        else if (state == AutoClimbState.INIT_PULL) handleInitPull();
+        else if (state == AutoClimbState.TILT_OUT) handleTiltOut();
+        else if (state == AutoClimbState.TILT_IN) handleTiltIn();
+        else if (state == AutoClimbState.ADVANCE) handleAdvance();
         else killMotors();
+    }
+
+    private final void handleManualState() {
+        left.setPercent(manual.left);
+        right.setPercent(-manual.right);
+        winch.setPercent(0);
     }
 
     private final void killMotors() {
@@ -123,7 +151,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     private final void handleOff() {
         killMotors();
-        if (approved) state = state.next();
+        if (approved) advance(); 
     }
 
     private final void handleInitPush() { 
@@ -132,7 +160,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         right.setPosition(-toRight);
 
         if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved) 
-            state = state.next();
+            advance();
     }
 
     private final void handleInitPull() { 
@@ -143,7 +171,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         else right.setPosition(0);
 
         if (leftSwitch.get() && rightSwitch.get() && approved)
-            state = state.next();
+            advance();
     }
 
     private final void handleTiltOut() {
@@ -155,7 +183,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
         if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved
                 && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2)) 
-            state = state.next();
+            advance();
     }
 
     private final void handleTiltIn() { 
@@ -166,7 +194,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         
         if (left.getPosition() >= toLeft && -right.getPosition() >= toRight && approved
                 && TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2))
-            state = state.next();
+            advance();
     }
 
     private final void handleAdvance() {
@@ -207,7 +235,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         else right.setPosition(0);
 
         if (leftSwitch.get() && rightSwitch.get() && approved)
-            state = state.next();
+            advance();
     }
 
     public static final synchronized Climber getInstance() {

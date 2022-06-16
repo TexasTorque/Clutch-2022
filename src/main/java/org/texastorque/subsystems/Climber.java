@@ -47,13 +47,13 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     private final Servo leftServo, rightServo;
     private final DigitalInput leftSwitch, rightSwitch;
 
-    private boolean started = false, approved = false, climb = false;
+    private boolean started = false, approved = false, running = false;
     private TorqueClick approvalReset = new TorqueClick();
 
-    public final void setAuto(final boolean climb) {
-        this.climb = climb;
-        if (!started && climb) started = true;
-        if (approvalReset.calculate(climb)) approved = true;
+    public final void setAuto(final boolean running) {
+        this.running = running;
+        if (!started && running) started = true;
+        if (approvalReset.calculate(running)) approved = true;
     }
 
     public final void setManual(final ManualClimbState manual) {
@@ -62,7 +62,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     public final boolean hasStarted() { return started; }
 
-    public final void reset() { started = false; approved = false; climb = false; }
+    public final void reset() { started = false; approved = false; running = false; }
 
     private final void advance() {
         state = state.next();
@@ -87,7 +87,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
      * 
      * @apiNote False is to release.
      */
-    private final void setServos(final boolean engaged) {
+    public final void setServos(final boolean engaged) {
         leftServo.set(engaged ? LEFT_SERVO_ENGAGED : LEFT_SERVO_DISENGAGED);
         rightServo.set(engaged ? RIGHT_SERVO_ENGAGED : RIGHT_SERVO_DISENGAGED);
     }
@@ -123,7 +123,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
 
-        if (climb) handleAutoClimb();
+        if (running) handleAutoClimb();
         else handleManualState();
     }
 

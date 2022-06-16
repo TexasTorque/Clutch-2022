@@ -12,10 +12,12 @@ import org.texastorque.subsystems.Magazine.GateDirection;
 import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret;
-import org.texastorque.subsystems.Climber.ClimberState;
+import org.texastorque.subsystems.Climber.ManualClimbState;
+import org.texastorque.subsystems.Climber.AutoClimbState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
-import org.texastorque.torquelib.base.TorqueInputModule;
+import org.texastorque.torquelib.control.TorqueClick;
+import org.texastorque.torquelib.control.TorqueToggle;
 import org.texastorque.torquelib.control.complex.TorqueSpeedSettings;
 import org.texastorque.torquelib.util.GenericController;
 
@@ -26,6 +28,7 @@ public final class Input extends TorqueInput implements Subsystems {
     private final TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6
     private final TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6
     private final TorqueSpeedSettings rSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5
+
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -56,7 +59,7 @@ public final class Input extends TorqueInput implements Subsystems {
         if (driver.getRightTrigger()) {
             intake.setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
         } else if (driver.getXButton()) {
-            intake.setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
+            //intake.setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
         } else {
             intake.setState(IntakeDirection.STOPPED, IntakePosition.UP);
         }
@@ -98,42 +101,34 @@ public final class Input extends TorqueInput implements Subsystems {
         }
     }
 
+    private final TorqueClick toggleClimberHooks = new TorqueClick();
+    private boolean servoEnabled = false;
+
     private final void updateClimber() {
-        if (driver.getRightCenterButton() && driver.getLeftCenterButton())
+        if (driver.getRightCenterButton())
             climber.reset();
 
-        if (driver.getRightCenterButton())
-            climber._servo = false;
-        if (driver.getLeftCenterButton())
-            climber._servo = true;
+        if (driver.getDPADDown()) 
+            climber.setManual(ManualClimbState.BOTH_DOWN);
+        else if (driver.getDPADUp()) 
+            climber.setManual(ManualClimbState.BOTH_UP);
+        else if (driver.getDPADRight()) 
+            climber.setManual(ManualClimbState.ZERO_RIGHT);
+        else if (driver.getDPADLeft()) 
+            climber.setManual(ManualClimbState.ZERO_LEFT);
+        else 
+            climber.setManual(ManualClimbState.OFF);
 
-        if (!driver.getRightStickClick()) // debug
+        climber.setAuto(driver.getXButton());
 
-        if (driver.getDPADUp())
-            climber.setState(ClimberState.BOTH_UP);
-        else if (driver.getDPADDown())
-            climber.setState(ClimberState.BOTH_DOWN);
-        else if (driver.getDPADLeft())
-            climber.setState(ClimberState.ZERO_LEFT);
-        else if (driver.getDPADRight())
-            climber.setState(ClimberState.ZERO_RIGHT);
-        else
-            climber.setState(ClimberState.OFF);
+        if (toggleClimberHooks.calculate(driver.getYButton()))
+            climber.setServos(servoEnabled = !servoEnabled);
 
-        else // debug
-            climber.setState(ClimberState.OFF); // debug
-
-
-        if (driver.getRightStickClick())
-            if (driver.getDPADUp())
-                climber._winchState = -.2;
-            else if (driver.getDPADDown())
-                climber._winchState = .2;
-            else 
-                climber._winchState = 0;
-        else
-            climber._winchState = 0;
-
+        //if (operator.getDPADDown()) climber._winch = .5;
+        if (driver.getAButton()) climber._winch = .5;
+        //else if (operator.getDPADUp()) climber._winch = -.5;
+        else if (driver.getBButton()) climber._winch = -.5;
+        else climber._winch = 0;
     }
 
     public static final synchronized Input getInstance() {

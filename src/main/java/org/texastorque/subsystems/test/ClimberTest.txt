@@ -1,3 +1,2 @@
-up
-no
-no
+x
+s

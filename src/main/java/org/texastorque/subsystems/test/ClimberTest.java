@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.texastorque.subsystems.Climber.*;
+import org.texastorque.torquelib.control.TorqueClick;
 
 /**
  * Test for the climber algorithm.
@@ -55,29 +56,27 @@ public class ClimberTest {
         right = new Winch(8);
     }
 
-    private ClimberState state = ClimberState.OFF;
+    private AutoClimbState state = AutoClimbState.OFF;
+
+    private boolean started = false, approved = false, climb = false;
+    private TorqueClick approvalReset = new TorqueClick();
+    public final void set(final boolean climb) {
+        this.climb = climb;
+        if (!started && climb) started = true;
+        if (approvalReset.calculate(climb)) approved = true;
+    }
 
     private final void update() {
         final ArrayList<String> in = input();
 
-        if (in.get(0).equals("up"))
-            state = ClimberState.BOTH_UP;
-        else if (in.get(0).equals("down"))
-            state = ClimberState.BOTH_DOWN;
-        else if (in.get(0).equals("right"))
-            state = ClimberState.ZERO_RIGHT;
-        else if (in.get(0).equals("left"))
-            state = ClimberState.ZERO_LEFT;
-        else 
-            state = ClimberState.OFF;
+        set(in.get(0).equals("x"));
 
-        double l = state.getLeft().calculate(left.getPosition(), in.get(1).equals("yes"));
-        left.setPercent(l);
-        double r = state.getRight().calculate(-right.getPosition(), in.get(2).equals("yes"));
-        right.setPercent(-r);
+        System.out.printf("Climb: %1B, Approved: %1B %n", climb, approved);
 
-        System.out.printf("%s: (%03.2f, %03.2f) & (%03.2f, %03.2f)\n", state,
-                l, r, left.getPosition(), right.getPosition());
+        if (in.get(1).equals("x")) approved = false;
+
+        //System.out.printf("%s: (%03.2f, %03.2f) & (%03.2f, %03.2f)\n", state,
+                //l, r, left.getPosition(), right.getPosition());
     }
 
     /**

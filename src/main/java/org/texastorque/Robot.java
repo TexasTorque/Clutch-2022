@@ -4,12 +4,19 @@ import java.util.ArrayList;
 import org.texastorque.auto.AutoManager;
 import org.texastorque.torquelib.base.*;
 
-public final class Robot extends TorqueIterative implements Subsystems {
+import edu.wpi.first.wpilibj.IterativeRobotBase;
+
+public final class Robot extends IterativeRobotBase implements Subsystems {
 
     private final Input input = Input.getInstance();
     private final AutoManager autoManager = AutoManager.getInstance();
 
     private final ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
+
+    public Robot() { super(1 / 50.); }
+
+    @Override
+    public final void startCompetition() {}
 
     @Override
     public final void robotInit() {
@@ -22,18 +29,15 @@ public final class Robot extends TorqueIterative implements Subsystems {
     }
 
     @Override
-    public final void alwaysContinuous() {}
-
-    @Override
     public final void disabledInit() {
         // This makes no sense
-        //subsystems.forEach(subsystem -> subsystem.initialize(TorqueMode.DISABLED));
+        // subsystems.forEach(subsystem -> subsystem.initialize(TorqueMode.DISABLED));
     }
 
     @Override
-    public final void disabledContinuous() {
+    public final void disabledPeriodic() {
         // This makes no sense
-        //subsystems.forEach(subsystem -> subsystem.update(TorqueMode.DISABLED));
+        // subsystems.forEach(subsystem -> subsystem.update(TorqueMode.DISABLED));
     }
 
     @Override
@@ -42,19 +46,19 @@ public final class Robot extends TorqueIterative implements Subsystems {
     }
 
     @Override
-    public final void teleopContinuous() {
+    public final void teleopPeriodic() {
         input.update();
         subsystems.forEach(subsystem -> subsystem.update(TorqueMode.TELEOP));
     }
 
     @Override
-    public final void autoInit() {
+    public final void autonomousInit() {
         autoManager.chooseCurrentSequence();
         subsystems.forEach(subsystem -> subsystem.initialize(TorqueMode.AUTO));
     }
 
     @Override
-    public final void autoContinuous() {
+    public final void autonomousPeriodic() {
         autoManager.runCurrentSequence();
         subsystems.forEach(subsystem -> subsystem.update(TorqueMode.AUTO));
     }
@@ -65,7 +69,7 @@ public final class Robot extends TorqueIterative implements Subsystems {
     }
 
     @Override
-    public final void testContinuous() {
+    public final void testPeriodic() {
         input.update();
         subsystems.forEach(subsystem -> subsystem.update(TorqueMode.TEST));
     }

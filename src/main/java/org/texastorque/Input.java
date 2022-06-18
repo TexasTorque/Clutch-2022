@@ -58,8 +58,8 @@ public final class Input extends TorqueInput implements Subsystems {
     private final void updateIntake() {
         if (driver.getRightTrigger()) {
             intake.setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
-        } else if (driver.getXButton()) {
-            //intake.setState(IntakeDirection.OUTAKE, IntakePosition.DOWN);
+        } else if (operator.getXButton()) {
+
         } else {
             intake.setState(IntakeDirection.STOPPED, IntakePosition.UP);
         }
@@ -124,9 +124,7 @@ public final class Input extends TorqueInput implements Subsystems {
         if (toggleClimberHooks.calculate(driver.getYButton()))
             climber.setServos(servoEnabled = !servoEnabled);
 
-        //if (operator.getDPADDown()) climber._winch = .5;
         if (driver.getAButton()) climber._winch = .5;
-        //else if (operator.getDPADUp()) climber._winch = -.5;
         else if (driver.getBButton()) climber._winch = -.5;
         else climber._winch = 0;
     }

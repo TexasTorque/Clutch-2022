@@ -5,8 +5,9 @@ import org.texastorque.auto.AutoManager;
 import org.texastorque.torquelib.base.*;
 
 import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj.TimedRobot;
 
-public final class Robot extends IterativeRobotBase implements Subsystems {
+public final class Robot extends TimedRobot implements Subsystems {
 
     private final Input input = Input.getInstance();
     private final AutoManager autoManager = AutoManager.getInstance();
@@ -14,9 +15,6 @@ public final class Robot extends IterativeRobotBase implements Subsystems {
     private final ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
 
     public Robot() { super(1 / 50.); }
-
-    @Override
-    public final void startCompetition() {}
 
     @Override
     public final void robotInit() {

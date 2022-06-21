@@ -47,8 +47,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     private static final double ROTARY_MIN_SPEED = -.35, ROTARY_MAX_SPEED = .35, ROLLER_MIN_SPEED = .8,
                                 ROLLER_MAX_SPEED = 1;
 
-    private IntakeDirection direction;
-    private IntakePosition position;
+    private IntakeDirection direction = IntakeDirection.STOPPED;
+    private IntakePosition position = IntakePosition.PRIME;
 
     private final TorqueSparkMax rotary, rollers;
     private final DigitalInput limitSwitch;

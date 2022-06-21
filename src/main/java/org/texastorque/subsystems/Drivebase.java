@@ -1,10 +1,6 @@
 package org.texastorque.subsystems;
 
-import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -53,7 +49,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     private final SwerveDriveKinematics kinematics;
     private final TorqueSwerveOdometry odometry;
-    private final SwerveDrivePoseEstimator poseEstimator;
 
     private final TorqueSwerveModule2021 backLeft, backRight, frontLeft, frontRight;
     private SwerveModuleState[] swerveModuleStates; // This can be made better
@@ -83,11 +78,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
                 new SwerveDriveKinematics(locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
 
         odometry = new TorqueSwerveOdometry(kinematics, gyro.getRotation2dClockwise());
-
-        poseEstimator = new SwerveDrivePoseEstimator(gyro.getRotation2dCounterClockwise(), new Pose2d(), kinematics,
-                                                     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.2, 0.2, 0.2),
-                                                     new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.2),
-                                                     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.2, .2, .2));
 
         reset();
     }
@@ -137,18 +127,12 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         odometry.update(gyro.getRotation2dClockwise().times(-1),
                         frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
 
-        poseEstimator.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(), frontRight.getState(),
-                             backLeft.getState(), backRight.getState());
-        // The order of these might be wrong – Shouldn't be now.
-
         log();
     }
 
     public final SwerveDriveKinematics getKinematics() { return kinematics; }
 
     public final TorqueSwerveOdometry getOdometry() { return odometry; }
-
-    public final SwerveDrivePoseEstimator getPoseEstimator() { return poseEstimator; }
 
     public final TorqueNavXGyro getGyro() { return gyro; }
 

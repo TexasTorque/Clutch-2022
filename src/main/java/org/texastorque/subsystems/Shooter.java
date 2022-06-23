@@ -144,10 +144,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public final Pose2d getVisionPositionEstimate() {
         TorqueMiscUtil.notImplemented();
-
-        if (!camera.hasTargets()) return new Pose2d();
-        final double gryoAngle = drivebase.getGyro().getAngle();
-        final double turretAngle = turret.getDegrees();
+       
         return new Pose2d();
     }
 

@@ -68,7 +68,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);
         } else if (state == TurretState.POSITIONAL) {
-            requested = calculateRequested(TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
+            requested = calculateRequested(mode.isAuto() ? position : TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
         } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
                 // is this good, idk?    
@@ -100,9 +100,11 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private final double formatRequested(final double requested) { return KS * Math.signum(requested) + requested; }
 
     public final boolean isLocked() {
-        // return !(shooter.getState() == ShooterState.REGRESSION) ||
         SmartDashboard.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));
-        return camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE;
+        return state == TurretState.POSITIONAL || state == TurretState.CENTER 
+                || (camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE);
+        // For Positional:
+        // return TurretState.POSITIONAL && Math.abs(getDegrees() - position) < TOLERANCE;
     }
 
     public static final synchronized Turret getInstance() {

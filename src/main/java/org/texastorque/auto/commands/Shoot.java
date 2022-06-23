@@ -14,9 +14,9 @@ public final class Shoot extends TorqueCommand implements Subsystems {
 
     public Shoot(final double rpm, final double hood, final double tur, final boolean stop, final double time) {
         this.rpm = rpm;
-        this. hood = hood;
-        this. tur = tur;
-        this. time = time;
+        this.hood = hood;
+        this.tur = tur;
+        this.time = time;
         this.stop = stop;
     }
 

@@ -91,14 +91,6 @@ public final class Input extends TorqueInput implements Subsystems {
             shooter.setState(ShooterState.OFF);
             turret.setState(TurretState.OFF);
         }
-
-        if (operator.getXButton()) {
-            turret.setState(TurretState.POSITIONAL);
-            turret.setPosition(-20);
-        } else if (operator.getBButton()) {
-            turret.setState(TurretState.POSITIONAL);
-            turret.setPosition(20);
-        }
     }
 
     private final TorqueClick toggleClimberHooks = new TorqueClick();

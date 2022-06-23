@@ -27,11 +27,7 @@ public final class Ports {
 
     public final class INTAKE {
         public static final int ROTARY = 9;
-        public final class ROLLER {
-            public static final int LEFT = 19;
-            public static final int RIGHT = 10;
-        }
-        public static final int SWITCH = 3;
+        public static final int ROLLER = 19;
     }
 
     public final class MAGAZINE {

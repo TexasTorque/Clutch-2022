@@ -12,7 +12,7 @@ public class Two extends TorqueSequence implements Subsystems {
     @Override
     protected void init() {
         addBlock(new TorqueBlock(
-                new FollowPathPlanner("Two", true, 2, 1),
+                new Path("Two", true, 2, 1),
                 new Execute(() -> { magazine.setBeltDirection(BeltDirection.INTAKING); })
         ));
         addBlock(new TorqueBlock(new Shoot(1840, 26, -171.15, true, 1.6)));

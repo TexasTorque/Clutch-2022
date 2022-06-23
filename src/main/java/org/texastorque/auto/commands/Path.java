@@ -6,12 +6,9 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Drivebase;
@@ -19,7 +16,7 @@ import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.torquelib.auto.TorqueCommand;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 
-public final class FollowPathPlanner extends TorqueCommand implements Subsystems {
+public final class Path extends TorqueCommand implements Subsystems {
     private final PIDController xController = new PIDController(1, 0, 0);
     private final PIDController yController = new PIDController(1, 0, 0);
     private final ProfiledPIDController thetaController =
@@ -31,21 +28,21 @@ public final class FollowPathPlanner extends TorqueCommand implements Subsystems
     private final Timer timer = new Timer();
     private final boolean resetOdometry;
 
-    public FollowPathPlanner(final String name) {
+    public Path(final String name) {
         thetaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
         trajectory = PathPlanner.loadPath(name, Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
                                           Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED);
         resetOdometry = false;
     }
 
-    public FollowPathPlanner(final String name, final boolean reset) {
+    public Path(final String name, final boolean reset) {
         thetaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
         trajectory = PathPlanner.loadPath(name, Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
                                           Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED);
         this.resetOdometry = reset;
     }
 
-    public FollowPathPlanner(final String name, final boolean reset, final double maxSpeed,
+    public Path(final String name, final boolean reset, final double maxSpeed,
                              final double maxAcceleration) {
         thetaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
         trajectory = PathPlanner.loadPath(name, maxSpeed, maxAcceleration);

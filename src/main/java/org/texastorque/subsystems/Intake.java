@@ -32,10 +32,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     }
 
     public static enum IntakePosition implements TorqueSubsystemState {
-        CLIMB(.25),
-        UP(1.5),
-        PRIME(4.4),
-        DOWN(8.3);
+        UP(0),
+        DOWN(-5.64);
 
         private final double position;
 
@@ -44,14 +42,13 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         public final double getPosition() { return position; }
     }
 
-    private static final double ROTARY_MIN_SPEED = -.35, ROTARY_MAX_SPEED = .35, ROLLER_MIN_SPEED = .8,
+    private static final double ROTARY_MIN_SPEED = -.35, ROTARY_MAX_SPEED = 1, ROLLER_MIN_SPEED = .8,
                                 ROLLER_MAX_SPEED = 1;
 
     private IntakeDirection direction = IntakeDirection.STOPPED;
-    private IntakePosition position = IntakePosition.PRIME;
+    private IntakePosition position = IntakePosition.UP;
 
     private final TorqueSparkMax rotary, rollers;
-    private final DigitalInput limitSwitch;
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
@@ -59,12 +56,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         rotary.configurePositionalCANFrame();
         rotary.burnFlash();
 
-        rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER.LEFT);
-        // rollers.addFollower(Ports.INTAKE.ROLLER.RIGHT);
-        // rollers.configureDumbLeaderCANFrame();
+        rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
         rollers.burnFlash();
-
-        limitSwitch = new DigitalInput(Ports.INTAKE.SWITCH);
     }
 
     public final void setState(final IntakeDirection direction, final IntakePosition position) {
@@ -85,13 +78,9 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     @Override
     public final void initialize(final TorqueMode mode) {}
 
-
     @Override
     public final void update(final TorqueMode mode) {
-        if (limitSwitch.get() && position.getPosition() >= rotary.getPosition())
-            rotary.setCurrent(.1);
-        else
-            rotary.setPosition(position.getPosition());
+        rotary.setPosition(position.getPosition());
 
         rollers.setPercent(direction.getDirection());
 

@@ -4,8 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.subsystems.Intake;
-import org.texastorque.subsystems.Intake.IntakeDirection;
-import org.texastorque.subsystems.Intake.IntakePosition;
+import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine;
 import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.subsystems.Magazine.GateDirection;
@@ -56,32 +55,10 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final void updateIntake() {
-        if (driver.getRightTrigger()) {
-            intake.setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
-        } else if (operator.getXButton()) {
-
-        } else {
-            intake.setState(IntakeDirection.STOPPED, IntakePosition.UP);
-        }
+        intake.setState(driver.getRightTrigger() ? IntakeState.INTAKE : IntakeState.OUTAKE);
     }
 
-    private final void updateMagazine() {
-        if (operator.getRightBumper()) {
-            magazine.setBeltDirection(BeltDirection.UP);
-        } else if (operator.getRightTrigger()) {
-            magazine.setBeltDirection(BeltDirection.DOWN);
-        } else {
-            magazine.setBeltDirection(BeltDirection.OFF);
-        }
-
-        if (operator.getLeftBumper()) {
-            magazine.setGateDirection(GateDirection.FORWARD);
-        } else if (operator.getLeftTrigger()) {
-            magazine.setGateDirection(GateDirection.REVERSE);
-        } else {
-            magazine.setGateDirection(GateDirection.OFF);
-        }
-    }
+    private final void updateMagazine() {}
 
     private final void updateShooter() {
         if (driver.getLeftTrigger()) {
@@ -93,6 +70,7 @@ public final class Input extends TorqueInput implements Subsystems {
         }
     }
 
+    // The ugly code below will be cleaned later!
     private final TorqueClick toggleClimberHooks = new TorqueClick();
     private boolean servoEnabled = false;
 

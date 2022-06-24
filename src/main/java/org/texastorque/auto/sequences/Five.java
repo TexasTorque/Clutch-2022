@@ -2,8 +2,7 @@ package org.texastorque.auto.sequences;
 
 import org.texastorque.Subsystems;
 import org.texastorque.auto.commands.*;
-import org.texastorque.subsystems.Intake.IntakeDirection;
-import org.texastorque.subsystems.Intake.IntakePosition;
+import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.torquelib.auto.*;
 import org.texastorque.torquelib.auto.commands.*;
@@ -19,7 +18,7 @@ public class Five extends TorqueSequence implements Subsystems {
                 new Path("Five1", true, 2, 1),
                 new Execute(() -> { 
                     magazine.setBeltDirection(BeltDirection.INTAKING);
-                    intake.setState(IntakeDirection.INTAKE, IntakePosition.DOWN);
+                    intake.setState(IntakeState.INTAKE);
                 })
         ));
         addBlock(new TorqueBlock(new Shoot(1700, 26, 172.15, false, 2)));
@@ -33,7 +32,7 @@ public class Five extends TorqueSequence implements Subsystems {
 
         addBlock(new TorqueBlock(new Execute(() -> { 
             magazine.setBeltDirection(BeltDirection.OFF); 
-            intake.setState(IntakeDirection.STOPPED, IntakePosition.UP);
+            intake.setState(IntakeState.PRIMED);
         })));
     }
 }

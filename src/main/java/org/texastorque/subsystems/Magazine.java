@@ -98,7 +98,6 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putNumber("Belt Amps", belt.getCurrent());
     }
 
-
     public static final synchronized Magazine getInstance() {
         return instance == null ? instance = new Magazine() : instance;
     }

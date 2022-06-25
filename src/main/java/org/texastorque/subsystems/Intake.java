@@ -1,6 +1,5 @@
 package org.texastorque.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
@@ -53,11 +52,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
         rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
-        // rotary.configurePositionalCANFrame();
-        // rotary.burnFlash();
 
         rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
-        // rollers.burnFlash();
     }
 
     public final void setState(final IntakeState state) { this.state = state; }

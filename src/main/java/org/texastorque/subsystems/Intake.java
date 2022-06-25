@@ -7,6 +7,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorqueTimeout;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 
@@ -21,7 +22,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     
     private static final double ROTARY_UP_POSITION = 0, ROTARY_DOWN_POSITION = -5.64,
                                 ROTARY_MIN_SPEED = -.35, ROTARY_MAX_SPEED = .35, 
-                                ROLLER_MAX_SPEED = 1;
+                                ROLLER_MAX_SPEED = 1, REV_TIME = .5;
 
     public enum IntakeState implements TorqueSubsystemState {
         INTAKE(-ROLLER_MAX_SPEED, ROTARY_DOWN_POSITION),
@@ -45,6 +46,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     }
 
     private IntakeState state = IntakeState.PRIMED;
+    private TorqueTimeout revIntake = new TorqueTimeout(REV_TIME);
 
     private final TorqueSparkMax rotary, rollers;
 
@@ -67,8 +69,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
+        rollers.setPercent(revIntake.calculate(isIntaking()) ? 0 : state.getDirection());
         rotary.setPosition(state.getPosition());
-        rollers.setPercent(state.getDirection());
 
         TorqueSubsystemState.logState(state);
 

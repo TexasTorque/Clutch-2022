@@ -119,9 +119,9 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         // DRIVE_MAX_TRANSLATIONAL_SPEED);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
 
-        frontLeft.setDesiredState(swerveModuleStates[2]);
+        frontLeft.setDesiredState(swerveModuleStates[0]);
         frontRight.setDesiredState(swerveModuleStates[1]);
-        backLeft.setDesiredState(swerveModuleStates[0]);
+        backLeft.setDesiredState(swerveModuleStates[2]);
         backRight.setDesiredState(swerveModuleStates[3]);
 
         odometry.update(gyro.getRotation2dClockwise().times(-1),

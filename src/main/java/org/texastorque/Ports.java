@@ -16,11 +16,11 @@ public final class Ports {
         public final class ROTATIONAL {
             public final class RIGHT {
                 public static final int FRONT = 5;
-                public static final int BACK = 6;
+                public static final int BACK = 8;
             }
             public final class LEFT {
                 public static final int FRONT = 7;
-                public static final int BACK = 8;
+                public static final int BACK = 6;
             }
         }
     }

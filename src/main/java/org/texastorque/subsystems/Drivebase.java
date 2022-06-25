@@ -14,9 +14,12 @@ import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
+import org.texastorque.torquelib.motors.TorqueTalon;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 /**
  * The drivebase subsystem. Drives with 4 2021 swerve modules.
@@ -98,7 +101,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode)  {
-
         if (state == DrivebaseState.X_FACTOR) {
             swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
             swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);

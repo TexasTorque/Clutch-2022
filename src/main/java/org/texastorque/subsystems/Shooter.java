@@ -17,6 +17,7 @@ import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueLogging;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.torquelib.util.TorqueMiscUtil;
 
@@ -103,12 +104,19 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         TorqueSubsystemState.logState(state);
 
-        SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
-        SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
+        // SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
+        // SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
 
-        SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
-        SmartDashboard.putBoolean("Is Shooting", isShooting());
-        SmartDashboard.putBoolean("Is Ready", isReady());
+        // SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
+        // SmartDashboard.putBoolean("Is Shooting", isShooting());
+        // SmartDashboard.putBoolean("Is Ready", isReady());
+
+        TorqueLogging.putNumber("Flywheel Real", flywheel.getVelocityRPM());
+        TorqueLogging.putNumber("Flywheel Req", flywheelSpeed);
+
+        TorqueLogging.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
+        TorqueLogging.putBoolean("Is Shooting", isShooting());
+        TorqueLogging.putBoolean("Is Ready", isReady());
     }
 
     public final boolean isShooting() { return state != ShooterState.OFF; }

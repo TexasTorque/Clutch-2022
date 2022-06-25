@@ -8,6 +8,7 @@ import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorqueClick;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueLogging;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -128,15 +129,24 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     @Override
     public final void update(final TorqueMode mode) {
         TorqueSubsystemState.logState(state);
-        SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
-        SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
+        // SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
+        TorqueLogging.putNumber("Arms", left.getPosition(), right.getPosition());
 
-        SmartDashboard.putBoolean("Approved", approved);
-        SmartDashboard.putBoolean("Running", running);
+        // SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
+        TorqueLogging.putNumber("Winch", winch.getPosition());
 
-        SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
-        SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
+        // SmartDashboard.putBoolean("Approved", approved);
+        TorqueLogging.putBoolean("Approved", approved);
+
+        // SmartDashboard.putBoolean("Running", running);
+        TorqueLogging.putBoolean("Running", running);
+
+        // SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
+        TorqueLogging.putBoolean("Left Switch", leftSwitch.get());
+        // SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
+        TorqueLogging.putBoolean("Left Switch", leftSwitch.get());
+
         if (_winch != 0) { winch.setPercent(_winch); return; }
 
         if (running) handleAutoClimb();

@@ -8,6 +8,7 @@ import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
+import org.texastorque.torquelib.util.TorqueLogging;
 
 public final class Magazine extends TorqueSubsystem implements Subsystems {
     private static volatile Magazine instance;
@@ -95,7 +96,8 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(beltDirection);
         TorqueSubsystemState.logState(gateDirection);
 
-        SmartDashboard.putNumber("Belt Amps", belt.getCurrent());
+        // SmartDashboard.putNumber("Belt Amps", belt.getCurrent());
+        TorqueLogging.putNumber("Belt Amps", belt.getCurrent());
     }
 
 

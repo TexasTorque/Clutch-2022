@@ -30,7 +30,7 @@ public class Five extends TorqueSequence implements Subsystems {
                     shooter.setHoodPosition(26);
                 })
         ));
-        addBlock(new TorqueBlock(new Shoot(1700, 26, 172.15, false, 2)));
+        addBlock(new TorqueBlock(new Shoot(1600, 30, 172.15, false, 2)));
         addBlock(new TorqueBlock(new Path("Five2", false, 3, 1)));
         addBlock(new TorqueBlock(
                 new Wait(1.),

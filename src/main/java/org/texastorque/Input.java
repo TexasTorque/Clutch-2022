@@ -55,10 +55,12 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final void updateIntake() {
-        intake.setState(driver.getRightTrigger() ? IntakeState.INTAKE : IntakeState.OUTAKE);
+        intake.setState(driver.getRightTrigger() ? IntakeState.INTAKE : IntakeState.PRIMED);
     }
 
-    private final void updateMagazine() {}
+    private final void updateMagazine() {
+        magazine.setState(BeltDirection.OFF, GateDirection.OFF);
+    }
 
     private final void updateShooter() {
         if (driver.getLeftTrigger()) {

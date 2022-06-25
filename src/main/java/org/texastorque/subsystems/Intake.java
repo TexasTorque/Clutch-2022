@@ -9,6 +9,7 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueLogging;
 
 /**
  * The intake subsystem.
@@ -72,9 +73,12 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
         TorqueSubsystemState.logState(state);
 
-        SmartDashboard.putNumber("Rotary Position", rotary.getPosition());
-        SmartDashboard.putNumber("Rotary Current", rotary.getCurrent());
-        SmartDashboard.putNumber("Rollers Current", rollers.getCurrent());
+        // SmartDashboard.putNumber("Rotary Position", rotary.getPosition());
+        TorqueLogging.putNumber("Rotary Position", rotary.getPosition());
+        // SmartDashboard.putNumber("Rotary Current", rotary.getCurrent());
+        TorqueLogging.putNumber("Rotary Current", rotary.getCurrent());
+        // SmartDashboard.putNumber("Rollers Current", rollers.getCurrent());
+        TorqueLogging.putNumber("Rollers Current", rollers.getCurrent());
     }
 
     public static final synchronized Intake getInstance() {

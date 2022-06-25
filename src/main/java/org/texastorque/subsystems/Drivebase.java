@@ -16,6 +16,7 @@ import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueLogging;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
 /**
@@ -137,11 +138,13 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     public final TorqueNavXGyro getGyro() { return gyro; }
 
     public final void log() {
-        SmartDashboard.putString("OdomPos", String.format("(%02.3f, %02.3f)", 
-                odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY()));
+        // SmartDashboard.putString("OdomPos", String.format("(%02.3f, %02.3f)", 
+                // odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY()));
+        TorqueLogging.putPose2d("Odometry", odometry.getPoseMeters());
 
-        SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", 
-                speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+        // SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", 
+                // speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+        TorqueLogging.putChassisSpeeds("Speeds", speeds);
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }

@@ -10,6 +10,7 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
+import org.texastorque.torquelib.util.TorqueLogging;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
 public class Turret extends TorqueSubsystem implements Subsystems {
@@ -59,7 +60,8 @@ public class Turret extends TorqueSubsystem implements Subsystems {
             // state = TurretState.CENTER;
         // requested = formatRequested(DIRECTIONAL);
        
-        SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
+        // SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
+        TorqueLogging.putBoolean("Has Targets", camera.hasTargets());
 
         if (climber.hasStarted()) {
             requested = calculateRequested(ROT_BACK);
@@ -82,9 +84,12 @@ public class Turret extends TorqueSubsystem implements Subsystems {
 
         TorqueSubsystemState.logState(state);
 
-        SmartDashboard.putNumber("Turret Req", requested);
-        SmartDashboard.putNumber("Turret Deg", getDegrees());
-        SmartDashboard.putBoolean("Turret Locked", isLocked());
+        // SmartDashboard.putNumber("Turret Req", requested);
+        // SmartDashboard.putNumber("Turret Deg", getDegrees());
+        // SmartDashboard.putBoolean("Turret Locked", isLocked());
+        TorqueLogging.putNumber("Turret Req", requested);
+        TorqueLogging.putNumber("Turret Deg", getDegrees());
+        TorqueLogging.putBoolean("Turret Locked", isLocked());
     }
 
     public final double getDegrees() { return (rotator.getPosition() / RATIO * 360.) % 360; }
@@ -100,10 +105,12 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private final double formatRequested(final double requested) { return KS * Math.signum(requested) + requested; }
 
     public final boolean isLocked() {
-        SmartDashboard.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));
+        // SmartDashboard.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));
+        TorqueLogging.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));
+
         return state == TurretState.POSITIONAL || state == TurretState.CENTER 
                 || (camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE);
-        // For Positional:
+        // For Positional: //?
         // return TurretState.POSITIONAL && Math.abs(getDegrees() - position) < TOLERANCE;
     }
 

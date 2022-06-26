@@ -9,8 +9,11 @@ public final class AutoManager extends TorqueAutoManager {
     @Override
     public final void init() {
         addSequence("Omar", new Omar());
-        addSequence("Five", new Five());
+        addSequence("One", new One());
+        addSequence("One (evil)", new OneEvil());
         addSequence("Two", new Two());
+        addSequence("Two (evil)", new TwoEvil());
+        addSequence("Five", new Five());
     }
 
     /**

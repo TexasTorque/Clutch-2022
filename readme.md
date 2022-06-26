@@ -1,6 +1,8 @@
-# TexasTorque2022
+# Clutch-2022
 
-Texas Torque's main robot code for the 2022 Rapid React season!
+Codebase for Clutch, our 2022 season robot.
+
+Others may call the robot Nimbus, but in programming, it's called Clutch. End of story.
 
 ## New project structure
 

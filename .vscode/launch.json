@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Test",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.control.test.Test",
+      "projectName": "TexasTorque2022"
+    },
+    {
+      "type": "java",
       "name": "Launch ClimberTest",
       "request": "launch",
       "mainClass": "org.texastorque.subsystems.test.ClimberTest",

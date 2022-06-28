@@ -56,6 +56,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
 
         rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
+        // rollers.configureSmartMotion(5600, 0, 5600, 100, 0);//?bruh shit hell naw
     }
 
     public final void setState(final IntakeState state) { this.state = state; }
@@ -67,7 +68,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        rollers.setPercent(Math.signum(state.getDirection()) * rampIntake.calculate(state != IntakeState.PRIMED));
+        rollers.setVoltage(Math.signum(state.getDirection()) * rampIntake.calculate(state != IntakeState.PRIMED));
         rotary.setPosition(revIntake.calculate(isIntaking()) ? IntakeState.PRIMED.getPosition() : state.getPosition());
 
         TorqueSubsystemState.logState(state);

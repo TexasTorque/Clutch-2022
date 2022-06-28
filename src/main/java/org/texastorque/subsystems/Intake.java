@@ -47,7 +47,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     private IntakeState state = IntakeState.PRIMED;
     private TorqueTimeout revIntake = new TorqueTimeout(REV_TIME);
-    private TorqueRamp rampIntake = new TorqueRamp(REV_TIME, 1.3, 12);
+    private TorqueRamp rampIntake = new TorqueRamp(6, 1.3, 12);
 
     private final TorqueSparkMax rotary, rollers;
 
@@ -56,6 +56,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
 
         rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
+        rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
+
         // rollers.configureSmartMotion(5600, 0, 5600, 100, 0);//?bruh shit hell naw
     }
 
@@ -69,6 +71,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     @Override
     public final void update(final TorqueMode mode) {
         rollers.setVoltage(Math.signum(state.getDirection()) * rampIntake.calculate(state != IntakeState.PRIMED));
+        // rollers.setVelocityRPM(5600);
         rotary.setPosition(revIntake.calculate(isIntaking()) ? IntakeState.PRIMED.getPosition() : state.getPosition());
 
         TorqueSubsystemState.logState(state);

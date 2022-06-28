@@ -114,9 +114,8 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 
-        // I think this does the same thing ):
-        // TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates,
-        // DRIVE_MAX_TRANSLATIONAL_SPEED);
+        // Literaly does the same thing LMFAO, my implementaiton is actually better 0:
+        // TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
 
         frontLeft.setDesiredState(swerveModuleStates[2]);

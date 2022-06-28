@@ -13,7 +13,7 @@ public class OneEvil extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
-        addBlock(new TorqueBlock(new Shoot(1500, 20, 0, true, 1)));
+        addBlock(new TorqueBlock(new Shoot(1300, 10, 0, true, 1)));
         addBlock(new TorqueBlock(new Path("One1", true, 1, .5)));
         addBlock(new TorqueBlock(
                 new Path("One2", false, 1, .5),
@@ -21,7 +21,7 @@ public class OneEvil extends TorqueSequence implements Subsystems {
                     intake.setState(IntakeState.INTAKE);
                 })
         ));
-        addBlock(new TorqueBlock(new Shoot(800, Shooter.HOOD_MAX, -135, true, 1)));
+        addBlock(new TorqueBlock(new Shoot(1200, Shooter.HOOD_MAX, -135, true, 1)));
         addBlock(new TorqueBlock(new Execute(() -> { 
             magazine.setBeltDirection(BeltDirection.OFF); 
             intake.setState(IntakeState.PRIMED);

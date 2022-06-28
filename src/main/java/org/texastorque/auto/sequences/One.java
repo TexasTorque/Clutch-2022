@@ -14,7 +14,7 @@ public class One extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
-        addBlock(new TorqueBlock(new Shoot(1500, 20, 0, true, 1)));
+        addBlock(new TorqueBlock(new Shoot(1300, 10, 0, true, 1)));
         addBlock(new TorqueBlock(new Path("One1", true, 1, .5)));
         addBlock(new TorqueBlock(new Execute(() -> { 
             magazine.setBeltDirection(BeltDirection.OFF); 

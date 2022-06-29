@@ -18,16 +18,12 @@ import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
 import org.texastorque.torquelib.control.TorqueToggle;
 import org.texastorque.torquelib.control.complex.TorqueSpeedSettings;
+import org.texastorque.torquelib.control.complex.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
 @SuppressWarnings("deprecation")
 public final class Input extends TorqueInput implements Subsystems {
     private static volatile Input instance;
-
-    private final TorqueSpeedSettings xSpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6
-    private final TorqueSpeedSettings ySpeeds = new TorqueSpeedSettings(1, 0.6, 1, .2);  // 1, .8, .6
-    private final TorqueSpeedSettings rSpeeds = new TorqueSpeedSettings(1, 0.5, 1, .25); // 1, .75, .5
-
 
     private Input() {
         driver = new GenericController(0, 0.1);
@@ -43,15 +39,22 @@ public final class Input extends TorqueInput implements Subsystems {
         updateClimber();
     }
 
+    private final TorqueTraversableSelection<Double> translationalSpeeds 
+            = new TorqueTraversableSelection<Double>(.4, .6, .8);
+
+    private final TorqueTraversableSelection<Double> rotationalSpeeds
+            = new TorqueTraversableSelection<Double>(.5, .75, 1.);
+
     private final void updateDrivebase() {
         drivebase.setState(DrivebaseState.FIELD_RELATIVE);
         drivebase.setSpeeds(new ChassisSpeeds(
                 driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
-                        xSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false),
+                        translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
                 -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
-                        ySpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false),
+                        translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
                 -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED *
-                        rSpeeds.update(driver.getRightBumper(), driver.getLeftBumper(), false, false)));
+                        rotationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper())
+                ));
     }
 
     private final void updateIntake() {

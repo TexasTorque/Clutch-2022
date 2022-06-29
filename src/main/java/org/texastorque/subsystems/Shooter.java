@@ -30,10 +30,11 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
     public enum ShooterState implements TorqueSubsystemState {
-        OFF,
-        REGRESSION,
-        SETPOINT,
-        DISTANCE;
+        OFF, REGRESSION, SETPOINT, DISTANCE, WARMUP;
+
+        public final boolean isShooting() { 
+            return this != OFF && this != WARMUP; 
+        }
     }
 
     private final TorqueLight camera;
@@ -91,8 +92,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         } else if (state == ShooterState.DISTANCE) {
             flywheelSpeed = regressionRPM(distance);
             hoodSetpoint = regressionHood(distance);
-        } else if (state == ShooterState.SETPOINT) {
-
+        } else if (state == ShooterState.SETPOINT || state == ShooterState.WARMUP) {
+            // LMFAO
         } else {
             flywheelSpeed = 0;
             flywheel.setPercent(FLYWHEEEL_IDLE);
@@ -111,7 +112,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Is Ready", isReady());
     }
 
-    public final boolean isShooting() { return state != ShooterState.OFF; }
+    public final boolean isShooting() { return state.isShooting(); }
 
     public final boolean isReady() {
         return isShooting() && Math.abs(flywheelSpeed - flywheel.getVelocityRPM()) < ERROR;

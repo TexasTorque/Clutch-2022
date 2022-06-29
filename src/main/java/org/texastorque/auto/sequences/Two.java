@@ -8,12 +8,15 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.*;
 import org.texastorque.torquelib.auto.commands.*;
+import org.texastorque.torquelib.util.TorqueMiscUtil;
 
 public class Two extends TorqueSequence implements Subsystems {
     public Two() { super("Two"); init(); }
 
     @Override
     protected void init() {
+        TorqueMiscUtil.outOfDate();
+
         addBlock(new TorqueBlock(
                 new Path("Two1", true, 2, 1),
                 new Execute(() -> { 

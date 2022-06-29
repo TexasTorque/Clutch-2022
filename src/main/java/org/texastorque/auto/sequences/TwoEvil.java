@@ -25,10 +25,9 @@ public class TwoEvil extends TorqueSequence implements Subsystems {
                     turret.setState(TurretState.POSITIONAL);
                     turret.setPosition(-171.15);
 
-                    shooter.setState(ShooterState.SETPOINT);
-                    // shooter.setFlywheelSpeed(1000);
+                    shooter.setState(ShooterState.WARMUP);
+                    shooter.setFlywheelSpeed(1000);
                     shooter.setHoodPosition(26);
-                    // magazine.setGateDirection(GateDirection.REVERSE);
                 })
         ));
         addBlock(new TorqueBlock(new Shoot(1450, 30, -171.15, true, 1.6)));

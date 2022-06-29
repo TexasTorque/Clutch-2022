@@ -21,7 +21,7 @@ public class OneEvil extends TorqueSequence implements Subsystems {
                     intake.setState(IntakeState.INTAKE);
                 })
         ));
-        addBlock(new TorqueBlock(new Shoot(1200, Shooter.HOOD_MAX, -135, true, 1)));
+        addBlock(new TorqueBlock(new Shoot(1200, 30, -135, true, 1)));
         addBlock(new TorqueBlock(new Execute(() -> { 
             magazine.setBeltDirection(BeltDirection.OFF); 
             intake.setState(IntakeState.PRIMED);

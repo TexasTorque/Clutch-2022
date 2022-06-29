@@ -22,7 +22,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     
     private static final double ROTARY_UP_POSITION = 0, ROTARY_DOWN_POSITION = -5.64,
                                 ROTARY_MIN_SPEED = -.35, ROTARY_MAX_SPEED = .35, 
-                                ROLLER_MAX_SPEED = 1, REV_TIME = .5;
+                                ROLLER_MAX_SPEED = 1;
 
     public enum IntakeState implements TorqueSubsystemState {
         INTAKE(-ROLLER_MAX_SPEED, ROTARY_DOWN_POSITION),
@@ -46,8 +46,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     }
 
     private IntakeState state = IntakeState.PRIMED;
-    private TorqueTimeout revIntake = new TorqueTimeout(REV_TIME);
-    private TorqueRamp rampIntake = new TorqueRamp(3, 1.3, 12);
+    private TorqueTimeout revIntake = new TorqueTimeout(.5);
+    private TorqueRamp rampIntake = new TorqueRamp(2, 1.3, 12);
 
     private final TorqueSparkMax rotary, rollers;
 

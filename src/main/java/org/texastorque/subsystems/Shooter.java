@@ -1,5 +1,12 @@
 package org.texastorque.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
@@ -12,15 +19,6 @@ import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 import org.texastorque.torquelib.util.TorqueMiscUtil;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
@@ -31,11 +29,13 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
     public enum ShooterState implements TorqueSubsystemState {
-        OFF, REGRESSION, SETPOINT, DISTANCE, WARMUP;
+        OFF,
+        REGRESSION,
+        SETPOINT,
+        DISTANCE,
+        WARMUP;
 
-        public final boolean isShooting() { 
-            return this != OFF && this != WARMUP; 
-        }
+        public final boolean isShooting() { return this != OFF && this != WARMUP; }
     }
 
     private final TorqueLight camera;
@@ -84,8 +84,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         camera.update(true);
 
         if (climber.hasStarted()) {
-           flywheelSpeed = 0;
-           hoodSetpoint = HOOD_MIN;
+            flywheelSpeed = 0;
+            hoodSetpoint = HOOD_MIN;
         } else if (state == ShooterState.REGRESSION) {
             distance = camera.getDistance();
             flywheelSpeed = regressionRPM(distance);
@@ -146,7 +146,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public final Pose2d getVisionPositionEstimate() {
         TorqueMiscUtil.notImplemented();
-       
+
         return new Pose2d();
     }
 

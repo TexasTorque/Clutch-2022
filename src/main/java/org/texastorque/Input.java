@@ -1,5 +1,6 @@
 package org.texastorque;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
@@ -12,8 +13,6 @@ import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
 import org.texastorque.torquelib.control.complex.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 @SuppressWarnings("deprecation")
 public final class Input extends TorqueInput implements Subsystems {
@@ -33,31 +32,26 @@ public final class Input extends TorqueInput implements Subsystems {
         updateClimber();
     }
 
-    private final TorqueTraversableSelection<Double> translationalSpeeds 
-            = new TorqueTraversableSelection<Double>(.4, .6, .8);
+    private final TorqueTraversableSelection<Double> translationalSpeeds =
+            new TorqueTraversableSelection<Double>(.4, .6, .8);
 
-    private final TorqueTraversableSelection<Double> rotationalSpeeds
-            = new TorqueTraversableSelection<Double>(.5, .75, 1.);
+    private final TorqueTraversableSelection<Double> rotationalSpeeds =
+            new TorqueTraversableSelection<Double>(.5, .75, 1.);
 
     private final void updateDrivebase() {
-        drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR 
-                : DrivebaseState.FIELD_RELATIVE);
-        drivebase.setSpeeds(new ChassisSpeeds(
-                driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
-                -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
-                -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED
-                ));
+        drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
+        drivebase.setSpeeds(new ChassisSpeeds(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
+                                              -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
+                                              -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED));
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
-                rotationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()));
+                                rotationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()));
     }
 
     private final void updateIntake() {
         intake.setState(driver.getRightTrigger() ? IntakeState.INTAKE : IntakeState.PRIMED);
     }
 
-    private final void updateMagazine() {
-        magazine.setState(BeltDirection.OFF, GateDirection.OFF);
-    }
+    private final void updateMagazine() { magazine.setState(BeltDirection.OFF, GateDirection.OFF); }
 
     private final void updateShooter() {
         if (driver.getLeftTrigger()) {
@@ -74,28 +68,29 @@ public final class Input extends TorqueInput implements Subsystems {
     private boolean servoEnabled = false;
 
     private final void updateClimber() {
-        if (driver.getLeftCenterButton())
-            climber.reset();
+        if (driver.getLeftCenterButton()) climber.reset();
 
-        if (driver.getDPADDown()) 
+        if (driver.getDPADDown())
             climber.setManual(ManualClimbState.BOTH_DOWN);
-        else if (driver.getDPADUp()) 
+        else if (driver.getDPADUp())
             climber.setManual(ManualClimbState.BOTH_UP);
-        else if (driver.getDPADRight()) 
+        else if (driver.getDPADRight())
             climber.setManual(ManualClimbState.ZERO_RIGHT);
-        else if (driver.getDPADLeft()) 
+        else if (driver.getDPADLeft())
             climber.setManual(ManualClimbState.ZERO_LEFT);
-        else 
+        else
             climber.setManual(ManualClimbState.OFF);
 
         climber.setAuto(driver.getXButton());
 
-        if (toggleClimberHooks.calculate(driver.getYButton()))
-            climber.setServos(servoEnabled = !servoEnabled);
+        if (toggleClimberHooks.calculate(driver.getYButton())) climber.setServos(servoEnabled = !servoEnabled);
 
-        if (driver.getAButton()) climber._winch = .5;
-        else if (driver.getBButton()) climber._winch = -.5;
-        else climber._winch = 0;
+        if (driver.getAButton())
+            climber._winch = .5;
+        else if (driver.getBButton())
+            climber._winch = -.5;
+        else
+            climber._winch = 0;
     }
 
     public static final synchronized Input getInstance() {

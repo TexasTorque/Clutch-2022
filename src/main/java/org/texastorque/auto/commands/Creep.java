@@ -1,14 +1,13 @@
 package org.texastorque.auto.commands;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
-
 public final class Creep extends TorqueCommand implements Subsystems {
-    private final double time; 
+    private final double time;
     private double start;
     private ChassisSpeeds speeds;
 
@@ -25,12 +24,11 @@ public final class Creep extends TorqueCommand implements Subsystems {
     }
 
     @Override
-    protected final void continuous() {
-    }
+    protected final void continuous() {}
 
     @Override
     protected final boolean endCondition() {
-        return(Timer.getFPGATimestamp() - start) > time;
+        return (Timer.getFPGATimestamp() - start) > time;
     }
 
     @Override

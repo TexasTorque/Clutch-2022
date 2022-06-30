@@ -1,5 +1,6 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
@@ -10,8 +11,6 @@ import org.texastorque.torquelib.control.TorqueTimeout;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 /**
  * The intake subsystem.
  *
@@ -20,10 +19,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public final class Intake extends TorqueSubsystem implements Subsystems {
     private static volatile Intake instance;
-    
-    private static final double ROTARY_UP_POSITION = 0, ROTARY_DOWN_POSITION = -5.64,
-                                ROTARY_MIN_SPEED = -.35, ROTARY_MAX_SPEED = .35, 
-                                ROLLER_MAX_SPEED = 1;
+
+    private static final double ROTARY_UP_POSITION = 0, ROTARY_DOWN_POSITION = -5.64, ROTARY_MIN_SPEED = -.35,
+                                ROTARY_MAX_SPEED = .35, ROLLER_MAX_SPEED = 1;
 
     public enum IntakeState implements TorqueSubsystemState {
         INTAKE(-ROLLER_MAX_SPEED, ROTARY_DOWN_POSITION),
@@ -32,8 +30,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
         private final double direction, position;
 
-        IntakeState(final double direction, final double position) { 
-            this.direction = direction; 
+        IntakeState(final double direction, final double position) {
+            this.direction = direction;
             this.position = position;
         }
 

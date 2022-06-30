@@ -1,11 +1,10 @@
 package org.texastorque;
 
+import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj.TimedRobot;
 import java.util.ArrayList;
 import org.texastorque.auto.AutoManager;
 import org.texastorque.torquelib.base.*;
-
-import edu.wpi.first.wpilibj.IterativeRobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
 
 public final class Robot extends TimedRobot implements Subsystems {
 

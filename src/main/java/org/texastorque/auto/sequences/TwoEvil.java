@@ -12,29 +12,29 @@ import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.Execute;
 
 public class TwoEvil extends TorqueSequence implements Subsystems {
-    public TwoEvil() { super("TwoEvil"); init(); }
+    public TwoEvil() {
+        super("TwoEvil");
+        init();
+    }
 
     @Override
     protected void init() {
-        addBlock(new TorqueBlock(
-                new Path("Two1", true, 2, 1),
-                new Execute(() -> { 
-                    // magazine.setBeltDirection(BeltDirection.INTAKING);
-                    intake.setState(IntakeState.INTAKE);
+        addBlock(new TorqueBlock(new Path("Two1", true, 2, 1), new Execute(() -> {
+                                     // magazine.setBeltDirection(BeltDirection.INTAKING);
+                                     intake.setState(IntakeState.INTAKE);
 
-                    turret.setState(TurretState.POSITIONAL);
-                    turret.setPosition(-171.15);
+                                     turret.setState(TurretState.POSITIONAL);
+                                     turret.setPosition(-171.15);
 
-                    shooter.setState(ShooterState.WARMUP);
-                    shooter.setFlywheelSpeed(1000);
-                    shooter.setHoodPosition(26);
-                })
-        ));
+                                     shooter.setState(ShooterState.WARMUP);
+                                     shooter.setFlywheelSpeed(1000);
+                                     shooter.setHoodPosition(26);
+                                 })));
         addBlock(new TorqueBlock(new Shoot(1450, 30, -171.15, true, 1.6)));
         addBlock(new TorqueBlock(new Path("Two2", false, 1, .5)));
         addBlock(new TorqueBlock(new Shoot(800, 30, 145, true, 1)));
-        addBlock(new TorqueBlock(new Execute(() -> { 
-            magazine.setBeltDirection(BeltDirection.OFF); 
+        addBlock(new TorqueBlock(new Execute(() -> {
+            magazine.setBeltDirection(BeltDirection.OFF);
             intake.setState(IntakeState.PRIMED);
             turret.setState(TurretState.CENTER);
         })));

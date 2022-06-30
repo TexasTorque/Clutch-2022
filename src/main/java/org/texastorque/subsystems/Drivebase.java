@@ -1,15 +1,5 @@
 package org.texastorque.subsystems;
 
-import org.texastorque.Ports;
-import org.texastorque.Subsystems;
-import org.texastorque.torquelib.base.TorqueMode;
-import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.base.TorqueSubsystemState;
-import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
-import org.texastorque.torquelib.sensors.TorqueNavXGyro;
-import org.texastorque.torquelib.util.KPID;
-import org.texastorque.torquelib.util.TorqueSwerveOdometry;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,6 +9,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.texastorque.Ports;
+import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueMode;
+import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
+import org.texastorque.torquelib.sensors.TorqueNavXGyro;
+import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
 /**
  * The drivebase subsystem. Drives with 4 2021 swerve modules.
@@ -107,23 +106,20 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     }
 
     @Override
-    public final void update(final TorqueMode mode)  {
+    public final void update(final TorqueMode mode) {
         if (state == DrivebaseState.X_FACTOR)
-            for (int i = 0; i < swerveModuleStates.length; i++) 
-                swerveModuleStates[i] = new SwerveModuleState(0, 
-                        new Rotation2d((i == 0 || i == 3) ? 135 : 45));
-       
+            for (int i = 0; i < swerveModuleStates.length; i++)
+                swerveModuleStates[i] = new SwerveModuleState(0, new Rotation2d((i == 0 || i == 3) ? 135 : 45));
+
         else if (state == DrivebaseState.FIELD_RELATIVE)
-            swerveModuleStates = kinematics.toSwerveModuleStates(
-                    ChassisSpeeds.fromFieldRelativeSpeeds(
-                            speeds.vxMetersPerSecond * (shooter.isShooting() 
-                                    ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef), 
-                            speeds.vyMetersPerSecond * (shooter.isShooting() 
-                                    ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
-                            speeds.omegaRadiansPerSecond * (shooter.isShooting() 
-                                    ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef), 
-                            gyro.getRotation2dClockwise()
-                    ));
+            swerveModuleStates = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    speeds.vxMetersPerSecond *
+                            (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
+                    speeds.vyMetersPerSecond *
+                            (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
+                    speeds.omegaRadiansPerSecond *
+                            (shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef),
+                    gyro.getRotation2dClockwise()));
 
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
@@ -137,8 +133,8 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         backLeft.setDesiredState(swerveModuleStates[0]);
         backRight.setDesiredState(swerveModuleStates[3]);
 
-        odometry.update(gyro.getRotation2dClockwise().times(-1),
-                        frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+        odometry.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(), frontRight.getState(),
+                        backLeft.getState(), backRight.getState());
 
         log();
     }
@@ -152,15 +148,14 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     public final TorqueNavXGyro getGyro() { return gyro; }
 
     public final void log() {
-        SmartDashboard.putString("OdomPos", String.format("(%02.3f, %02.3f)", 
-                getPose().getX(), getPose().getY()));
+        SmartDashboard.putString("OdomPos", String.format("(%02.3f, %02.3f)", getPose().getX(), getPose().getY()));
 
         SmartDashboard.putNumber("Odom Rot", getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("Gyro Rot", gyro.getRotation2dClockwise().getDegrees());
         SmartDashboard.putNumber("Gyro Rot -1", gyro.getRotation2dClockwise().times(-1).getDegrees());
 
-        SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", 
-                speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+        SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", speeds.vxMetersPerSecond,
+                                                         speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }

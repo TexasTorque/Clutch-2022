@@ -5,7 +5,10 @@ import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 
 public class Omar extends TorqueSequence {
-    public Omar() { super("Omar"); init(); }
+    public Omar() {
+        super("Omar");
+        init();
+    }
 
     @Override
     protected void init() {

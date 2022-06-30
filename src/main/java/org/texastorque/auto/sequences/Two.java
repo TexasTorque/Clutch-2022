@@ -13,29 +13,29 @@ import org.texastorque.torquelib.auto.commands.Execute;
 import org.texastorque.torquelib.util.TorqueMiscUtil;
 
 public class Two extends TorqueSequence implements Subsystems {
-    public Two() { super("Two"); init(); }
+    public Two() {
+        super("Two");
+        init();
+    }
 
     @Override
     protected void init() {
         TorqueMiscUtil.outOfDate();
 
-        addBlock(new TorqueBlock(
-                new Path("Two1", true, 2, 1),
-                new Execute(() -> { 
-                    magazine.setBeltDirection(BeltDirection.INTAKING);
-                    intake.setState(IntakeState.INTAKE);
+        addBlock(new TorqueBlock(new Path("Two1", true, 2, 1), new Execute(() -> {
+                                     magazine.setBeltDirection(BeltDirection.INTAKING);
+                                     intake.setState(IntakeState.INTAKE);
 
-                    turret.setState(TurretState.POSITIONAL);
-                    turret.setPosition(-171.15);
+                                     turret.setState(TurretState.POSITIONAL);
+                                     turret.setPosition(-171.15);
 
-                    shooter.setState(ShooterState.SETPOINT);
-                    shooter.setFlywheelSpeed(1400);
-                    shooter.setHoodPosition(26);
-                })
-        ));
+                                     shooter.setState(ShooterState.SETPOINT);
+                                     shooter.setFlywheelSpeed(1400);
+                                     shooter.setHoodPosition(26);
+                                 })));
         addBlock(new TorqueBlock(new Shoot(1600, 30, -171.15, true, 1.6)));
-        addBlock(new TorqueBlock(new Execute(() -> { 
-            magazine.setBeltDirection(BeltDirection.OFF); 
+        addBlock(new TorqueBlock(new Execute(() -> {
+            magazine.setBeltDirection(BeltDirection.OFF);
             intake.setState(IntakeState.PRIMED);
         })));
     }

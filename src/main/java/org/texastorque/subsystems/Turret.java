@@ -1,5 +1,9 @@
 package org.texastorque.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
@@ -9,16 +13,11 @@ import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.TorqueMathUtil;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
-    private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.2,
-            ROT_CENTER = 0, ROT_BACK = 180, TOLERANCE = 5, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
+    private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.2, ROT_CENTER = 0, ROT_BACK = 180,
+                                TOLERANCE = 5, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
     private static final boolean SHOOT_WITH_ODOMETRY = true;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
@@ -60,9 +59,9 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         // if (getDegrees() > MAX_LEFT) state = TurretState.CENTER;
         // requested = formatRequested(-DIRECTIONAL);
         // else if (getDegrees() < MAX_RIGHT)
-            // state = TurretState.CENTER;
+        // state = TurretState.CENTER;
         // requested = formatRequested(DIRECTIONAL);
-       
+
         SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
 
         if (climber.hasStarted()) {
@@ -72,10 +71,11 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);
         } else if (state == TurretState.POSITIONAL) {
-            requested = calculateRequested(mode.isAuto() ? position : TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
+            requested = calculateRequested(mode.isAuto() ? position
+                                                         : TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
         } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
-                // is this good, idk?    
+                // is this good, idk?
                 requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
             else
                 requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
@@ -105,19 +105,19 @@ public class Turret extends TorqueSubsystem implements Subsystems {
 
     public final boolean isLocked() {
         SmartDashboard.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));
-        return state == TurretState.POSITIONAL || state == TurretState.CENTER 
-                || (camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE);
+        return state == TurretState.POSITIONAL || state == TurretState.CENTER ||
+                (camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE);
         // For Positional:
         // return TurretState.POSITIONAL && Math.abs(getDegrees() - position) < TOLERANCE;
     }
 
     private final double calculateAngleWithOdometry() {
         //          v  This might want to be raw gyro angle??
-        return (drivebase.getPose().getRotation().minus(new Rotation2d(Math.atan2(
-                HUB_CENTER_POSITION.getX() - drivebase.getPose().getX(),
-                HUB_CENTER_POSITION.getY() - drivebase.getPose().getY())
-                ))).times(-1).getDegrees();
-
+        return (drivebase.getPose().getRotation().minus(
+                        new Rotation2d(Math.atan2(HUB_CENTER_POSITION.getX() - drivebase.getPose().getX(),
+                                                  HUB_CENTER_POSITION.getY() - drivebase.getPose().getY()))))
+                .times(-1)
+                .getDegrees();
     }
 
     public static final synchronized Turret getInstance() {

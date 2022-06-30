@@ -10,13 +10,11 @@ public final class Empty extends TorqueSubsystem implements Subsystems {
     private Empty() {}
 
     @Override
-    public final void initialize(final TorqueMode mode) {
-    }
+    public final void initialize(final TorqueMode mode) {}
 
     @Override
-    public final void update(final TorqueMode mode) {
-    }
-        
+    public final void update(final TorqueMode mode) {}
+
     public static final synchronized Empty getInstance() {
         return instance == null ? instance = new Empty() : instance;
     }

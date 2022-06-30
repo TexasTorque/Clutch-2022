@@ -7,17 +7,16 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import org.texastorque.subsystems.Climber.AutoClimbState;
 import org.texastorque.torquelib.control.TorqueClick;
 
 /**
  * Test for the climber algorithm.
- * 
+ *
  * Helped me catch one bug: this shit fucking works!!
- * 
+ *
  * Excuse the shitty code quality - its just a test so I don't care.
- * 
+ *
  * I'm also a 'lil toasted rn 🙃
  */
 public class ClimberTest {
@@ -74,13 +73,13 @@ public class ClimberTest {
 
         if (in.get(1).equals("x")) approved = false;
 
-        //System.out.printf("%s: (%03.2f, %03.2f) & (%03.2f, %03.2f)\n", state,
-                //l, r, left.getPosition(), right.getPosition());
+        // System.out.printf("%s: (%03.2f, %03.2f) & (%03.2f, %03.2f)\n", state,
+        // l, r, left.getPosition(), right.getPosition());
     }
 
     /**
      * A class for adding one number to another fucking number.
-     * 
+     *
      * @author 🤡
      */
     private static final class Winch {
@@ -92,12 +91,8 @@ public class ClimberTest {
             this.position = 0;
         }
 
-        public final void setPercent(final double percent) {
-            position += speed * percent;
-        }
+        public final void setPercent(final double percent) { position += speed * percent; }
 
-        public final double getPosition() {
-            return position;
-        }
+        public final double getPosition() { return position; }
     }
 }

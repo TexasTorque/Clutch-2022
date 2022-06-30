@@ -1,12 +1,11 @@
 package org.texastorque.auto.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Magazine.GateDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueCommand;
-
-import edu.wpi.first.wpilibj.Timer;
 
 public final class Shoot extends TorqueCommand implements Subsystems {
     private final double rpm, hood, tur, time;
@@ -32,8 +31,7 @@ public final class Shoot extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void continuous() {
-        if (shooter.isReady() && start == -1)
-            start = Timer.getFPGATimestamp();
+        if (shooter.isReady() && start == -1) start = Timer.getFPGATimestamp();
     }
 
     @Override

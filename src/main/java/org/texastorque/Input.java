@@ -11,7 +11,7 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
-import org.texastorque.torquelib.control.complex.TorqueTraversableSelection;
+import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
 @SuppressWarnings("deprecation")

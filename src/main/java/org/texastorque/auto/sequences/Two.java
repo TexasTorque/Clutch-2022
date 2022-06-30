@@ -10,7 +10,7 @@ import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.Execute;
-import org.texastorque.torquelib.util.TorqueMiscUtil;
+import org.texastorque.torquelib.util.TorqueUtil;
 
 public class Two extends TorqueSequence implements Subsystems {
     public Two() {
@@ -20,7 +20,7 @@ public class Two extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
-        TorqueMiscUtil.outOfDate();
+        TorqueUtil.outOfDate();
 
         addBlock(new TorqueBlock(new Path("Two1", true, 2, 1), new Execute(() -> {
                                      magazine.setBeltDirection(BeltDirection.INTAKING);

@@ -11,7 +11,7 @@ import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorqueClick;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
-import org.texastorque.torquelib.util.TorqueMathUtil;
+import org.texastorque.torquelib.util.TorqueMath;
 
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
@@ -187,8 +187,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         left.setPosition(toLeft);
         right.setPosition(-toRight);
 
-        if (TorqueMathUtil.toleranced(left.getPosition(), toLeft, 3) &&
-            TorqueMathUtil.toleranced(-right.getPosition(), toRight, 3) && approved)
+        if (TorqueMath.toleranced(left.getPosition(), toLeft, 3) &&
+            TorqueMath.toleranced(-right.getPosition(), toRight, 3) && approved)
             advance();
     }
 
@@ -222,9 +222,9 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         left.setPosition(toLeft);
         right.setPosition(-toRight);
 
-        if (TorqueMathUtil.toleranced(left.getPosition(), toLeft, 3) &&
-            TorqueMathUtil.toleranced(-right.getPosition(), toRight, 3) && approved &&
-            TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 4))
+        if (TorqueMath.toleranced(left.getPosition(), toLeft, 3) &&
+            TorqueMath.toleranced(-right.getPosition(), toRight, 3) && approved &&
+            TorqueMath.toleranced(winch.getPosition(), toWinch, 4))
             advance();
     }
 
@@ -234,9 +234,9 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset)
             winch.setPosition(toWinch);
 
-        if (TorqueMathUtil.toleranced(left.getPosition(), toLeft, 5) &&
-            TorqueMathUtil.toleranced(-right.getPosition(), toRight, 5) && approved &&
-            TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 4))
+        if (TorqueMath.toleranced(left.getPosition(), toLeft, 5) &&
+            TorqueMath.toleranced(-right.getPosition(), toRight, 5) && approved &&
+            TorqueMath.toleranced(winch.getPosition(), toWinch, 4))
             advance();
     }
 
@@ -245,7 +245,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
                      rightRelease = MAX_RIGHT - offsetRelease, offsetWinch = 80, leftWinch = MAX_LEFT - offsetWinch,
                      rightWinch = MAX_RIGHT - offsetWinch, toWinch = 0, leftWait = 30, rightWait = 30;
 
-        final boolean winchGood = TorqueMathUtil.toleranced(winch.getPosition(), toWinch, 2);
+        final boolean winchGood = TorqueMath.toleranced(winch.getPosition(), toWinch, 2);
 
         if (left.getPosition() <= leftWinch && -right.getPosition() <= rightWinch)
             winch.setPosition(toWinch);
@@ -261,8 +261,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
             }
         }
 
-        if (TorqueMathUtil.toleranced(left.getPosition(), leftRelease, 5) &&
-            TorqueMathUtil.toleranced(-right.getPosition(), rightRelease, 5))
+        if (TorqueMath.toleranced(left.getPosition(), leftRelease, 5) &&
+            TorqueMath.toleranced(-right.getPosition(), rightRelease, 5))
             setServos(false);
 
         if (leftSwitch.get())

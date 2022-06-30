@@ -8,7 +8,7 @@ import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.Execute;
-import org.texastorque.torquelib.util.TorqueMiscUtil;
+import org.texastorque.torquelib.util.TorqueUtil;
 
 public class One extends TorqueSequence implements Subsystems {
     public One() {
@@ -18,7 +18,7 @@ public class One extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
-        TorqueMiscUtil.outOfDate();
+        TorqueUtil.outOfDate();
 
         addBlock(new TorqueBlock(new Shoot(1300, 10, 0, true, 1)));
         addBlock(new TorqueBlock(new Path("One1", true, 1, .5)));

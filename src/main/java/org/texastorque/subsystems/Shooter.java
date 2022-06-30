@@ -16,8 +16,8 @@ import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.KPID;
-import org.texastorque.torquelib.util.TorqueMathUtil;
-import org.texastorque.torquelib.util.TorqueMiscUtil;
+import org.texastorque.torquelib.util.TorqueMath;
+import org.texastorque.torquelib.util.TorqueUtil;
 
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
@@ -135,17 +135,17 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     }
 
     private final double clampRPM(final double rpm) {
-        return TorqueMathUtil.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX);
+        return TorqueMath.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX);
     }
 
-    private final double clampHood(final double hood) { return TorqueMathUtil.constrain(hood, HOOD_MIN, HOOD_MAX); }
+    private final double clampHood(final double hood) { return TorqueMath.constrain(hood, HOOD_MIN, HOOD_MAX); }
 
     public final TorqueLight getCamera() { return camera; }
 
     public final ShooterState getState() { return state; }
 
     public final Pose2d getVisionPositionEstimate() {
-        TorqueMiscUtil.notImplemented();
+        TorqueUtil.notImplemented();
 
         return new Pose2d();
     }

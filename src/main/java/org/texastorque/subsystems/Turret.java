@@ -11,7 +11,7 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
-import org.texastorque.torquelib.util.TorqueMathUtil;
+import org.texastorque.torquelib.util.TorqueMath;
 
 public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
@@ -72,7 +72,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
             requested = calculateRequested(ROT_CENTER);
         } else if (state == TurretState.POSITIONAL) {
             requested = calculateRequested(mode.isAuto() ? position
-                                                         : TorqueMathUtil.constrain(position, MAX_RIGHT, MAX_LEFT));
+                                                         : TorqueMath.constrain(position, MAX_RIGHT, MAX_LEFT));
         } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
                 // is this good, idk?

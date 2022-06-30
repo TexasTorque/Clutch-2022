@@ -1,6 +1,7 @@
 package org.texastorque.subsystems;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -146,11 +147,17 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     public final TorqueSwerveOdometry getOdometry() { return odometry; }
 
+    public final Pose2d getPose() { return odometry.getPoseMeters(); }
+
     public final TorqueNavXGyro getGyro() { return gyro; }
 
     public final void log() {
         SmartDashboard.putString("OdomPos", String.format("(%02.3f, %02.3f)", 
-                odometry.getPoseMeters().getX(), odometry.getPoseMeters().getY()));
+                getPose().getX(), getPose().getY()));
+
+        SmartDashboard.putNumber("Odom Rot", getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Gyro Rot", gyro.getRotation2dClockwise().getDegrees());
+        SmartDashboard.putNumber("Gyro Rot -1", gyro.getRotation2dClockwise().times(-1).getDegrees());
 
         SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", 
                 speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));

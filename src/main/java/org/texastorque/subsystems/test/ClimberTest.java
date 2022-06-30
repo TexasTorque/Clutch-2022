@@ -3,13 +3,12 @@ package org.texastorque.subsystems.test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.texastorque.subsystems.Climber.*;
+import org.texastorque.subsystems.Climber.AutoClimbState;
 import org.texastorque.torquelib.control.TorqueClick;
 
 /**

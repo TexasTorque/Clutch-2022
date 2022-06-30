@@ -1,20 +1,19 @@
 package org.texastorque;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
-import org.texastorque.subsystems.Intake;
 import org.texastorque.subsystems.Intake.IntakeState;
-import org.texastorque.subsystems.Magazine;
 import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.subsystems.Magazine.GateDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
-import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
 import org.texastorque.torquelib.control.complex.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 @SuppressWarnings("deprecation")
 public final class Input extends TorqueInput implements Subsystems {

@@ -1,6 +1,5 @@
 package org.texastorque.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
@@ -10,6 +9,8 @@ import org.texastorque.torquelib.control.TorqueRamp;
 import org.texastorque.torquelib.control.TorqueTimeout;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The intake subsystem.

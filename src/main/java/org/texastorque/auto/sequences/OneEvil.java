@@ -1,12 +1,13 @@
 package org.texastorque.auto.sequences;
 
 import org.texastorque.Subsystems;
-import org.texastorque.auto.commands.*;
-import org.texastorque.subsystems.Shooter;
+import org.texastorque.auto.commands.Path;
+import org.texastorque.auto.commands.Shoot;
 import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine.BeltDirection;
-import org.texastorque.torquelib.auto.*;
-import org.texastorque.torquelib.auto.commands.*;
+import org.texastorque.torquelib.auto.TorqueBlock;
+import org.texastorque.torquelib.auto.TorqueSequence;
+import org.texastorque.torquelib.auto.commands.Execute;
 
 public class OneEvil extends TorqueSequence implements Subsystems {
     public OneEvil() { super("OneEvil"); init(); }

@@ -1,20 +1,21 @@
 package org.texastorque.auto.commands;
 
+import org.texastorque.Subsystems;
+import org.texastorque.subsystems.Drivebase;
+import org.texastorque.subsystems.Drivebase.DrivebaseState;
+import org.texastorque.torquelib.auto.TorqueCommand;
+import org.texastorque.torquelib.sensors.TorqueNavXGyro;
+
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-
-import org.texastorque.Subsystems;
-import org.texastorque.subsystems.Drivebase;
-import org.texastorque.subsystems.Drivebase.DrivebaseState;
-import org.texastorque.torquelib.auto.TorqueCommand;
-import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 
 public final class Path extends TorqueCommand implements Subsystems {
     private final PIDController xController = new PIDController(1, 0, 0);

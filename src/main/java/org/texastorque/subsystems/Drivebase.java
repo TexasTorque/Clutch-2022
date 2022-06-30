@@ -1,5 +1,15 @@
 package org.texastorque.subsystems;
 
+import org.texastorque.Ports;
+import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueMode;
+import org.texastorque.torquelib.base.TorqueSubsystem;
+import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
+import org.texastorque.torquelib.sensors.TorqueNavXGyro;
+import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueSwerveOdometry;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,16 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.texastorque.Ports;
-import org.texastorque.Subsystems;
-import org.texastorque.torquelib.base.TorqueMode;
-import org.texastorque.torquelib.base.TorqueSubsystem;
-import org.texastorque.torquelib.base.TorqueSubsystemState;
-import org.texastorque.torquelib.control.complex.TorqueTraversableSelection;
-import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
-import org.texastorque.torquelib.sensors.TorqueNavXGyro;
-import org.texastorque.torquelib.util.KPID;
-import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
 /**
  * The drivebase subsystem. Drives with 4 2021 swerve modules.

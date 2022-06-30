@@ -1,11 +1,11 @@
 package org.texastorque.auto.commands;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
-
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.torquelib.auto.TorqueCommand;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 
 public final class Creep extends TorqueCommand implements Subsystems {
     private final double time; 

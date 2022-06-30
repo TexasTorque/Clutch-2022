@@ -48,13 +48,12 @@ public final class Input extends TorqueInput implements Subsystems {
     private final void updateDrivebase() {
         drivebase.setState(DrivebaseState.FIELD_RELATIVE);
         drivebase.setSpeeds(new ChassisSpeeds(
-                driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
-                        translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
-                -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
-                        translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
-                -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED *
-                        rotationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper())
+                driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
+                -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
+                -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED
                 ));
+        drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
+                rotationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()));
     }
 
     private final void updateIntake() {

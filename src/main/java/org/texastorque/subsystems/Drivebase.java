@@ -13,6 +13,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.complex.TorqueTraversableSelection;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;
@@ -58,6 +59,9 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     private final TorqueNavXGyro gyro = TorqueNavXGyro.getInstance();
 
+    private double translationalSpeedCoef, rotationalSpeedCoef;
+    private final double SHOOTING_TRANSLATIONAL_SPEED_COEF = .4, SHOOTING_ROTATIONAL_SPEED_COEF = .5;
+
     private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
         return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
                                           ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
@@ -82,6 +86,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         reset();
     }
 
+    public final void setSpeedCoefs(final double translational, final double rotational) {
+        this.translationalSpeedCoef = translational;
+        this.rotationalSpeedCoef = rotational;
+    }
+
     public final void setState(final DrivebaseState state) { this.state = state; }
 
     public final DrivebaseState getState() { return state; }
@@ -98,7 +107,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode)  {
-
         if (state == DrivebaseState.X_FACTOR) {
             swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
             swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
@@ -106,10 +114,18 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
             swerveModuleStates[3].angle = Rotation2d.fromDegrees(135);
         }
 
+       
         else if (state == DrivebaseState.FIELD_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(
-                    ChassisSpeeds.fromFieldRelativeSpeeds(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond,
-                                                          speeds.omegaRadiansPerSecond, gyro.getRotation2dClockwise()));
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                            speeds.vxMetersPerSecond * (shooter.isShooting() 
+                                    ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef), 
+                            speeds.vyMetersPerSecond * (shooter.isShooting() 
+                                    ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
+                            speeds.omegaRadiansPerSecond * (shooter.isShooting() 
+                                    ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef), 
+                            gyro.getRotation2dClockwise()
+                    ));
 
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);

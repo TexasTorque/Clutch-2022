@@ -8,16 +8,11 @@ import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine;
 import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.subsystems.Magazine.GateDirection;
-import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Shooter.ShooterState;
-import org.texastorque.subsystems.Turret;
 import org.texastorque.subsystems.Climber.ManualClimbState;
-import org.texastorque.subsystems.Climber.AutoClimbState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
-import org.texastorque.torquelib.control.TorqueToggle;
-import org.texastorque.torquelib.control.complex.TorqueSpeedSettings;
 import org.texastorque.torquelib.control.complex.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
@@ -46,7 +41,8 @@ public final class Input extends TorqueInput implements Subsystems {
             = new TorqueTraversableSelection<Double>(.5, .75, 1.);
 
     private final void updateDrivebase() {
-        drivebase.setState(DrivebaseState.FIELD_RELATIVE);
+        drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR 
+                : DrivebaseState.FIELD_RELATIVE);
         drivebase.setSpeeds(new ChassisSpeeds(
                 driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
                 -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
@@ -79,7 +75,7 @@ public final class Input extends TorqueInput implements Subsystems {
     private boolean servoEnabled = false;
 
     private final void updateClimber() {
-        if (driver.getRightCenterButton())
+        if (driver.getLeftCenterButton())
             climber.reset();
 
         if (driver.getDPADDown()) 

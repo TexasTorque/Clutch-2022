@@ -107,13 +107,10 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode)  {
-        if (state == DrivebaseState.X_FACTOR) {
-            swerveModuleStates[0].angle = Rotation2d.fromDegrees(135);
-            swerveModuleStates[1].angle = Rotation2d.fromDegrees(45);
-            swerveModuleStates[2].angle = Rotation2d.fromDegrees(45);
-            swerveModuleStates[3].angle = Rotation2d.fromDegrees(135);
-        }
-
+        if (state == DrivebaseState.X_FACTOR)
+            for (int i = 0; i < swerveModuleStates.length; i++) 
+                swerveModuleStates[i] = new SwerveModuleState(0, 
+                        new Rotation2d((i == 0 || i == 3) ? 135 : 45));
        
         else if (state == DrivebaseState.FIELD_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(

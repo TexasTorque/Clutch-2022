@@ -107,7 +107,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
         // Positive is pull together
         winch = new TorqueSparkMax(Ports.CLIMBER.WINCH);
-        winch.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
+        winch.configurePID(new KPID(.1, 0, 0, 0, 1., -1.));
         winch.configurePositionalCANFrame();
         winch.setEncoderZero(0);
         winch.burnFlash();
@@ -135,10 +135,13 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Approved", approved);
         SmartDashboard.putBoolean("Running", running);
 
+        TorqueSubsystemState.logState(state);
+        SmartDashboard.putString("climstate", state.toString());
+
         SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
         SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
         if (_winch != 0) {
-            winch.setPercent(_winch);
+            winch.setPercent(_winch / 4.7);
             return;
         }
 
@@ -183,9 +186,9 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleInitPush() {
-        final double toLeft = MAX_LEFT, toRight = MAX_RIGHT;
-        left.setPosition(toLeft);
-        right.setPosition(-toRight);
+        final double toLeft = 200, toRight = 200;
+        left.setPercent(left.getPosition() <= toLeft ? .5 : 0);
+        right.setPercent(-right.getPosition() <= toRight ? -.5 : 0);
 
         if (TorqueMath.toleranced(left.getPosition(), toLeft, 3) &&
             TorqueMath.toleranced(-right.getPosition(), toRight, 3) && approved)
@@ -195,60 +198,72 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     private boolean initPullRightHasGoneTooLow = false, initPullLeftHasGoneTooLow = false;
 
     private final void handleInitPull() {
-        if (leftSwitch.get())
-            left.setPercent(0);
-        else if (initPullLeftHasGoneTooLow)
-            left.setPosition(15);
+        if (initPullLeftHasGoneTooLow)
+            if (leftSwitch.get())
+                left.setPercent(0);
+            else
+                left.setPercent(.1);
+            // left.setPosition(15);
         else
-            left.setPosition(0);
+            left.setPercent(-.5);
 
-        if (rightSwitch.get())
-            right.setPercent(0);
-        else if (initPullRightHasGoneTooLow)
-            right.setPosition(15);
+        if (initPullRightHasGoneTooLow) 
+            if (rightSwitch.get())
+                right.setPercent(0);
+            else
+                right.setPercent(-.1);
+            // right.setPosition(15);
         else
-            right.setPosition(0);
+            right.setPercent(.5);
 
-        if (left.getPosition() <= 4) initPullLeftHasGoneTooLow = true;
-        if (-right.getPosition() <= 4) initPullRightHasGoneTooLow = true;
-
+        if (left.getPosition() <= 0) initPullLeftHasGoneTooLow = true;
+        if (-right.getPosition() <= 0) initPullRightHasGoneTooLow = true;
+        
         if (leftSwitch.get() && rightSwitch.get() && approved) advance();
     }
 
     private final void handleTiltOut() {
-        final double OFFSET = 40, toLeft = MAX_LEFT - OFFSET, toRight = MAX_RIGHT - OFFSET, toWinch = -80;
+        final double toLeft = 140, toRight = 140, toWinch = 80;
 
-        winch.setPosition(toWinch);
-        left.setPosition(toLeft);
-        right.setPosition(-toRight);
+        winch.setPercent(winch.getPosition() <= toWinch ? .3 : 0);
+         left.setPercent(left.getPosition() <= toLeft ? .5 : 0);
+        right.setPercent(-right.getPosition() <= toRight ? -.5 : 0);
 
         if (TorqueMath.toleranced(left.getPosition(), toLeft, 3) &&
             TorqueMath.toleranced(-right.getPosition(), toRight, 3) && approved &&
-            TorqueMath.toleranced(winch.getPosition(), toWinch, 4))
+            TorqueMath.toleranced(winch.getPosition(), toWinch, 15))
             advance();
     }
 
     private final void handleTiltIn() {
-        final double offset = 15, toLeft = MAX_LEFT, toRight = MAX_RIGHT, toWinch = -83;
+        final double offset = 15, toLeft = MAX_LEFT, toRight = MAX_RIGHT, toWinch = 60;
+
+        // winch.setPercent(percent);
+
+        left.setPercent(left.getPosition() <= toLeft ? .5 : 0);
+        right.setPercent(-right.getPosition() <= toRight ? -.5 : 0);
 
         if (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset)
-            winch.setPosition(toWinch);
+            winch.setPercent(winch.getPosition() >= toWinch ? -.3 : 0);
+        else
+            winch.setPercent(0);
 
         if (TorqueMath.toleranced(left.getPosition(), toLeft, 5) &&
             TorqueMath.toleranced(-right.getPosition(), toRight, 5) && approved &&
-            TorqueMath.toleranced(winch.getPosition(), toWinch, 4))
+            TorqueMath.toleranced(winch.getPosition(), toWinch, 15))
             advance();
     }
 
+    private boolean initPullRightHasGoneTooLow2 = false, initPullLeftHasGoneTooLow2 = false;
+
     private final void handleAdvance() {
-        final double offsetRelease = 40, leftRelease = MAX_LEFT - offsetRelease,
-                     rightRelease = MAX_RIGHT - offsetRelease, offsetWinch = 80, leftWinch = MAX_LEFT - offsetWinch,
-                     rightWinch = MAX_RIGHT - offsetWinch, toWinch = 0, leftWait = 30, rightWait = 30;
+        final double offsetRelease = 40, leftRelease = 130, rightRelease = 130, offsetWinch = 80, leftWinch = 140,
+                     rightWinch = 140, toWinch = 0, leftWait = 30, rightWait = 30;
 
         final boolean winchGood = TorqueMath.toleranced(winch.getPosition(), toWinch, 2);
 
         if (left.getPosition() <= leftWinch && -right.getPosition() <= rightWinch)
-            winch.setPosition(toWinch);
+            winch.setPercent(winch.getPosition() >= toWinch ? -.3 : 0);
         else
             winch.setPercent(0);
 
@@ -265,15 +280,27 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
             TorqueMath.toleranced(-right.getPosition(), rightRelease, 5))
             setServos(false);
 
-        if (leftSwitch.get())
-            left.setPercent(0);
+          if (initPullLeftHasGoneTooLow2)
+            if (leftSwitch.get())
+                left.setPercent(0);
+            else
+                left.setPercent(.1);
+            // left.setPosition(15);
         else
-            left.setPosition(0);
+            left.setPercent(-.5);
 
-        if (rightSwitch.get())
-            right.setPercent(0);
+        if (initPullRightHasGoneTooLow2) 
+            if (rightSwitch.get())
+                right.setPercent(0);
+            else
+                right.setPercent(-.1);
+            // right.setPosition(15);
         else
-            right.setPosition(0);
+            right.setPercent(.5);
+
+        if (left.getPosition() <= 0) initPullLeftHasGoneTooLow2 = true;
+        if (-right.getPosition() <= 0) initPullRightHasGoneTooLow2 = true;
+        
 
         if (leftSwitch.get() && rightSwitch.get() && approved) advance();
     }

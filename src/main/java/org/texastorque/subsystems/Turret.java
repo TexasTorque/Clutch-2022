@@ -18,7 +18,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
 
     private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.2, ROT_CENTER = 0, ROT_BACK = 180,
                                 TOLERANCE = 5, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
-    private static final boolean SHOOT_WITH_ODOMETRY = true;
+    private static final boolean SHOOT_WITH_ODOMETRY = false;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
     public enum TurretState implements TorqueSubsystemState {
@@ -37,6 +37,8 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private double requested = 0;
     private TurretState state = TurretState.OFF;
     private double position = 0;
+
+    private double offset = 0;
 
     private Turret() {
         rotator = new TorqueSparkMax(Ports.TURRET);
@@ -76,7 +78,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
                 // is this good, idk?
-                requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
+                requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), offset);
             else
                 requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
         } else
@@ -109,6 +111,10 @@ public class Turret extends TorqueSubsystem implements Subsystems {
                 (camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE);
         // For Positional:
         // return TurretState.POSITIONAL && Math.abs(getDegrees() - position) < TOLERANCE;
+    }
+
+    public void setOffset(double offset) {
+        this.offset = offset;
     }
 
     private final double calculateAngleWithOdometry() {

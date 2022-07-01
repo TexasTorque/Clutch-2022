@@ -46,7 +46,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     private IntakeState state = IntakeState.PRIMED;
     private TorqueTimeout revIntake = new TorqueTimeout(.5);
-    private TorqueRamp rampIntake = new TorqueRamp(2, 1.3, 12);
+    private TorqueRamp rampIntake = new TorqueRamp(3, 1.3, 12);
 
     private final TorqueSparkMax rotary, rollers;
 

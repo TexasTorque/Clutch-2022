@@ -23,29 +23,31 @@ public class Five extends TorqueSequence implements Subsystems {
     @Override
     protected void init() {
         addBlock(new TorqueBlock(new Path("Five1", true, 2, 1), new Execute(() -> {
-                                     magazine.setBeltDirection(BeltDirection.INTAKING);
+                                    //  magazine.setBeltDirection(BeltDirection.INTAKING);
                                      intake.setState(IntakeState.INTAKE);
 
                                      turret.setState(TurretState.POSITIONAL);
                                      turret.setPosition(172.15);
 
                                      shooter.setState(ShooterState.WARMUP);
-                                     shooter.setFlywheelSpeed(1400);
+                                     shooter.setFlywheelSpeed(1000);
                                      shooter.setHoodPosition(26);
                                  })));
-        addBlock(new TorqueBlock(new Shoot(1600, 35, 172.15, true, 2)));
+        addBlock(new TorqueBlock(new Shoot(1400, 40, 172.15, true, 2)));
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
         addBlock(new TorqueBlock(new Execute(() -> {
             turret.setState(TurretState.POSITIONAL);
             turret.setPosition(30);
+            turret.setOffset(0);
 
             shooter.setState(ShooterState.WARMUP);
             shooter.setFlywheelSpeed(1400);
         })));
         addBlock(new TorqueBlock(new Path("Five3", false, 3, 1)));
-        addBlock(new TorqueBlock(new Creep(1, new ChassisSpeeds(-.5, 0, 0)), new Target(false, 3)));
+        addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)), new Target(false, 3)));
 
         addBlock(new TorqueBlock(new Execute(() -> {
+            turret.setOffset(0);
             magazine.setBeltDirection(BeltDirection.OFF);
             intake.setState(IntakeState.PRIMED);
             turret.setState(TurretState.CENTER);

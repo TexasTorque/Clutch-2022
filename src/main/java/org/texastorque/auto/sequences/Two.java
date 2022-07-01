@@ -20,7 +20,7 @@ public class Two extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
-        TorqueUtil.outOfDate();
+        // TorqueUtil.outOfDate();
 
         addBlock(new TorqueBlock(new Path("Two1", true, 2, 1), new Execute(() -> {
                                      magazine.setBeltDirection(BeltDirection.INTAKING);

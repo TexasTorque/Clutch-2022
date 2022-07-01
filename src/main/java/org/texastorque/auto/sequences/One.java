@@ -18,7 +18,7 @@ public class One extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
-        TorqueUtil.outOfDate();
+        // TorqueUtil.outOfDate();
 
         addBlock(new TorqueBlock(new Shoot(1300, 10, 0, true, 1)));
         addBlock(new TorqueBlock(new Path("One1", true, 1, .5)));

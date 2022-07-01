@@ -43,8 +43,9 @@ public class Five extends TorqueSequence implements Subsystems {
             shooter.setState(ShooterState.WARMUP);
             shooter.setFlywheelSpeed(1400);
         })));
-        addBlock(new TorqueBlock(new Path("Five3", false, 3, 1)));
-        addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)), new Target(false, 3)));
+        addBlock(new TorqueBlock(new Path("Five3", false, 4, 2)));
+        addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.75, 0, 0)), 
+                                 new Target(true, 3)));
 
         addBlock(new TorqueBlock(new Execute(() -> {
             turret.setOffset(0);

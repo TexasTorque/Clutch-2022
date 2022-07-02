@@ -107,13 +107,14 @@ public final class Input extends TorqueInput implements Subsystems {
     private final void updateClimber() {
         if (driver.getLeftCenterButton()) climber.reset();
 
-        updateManualArmControls(operator);
-        updateManualWinchControls(operator, true); 
+        updateManualArmControls(driver);
+        // updateManualWinchControls(operator, true); 
         // ^ if driver stick must be false
+        updateManualWinchControls(driver);
 
         climber.setAuto(driver.getRightCenterButton());
 
-        if (toggleClimberHooks.calculate(operator.getYButton())) 
+        if (toggleClimberHooks.calculate(driver.getYButton())) 
             climber.setServos(servoEnabled = !servoEnabled);
     }
 
@@ -130,16 +131,25 @@ public final class Input extends TorqueInput implements Subsystems {
             climber.setManual(ManualClimbState.OFF);
     }
 
-    private final double WINCH_DEADBAND = .5;
-
-    private final void updateManualWinchControls(final GenericController controller, final boolean stick) {
-        if (stick ? controller.getLeftYAxis() >= WINCH_DEADBAND : controller.getBButton())
+    private final void updateManualWinchControls(final GenericController controller) {
+        
+        // if (stick ? controller.getLeftYAxis() >= WINCH_DEADBAND : controller.getBButton())
+        //     climber.setWinch(ManualWinchState.OUT);
+        // else if (stick ? controller.getLeftYAxis() <= -WINCH_DEADBAND : controller.getAButton())
+        //     climber.setWinch(ManualWinchState.IN);
+        // else
+        //     climber.setWinch(ManualWinchState.OFF);
+        
+        if (controller.getBButton() && controller.getDPADUp())
             climber.setWinch(ManualWinchState.OUT);
-        else if (stick ? controller.getLeftYAxis() <= -WINCH_DEADBAND : controller.getAButton())
+        else if (controller.getBButton() && controller.getDPADDown())
             climber.setWinch(ManualWinchState.IN);
         else
             climber.setWinch(ManualWinchState.OFF);
+
+
     }
+
 
     public static final synchronized Input getInstance() {
         return instance == null ? instance = new Input() : instance;

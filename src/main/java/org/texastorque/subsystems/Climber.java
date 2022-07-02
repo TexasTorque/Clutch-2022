@@ -16,8 +16,8 @@ import org.texastorque.torquelib.util.TorqueMath;
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
-    private static final double MAX_LEFT = 200, MAX_RIGHT = 200, LEFT_SERVO_ENGAGED = .5, LEFT_SERVO_DISENGAGED = .9,
-                                RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1, ARM_PWR = .5, WINCH_PWR = .3;
+    private static final double MAX_LEFT = 180, MAX_RIGHT = 180, LEFT_SERVO_ENGAGED = .6, LEFT_SERVO_DISENGAGED = 1.0,
+                                RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1, ARM_PWR = .75, WINCH_PWR = .3;
 
     public static enum AutoClimbState implements TorqueSubsystemState {
         OFF,
@@ -111,6 +111,14 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         rightServo.set(engaged ? RIGHT_SERVO_ENGAGED : RIGHT_SERVO_DISENGAGED);
     }
 
+     public final void setLeftServo(final boolean engaged) {
+        leftServo.set(engaged ? LEFT_SERVO_ENGAGED : LEFT_SERVO_DISENGAGED);
+    }
+
+     public final void setRightServo(final boolean engaged) {
+        rightServo.set(engaged ? RIGHT_SERVO_ENGAGED : RIGHT_SERVO_DISENGAGED);
+     }
+
     private Climber() {
         left = setupArmMotors(Ports.CLIMBER.ARMS.LEFT);
         right = setupArmMotors(Ports.CLIMBER.ARMS.RIGHT);
@@ -199,8 +207,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         left.setPercent(left.getPosition() <= toLeft ? ARM_PWR : 0);
         right.setPercent(-right.getPosition() <= toRight ? -ARM_PWR : 0);
 
-        if (TorqueMath.toleranced(left.getPosition(), toLeft, 3) &&
-            TorqueMath.toleranced(-right.getPosition(), toRight, 3) && approved)
+        if (TorqueMath.toleranced(left.getPosition(), toLeft, 10) &&
+            TorqueMath.toleranced(-right.getPosition(), toRight, 10) && approved)
             advance();
     }
 
@@ -250,7 +258,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleTiltIn() {
-        final double offset = 30, toLeft = 200, toRight = 200, toWinch = 60;
+        final double offset = 30, toLeft = 200, toRight = 200, toWinch = 70;
 
         left.setPercent(left.getPosition() <= toLeft ? ARM_PWR : 0);
         right.setPercent(-right.getPosition() <= toRight ? -ARM_PWR : 0);
@@ -261,7 +269,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         //     winch.setPercent(0);
 
         winch.setPercent(left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset
-                ? (winch.getPosition() >= toWinch ? -WINCH_PWR : -.1) : 0); //! <- WINCH IDLE IS .1
+                ? (winch.getPosition() >= toWinch ? -WINCH_PWR : 0) : 0); //! <- WINCH IDLE IS .1
 
         if (TorqueMath.toleranced(left.getPosition(), toLeft, 5) &&
             TorqueMath.toleranced(-right.getPosition(), toRight, 5) && approved &&
@@ -270,8 +278,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleAdvance() {
-        final double leftRelease = 170, rightRelease = 170, 
-                     leftWinch = 160, rightWinch = 160, 
+        final double leftRelease = 185, rightRelease = 180, 
+                     leftWinch = 100, rightWinch = 100, 
                      leftWait = 30, rightWait = 30,
                      toWinch = 0;
 
@@ -280,8 +288,9 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         // else
         //     winch.setPercent(0);
         
-        winch.setPercent(left.getPosition() <= leftWinch && -right.getPosition() <= rightWinch 
-                ? (winch.getPosition() >= toWinch ? -WINCH_PWR : 0) : 0);
+        // winch.setPercent(left.getPosition() <= leftWinch && -right.getPosition() <= rightWinch 
+        //         ? (winch.getPosition() >= toWinch ? -WINCH_PWR : 0) : 0);
+        winch.setPercent(0);
 
         if (left.getPosition() <= leftWait && -right.getPosition() <= rightWait) {
             setServos(true);
@@ -293,12 +302,21 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         }
 
         if (TorqueMath.toleranced(left.getPosition(), leftRelease, 5) &&
+            TorqueMath.toleranced(-right.getPosition(), leftRelease, 5))
+            setLeftServo(false);
+        if (TorqueMath.toleranced(left.getPosition(), rightRelease, 5) &&
             TorqueMath.toleranced(-right.getPosition(), rightRelease, 5))
-            setServos(false);
+            setRightServo(false);
+
+        // if (TorqueMath.toleranced(left.getPosition(), leftRelease - 8, 5) &&
+        //     TorqueMath.toleranced(-right.getPosition(), rightRelease - 8, 5))
+        //     setRightServo(false);
+
+
 
         pullToLatch(ARM_PWR);
 
-        if (leftSwitch.get() && rightSwitch.get() && approved) advance();
+        // if (leftSwitch.get() && rightSwitch.get() && approved) advance();
     }
 
     public static final synchronized Climber getInstance() {

@@ -13,6 +13,7 @@ import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.Execute;
+import org.texastorque.torquelib.auto.commands.Wait;
 
 public class Five extends TorqueSequence implements Subsystems {
     public Five() {
@@ -22,7 +23,8 @@ public class Five extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
-        addBlock(new TorqueBlock(new Path("Five1", true, 2, 1), new Execute(() -> {
+        
+        addBlock(new TorqueBlock(new Execute(() -> {
                                     //  magazine.setBeltDirection(BeltDirection.INTAKING);
                                      intake.setState(IntakeState.INTAKE);
 
@@ -32,8 +34,9 @@ public class Five extends TorqueSequence implements Subsystems {
                                      shooter.setState(ShooterState.WARMUP);
                                      shooter.setFlywheelSpeed(1000);
                                      shooter.setHoodPosition(26);
-                                 })));
-        addBlock(new TorqueBlock(new Shoot(1400, 40, 172.15, true, 2)));
+                                 }), new Wait(.75)));
+        addBlock(new TorqueBlock(new Path("Five1", true, 2, 1)));
+        addBlock(new TorqueBlock(new Shoot(1450, 30, 172.15, true, 2)));
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
         addBlock(new TorqueBlock(new Execute(() -> {
             turret.setState(TurretState.POSITIONAL);

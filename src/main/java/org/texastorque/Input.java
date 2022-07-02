@@ -12,7 +12,6 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
-import org.texastorque.torquelib.control.TorqueToggle;
 import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
@@ -63,7 +62,29 @@ public final class Input extends TorqueInput implements Subsystems {
             intake.setState(IntakeState.PRIMED);
     }
 
-    private final void updateMagazine() { magazine.setState(BeltDirection.OFF, GateDirection.OFF); }
+    private final void updateMagazine() { 
+        updateManualMagazineBeltControls(operator);
+        updateManualMagazineGateControls(operator);
+        // magazine.setState(BeltDirection.OFF, GateDirection.OFF); 
+    }
+
+    private final void updateManualMagazineBeltControls(final GenericController controller) {
+        if (controller.getRightBumper())
+            magazine.setBeltDirection(BeltDirection.UP);
+        else if (controller.getRightTrigger())
+            magazine.setBeltDirection(BeltDirection.DOWN);
+        else 
+            magazine.setBeltDirection(BeltDirection.OFF);
+    }
+
+    private final void updateManualMagazineGateControls(final GenericController controller) {
+        if (controller.getLeftBumper())
+            magazine.setGateDirection(GateDirection.FORWARD);
+        else if (controller.getLeftTrigger())
+            magazine.setGateDirection(GateDirection.REVERSE);
+        else 
+            magazine.setGateDirection(GateDirection.OFF);
+    }
 
     private final void updateShooter() {
         if (driver.getLeftTrigger()) {
@@ -80,7 +101,6 @@ public final class Input extends TorqueInput implements Subsystems {
         }
     }
 
-    // The ugly code below will be cleaned later!
     private final TorqueClick toggleClimberHooks = new TorqueClick();
     private boolean servoEnabled = false;
 

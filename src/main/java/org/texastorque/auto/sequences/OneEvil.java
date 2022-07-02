@@ -1,5 +1,6 @@
 package org.texastorque.auto.sequences;
 
+import org.texastorque.Input;
 import org.texastorque.Subsystems;
 import org.texastorque.auto.commands.Path;
 import org.texastorque.auto.commands.Shoot;
@@ -25,6 +26,7 @@ public class OneEvil extends TorqueSequence implements Subsystems {
         addBlock(new TorqueBlock(new Execute(() -> {
             magazine.setBeltDirection(BeltDirection.OFF);
             intake.setState(IntakeState.PRIMED);
+            Input.getInstance().invertDrivebaseControls();
         })));
     }
 }

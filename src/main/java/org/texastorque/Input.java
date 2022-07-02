@@ -38,11 +38,16 @@ public final class Input extends TorqueInput implements Subsystems {
     private final TorqueTraversableSelection<Double> rotationalSpeeds =
             new TorqueTraversableSelection<Double>(.5, .75, 1.);
 
+    // Incredibly basic solution for inverting the driver controls after an auto routine.
+    private double invertCoefficient = 1;
+    public final void invertDrivebaseControls() { invertCoefficient = -1; }
+
     private final void updateDrivebase() {
         drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
-        drivebase.setSpeeds(new ChassisSpeeds(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
-                                              -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
-                                              -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED));
+        drivebase.setSpeeds(new ChassisSpeeds(
+                driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient,
+                -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient,
+                -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
                                 rotationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()));
     }

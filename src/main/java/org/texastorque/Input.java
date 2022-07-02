@@ -102,14 +102,12 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final TorqueClick toggleClimberHooks = new TorqueClick();
-    private boolean servoEnabled = false;
+    private boolean servoEnabled = true;
 
     private final void updateClimber() {
         if (driver.getLeftCenterButton()) climber.reset();
 
         updateManualArmControls(driver);
-        // updateManualWinchControls(operator, true); 
-        // ^ if driver stick must be false
         updateManualWinchControls(driver);
 
         climber.setAuto(driver.getRightCenterButton());
@@ -132,22 +130,12 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final void updateManualWinchControls(final GenericController controller) {
-        
-        // if (stick ? controller.getLeftYAxis() >= WINCH_DEADBAND : controller.getBButton())
-        //     climber.setWinch(ManualWinchState.OUT);
-        // else if (stick ? controller.getLeftYAxis() <= -WINCH_DEADBAND : controller.getAButton())
-        //     climber.setWinch(ManualWinchState.IN);
-        // else
-        //     climber.setWinch(ManualWinchState.OFF);
-        
         if (controller.getBButton() && controller.getDPADUp())
             climber.setWinch(ManualWinchState.OUT);
         else if (controller.getBButton() && controller.getDPADDown())
             climber.setWinch(ManualWinchState.IN);
         else
             climber.setWinch(ManualWinchState.OFF);
-
-
     }
 
 

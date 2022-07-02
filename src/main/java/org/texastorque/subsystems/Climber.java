@@ -16,8 +16,6 @@ import org.texastorque.torquelib.util.TorqueMath;
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
-    public double _winch = 0;
-
     private static final double MAX_LEFT = 200, MAX_RIGHT = 200, LEFT_SERVO_ENGAGED = .5, LEFT_SERVO_DISENGAGED = .9,
                                 RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1, ARM_PWR = .5, WINCH_PWR = .3;
 
@@ -47,6 +45,12 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         }
     }
 
+    public static enum ManualWinchState implements TorqueSubsystemState {
+        IN, OFF, OUT;
+        public final double getDirection() { return this.ordinal() - 1; }
+        public final boolean isOn() { return this != OFF; }
+    }
+
     private final TorqueSparkMax left, right, winch;
     private final Servo leftServo, rightServo;
     private final DigitalInput leftSwitch, rightSwitch;
@@ -60,7 +64,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (approvalReset.calculate(running)) approved = true;
     }
 
-    public final void setManual(final ManualClimbState manual) { this.manual = manual; }
+    public final void setManual(final ManualClimbState manual) { this.manualState = manual; }
+    public final void setWinch(final ManualWinchState winch) { this.winchState = winch; }
 
     public final boolean hasStarted() { return started; }
 
@@ -68,20 +73,23 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         started = false;
         approved = false;
         running = false;
-        state = AutoClimbState.OFF;
+        climbState = AutoClimbState.OFF;
+        manualState = ManualClimbState.OFF;
+        winchState = ManualWinchState.OFF;
         tooLowRight = false;
         tooLowLeft = false;
     }
 
     private final void advance() {
-        state = state.next();
+        climbState = climbState.next();
         approved = false;
         tooLowRight = false;
         tooLowLeft = false;
     }
 
-    private AutoClimbState state = AutoClimbState.OFF;
-    private ManualClimbState manual = ManualClimbState.OFF;
+    private AutoClimbState climbState = AutoClimbState.OFF;
+    private ManualClimbState manualState = ManualClimbState.OFF;
+    private ManualWinchState winchState = ManualWinchState.OFF;
 
     private final TorqueSparkMax setupArmMotors(final int port) {
         final TorqueSparkMax motor = new TorqueSparkMax(port);
@@ -129,7 +137,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        TorqueSubsystemState.logState(state);
+        TorqueSubsystemState.logState(climbState);
         SmartDashboard.putString("Arms", String.format("%03.2f   %03.2f", left.getPosition(), right.getPosition()));
 
         SmartDashboard.putString("Winch", String.format("%03.2f", winch.getPosition()));
@@ -137,43 +145,41 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Approved", approved);
         SmartDashboard.putBoolean("Running", running);
 
-        TorqueSubsystemState.logState(state);
-        SmartDashboard.putString("climstate", state.toString());
+        TorqueSubsystemState.logState(climbState);
+        SmartDashboard.putString("Climb State", climbState.toString());
 
         SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
         SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
 
-        if (_winch != 0) {
-            winch.setPercent(_winch / 4.7);
-            return;
-        }
-
-        if (running)
+        if (winchState.isOn()) 
+            winch.setPercent(winchState.getDirection() * WINCH_PWR);
+        else if (running)
             handleAutoClimb();
         else
             handleManualState();
     }
 
     private final void handleAutoClimb() {
-        if (state == AutoClimbState.OFF)
+        // Would be a switch statement but they are ugly
+        if (climbState == AutoClimbState.OFF)
             handleOff();
-        else if (state == AutoClimbState.INIT_PUSH)
+        else if (climbState == AutoClimbState.INIT_PUSH)
             handleInitPush();
-        else if (state == AutoClimbState.INIT_PULL)
+        else if (climbState == AutoClimbState.INIT_PULL)
             handleInitPull();
-        else if (state == AutoClimbState.TILT_OUT)
+        else if (climbState == AutoClimbState.TILT_OUT)
             handleTiltOut();
-        else if (state == AutoClimbState.TILT_IN)
+        else if (climbState == AutoClimbState.TILT_IN)
             handleTiltIn();
-        else if (state == AutoClimbState.ADVANCE)
+        else if (climbState == AutoClimbState.ADVANCE)
             handleAdvance();
         else
             killMotors();
     }
 
     private final void handleManualState() {
-        left.setPercent(manual.left);
-        right.setPercent(-manual.right);
+        left.setPercent(manualState.left);
+        right.setPercent(-manualState.right);
         winch.setPercent(0);
     }
 

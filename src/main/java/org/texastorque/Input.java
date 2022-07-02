@@ -2,6 +2,7 @@ package org.texastorque;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.texastorque.subsystems.Climber.ManualClimbState;
+import org.texastorque.subsystems.Climber.ManualWinchState;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.subsystems.Intake.IntakeState;
@@ -11,6 +12,7 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
+import org.texastorque.torquelib.control.TorqueToggle;
 import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
@@ -53,7 +55,12 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final void updateIntake() {
-        intake.setState(driver.getRightTrigger() ? IntakeState.INTAKE : IntakeState.PRIMED);
+        if (driver.getRightTrigger())
+            intake.setState(IntakeState.INTAKE);
+        else if (driver.getAButton())
+            intake.setState(IntakeState.OUTAKE);
+        else
+            intake.setState(IntakeState.PRIMED);
     }
 
     private final void updateMagazine() { magazine.setState(BeltDirection.OFF, GateDirection.OFF); }
@@ -62,6 +69,11 @@ public final class Input extends TorqueInput implements Subsystems {
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(TurretState.TRACK);
+        } else if (driver.getXButton()) {
+            shooter.setState(ShooterState.SETPOINT);
+            shooter.setFlywheelSpeed(1600);
+            shooter.setHoodPosition(30);
+            turret.setState(TurretState.CENTER);
         } else {
             shooter.setState(ShooterState.OFF);
             turret.setState(TurretState.OFF);
@@ -75,27 +87,38 @@ public final class Input extends TorqueInput implements Subsystems {
     private final void updateClimber() {
         if (driver.getLeftCenterButton()) climber.reset();
 
-        if (driver.getDPADDown())
+        updateManualArmControls(operator);
+        updateManualWinchControls(operator, true); 
+        // ^ if driver stick must be false
+
+        climber.setAuto(driver.getRightCenterButton());
+
+        if (toggleClimberHooks.calculate(operator.getYButton())) 
+            climber.setServos(servoEnabled = !servoEnabled);
+    }
+
+    private final void updateManualArmControls(final GenericController controller) {
+        if (controller.getDPADDown())
             climber.setManual(ManualClimbState.BOTH_DOWN);
-        else if (driver.getDPADUp())
+        else if (controller.getDPADUp())
             climber.setManual(ManualClimbState.BOTH_UP);
-        else if (driver.getDPADRight())
+        else if (controller.getDPADRight())
             climber.setManual(ManualClimbState.ZERO_RIGHT);
-        else if (driver.getDPADLeft())
+        else if (controller.getDPADLeft())
             climber.setManual(ManualClimbState.ZERO_LEFT);
         else
             climber.setManual(ManualClimbState.OFF);
+    }
 
-        climber.setAuto(driver.getXButton());
+    private final double WINCH_DEADBAND = .5;
 
-        if (toggleClimberHooks.calculate(driver.getYButton())) climber.setServos(servoEnabled = !servoEnabled);
-
-        if (driver.getAButton())
-            climber._winch = .5;
-        else if (driver.getBButton())
-            climber._winch = -.5;
+    private final void updateManualWinchControls(final GenericController controller, final boolean stick) {
+        if (stick ? controller.getLeftYAxis() >= WINCH_DEADBAND : controller.getBButton())
+            climber.setWinch(ManualWinchState.OUT);
+        else if (stick ? controller.getLeftYAxis() <= -WINCH_DEADBAND : controller.getAButton())
+            climber.setWinch(ManualWinchState.IN);
         else
-            climber._winch = 0;
+            climber.setWinch(ManualWinchState.OFF);
     }
 
     public static final synchronized Input getInstance() {

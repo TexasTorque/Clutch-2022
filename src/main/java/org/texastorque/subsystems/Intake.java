@@ -63,7 +63,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
         rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
 
-        // rollers.configureSmartMotion(5600, 0, 5600, 100, 0);//?bruh shit hell naw
+        // rollers.configureSmartMotion(5600, 0, 5600, 100, 0);
     }
 
     public final void setState(final IntakeState state) { this.state = state; }

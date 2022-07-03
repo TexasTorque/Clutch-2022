@@ -284,7 +284,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         // else
         //     winch.setPercent(0);
        
-        // This shit gon need 2 be uncommented out!
+        // This stuff gon need 2 be uncommented out!
         // winch.setPercent(left.getPosition() <= leftWinch && -right.getPosition() <= rightWinch 
         //         ? (winch.getPosition() >= toWinch ? -WINCH_PWR : 0) : 0);
         winch.setPercent(0);

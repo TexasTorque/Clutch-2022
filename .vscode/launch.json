@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch TorqueController",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.sensors.TorqueController",
+      "projectName": "Clutch-2022"
+    },
+    {
+      "type": "java",
       "name": "Launch TorqueStickHeading",
       "request": "launch",
       "mainClass": "org.texastorque.torquelib.control.TorqueStickHeading",

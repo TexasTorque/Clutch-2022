@@ -34,10 +34,10 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final TorqueTraversableSelection<Double> translationalSpeeds =
-            new TorqueTraversableSelection<Double>(.4, .6, .8);
+            new TorqueTraversableSelection<Double>(1, .4, .6, .8);
 
     private final TorqueTraversableSelection<Double> rotationalSpeeds =
-            new TorqueTraversableSelection<Double>(.5, .75, 1.);
+            new TorqueTraversableSelection<Double>(1, .5, .75, 1.);
 
     // Incredibly basic solution for inverting the driver controls after an auto routine.
     private double invertCoefficient = 1;

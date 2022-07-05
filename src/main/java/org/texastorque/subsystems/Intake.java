@@ -14,6 +14,7 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorqueRamp;
 import org.texastorque.torquelib.control.TorqueTimeout;
+import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 
@@ -57,10 +58,12 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     // private TorqueRamp rampIntakeVolts = new TorqueRamp(3, 1.3, 12);
     // private TorqueRamp rampIntakeCurrent = new TorqueRamp(3, .1, .5);
 
-    private final TorqueSparkMax rotary, rollers;
+    private final TorqueFalcon rotary;
+    private final TorqueSparkMax rollers;
 
     private Intake() {
-        rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
+        rotary = new TorqueFalcon(Ports.INTAKE.ROTARY);
+
         rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
 
         rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
@@ -78,9 +81,10 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        rollers.setVoltage(Math.signum(state.getDirection()) * rampIntakeVolts.calculate(state != IntakeState.PRIMED));
+        // rollers.setVoltage(Math.signum(state.getDirection()) * rampIntakeVolts.calculate(state != IntakeState.PRIMED));
         // rollers.setCurrent(Math.signum(state.getDirection()) * rampIntakeCurrent.calculate(state != IntakeState.PRIMED));
         // rollers.setVelocityRPM(5600);
+        rollers.setPercent(state.getDirection());
 
         rotary.setPosition(revIntake.calculate(isIntaking()) ? IntakeState.PRIMED.getPosition() : state.getPosition());
 

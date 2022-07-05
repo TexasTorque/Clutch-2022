@@ -7,6 +7,7 @@
 package org.texastorque.auto;
 
 import org.texastorque.auto.sequences.Five;
+import org.texastorque.auto.sequences.FiveCool;
 import org.texastorque.auto.sequences.Omar;
 import org.texastorque.auto.sequences.One;
 import org.texastorque.auto.sequences.OneEvil;
@@ -25,6 +26,7 @@ public final class AutoManager extends TorqueAutoManager {
         addSequence("Two", new Two());
         addSequence("Two (evil)", new TwoEvil());
         addSequence("Five", new Five());
+        addSequence("Five (cool)", new FiveCool());
     }
 
     /**

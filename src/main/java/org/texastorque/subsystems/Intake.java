@@ -52,7 +52,10 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     private IntakeState state = IntakeState.PRIMED;
     private TorqueTimeout revIntake = new TorqueTimeout(.5);
-    private TorqueRamp rampIntake = new TorqueRamp(3, 1.3, 12);
+    // Bruh idfk
+    private TorqueRamp rampIntakeVolts = new TorqueRamp(2, 1.3, 9);
+    // private TorqueRamp rampIntakeVolts = new TorqueRamp(3, 1.3, 12);
+    // private TorqueRamp rampIntakeCurrent = new TorqueRamp(3, .1, .5);
 
     private final TorqueSparkMax rotary, rollers;
 
@@ -75,8 +78,10 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        rollers.setVoltage(Math.signum(state.getDirection()) * rampIntake.calculate(state != IntakeState.PRIMED));
+        rollers.setVoltage(Math.signum(state.getDirection()) * rampIntakeVolts.calculate(state != IntakeState.PRIMED));
+        // rollers.setCurrent(Math.signum(state.getDirection()) * rampIntakeCurrent.calculate(state != IntakeState.PRIMED));
         // rollers.setVelocityRPM(5600);
+
         rotary.setPosition(revIntake.calculate(isIntaking()) ? IntakeState.PRIMED.getPosition() : state.getPosition());
 
         TorqueSubsystemState.logState(state);

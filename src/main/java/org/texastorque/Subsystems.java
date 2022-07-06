@@ -22,4 +22,5 @@ public interface Subsystems {
     public final Shooter shooter = Shooter.getInstance();
     public final Turret turret = Turret.getInstance();
     public final Climber climber = Climber.getInstance();
+    public final Faller faller = Faller.getInstance();
 }

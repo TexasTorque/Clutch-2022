@@ -13,6 +13,7 @@ import org.texastorque.auto.AutoManager;
 import org.texastorque.torquelib.base.*;
 
 public final class Robot extends TimedRobot implements Subsystems {
+    public static final boolean USE_CLIMBER = true;
 
     private final Input input = Input.getInstance();
     private final AutoManager autoManager = AutoManager.getInstance();
@@ -28,7 +29,7 @@ public final class Robot extends TimedRobot implements Subsystems {
         subsystems.add(magazine);
         subsystems.add(shooter);
         subsystems.add(turret);
-        subsystems.add(climber);
+        subsystems.add(USE_CLIMBER ? climber : faller);
     }
 
     @Override

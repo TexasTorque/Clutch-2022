@@ -13,6 +13,8 @@ import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Climber.ManualWinchState;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
+import org.texastorque.subsystems.Faller.FallerState;
+import org.texastorque.subsystems.Faller.WinchState;
 import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.subsystems.Magazine.GateDirection;
@@ -38,7 +40,11 @@ public final class Input extends TorqueInput implements Subsystems {
         updateIntake();
         updateMagazine();
         updateShooter();
-        updateClimber();
+
+        if (Robot.USE_CLIMBER)
+            updateClimber();
+        else
+            updateFaller();
     }
 
     private final TorqueTraversableSelection<Double> translationalSpeeds =
@@ -147,6 +153,41 @@ public final class Input extends TorqueInput implements Subsystems {
             climber.setWinch(ManualWinchState.IN);
         else
             climber.setWinch(ManualWinchState.OFF);
+    }
+
+    private final TorqueClick toggleFallerHooks = new TorqueClick();
+    private boolean fallerServosEnabled = true;
+
+    private final void updateFaller() {
+        if (driver.getLeftCenterButton()) climber.reset();
+
+        updateFallerArms(driver);
+        updateFallerWinch(driver);
+
+        if (toggleFallerHooks.calculate(driver.getYButton())) 
+            climber.setServos(fallerServosEnabled = !fallerServosEnabled);
+    }
+
+    private final void updateFallerArms(final GenericController controller) {
+        if (controller.getDPADDown())
+            faller.setState(FallerState.BOTH_DOWN);
+        else if (controller.getDPADUp())
+            faller.setState(FallerState.BOTH_UP);
+        else if (controller.getDPADRight())
+            faller.setState(FallerState.ZERO_RIGHT);
+        else if (controller.getDPADLeft())
+            faller.setState(FallerState.ZERO_LEFT);
+        else
+            faller.setState(FallerState.OFF);
+    }
+
+    private final void updateFallerWinch(final GenericController controller) {
+        if (controller.getBButton() && controller.getDPADUp())
+            faller.setWinch(WinchState.OUT);
+        else if (controller.getBButton() && controller.getDPADDown())
+        faller.setWinch(WinchState.IN);
+        else
+        faller.setWinch(WinchState.OFF);
     }
 
 

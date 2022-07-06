@@ -184,7 +184,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         // Would be a switch statement but they are ugly
         if (climbState == AutoClimbState.OFF)
             handleOff();
-        else if (climbState == AutoClimbState.INIT_PUSH)
+        if (climbState == AutoClimbState.INIT_PUSH)
             handleInitPush();
         else if (climbState == AutoClimbState.INIT_PULL)
             handleInitPull();
@@ -199,6 +199,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleManualState() {
+        if (manualState != ManualClimbState.OFF)
+            started = true;
         left.setPercent(manualState.left);
         right.setPercent(-manualState.right);
         winch.setPercent(0);

@@ -52,21 +52,16 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     }
 
     private IntakeState state = IntakeState.PRIMED;
-    private TorqueTimeout revIntake = new TorqueTimeout(.5);
-    // Bruh idfk
-    private TorqueRamp rampIntakeVolts = new TorqueRamp(2, 1.3, 9);
-    // private TorqueRamp rampIntakeVolts = new TorqueRamp(3, 1.3, 12);
-    // private TorqueRamp rampIntakeCurrent = new TorqueRamp(3, .1, .5);
 
-    private final TorqueFalcon rotary;
-    private final TorqueSparkMax rollers;
+    private final TorqueFalcon rollers;
+    private final TorqueSparkMax rotary;
 
     private Intake() {
-        rotary = new TorqueFalcon(Ports.INTAKE.ROTARY);
+        rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
 
         rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
 
-        rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
+        rollers = new TorqueFalcon(Ports.INTAKE.ROLLER);
         rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
     }
 
@@ -79,12 +74,8 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        // rollers.setVoltage(Math.signum(state.getDirection()) * rampIntakeVolts.calculate(state != IntakeState.PRIMED));
-        // rollers.setCurrent(Math.signum(state.getDirection()) * rampIntakeCurrent.calculate(state != IntakeState.PRIMED));
-        // rollers.setVelocityRPM(5600);
-        rollers.setPercent(state.getDirection());
-
-        rotary.setPosition(revIntake.calculate(isIntaking()) ? IntakeState.PRIMED.getPosition() : state.getPosition());
+        rollers.setPercent(-state.getDirection());
+        rotary.setPosition(state.getPosition());
 
         TorqueSubsystemState.logState(state);
 

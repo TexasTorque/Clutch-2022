@@ -129,7 +129,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) { return clampRPM((150 * distance) + 1000); }
+    private final double regressionRPM(final double distance) { return clampRPM((150 * distance) + 1023); }
 
     /**
      * @param distance Distance (m)
@@ -137,7 +137,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      */
     private final double regressionHood(final double distance) {
         if (distance > 3.5) return HOOD_MAX;
-        return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 46.01);
+        return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 40.63);
     }
 
     private final double clampRPM(final double rpm) {
@@ -155,6 +155,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         return new Pose2d();
     }
+    
 
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;

@@ -7,6 +7,8 @@
 package org.texastorque;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Climber.ManualWinchState;
 import org.texastorque.subsystems.Drivebase;
@@ -40,7 +42,8 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
     private final TorqueTraversableSelection<Double> translationalSpeeds =
-            new TorqueTraversableSelection<Double>(1, .4, .6, .8);
+            new TorqueTraversableSelection<Double>(1, .35, .55, .75);
+            // new TorqueTraversableSelection<Double>(1, .4, .6, .8);
 
     private final TorqueTraversableSelection<Double> rotationalSpeeds =
             new TorqueTraversableSelection<Double>(1, .5, .75, 1.);
@@ -50,13 +53,15 @@ public final class Input extends TorqueInput implements Subsystems {
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
     private final void updateDrivebase() {
+        SmartDashboard.putNumber("Secret", translationalSpeeds.get());
+
         drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
         drivebase.setSpeeds(new ChassisSpeeds(
                 driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient,
                 -driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient,
                 -driver.getRightXAxis() * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
-        drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()),
-                                rotationalSpeeds.calculate(driver.getRightBumper(), driver.getLeftBumper()));
+        drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
+                                rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
     }
 
     private final void updateIntake() {

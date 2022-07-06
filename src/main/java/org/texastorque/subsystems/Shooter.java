@@ -156,7 +156,6 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         return new Pose2d();
     }
     
-
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;
     }

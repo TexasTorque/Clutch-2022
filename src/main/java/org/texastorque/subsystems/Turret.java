@@ -15,6 +15,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorqueRollingMedian;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.TorqueMath;
@@ -23,7 +24,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
     private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.2, ROT_CENTER = 0, ROT_BACK = 180,
-                                TOLERANCE = 5, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
+                                TOLERANCE = 8, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
     private static final boolean SHOOT_WITH_ODOMETRY = false;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
@@ -61,6 +62,8 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         state = TurretState.OFF;
     }
 
+    private final TorqueRollingMedian yawFilter = new TorqueRollingMedian(3);
+
     @Override
     public final void update(final TorqueMode mode) {
         // These should be inside tracking logic
@@ -84,7 +87,8 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
                 // is this good, idk?
-                requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), offset);
+                requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
+                // requested = isLocked() ? 0 : calculateRequested(yawFilter.calculate(camera.getTargetYaw()), 0);
             else
                 requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
         } else

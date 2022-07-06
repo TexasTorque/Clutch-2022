@@ -142,8 +142,11 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @return Hood the shooter should go at
      */
     private final double regressionHood(final double distance) {
+        final double a = -72.22; // Closer to 1 spreads it out further
+        final double b = -.5019; // Closer to -1 makes it bulge out in middle
+        final double c = 40.63; // Constant 
         // if (distance > 3.5) return HOOD_MAX;
-        return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 40.63);
+        return clampHood(a * Math.exp(b * distance) + c);
     }
 
     private final double clampRPM(final double rpm) {

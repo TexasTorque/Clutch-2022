@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
+import org.texastorque.Robot;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
@@ -57,9 +58,13 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         public final boolean isOn() { return this != OFF; }
     }
 
-    private final TorqueSparkMax left, right, winch;
-    private final Servo leftServo, rightServo;
-    private final DigitalInput leftSwitch, rightSwitch;
+    // private final TorqueSparkMax left, right, winch;
+    // private final Servo leftServo, rightServo;
+    // private final DigitalInput leftSwitch, rightSwitch;
+
+    private TorqueSparkMax left, right, winch;
+    private Servo leftServo, rightServo;
+    private DigitalInput leftSwitch, rightSwitch;
 
     private boolean started = false, approved = false, running = false;
     private final TorqueClick approvalReset = new TorqueClick();
@@ -133,6 +138,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
      }
 
     private Climber() {
+        if (!Robot.USE_CLIMBER) return;
+
         left = setupArmMotors(Ports.CLIMBER.ARMS.LEFT);
         right = setupArmMotors(Ports.CLIMBER.ARMS.RIGHT);
 

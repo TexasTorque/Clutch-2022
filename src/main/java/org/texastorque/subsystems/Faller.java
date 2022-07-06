@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
+import org.texastorque.Robot;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
@@ -97,9 +98,13 @@ public final class Faller extends TorqueSubsystem implements Subsystems {
         public final ArmConfig getRight() { return right; }
     }
 
-    private final TorqueSparkMax left, right, winch;
-    private final Servo leftServo, rightServo;
-    private final DigitalInput leftSwitch, rightSwitch;
+    // private final TorqueSparkMax left, right, winch;
+    // private final Servo leftServo, rightServo;
+    // private final DigitalInput leftSwitch, rightSwitch;
+
+    private TorqueSparkMax left, right, winch;
+    private Servo leftServo, rightServo;
+    private DigitalInput leftSwitch, rightSwitch;
 
     private boolean started = false;
 
@@ -143,6 +148,9 @@ public final class Faller extends TorqueSubsystem implements Subsystems {
     }
 
     private Faller() {
+        // Super unsafe
+        if (Robot.USE_CLIMBER) return;
+
         left = setupArmMotors(Ports.CLIMBER.ARMS.LEFT);
         right = setupArmMotors(Ports.CLIMBER.ARMS.RIGHT);
 

@@ -17,7 +17,7 @@ public class Omar extends TorqueSequence {
     }
 
     @Override
-    protected void init() {
+    protected final void init() {
         addBlock(new TorqueBlock(new Path("Omar", true, 1.5, .75)));
     }
 }

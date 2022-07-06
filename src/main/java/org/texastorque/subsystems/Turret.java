@@ -75,7 +75,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
 
-        if (climber.hasStarted()) {
+        if (climber.hasStarted() || faller.hasStarted()) {
             requested = calculateRequested(ROT_BACK);
         } else if (state == TurretState.OFF) {
             requested = 0;

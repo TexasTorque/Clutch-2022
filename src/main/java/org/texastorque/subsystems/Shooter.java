@@ -111,12 +111,17 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         TorqueSubsystemState.logState(state);
 
+        SmartDashboard.putString(String.format("%3.2f", hood.getPosition()), "Hood");
+
         SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
+        SmartDashboard.putString(String.format("%4.2f", flywheelSpeed), "RPM SET");
 
         SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
         SmartDashboard.putBoolean("Is Shooting", isShooting());
         SmartDashboard.putBoolean("Is Ready", isReady());
+
+        SmartDashboard.putString(camera.hasTargets() ? String.format("%3.2f", camera.getDistance()) : "I can't see", "Camera Distance");
     }
 
     public final boolean isShooting() { return state.isShooting(); }

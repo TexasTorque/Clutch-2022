@@ -169,6 +169,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(climbState);
         SmartDashboard.putString("Climb State", climbState.toString());
 
+        SmartDashboard.putBoolean("Climb Started", started);
+
         SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
         SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
 

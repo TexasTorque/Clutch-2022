@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Climber.ManualWinchState;
 import org.texastorque.subsystems.Drivebase;
+import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.subsystems.Faller.FallerState;
 import org.texastorque.subsystems.Faller.WinchState;
@@ -22,6 +23,7 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
+import org.texastorque.torquelib.control.TorqueSpeedSettings;
 import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
@@ -47,8 +49,10 @@ public final class Input extends TorqueInput implements Subsystems {
             updateFaller();
     }
 
+    private final double offset = .25, increment = .2;
+
     private final TorqueTraversableSelection<Double> translationalSpeeds =
-            new TorqueTraversableSelection<Double>(1, .35, .55, .75);
+            new TorqueTraversableSelection<Double>(1, 1 - offset - 2 * increment, 1 - offset - increment - offset);
             // new TorqueTraversableSelection<Double>(1, .4, .6, .8);
 
     private final TorqueTraversableSelection<Double> rotationalSpeeds =
@@ -59,7 +63,7 @@ public final class Input extends TorqueInput implements Subsystems {
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
     private final void updateDrivebase() {
-        SmartDashboard.putNumber("Secret", translationalSpeeds.get());
+        SmartDashboard.putNumber("Speed Shifter", translationalSpeeds.get() + offset);
 
         drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
         drivebase.setSpeeds(new ChassisSpeeds(
@@ -103,7 +107,18 @@ public final class Input extends TorqueInput implements Subsystems {
             magazine.setGateDirection(GateDirection.OFF);
     }
 
+    private final TorqueSpeedSettings flywheelRPM = new TorqueSpeedSettings(1000, 1000, 3000, 100);
+    private final TorqueSpeedSettings hoodSetpoint = new TorqueSpeedSettings(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
+
     private final void updateShooter() {
+        // This is debugging for the regression
+        if (operator.getXButton()) {
+            shooter.setState(ShooterState.SETPOINT);
+            shooter.setFlywheelSpeed(flywheelRPM.getSpeed());
+            shooter.setHoodPosition(hoodSetpoint.getSpeed());
+            turret.setState(TurretState.CENTER);
+        } else 
+        
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(TurretState.TRACK);

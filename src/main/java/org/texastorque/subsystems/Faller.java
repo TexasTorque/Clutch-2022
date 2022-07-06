@@ -180,6 +180,8 @@ public final class Faller extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
         SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
 
+        if (state != FallerState.OFF) started = true;
+
         winch.setPercent(winchState.getDirection() * WINCH_PWR);
 
         left.setPercent(state.getLeft().calculate(left.getPosition(), leftSwitch.get()));

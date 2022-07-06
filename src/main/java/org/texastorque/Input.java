@@ -111,6 +111,9 @@ public final class Input extends TorqueInput implements Subsystems {
     private final TorqueSpeedSettings hoodSetpoint = new TorqueSpeedSettings(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
 
     private final void updateShooter() {
+        flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
+        hoodSetpoint.update(operator.getDPADUp(), operator.getDPADDown(), false, false);
+
         // This is debugging for the regression
         if (operator.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
@@ -180,7 +183,7 @@ public final class Input extends TorqueInput implements Subsystems {
         updateFallerWinch(driver);
 
         if (toggleFallerHooks.calculate(driver.getYButton())) 
-            climber.setServos(fallerServosEnabled = !fallerServosEnabled);
+            faller.setServos(fallerServosEnabled = !fallerServosEnabled);
     }
 
     private final void updateFallerArms(final GenericController controller) {

@@ -115,7 +115,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
-        SmartDashboard.putString(String.format("%4.2f", flywheelSpeed), "RPM SET");
+        SmartDashboard.putString(String.format("%4.2f", flywheelSpeed), "RPM");
 
         SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
         SmartDashboard.putBoolean("Is Shooting", isShooting());
@@ -134,14 +134,15 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) { return clampRPM((150 * distance) + 1023); }
+    // private final double regressionRPM(final double distance) { return clampRPM((150 * distance) + 1023); }
+    private final double regressionRPM(final double distance) { return clampRPM((137 * distance) + 1100); }
 
     /**
      * @param distance Distance (m)
      * @return Hood the shooter should go at
      */
     private final double regressionHood(final double distance) {
-        if (distance > 3.5) return HOOD_MAX;
+        // if (distance > 3.5) return HOOD_MAX;
         return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 40.63);
     }
 

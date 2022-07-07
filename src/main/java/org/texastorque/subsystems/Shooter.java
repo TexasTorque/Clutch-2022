@@ -28,7 +28,7 @@ import org.texastorque.torquelib.util.TorqueUtil;
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
-    public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 83.24, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
+    public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 60, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
                                FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(38.5),
                                TARGET_HEIGHT = 2.6416;
 
@@ -113,6 +113,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
+        SmartDashboard.putNumber("IDIST", camera.getDistance());
 
         SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
         SmartDashboard.putBoolean("Is Shooting", isShooting());
@@ -129,15 +130,15 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) { return clampRPM((150 * distance) + 1023); }
+    private final double regressionRPM(final double distance) { return clampRPM(26.83 * distance + 1350); }
 
     /**
      * @param distance Distance (m)
      * @return Hood the shooter should go at
      */
     private final double regressionHood(final double distance) {
-        if (distance > 3.5) return HOOD_MAX;
-        return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 40.63);
+        // if (distance > 3.5) return HOOD_MAX;
+        return clampHood(1.84 * distance + 19.29 - 5);
     }
 
     private final double clampRPM(final double rpm) {

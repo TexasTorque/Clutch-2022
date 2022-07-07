@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.subsystems.Climber.ManualClimbState;
 import org.texastorque.subsystems.Climber.ManualWinchState;
 import org.texastorque.subsystems.Drivebase;
+import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine.BeltDirection;
@@ -20,6 +21,7 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
+import org.texastorque.torquelib.control.TorqueSpeedSettings;
 import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
@@ -97,7 +99,25 @@ public final class Input extends TorqueInput implements Subsystems {
             magazine.setGateDirection(GateDirection.OFF);
     }
 
+
+    private final TorqueSpeedSettings flywheelRPM = new TorqueSpeedSettings(1000, 1000, 3000, 100);
+    private final TorqueSpeedSettings hoodSetpoint = new TorqueSpeedSettings(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
+
     private final void updateShooter() {
+        flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
+        hoodSetpoint.update(operator.getDPADUp(), operator.getDPADDown(), false, false);
+
+        SmartDashboard.putNumber("IRPM", flywheelRPM.getSpeed());
+        SmartDashboard.putNumber("IHOOD", hoodSetpoint.getSpeed());
+
+        // This is debugging for the regression
+        if (operator.getXButton()) {
+            shooter.setState(ShooterState.SETPOINT);
+            shooter.setFlywheelSpeed(flywheelRPM.getSpeed());
+            shooter.setHoodPosition(hoodSetpoint.getSpeed());
+            // turret.setState(TurretState.CENTER);
+        } else 
+        
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(TurretState.TRACK);

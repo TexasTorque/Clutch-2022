@@ -26,20 +26,21 @@ public class TwoEvil extends TorqueSequence implements Subsystems {
 
     @Override
     protected void init() {
+        final double firstTurret = -165.15;
         
         addBlock(new TorqueBlock(new Wait(2), new Execute(() -> {
                                      // magazine.setBeltDirection(BeltDirection.INTAKING);
                                      intake.setState(IntakeState.INTAKE);
 
                                      turret.setState(TurretState.POSITIONAL);
-                                     turret.setPosition(-171.15);
+                                     turret.setPosition(firstTurret);
 
                                      shooter.setState(ShooterState.WARMUP);
                                      shooter.setFlywheelSpeed(1000);
                                      shooter.setHoodPosition(26);
                                  })));
         addBlock(new TorqueBlock(new Path("Two1", true, 2, 1)));
-        addBlock(new TorqueBlock(new Shoot(1550, 40, -165.15, true, 1.6)));
+        addBlock(new TorqueBlock(new Shoot(1500, 20, firstTurret, true, 2)));
         addBlock(new TorqueBlock(new Path("Two2", false, 1, .5)));
         addBlock(new TorqueBlock(new Shoot(800, 30, 160, true, 1)));
         addBlock(new TorqueBlock(new Execute(() -> {

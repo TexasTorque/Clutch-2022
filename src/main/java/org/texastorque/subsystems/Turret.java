@@ -24,7 +24,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
     private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.2, ROT_CENTER = 0, ROT_BACK = 180,
-                                TOLERANCE = 8, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
+                                TOLERANCE = 4, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
     private static final boolean SHOOT_WITH_ODOMETRY = false;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 

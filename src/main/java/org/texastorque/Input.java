@@ -107,6 +107,7 @@ public final class Input extends TorqueInput implements Subsystems {
             magazine.setGateDirection(GateDirection.OFF);
     }
 
+
     private final TorqueSpeedSettings flywheelRPM = new TorqueSpeedSettings(1000, 1000, 3000, 100);
     private final TorqueSpeedSettings hoodSetpoint = new TorqueSpeedSettings(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
 
@@ -114,12 +115,15 @@ public final class Input extends TorqueInput implements Subsystems {
         flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
         hoodSetpoint.update(operator.getDPADUp(), operator.getDPADDown(), false, false);
 
+        SmartDashboard.putNumber("IRPM", flywheelRPM.getSpeed());
+        SmartDashboard.putNumber("IHOOD", hoodSetpoint.getSpeed());
+
         // This is debugging for the regression
         if (operator.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(flywheelRPM.getSpeed());
             shooter.setHoodPosition(hoodSetpoint.getSpeed());
-            turret.setState(TurretState.CENTER);
+            // turret.setState(TurretState.CENTER);
         } else 
         
         if (driver.getLeftTrigger()) {

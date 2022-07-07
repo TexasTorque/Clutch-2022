@@ -35,20 +35,21 @@ public class FiveCool extends TorqueSequence implements Subsystems {
                                      shooter.setFlywheelSpeed(1000);
                                      shooter.setHoodPosition(20);
                                  })));
-        addBlock(new TorqueBlock(new Path("Five1", true, 2, 1)));
-        addBlock(new TorqueBlock(new Shoot(1500, 20, firstTurret, true, 2)));
+        addBlock(new TorqueBlock(new Path("Five1", true, 4, 2)));
+        addBlock(new TorqueBlock(new Shoot(1450, 20, firstTurret, false, 1.8)));
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
         addBlock(new TorqueBlock(new Execute(() -> {
-            turret.setState(TurretState.POSITIONAL);
-            turret.setPosition(30);
-            turret.setOffset(0);
+            turret.setState(TurretState.POSITIONAL);    
+            turret.setPosition(-65);
 
             shooter.setState(ShooterState.WARMUP);
             shooter.setFlywheelSpeed(1400);
         })));
         addBlock(new TorqueBlock(new Path("Five3", false, 4, 2)));
         addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)),
-                new Target(false, 3)));
+                new Shoot(1600, 30, -65, true, 1.8)));
+        // addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)),
+                // new Target(false, 4)));
 
         addBlock(new TorqueBlock(new Execute(() -> {
             turret.setOffset(0);

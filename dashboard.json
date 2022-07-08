@@ -1,0 +1,115 @@
+{
+    "tabPane": [
+      {
+        "title": "Texas Torque",
+        "autoPopulate": true,
+        "autoPopulatePrefix": "LiveWindow/",
+        "widgetPane": {
+          "gridSize": 120.0,
+          "showGrid": true,
+          "hgap": 4.0,
+          "vgap": 4.0,
+          "titleType": 1,
+          "tiles": {
+            "2,0": {
+              "size": [
+                2,
+                2
+              ],
+              "content": {
+                "_type": "Simple Dial",
+                "_source0": "network_table:///SmartDashboard/Flywheel Real",
+                "_title": "Shooter RPM",
+                "Range/Min": 0.0,
+                "Range/Max": 4500.0,
+                "Visuals/Show value": true
+              }
+            },
+            "4,0": {
+              "size": [
+                2,
+                1
+              ],
+              "content": {
+                "_type": "Boolean Box",
+                "_source0": "network_table:///SmartDashboard/Climb Started",
+                "_title": "Climb Started",
+                "Colors/Color when true": "#00FF00FF",
+                "Colors/Color when false": "#FF0000FF"
+              }
+            },
+            "0,0": {
+              "size": [
+                2,
+                2
+              ],
+              "content": {
+                "_type": "Simple Dial",
+                "_source0": "network_table:///SmartDashboard/Speed Shifter",
+                "_title": "Speed Shifter Setting",
+                "Range/Min": 0.0,
+                "Range/Max": 1.0,
+                "Visuals/Show value": true
+              }
+            },
+            "4,1": {
+              "size": [
+                2,
+                1
+              ],
+              "content": {
+                "_type": "ComboBox Chooser",
+                "_source0": "network_table:///SmartDashboard/AutoList",
+                "_title": "Auto List"
+              }
+            },
+            "6,0": {
+              "size": [
+                2,
+                1
+              ],
+              "content": {
+                "_type": "Boolean Box",
+                "_source0": "network_table:///SmartDashboard/Left Switch",
+                "_title": "Left Climber",
+                "Colors/Color when true": "#00FF00FF",
+                "Colors/Color when false": "#FF0000FF"
+              }
+            },
+            "6,1": {
+              "size": [
+                2,
+                1
+              ],
+              "content": {
+                "_type": "Boolean Box",
+                "_source0": "network_table:///SmartDashboard/Right Switch",
+                "_title": "Right Climber",
+                "Colors/Color when true": "#00FF00FF",
+                "Colors/Color when false": "#FF0000FF"
+              }
+            },
+            "8,0": {
+                "size": [
+                  2,
+                  1
+                ],
+                "content": {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Servos",
+                  "_title": "Servos",
+                  "Colors/Color when true": "#00FF00FF",
+                  "Colors/Color when false": "#FF0000FF"
+                }
+              }
+          }
+        }
+      }
+    ],
+    "windowGeometry": {
+      "x": -7.333333492279053,
+      "y": -7.333333492279053,
+      "width": 1294.6666259765625,
+      "height": 694.6666870117188
+    }
+  }

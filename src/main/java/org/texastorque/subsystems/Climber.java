@@ -172,6 +172,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Left Switch", leftSwitch.get());
         SmartDashboard.putBoolean("Right Switch", rightSwitch.get());
 
+        SmartDashboard.putBoolean("Climb Started", started);
+
         if (winchState.isOn()) 
             winch.setPercent(winchState.getDirection() * WINCH_PWR);
         else if (running)

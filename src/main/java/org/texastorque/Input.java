@@ -55,7 +55,7 @@ public final class Input extends TorqueInput implements Subsystems {
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
     private final void updateDrivebase() {
-        SmartDashboard.putNumber("Secret", translationalSpeeds.get());
+        SmartDashboard.putNumber("Speed Shifter", translationalSpeeds.get() + .25); // hehe!
 
         drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
         drivebase.setSpeeds(new ChassisSpeeds(
@@ -145,6 +145,8 @@ public final class Input extends TorqueInput implements Subsystems {
 
         if (toggleClimberHooks.calculate(driver.getYButton())) 
             climber.setServos(servoEnabled = !servoEnabled);
+
+        SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
     private final void updateManualArmControls(final GenericController controller) {

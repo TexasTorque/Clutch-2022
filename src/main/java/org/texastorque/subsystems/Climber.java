@@ -22,7 +22,7 @@ import org.texastorque.torquelib.util.TorqueMath;
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
-    private static final double MAX_LEFT = 180, MAX_RIGHT = 180, LEFT_SERVO_ENGAGED = .6, LEFT_SERVO_DISENGAGED = 1.0,
+    private static final double MAX_LEFT = 180, MAX_RIGHT = 177, LEFT_SERVO_ENGAGED = .6, LEFT_SERVO_DISENGAGED = 1.0,
                                 RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1, ARM_PWR = .75, WINCH_PWR = .3;
 
     public static enum AutoClimbState implements TorqueSubsystemState {
@@ -203,8 +203,33 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     private final void handleManualState() {
         if (manualState != ManualClimbState.OFF)
             started = true;
-        left.setPercent(manualState.left);
-        right.setPercent(-manualState.right);
+
+        // Horribly ugly code bc we at a competition (;
+        // Very sorry, will refactor later
+        if (manualState == ManualClimbState.BOTH_UP) {
+            if (left.getPosition() >= MAX_LEFT)
+                left.setPercent(0);
+            else
+                left.setPercent(1);
+
+            if (-right.getPosition() >= MAX_RIGHT)
+                right.setPercent(0);
+            else
+                right.setPercent(-1);
+        } else if (manualState == ManualClimbState.BOTH_DOWN) {
+            if (left.getPosition() <= 0)
+                left.setPercent(0);
+            else
+                left.setPercent(-1);
+
+             if (-right.getPosition() <= 0)
+                right.setPercent(0);
+            else
+                right.setPercent(1);
+        } else {
+            left.setPercent(manualState.left);
+            right.setPercent(-manualState.right);
+        }
         winch.setPercent(0);
     }
 

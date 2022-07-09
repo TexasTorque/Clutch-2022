@@ -68,6 +68,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     public final void setState(final IntakeState state) { this.state = state; }
 
     public final boolean isIntaking() { return state == IntakeState.INTAKE; }
+    public final boolean isOutaking() { return state == IntakeState.OUTAKE; }
 
     @Override
     public final void initialize(final TorqueMode mode) {}

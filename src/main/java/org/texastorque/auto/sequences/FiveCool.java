@@ -23,7 +23,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
     @Override
     protected final void init() { // this method has been marked not final the whole time???
-        final double firstTurret = 167;
+        final double firstTurret = 165;
         addBlock(new TorqueBlock(new Execute(() -> {
                                     //  magazine.setBeltDirection(BeltDirection.INTAKING);
                                      intake.setState(IntakeState.INTAKE);
@@ -36,20 +36,19 @@ public class FiveCool extends TorqueSequence implements Subsystems {
                                      shooter.setHoodPosition(20);
                                  })));
         addBlock(new TorqueBlock(new Path("Five1", true, 4, 2)));
-        addBlock(new TorqueBlock(new Shoot(1450, 20, firstTurret, false, 1.8)));
+        addBlock(new TorqueBlock(new Shoot(1450, 20, firstTurret, true, 1.8)));
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
         addBlock(new TorqueBlock(new Execute(() -> {
             turret.setState(TurretState.POSITIONAL);    
             turret.setPosition(-65);
 
             shooter.setState(ShooterState.WARMUP);
-            shooter.setFlywheelSpeed(1400);
+            shooter.setFlywheelSpeed(800);
+            shooter.setAutoOffset(-100);
         })));
         addBlock(new TorqueBlock(new Path("Five3", false, 4, 2)));
         addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)),
-                new Shoot(1600, 30, -65, true, 1.8)));
-        // addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)),
-                // new Target(false, 4)));
+                new Target(false, 4)));
 
         addBlock(new TorqueBlock(new Execute(() -> {
             turret.setOffset(0);

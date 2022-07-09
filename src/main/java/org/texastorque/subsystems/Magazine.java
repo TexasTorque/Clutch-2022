@@ -75,6 +75,7 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
+        if (intake.isOutaking()) { beltDirection = BeltDirection.DOWN; }
         if (intake.isIntaking()) { beltDirection = BeltDirection.UP; }
 
         if (shooter.isShooting()) {

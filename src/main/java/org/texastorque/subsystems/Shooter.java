@@ -49,7 +49,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private final TorqueSparkMax hood;
     private final TorqueFalcon flywheel;
 
-    private double hoodSetpoint, flywheelSpeed, distance;
+    private double hoodSetpoint, flywheelSpeed, distance, autoOffset = 0;
 
     private ShooterState state = ShooterState.OFF;
 
@@ -80,6 +80,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public final void setDistance(final double distance) { this.distance = distance; }
 
+    public final void setAutoOffset(final double autoOffset) { this.autoOffset = autoOffset; }
+
     @Override
     public final void initialize(final TorqueMode mode) {
         state = ShooterState.OFF;
@@ -94,7 +96,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
             hoodSetpoint = HOOD_MIN;
         } else if (state == ShooterState.REGRESSION) {
             distance = camera.getDistance();
-            flywheelSpeed = regressionRPM(distance);
+            flywheelSpeed = regressionRPM(distance) + (mode.isAuto() ? autoOffset : 0);
             hoodSetpoint = regressionHood(distance);
         } else if (state == ShooterState.DISTANCE) {
             flywheelSpeed = regressionRPM(distance);

@@ -55,7 +55,7 @@ public final class Input extends TorqueInput implements Subsystems {
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
     private final void updateDrivebase() {
-        SmartDashboard.putNumber("Speed Shifter", translationalSpeeds.get() + .25); // hehe!
+    SmartDashboard.putNumber("Speed Shifter", (rotationalSpeeds.get() - .5) *  2.); 
 
         drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
         drivebase.setSpeeds(new ChassisSpeeds(

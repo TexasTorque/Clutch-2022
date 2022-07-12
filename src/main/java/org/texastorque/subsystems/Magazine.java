@@ -71,12 +71,12 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
     private boolean shootingStarted = false;
     private double shootingStartedTime = 0;
-    private final double DROP_TIME = .2;
+    private final double DROP_TIME = 0;
 
     @Override
     public final void update(final TorqueMode mode) {
-        if (intake.isOutaking()) { beltDirection = BeltDirection.DOWN; }
-        if (intake.isIntaking()) { beltDirection = BeltDirection.UP; }
+        // if (intake.isOutaking()) { beltDirection = BeltDirection.DOWN; }
+        // if (intake.isIntaking()) { beltDirection = BeltDirection.UP; }
 
         if (shooter.isShooting()) {
             if (!shootingStarted) {

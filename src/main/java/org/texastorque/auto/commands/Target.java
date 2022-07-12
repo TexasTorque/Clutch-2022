@@ -41,14 +41,14 @@ public final class Target extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void end() {
-        if (stop)
+        if (stop) {
             shooter.setState(ShooterState.OFF);
-        else {
+            turret.setState(TurretState.CENTER);
+        } else {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(1000);
         }
 
-        turret.setState(TurretState.CENTER);
         magazine.setGateDirection(GateDirection.OFF);
     }
 }

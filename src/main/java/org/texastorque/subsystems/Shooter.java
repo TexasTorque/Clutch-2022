@@ -59,9 +59,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         flywheel = new TorqueFalcon(Ports.SHOOTER.FLYWHEEL.LEFT);
         flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
 
-        // flywheel.configurePID(new KPID(0.0999999046, 5e-05, 0, 0.0603409074, -1, 1,
-        // 1000));
-        flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
+        // flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
+        flywheel.configurePID(new KPID(0.0999999046, 0, 0,  0.0603409074, -1, 1, 1000));
         flywheel.setNeutralMode(NeutralMode.Coast);
         flywheel.setStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
         flywheel.setSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
@@ -117,7 +116,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
         SmartDashboard.putNumber("IDIST", camera.getDistance());
 
-        SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
+        SmartDashboard.putNumber("Flywheel Delta", flywheelSpeed - flywheel.getVelocityRPM());
         SmartDashboard.putBoolean("Is Shooting", isShooting());
         SmartDashboard.putBoolean("Is Ready", isReady());
     }

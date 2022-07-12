@@ -14,6 +14,7 @@ import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.Execute;
+import org.texastorque.torquelib.auto.commands.Wait;
 
 public class FiveCool extends TorqueSequence implements Subsystems {
     public FiveCool() {
@@ -44,10 +45,11 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
             shooter.setState(ShooterState.WARMUP);
             shooter.setFlywheelSpeed(800);
-            shooter.setAutoOffset(-100);
+            shooter.setAutoOffset(0);
         })));
         addBlock(new TorqueBlock(new Path("Five3", false, 4, 2)));
-        addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)),
+        addBlock(new TorqueBlock(new Target(false, .5)));
+        addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)), 
                 new Target(false, 4)));
 
         addBlock(new TorqueBlock(new Execute(() -> {

@@ -100,10 +100,13 @@ public class Turret extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putNumber("Turret Req", requested);
         SmartDashboard.putNumber("Turret Deg", getDegrees());
+        SmartDashboard.putNumber("Turret Delta", requested - getDegrees());
         SmartDashboard.putBoolean("Turret Locked", isLocked());
     }
 
-    public final double getDegrees() { return (rotator.getPosition() / RATIO * 360.) % 360; }
+    public final double getDegrees() {
+        return (rotator.getPosition() / RATIO * 360.) % 360;
+    }
 
     private final double calculateRequested(final double requested) {
         return calculateRequested(getDegrees(), requested);

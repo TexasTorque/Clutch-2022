@@ -2,11 +2,11 @@
   "tabPane": [
     {
       "title": "Texas Torque",
-      "autoPopulate": true,
-      "autoPopulatePrefix": "LiveWindow/",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
       "widgetPane": {
         "gridSize": 120.0,
-        "showGrid": true,
+        "showGrid": false,
         "hgap": 4.0,
         "vgap": 4.0,
         "titleType": 1,
@@ -25,7 +25,7 @@
               "Visuals/Show value": true
             }
           },
-          "4,0": {
+          "8,1": {
             "size": [
               2,
               1
@@ -52,7 +52,7 @@
               "Visuals/Show value": true
             }
           },
-          "6,0": {
+          "4,2": {
             "size": [
               2,
               1
@@ -65,7 +65,7 @@
               "Colors/Color when false": "#FF0000FF"
             }
           },
-          "6,1": {
+          "6,2": {
             "size": [
               2,
               1
@@ -91,16 +91,44 @@
               "Colors/Color when false": "#FF0000FF"
             }
           },
-          "0,2": {
+          "8,2": {
             "size": [
-              3,
-              2
+              2,
+              1
             ],
             "content": {
-              "_type": "Motor Controller",
-              "_source0": "network_table:///LiveWindow/Ungrouped/Talon SRX [6]",
-              "_title": "Ungrouped/Talon SRX [6]",
-              "Visuals/Orientation": "HORIZONTAL"
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto List",
+              "_title": "Auto List"
+            }
+          },
+          "0,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/IDIST",
+              "_title": "Target \"Distance\"",
+              "Range/Min": 0.0,
+              "Range/Max": 100.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 1,
+              "Visuals/Show text": true
+            }
+          },
+          "6,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Turret Locked",
+              "_title": "Turret Locked",
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
             }
           },
           "4,1": {
@@ -109,9 +137,59 @@
               1
             ],
             "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Auto List",
-              "_title": "SmartDashboard/Auto List"
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Is Ready",
+              "_title": "Shooter Ready",
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#FF0000FF"
+            }
+          },
+          "2,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Flywheel Req",
+              "_title": "Requested RPM",
+              "Range/Min": 0.0,
+              "Range/Max": 4500.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 1,
+              "Visuals/Show text": true
+            }
+          },
+          "4,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Flywheel Delta",
+              "_title": "Flywheel Delta",
+              "Range/Min": -100.0,
+              "Range/Max": 100.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 1,
+              "Visuals/Show text": true
+            }
+          },
+          "6,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Turret Delta",
+              "_title": "Turret Delta",
+              "Range/Min": -30.0,
+              "Range/Max": 30.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 1,
+              "Visuals/Show text": true
             }
           }
         }

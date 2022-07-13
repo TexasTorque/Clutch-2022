@@ -6,6 +6,7 @@
  */
 package org.texastorque.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,7 +36,7 @@ import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static volatile Drivebase instance;
 
-    public enum DrivebaseState implements TorqueSubsystemState { ROBOT_RELATIVE, FIELD_RELATIVE, X_FACTOR }
+    public enum DrivebaseState implements TorqueSubsystemState { ROBOT_RELATIVE, FIELD_RELATIVE, FIELD_RELATIVE_ACTIVE, X_FACTOR }
 
     public static final double DRIVE_MAX_TRANSLATIONAL_SPEED = 4, DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2,
                                DRIVE_MAX_ROTATIONAL_SPEED = 6;
@@ -47,7 +48,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2), ROTATE_PID =
                                                                                           new KPID(.3, 0, 0, 0, -1, 1);
 
-    public static final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
+    public final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
 
     private final Translation2d locationBackLeft = new Translation2d(DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y),
                                 locationBackRight = new Translation2d(DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y),
@@ -68,13 +69,14 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private double translationalSpeedCoef, rotationalSpeedCoef;
     private final double SHOOTING_TRANSLATIONAL_SPEED_COEF = .4, SHOOTING_ROTATIONAL_SPEED_COEF = .5;
 
-    private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
-        return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
-                                          ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
-                                          DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
-    }
+    public final PIDController activeRotationController;
+    private final double rotationLockCoef = 1;
+    private double rotationLock;
 
     private Drivebase() {
+        activeRotationController = new PIDController(.045, .025, 0);
+        activeRotationController.enableContinuousInput(0, 360);
+
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
         backLeft.setLogging(true);
         backRight =
@@ -108,7 +110,8 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     @Override
     public final void initialize(final TorqueMode mode) {
         reset();
-        state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE : DrivebaseState.ROBOT_RELATIVE;
+        // state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE : DrivebaseState.ROBOT_RELATIVE;
+        state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE_ACTIVE : DrivebaseState.ROBOT_RELATIVE;
     }
 
     @Override
@@ -126,6 +129,19 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
                     speeds.omegaRadiansPerSecond *
                             (shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef),
                     gyro.getRotation2dClockwise()));
+
+        else if (state == DrivebaseState.FIELD_RELATIVE_ACTIVE) {
+            rotationLock = (rotationLock + speeds.omegaRadiansPerSecond * rotationalSpeedCoef * rotationLockCoef) % 360;
+            final double rotation = activeRotationController.calculate(gyro.getRotation2dClockwise().getDegrees(), rotationLock);
+            swerveModuleStates = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                speeds.vxMetersPerSecond *
+                        (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
+                speeds.vyMetersPerSecond *
+                        (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
+                rotation,
+                gyro.getRotation2dClockwise())); 
+
+        }
 
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
@@ -165,6 +181,12 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }
+
+    private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
+        return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
+                                          ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
+                                          DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
+    }
 
     public static final synchronized Drivebase getInstance() {
         return instance == null ? instance = new Drivebase() : instance;

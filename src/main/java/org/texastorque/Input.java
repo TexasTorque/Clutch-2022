@@ -21,7 +21,7 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
-import org.texastorque.torquelib.control.TorqueSpeedSettings;
+import org.texastorque.torquelib.control.TorqueTraversableRange;
 import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
@@ -100,8 +100,8 @@ public final class Input extends TorqueInput implements Subsystems {
     }
 
 
-    private final TorqueSpeedSettings flywheelRPM = new TorqueSpeedSettings(1000, 1000, 3000, 100);
-    private final TorqueSpeedSettings hoodSetpoint = new TorqueSpeedSettings(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
+    private final TorqueTraversableRange flywheelRPM = new TorqueTraversableRange(1000, 1000, 3000, 100);
+    private final TorqueTraversableRange hoodSetpoint = new TorqueTraversableRange(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
 
     private final void updateShooter() {
         flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);

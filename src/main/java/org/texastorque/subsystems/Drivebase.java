@@ -77,7 +77,9 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private double rotationLock;
 
     private Drivebase() {
-        activeRotationController = new PIDController(.045, .025, 0);
+        // activeRotationController = new PIDController(.045, .025, 0);
+        activeRotationController = TorquePID.create(.045).addIntegral(.025).build().createPIDController();
+        // ^ is this better?? Idk
         activeRotationController.enableContinuousInput(0, 360);
 
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);

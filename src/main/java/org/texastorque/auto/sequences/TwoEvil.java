@@ -15,8 +15,8 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
-import org.texastorque.torquelib.auto.commands.Execute;
-import org.texastorque.torquelib.auto.commands.Wait;
+import org.texastorque.torquelib.auto.commands.TorqueExecute;
+import org.texastorque.torquelib.auto.commands.TorqueWait;
 
 public class TwoEvil extends TorqueSequence implements Subsystems {
     public TwoEvil() {
@@ -28,7 +28,7 @@ public class TwoEvil extends TorqueSequence implements Subsystems {
     protected void init() {
         final double firstTurret = -165.15;
         
-        addBlock(new TorqueBlock(new Wait(2), new Execute(() -> {
+        addBlock(new TorqueBlock(new TorqueWait(2), new TorqueExecute(() -> {
                                      // magazine.setBeltDirection(BeltDirection.INTAKING);
                                      intake.setState(IntakeState.INTAKE);
 
@@ -43,7 +43,7 @@ public class TwoEvil extends TorqueSequence implements Subsystems {
         addBlock(new TorqueBlock(new Shoot(1500, 20, firstTurret, true, 2)));
         addBlock(new TorqueBlock(new Path("Two2", false, 1, .5)));
         addBlock(new TorqueBlock(new Shoot(800, 30, 160, true, 1)));
-        addBlock(new TorqueBlock(new Execute(() -> {
+        addBlock(new TorqueBlock(new TorqueExecute(() -> {
             magazine.setBeltDirection(BeltDirection.OFF);
             intake.setState(IntakeState.PRIMED);
             turret.setState(TurretState.CENTER);

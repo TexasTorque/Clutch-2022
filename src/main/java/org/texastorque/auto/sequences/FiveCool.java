@@ -13,10 +13,9 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
-import org.texastorque.torquelib.auto.commands.Execute;
-import org.texastorque.torquelib.auto.commands.Wait;
+import org.texastorque.torquelib.auto.commands.TorqueExecute;
 
-public class FiveCool extends TorqueSequence implements Subsystems {
+public final class FiveCool extends TorqueSequence implements Subsystems {
     public FiveCool() {
         super("Five (Cool)");
         init();
@@ -25,7 +24,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
     @Override
     protected final void init() { // this method has been marked not final the whole time???
         final double firstTurret = 165;
-        addBlock(new TorqueBlock(new Execute(() -> {
+        addBlock(new TorqueBlock(new TorqueExecute(() -> {
                                     //  magazine.setBeltDirection(BeltDirection.INTAKING);
                                      intake.setState(IntakeState.INTAKE);
 
@@ -39,7 +38,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         addBlock(new TorqueBlock(new Path("Five1", true, 4, 2)));
         addBlock(new TorqueBlock(new Shoot(1450, 20, firstTurret, true, 1.8)));
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
-        addBlock(new TorqueBlock(new Execute(() -> {
+        addBlock(new TorqueBlock(new TorqueExecute(() -> {
             turret.setState(TurretState.POSITIONAL);    
             turret.setPosition(-65);
 
@@ -52,7 +51,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         addBlock(new TorqueBlock(new Creep(2, new ChassisSpeeds(-.5, 0, 0)), 
                 new Target(false, 4)));
 
-        addBlock(new TorqueBlock(new Execute(() -> {
+        addBlock(new TorqueBlock(new TorqueExecute(() -> {
             turret.setOffset(0);
             magazine.setBeltDirection(BeltDirection.OFF);
             intake.setState(IntakeState.PRIMED);

@@ -10,7 +10,7 @@ import org.texastorque.auto.commands.Path;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 
-public class Omar extends TorqueSequence {
+public final class Omar extends TorqueSequence {
     public Omar() {
         super("Omar");
         init();

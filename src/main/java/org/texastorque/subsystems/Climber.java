@@ -15,6 +15,7 @@ import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorqueClick;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueMath;
@@ -106,7 +107,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     private final TorqueSparkMax setupArmMotors(final int port) {
         final TorqueSparkMax motor = new TorqueSparkMax(port);
-        motor.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
+        // motor.configurePID(new KPID(.1, 0, 0, 0, -1., 1.));
+        motor.configurePID(TorquePID.create(.1).build());
         motor.configurePositionalCANFrame();
         motor.setEncoderZero(0);
         return motor;

@@ -18,6 +18,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
@@ -60,13 +61,25 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
 
         // flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
-        flywheel.configurePID(new KPID(0.0999999046, 0, 0,  0.0603409074, -1, 1, 1000));
+        // flywheel.configurePID(new KPID(0.0999999046, 0, 0,  0.0603409074, -1, 1, 1000));
+
+        flywheel.configurePID(TorquePID.create(0.0999999046)
+                .addFeedForward(0.0603409074)
+                .addIntegralZone(1000).build());
+                                        
+
         flywheel.setNeutralMode(NeutralMode.Coast);
         flywheel.setStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
         flywheel.setSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
 
         hood = new TorqueSparkMax(Ports.SHOOTER.HOOD);
-        hood.configurePID(new KPID(.1, .001, 0, 0, -.70, .70, .3));
+        // hood.configurePID(new KPID(.1, .001, 0, 0, -.70, .70, .3));
+        hood.configurePID(TorquePID.create(.1)
+                .addIntegral(.001)
+                .addOutputRange(-.7, .7)
+                .addIntegralZone(.3)
+                .build());
+
         hood.configurePositionalCANFrame();
         hood.burnFlash();
     }

@@ -12,6 +12,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.control.TorqueRamp;
 import org.texastorque.torquelib.control.TorqueTimeout;
 import org.texastorque.torquelib.motors.TorqueFalcon;
@@ -59,10 +60,12 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
 
-        rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
+        // rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
+        rotary.configurePID(TorquePID.create(.1).addOutputRange(ROTARY_MIN_SPEED, ROTARY_MAX_SPEED).build());
 
         rollers = new TorqueFalcon(Ports.INTAKE.ROLLER);
-        rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
+        // rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
+        rollers.configurePID(TorquePID.create().build());
     }
 
     public final void setState(final IntakeState state) { this.state = state; }

@@ -21,6 +21,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;
@@ -44,9 +45,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static final double DRIVE_GEARING = .1875, // Drive rotations per motor rotations
             DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788), DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875),
                                 DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
-
-    public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2), ROTATE_PID =
-                                                                                          new KPID(.3, 0, 0, 0, -1, 1);
+// 
+//     public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2), 
+                        // ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
+    public static final TorquePID DRIVE_PID = TorquePID.create(.00048464).addIntegralZone(.2).build();
+    public static final TorquePID ROTATE_PID = TorquePID.create(.3).build();
 
     public final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
 

@@ -15,6 +15,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.control.TorqueRollingMedian;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
@@ -23,8 +24,10 @@ import org.texastorque.torquelib.util.TorqueMath;
 public class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
-    private static final double MAX_VOLTS = 12, RATIO = 128.4722, KS = 0.2, ROT_CENTER = 0, ROT_BACK = 180,
-                                TOLERANCE = 4, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5;
+    private static final double MAX_VOLTS = 12, RATIO = 128.4722, ROT_CENTER = 0, ROT_BACK = 180,
+                                TOLERANCE = 4, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5,
+                                // KS = .2;
+                                KS = 0.14066;
     private static final boolean SHOOT_WITH_ODOMETRY = false;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
@@ -39,7 +42,9 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private final TorqueSparkMax rotator;
 
     // Needs to be played with
-    private final PIDController pidController = new PIDController(0.15, 0, 0);
+    // private final PIDController pidController = new PIDController(0.15, 0, 0);
+    // private final PIDController pidController = new PIDController(.1039, 0, 0);
+    private final PIDController pidController = TorquePID.create(.1039).build().createPIDController();
 
     private double requested = 0;
     private TurretState state = TurretState.OFF;

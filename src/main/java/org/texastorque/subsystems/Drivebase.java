@@ -183,6 +183,8 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", speeds.vxMetersPerSecond,
                                                          speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+
+        SmartDashboard.putNumber("Rot Lock", rotationLock);
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }

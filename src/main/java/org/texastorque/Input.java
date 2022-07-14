@@ -26,7 +26,7 @@ import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.util.GenericController;
 
 @SuppressWarnings("deprecation")
-public final class Input extends TorqueInput implements Subsystems {
+public final class Input extends TorqueInput<GenericController> implements Subsystems {
     private static volatile Input instance;
 
     private Input() {

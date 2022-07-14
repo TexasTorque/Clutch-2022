@@ -18,12 +18,6 @@ import org.texastorque.torquelib.auto.commands.TorqueExecute;
 
 public class OneEvil extends TorqueSequence implements Subsystems {
     public OneEvil() {
-        super("OneEvil");
-        init();
-    }
-
-    @Override
-    protected void init() {
         addBlock(new TorqueBlock(new Shoot(1350, 10, 0, true, 3)));
         addBlock(new TorqueBlock(new Path("One1", true, 1, .5),
                                  new TorqueExecute(() -> { intake.setState(IntakeState.INTAKE); })));

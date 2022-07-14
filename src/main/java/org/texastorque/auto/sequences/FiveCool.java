@@ -18,12 +18,6 @@ import org.texastorque.torquelib.auto.commands.TorqueWait;
 
 public class FiveCool extends TorqueSequence implements Subsystems {
     public FiveCool() {
-        super("Five (Cool)");
-        init();
-    }
-
-    @Override
-    protected final void init() { // this method has been marked not final the whole time???
         final double firstTurret = 165;
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
                                     //  magazine.setBeltDirection(BeltDirection.INTAKING);

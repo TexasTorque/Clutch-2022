@@ -16,7 +16,7 @@ public final class AutoManager extends TorqueAutoManager {
     private static volatile AutoManager instance;
 
     @Override
-    public final void init() {
+    protected final void init() {
         addSequence("Omar", new Omar());
         addSequence("One (evil)", new OneEvil());
         addSequence("Two (evil)", new TwoEvil());

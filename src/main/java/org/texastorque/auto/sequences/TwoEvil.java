@@ -20,12 +20,6 @@ import org.texastorque.torquelib.auto.commands.TorqueWait;
 
 public class TwoEvil extends TorqueSequence implements Subsystems {
     public TwoEvil() {
-        super("TwoEvil");
-        init();
-    }
-
-    @Override
-    protected void init() {
         final double firstTurret = -165.15;
         
         addBlock(new TorqueBlock(new TorqueWait(2), new TorqueExecute(() -> {

@@ -176,6 +176,10 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putBoolean("Climb Started", started);
 
+        SmartDashboard.putNumber("Gyro Pitch", drivebase.getGyro().getPitch());
+        SmartDashboard.putNumber("Gyro Roll", drivebase.getGyro().getRoll());
+        SmartDashboard.putNumber("Gyro Yaw", drivebase.getGyro().getYaw());
+
         if (winchState.isOn()) 
             winch.setPercent(winchState.getDirection() * WINCH_PWR);
         else if (running)
@@ -247,6 +251,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleInitPush() {
+        setServos(true);
+
         final double toLeft = MAX_LEFT, toRight = MAX_RIGHT;
         left.setPercent(left.getPosition() <= toLeft ? ARM_PWR : 0);
         right.setPercent(-right.getPosition() <= toRight ? -ARM_PWR : 0);
@@ -271,10 +277,12 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (leftSwitch.get() && rightSwitch.get() /*&& approved*/) advance();
     }
 
+    private boolean traversing = false;
+
     private final void handleTiltOut() {
         final double toLeft = 140, toRight = 140, toWinch = 110;
 
-        winch.setPercent(-winch.getPosition() <= toWinch ? -.5 : 0);
+        winch.setPercent(-winch.getPosition() <= toWinch ? (traversing ? -.2 : -.5)  : 0);
         right.setPercent(-right.getPosition() <= toRight ? -ARM_PWR : 0);
         left.setPercent(left.getPosition() <= toLeft ? ARM_PWR : 0);
 
@@ -287,16 +295,19 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     private final void handleTiltIn() {
         final double offset = 30, toLeft = 200, toRight = 200, toWinch = 60;
 
-        left.setPercent(left.getPosition() <= toLeft ? ARM_PWR : 0);
-        right.setPercent(-right.getPosition() <= toRight ? -ARM_PWR : 0);
+        // final boolean move = drivebase.getGyro().getPitch() > -12 || left.getPosition() > 172;
+        final boolean move = true;
+
+        left.setPercent(move ? (left.getPosition() <= toLeft ? ARM_PWR : 0) : 0);
+        right.setPercent(move ? (-right.getPosition() <= toRight ? -ARM_PWR : 0) : 0);
 
         // if (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset)
         //     winch.setPercent(winch.getPosition() >= toWinch ? -.3 : 0);
         // else
         //     winch.setPercent(0);
-
-        winch.setPercent(left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset
-                ? (-winch.getPosition() >= toWinch ? WINCH_PWR : 0) : 0); //! <- WINCH IDLE IS .1
+        var x = true;
+        winch.setPercent(x ? (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset
+                ? (-winch.getPosition() >= toWinch ? WINCH_PWR : 0) : 0) : 0);
 
         if (TorqueMath.toleranced(left.getPosition(), toLeft, 5) &&
             TorqueMath.toleranced(-right.getPosition(), toRight, 5) && approved &&
@@ -309,6 +320,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
                      leftWinch = 140, rightWinch = 140, 
                      leftWait = 70, rightWait = 70,
                      toWinch = 0;
+
+        traversing = true;
 
         // if (left.getPosition() <= leftWinch && -right.getPosition() <= rightWinch)
         //     winch.setPercent(winch.getPosition() >= toWinch ? -.3 : 0);

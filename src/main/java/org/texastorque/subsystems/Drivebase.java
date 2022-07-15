@@ -25,6 +25,7 @@ import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.KPID;
+import org.texastorque.torquelib.util.TorqueMath;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
 /**
@@ -72,16 +73,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private double translationalSpeedCoef, rotationalSpeedCoef;
     private final double SHOOTING_TRANSLATIONAL_SPEED_COEF = .4, SHOOTING_ROTATIONAL_SPEED_COEF = .5;
 
-    public final PIDController activeRotationController;
-    private final double rotationLockCoef = 1;
-    private double rotationLock;
-
     private Drivebase() {
-        // activeRotationController = new PIDController(.045, .025, 0);
-        activeRotationController = TorquePID.create(.045).addIntegral(.025).build().createPIDController();
-        // ^ is this better?? Idk
-        activeRotationController.enableContinuousInput(0, 360);
-
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
         backLeft.setLogging(true);
         backRight =
@@ -115,8 +107,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     @Override
     public final void initialize(final TorqueMode mode) {
         reset();
-        // state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE : DrivebaseState.ROBOT_RELATIVE;
-        state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE_ACTIVE : DrivebaseState.ROBOT_RELATIVE;
+        state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE : DrivebaseState.ROBOT_RELATIVE;
     }
 
     @Override
@@ -135,18 +126,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
                             (shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef),
                     gyro.getRotation2dClockwise()));
 
-        else if (state == DrivebaseState.FIELD_RELATIVE_ACTIVE) {
-            rotationLock = (rotationLock + speeds.omegaRadiansPerSecond * rotationalSpeedCoef * rotationLockCoef) % 360;
-            final double rotation = activeRotationController.calculate(gyro.getRotation2dClockwise().getDegrees(), rotationLock);
-            swerveModuleStates = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
-                speeds.vxMetersPerSecond *
-                        (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
-                speeds.vyMetersPerSecond *
-                        (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
-                rotation,
-                gyro.getRotation2dClockwise())); 
-
-        }
 
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
@@ -184,7 +163,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", speeds.vxMetersPerSecond,
                                                          speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
 
-        SmartDashboard.putNumber("Rot Lock", rotationLock);
+        SmartDashboard.putString("Drive State", state.toString());
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }

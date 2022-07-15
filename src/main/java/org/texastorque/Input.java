@@ -47,23 +47,22 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         updateClimber();
     }
 
-    private final TorqueTraversableSelection<Double> translationalSpeeds =
-            new TorqueTraversableSelection<Double>(1, .35, .45, .55);
-            // new TorqueTraversableSelection<Double>(1, .4, .6, .8);
-
-    private final TorqueTraversableSelection<Double> rotationalSpeeds =
-            new TorqueTraversableSelection<Double>(1, .5, .75, 1.);
+    private final TorqueTraversableSelection<Double> 
+            translationalSpeeds = new TorqueTraversableSelection<Double>(1, .35, .45, .55),
+            rotationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .75, 1.);
 
     // Incredibly basic solution for inverting the driver controls after an auto routine.
     private double invertCoefficient = 1;
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
-    private Rotation2d lastRotation = drivebase.getGyro().getRotation2d();
+
     private static PIDController rotationPID = TorquePID.create(.02).addDerivative(.001)
             .build().createPIDController();
     static { rotationPID.enableContinuousInput(0, 360); }
 
-    final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10);
-    final TorqueSlewLimiter yLimiter = new TorqueSlewLimiter(5, 10);
+    private double lastRotation = drivebase.getGyro().getRotation2d().getDegrees();
+
+    final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10),
+                            yLimiter = new TorqueSlewLimiter(5, 10);
 
     private final void updateDrivebase() {
         SmartDashboard.putNumber("Speed Shifter", (rotationalSpeeds.get() - .5) *  2.); 
@@ -71,20 +70,22 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         // drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
         drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.ROBOT_RELATIVE);
 
-        double rotationOutput = 0;
-        if (driver.getRightXAxis() == 0) {
-            rotationOutput = -rotationPID.calculate(drivebase.getGyro().getRotation2d().getDegrees(), lastRotation.getDegrees());
-        } else {
-            lastRotation = drivebase.getGyro().getRotation2d();
-            rotationOutput = -driver.getRightXAxis();
-        }
-        SmartDashboard.putNumber("PID O", rotationOutput);
-        SmartDashboard.putNumber("Rot Delta", drivebase.getGyro().getRotation2d().getDegrees() - lastRotation.getDegrees());
+        final double rotationReal = drivebase.getGyro().getRotation2d().getDegrees();
+        double rotationRequested = -driver.getRightXAxis();
+
+        if (rotationRequested == 0) 
+            rotationRequested = -rotationPID.calculate(rotationReal, lastRotation);
+        else
+            lastRotation = rotationReal;
+
+
+        SmartDashboard.putNumber("PID O", rotationRequested);
+        SmartDashboard.putNumber("Rot Delta", rotationReal - lastRotation);
 
         drivebase.setSpeeds(new ChassisSpeeds(
                 xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
                 yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
-                rotationOutput * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
+                rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
                                 rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
     }

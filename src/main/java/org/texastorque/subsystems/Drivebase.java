@@ -24,8 +24,6 @@ import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
-import org.texastorque.torquelib.util.KPID;
-import org.texastorque.torquelib.util.TorqueMath;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
 /**

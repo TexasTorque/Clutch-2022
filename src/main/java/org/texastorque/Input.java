@@ -56,9 +56,11 @@ public final class Input extends TorqueInput<TorqueController> implements Subsys
     private double invertCoefficient = 1;
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
-    private static PIDController rotationPID = TorquePID.create(.02).addDerivative(.001)
-            .build().createPIDController();
-    static { rotationPID.enableContinuousInput(0, 360); }
+    private final PIDController rotationPID = TorquePID.create(.02).addDerivative(.001)
+            .build().createPIDController((pid) -> {
+                pid.enableContinuousInput(0, 360);
+                return pid;
+            });
 
     private double lastRotation = drivebase.getGyro().getRotation2d().getDegrees();
 

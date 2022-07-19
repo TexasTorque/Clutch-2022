@@ -11,8 +11,12 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.photonvision.PhotonUtils;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
@@ -35,6 +39,15 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
+    public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
+
+    public static final Pose2d HUB_ORIGIN = new Pose2d(HUB_CENTER_POSITION.getX(),
+            HUB_CENTER_POSITION.getY(), new Rotation2d());
+
+    public static final Translation2d CAMERA_TO_ROBOT = new Translation2d(Units.inchesToMeters(2), CAMERA_HEIGHT);
+
+    private static final Transform2d TRANSFORM_ADJUSTMENT = new Transform2d(new Translation2d(.9, 0), new Rotation2d());
+
     public enum ShooterState implements TorqueSubsystemState {
         OFF,
         REGRESSION,
@@ -55,7 +68,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private ShooterState state = ShooterState.OFF;
 
     private Shooter() {
-        camera = new TorqueLight(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
+        camera = new TorqueLight();
 
         flywheel = new TorqueFalcon(Ports.SHOOTER.FLYWHEEL.LEFT);
         flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
@@ -101,13 +114,13 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        camera.update(true);
+        camera.update();
 
         if (climber.hasStarted()) {
             flywheelSpeed = 0;
             hoodSetpoint = HOOD_MIN;
         } else if (state == ShooterState.REGRESSION) {
-            distance = camera.getDistance();
+            distance = calculateDistance();
             flywheelSpeed = regressionRPM(distance) + (mode.isAuto() ? autoOffset : 0);
             hoodSetpoint = regressionHood(distance);
         } else if (state == ShooterState.DISTANCE) {
@@ -127,7 +140,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
-        SmartDashboard.putNumber("IDIST", camera.getDistance());
+        SmartDashboard.putNumber("IDIST", calculateDistance());
 
         SmartDashboard.putNumber("Flywheel Delta", flywheelSpeed - flywheel.getVelocityRPM());
         SmartDashboard.putBoolean("Is Shooting", isShooting());
@@ -165,11 +178,39 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public final ShooterState getState() { return state; }
 
-    public final Pose2d getVisionPositionEstimate() {
-        TorqueUtil.notImplemented();
-
-        return new Pose2d();
+    public final double calculateDistance() { 
+        return TorqueLight.getDistanceToElevatedTarget(camera, CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
     }
+
+
+    // public Pose2d getEstimatedPositionRelativeToRobot() {
+    //     // Push forward the detection .9 on the x to track the center of the hub rather
+    //     // than the tape.
+    //     Transform2d targetRelativeToCamera = bestTarget.getCameraToTarget();
+    //     Transform2d targetRelativeToCenterOfHub = targetRelativeToCamera.plus(transformAdjustmnet);
+    //     SmartDashboard.putString("TargetRelCamera",
+    //             targetRelativeToCamera.getX() + "," + targetRelativeToCamera.getY());
+    //     SmartDashboard.putString("TargetRelCenterHub",
+    //             targetRelativeToCenterOfHub.getX() + "," + targetRelativeToCenterOfHub.getY());
+    //     Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(targetRelativeToCenterOfHub,
+    //             Constants.HUB_ORIGIN,
+    //             new Transform2d(Constants.CAMERA_TO_ROBOT,
+    //                     Rotation2d.fromDegrees(-Turret.getInstance().getDegrees())));
+    //     SmartDashboard.putString("EstimatedRobotPositionVision",
+    //             estimatedPositionOfRobot.getX() + "," + estimatedPositionOfRobot.getY());
+    //     return estimatedPositionOfRobot;
+    // }
+
+    public final Pose2d getEstimatedPositionRelativeToRobot() { 
+        final Transform2d targetRelativeToCamera = camera.getCameraToTarget();
+        final Transform2d targetRelativeToCenterOfHub = targetRelativeToCamera.plus(TRANSFORM_ADJUSTMENT);
+
+        final Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(targetRelativeToCenterOfHub,
+                HUB_ORIGIN, new Transform2d(CAMERA_TO_ROBOT, Rotation2d.fromDegrees(-turret.getDegrees())));
+
+        return estimatedPositionOfRobot;
+    }
+
     
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;

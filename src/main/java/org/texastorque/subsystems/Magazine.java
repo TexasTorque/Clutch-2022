@@ -1,3 +1,9 @@
+/**
+ * Copyright 2022 Texas Torque.
+ * 
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -65,10 +71,11 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
     private boolean shootingStarted = false;
     private double shootingStartedTime = 0;
-    private final double DROP_TIME = .2;
+    private final double DROP_TIME = 0;
 
     @Override
     public final void update(final TorqueMode mode) {
+        if (intake.isOutaking()) { beltDirection = BeltDirection.DOWN; }
         if (intake.isIntaking()) { beltDirection = BeltDirection.UP; }
 
         if (shooter.isShooting()) {

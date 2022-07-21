@@ -1,0 +1,11 @@
+Systems Check
+=============
+- Swerve modules move
+- Intake
+- Outtake
+- Test regression shot
+- Setpoint shot
+- Climbers go up and down
+- Winch goes in and out
+- Servos actuate
+- Limits switches work

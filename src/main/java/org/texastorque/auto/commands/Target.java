@@ -1,3 +1,9 @@
+/**
+ * Copyright 2022 Texas Torque.
+ * 
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque.auto.commands;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -35,14 +41,14 @@ public final class Target extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void end() {
-        if (stop)
+        if (stop) {
             shooter.setState(ShooterState.OFF);
-        else {
+            turret.setState(TurretState.CENTER);
+        } else {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(1000);
         }
 
-        turret.setState(TurretState.CENTER);
         magazine.setGateDirection(GateDirection.OFF);
     }
 }

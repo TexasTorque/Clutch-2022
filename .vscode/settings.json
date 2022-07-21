@@ -30,4 +30,5 @@
   "editor.rulers": [
     120
   ],
+  "editor.inlayHints.enabled": "off"
 }

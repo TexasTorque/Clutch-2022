@@ -1,3 +1,9 @@
+/**
+ * Copyright 2022 Texas Torque.
+ * 
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -6,8 +12,10 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.control.TorqueRamp;
 import org.texastorque.torquelib.control.TorqueTimeout;
+import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
 
@@ -45,33 +53,33 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     }
 
     private IntakeState state = IntakeState.PRIMED;
-    private TorqueTimeout revIntake = new TorqueTimeout(.5);
-    private TorqueRamp rampIntake = new TorqueRamp(3, 1.3, 12);
 
-    private final TorqueSparkMax rotary, rollers;
+    private final TorqueFalcon rollers;
+    private final TorqueSparkMax rotary;
 
     private Intake() {
         rotary = new TorqueSparkMax(Ports.INTAKE.ROTARY);
-        rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
 
-        rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
-        rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
+        // rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
+        rotary.configurePID(TorquePID.create(.1).addOutputRange(ROTARY_MIN_SPEED, ROTARY_MAX_SPEED).build());
 
-        // rollers.configureSmartMotion(5600, 0, 5600, 100, 0);//?bruh shit hell naw
+        rollers = new TorqueFalcon(Ports.INTAKE.ROLLER);
+        // rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
+        rollers.configurePID(TorquePID.create().build());
     }
 
     public final void setState(final IntakeState state) { this.state = state; }
 
     public final boolean isIntaking() { return state == IntakeState.INTAKE; }
+    public final boolean isOutaking() { return state == IntakeState.OUTAKE; }
 
     @Override
     public final void initialize(final TorqueMode mode) {}
 
     @Override
     public final void update(final TorqueMode mode) {
-        rollers.setVoltage(Math.signum(state.getDirection()) * rampIntake.calculate(state != IntakeState.PRIMED));
-        // rollers.setVelocityRPM(5600);
-        rotary.setPosition(revIntake.calculate(isIntaking()) ? IntakeState.PRIMED.getPosition() : state.getPosition());
+        rollers.setPercent(-state.getDirection());
+        rotary.setPosition(state.getPosition());
 
         TorqueSubsystemState.logState(state);
 

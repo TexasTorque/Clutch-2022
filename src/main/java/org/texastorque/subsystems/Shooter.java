@@ -1,3 +1,9 @@
+/**
+ * Copyright 2022 Texas Torque.
+ * 
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -12,6 +18,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
@@ -22,7 +29,7 @@ import org.texastorque.torquelib.util.TorqueUtil;
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
-    public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 83.24, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
+    public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 60, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
                                FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(38.5),
                                TARGET_HEIGHT = 2.6416;
 
@@ -43,25 +50,36 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private final TorqueSparkMax hood;
     private final TorqueFalcon flywheel;
 
-    private double hoodSetpoint, flywheelSpeed, distance;
+    private double hoodSetpoint, flywheelSpeed, distance, autoOffset = 0;
 
     private ShooterState state = ShooterState.OFF;
 
     private Shooter() {
-        camera = new TorqueLight(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
+        camera = new TorqueLight();
 
         flywheel = new TorqueFalcon(Ports.SHOOTER.FLYWHEEL.LEFT);
         flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
 
-        // flywheel.configurePID(new KPID(0.0999999046, 5e-05, 0, 0.0603409074, -1, 1,
-        // 1000));
-        flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
+        // flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
+        // flywheel.configurePID(new KPID(0.0999999046, 0, 0,  0.0603409074, -1, 1, 1000));
+
+        flywheel.configurePID(TorquePID.create(0.0999999046)
+                .addFeedForward(0.0603409074)
+                .addIntegralZone(1000).build());
+                                        
+
         flywheel.setNeutralMode(NeutralMode.Coast);
         flywheel.setStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
         flywheel.setSupplyLimit(new SupplyCurrentLimitConfiguration(true, 80, 1, .001));
 
         hood = new TorqueSparkMax(Ports.SHOOTER.HOOD);
-        hood.configurePID(new KPID(.1, .001, 0, 0, -.70, .70, .3));
+        // hood.configurePID(new KPID(.1, .001, 0, 0, -.70, .70, .3));
+        hood.configurePID(TorquePID.create(.1)
+                .addIntegral(.001)
+                .addOutputRange(-.7, .7)
+                .addIntegralZone(.3)
+                .build());
+
         hood.configurePositionalCANFrame();
         hood.burnFlash();
     }
@@ -74,6 +92,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public final void setDistance(final double distance) { this.distance = distance; }
 
+    public final void setAutoOffset(final double autoOffset) { this.autoOffset = autoOffset; }
+
     @Override
     public final void initialize(final TorqueMode mode) {
         state = ShooterState.OFF;
@@ -81,14 +101,14 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        camera.update(true);
+        camera.update();
 
         if (climber.hasStarted()) {
             flywheelSpeed = 0;
             hoodSetpoint = HOOD_MIN;
         } else if (state == ShooterState.REGRESSION) {
-            distance = camera.getDistance();
-            flywheelSpeed = regressionRPM(distance);
+            distance = calculateDistance();
+            flywheelSpeed = regressionRPM(distance) + (mode.isAuto() ? autoOffset : 0);
             hoodSetpoint = regressionHood(distance);
         } else if (state == ShooterState.DISTANCE) {
             flywheelSpeed = regressionRPM(distance);
@@ -107,8 +127,9 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
+        SmartDashboard.putNumber("IDIST", calculateDistance());
 
-        SmartDashboard.putNumber("Flywheel Delta", Math.abs(flywheelSpeed - flywheel.getVelocityRPM()));
+        SmartDashboard.putNumber("Flywheel Delta", flywheelSpeed - flywheel.getVelocityRPM());
         SmartDashboard.putBoolean("Is Shooting", isShooting());
         SmartDashboard.putBoolean("Is Ready", isReady());
     }
@@ -123,15 +144,15 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) { return clampRPM((150 * distance) + 1000); }
+    private final double regressionRPM(final double distance) { return clampRPM(26.83 * distance + 1350); }
 
     /**
      * @param distance Distance (m)
      * @return Hood the shooter should go at
      */
     private final double regressionHood(final double distance) {
-        if (distance > 3.5) return HOOD_MAX;
-        return clampHood(-72.22 * Math.exp(-0.5019 * distance) + 46.01);
+        // if (distance > 3.5) return HOOD_MAX;
+        return clampHood(1.84 * distance + 19.29 - 5);
     }
 
     private final double clampRPM(final double rpm) {
@@ -150,6 +171,10 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         return new Pose2d();
     }
 
+    public final double calculateDistance() { 
+        return TorqueLight.getDistanceToElevatedTarget(camera, CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
+    }
+    
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;
     }

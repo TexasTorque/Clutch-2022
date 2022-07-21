@@ -1,5 +1,12 @@
+/**
+ * Copyright 2022 Texas Torque.
+ * 
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,9 +21,9 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
-import org.texastorque.torquelib.util.KPID;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
 /**
@@ -37,11 +44,13 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static final double DRIVE_GEARING = .1875, // Drive rotations per motor rotations
             DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788), DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875),
                                 DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
+// 
+//     public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2), 
+                        // ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
+    public static final TorquePID DRIVE_PID = TorquePID.create(.00048464).addIntegralZone(.2).build();
+    public static final TorquePID ROTATE_PID = TorquePID.create(.3).build();
 
-    public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2), ROTATE_PID =
-                                                                                          new KPID(.3, 0, 0, 0, -1, 1);
-
-    public static final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
+    public final SimpleMotorFeedforward DRIVE_FEED_FORWARD = new SimpleMotorFeedforward(.27024, 2.4076, .5153);
 
     private final Translation2d locationBackLeft = new Translation2d(DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y),
                                 locationBackRight = new Translation2d(DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y),
@@ -61,12 +70,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     private double translationalSpeedCoef, rotationalSpeedCoef;
     private final double SHOOTING_TRANSLATIONAL_SPEED_COEF = .4, SHOOTING_ROTATIONAL_SPEED_COEF = .5;
-
-    private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
-        return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
-                                          ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
-                                          DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
-    }
 
     private Drivebase() {
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
@@ -121,6 +124,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
                             (shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef),
                     gyro.getRotation2dClockwise()));
 
+
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 
@@ -156,9 +160,17 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", speeds.vxMetersPerSecond,
                                                          speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+
+        SmartDashboard.putString("Drive State", state.toString());
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }
+
+    private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
+        return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
+                                          ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
+                                          DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
+    }
 
     public static final synchronized Drivebase getInstance() {
         return instance == null ? instance = new Drivebase() : instance;

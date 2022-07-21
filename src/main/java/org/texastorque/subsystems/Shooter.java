@@ -55,7 +55,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private ShooterState state = ShooterState.OFF;
 
     private Shooter() {
-        camera = new TorqueLight(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
+        camera = new TorqueLight();
 
         flywheel = new TorqueFalcon(Ports.SHOOTER.FLYWHEEL.LEFT);
         flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
@@ -101,13 +101,13 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        camera.update(true);
+        camera.update();
 
         if (climber.hasStarted()) {
             flywheelSpeed = 0;
             hoodSetpoint = HOOD_MIN;
         } else if (state == ShooterState.REGRESSION) {
-            distance = camera.getDistance();
+            distance = calculateDistance();
             flywheelSpeed = regressionRPM(distance) + (mode.isAuto() ? autoOffset : 0);
             hoodSetpoint = regressionHood(distance);
         } else if (state == ShooterState.DISTANCE) {
@@ -127,7 +127,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
-        SmartDashboard.putNumber("IDIST", camera.getDistance());
+        SmartDashboard.putNumber("IDIST", calculateDistance());
 
         SmartDashboard.putNumber("Flywheel Delta", flywheelSpeed - flywheel.getVelocityRPM());
         SmartDashboard.putBoolean("Is Shooting", isShooting());
@@ -169,6 +169,10 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         TorqueUtil.notImplemented();
 
         return new Pose2d();
+    }
+
+    public final double calculateDistance() { 
+        return TorqueLight.getDistanceToElevatedTarget(camera, CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
     }
     
     public static final synchronized Shooter getInstance() {

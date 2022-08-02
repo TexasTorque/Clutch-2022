@@ -6,6 +6,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Test",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.control.test.Test",
+      "projectName": "Clutch-2022"
+    },
+    {
+      "type": "java",
+      "name": "Launch TorqueSlewLimiter",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.control.TorqueSlewLimiter",
+      "projectName": "Clutch-2022"
+    },
+    {
+      "type": "java",
       "name": "Launch TorquePID",
       "request": "launch",
       "mainClass": "org.texastorque.torquelib.control.TorquePID",

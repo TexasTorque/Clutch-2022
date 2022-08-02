@@ -11,8 +11,12 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.photonvision.PhotonUtils;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
@@ -30,10 +34,23 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
     public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 60, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
-                               FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(38.5),
-                               TARGET_HEIGHT = 2.6416;
+                               FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(33),
+            TARGET_HEIGHT = 2.6416;
 
+    public static final double HUB_RADIUS = .6778625; // 
+    
+    public static final double TURRET_RADIUS = Units.inchesToMeters(7.2);
+                               
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
+
+    public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
+
+    public static final Pose2d HUB_ORIGIN = new Pose2d(HUB_CENTER_POSITION.getX(),
+            HUB_CENTER_POSITION.getY(), new Rotation2d());
+
+    public static final Translation2d CAMERA_TO_ROBOT = new Translation2d(Units.inchesToMeters(2), CAMERA_HEIGHT);
+
+    private static final Transform2d TRANSFORM_ADJUSTMENT = new Transform2d(new Translation2d(.9, 0), new Rotation2d());
 
     public enum ShooterState implements TorqueSubsystemState {
         OFF,
@@ -173,6 +190,16 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public final double calculateDistance() { 
         return TorqueLight.getDistanceToElevatedTarget(camera, CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
+    }
+
+    public final Pose2d getEstimatedPositionRelativeToRobot() { 
+        final Transform2d targetRelativeToCamera = camera.getCameraToTarget();
+        final Transform2d targetRelativeToCenterOfHub = targetRelativeToCamera.plus(TRANSFORM_ADJUSTMENT);
+
+        final Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(targetRelativeToCenterOfHub,
+                HUB_ORIGIN, new Transform2d(CAMERA_TO_ROBOT, Rotation2d.fromDegrees(-turret.getDegrees())));
+
+        return estimatedPositionOfRobot;
     }
     
     public static final synchronized Shooter getInstance() {

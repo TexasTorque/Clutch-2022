@@ -34,9 +34,13 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
     public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 60, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
-                               FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(38.5),
-                               TARGET_HEIGHT = 2.6416;
+                               FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(33),
+            TARGET_HEIGHT = 2.6416;
 
+    public static final double HUB_RADIUS = .6778625; // 
+    
+    public static final double TURRET_RADIUS = Units.inchesToMeters(7.2);
+                               
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);

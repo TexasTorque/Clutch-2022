@@ -135,6 +135,10 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         this.offset = offset;
     }
 
+    /**
+     * 
+     * @return
+     */
     private final double calculateAngleWithOdometry() {
         //          v  This might want to be raw gyro angle??
         SmartDashboard.putNumber("_gcw", drivebase.getGyro().getRotation2dClockwise().getDegrees());

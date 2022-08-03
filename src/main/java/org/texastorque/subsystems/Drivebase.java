@@ -9,6 +9,8 @@ package org.texastorque.subsystems;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -24,6 +26,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
+import org.texastorque.Robot;
 import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
@@ -69,6 +72,10 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static final Matrix<N1, N1> LOCAL_STDS = new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.3);
     private static final Matrix<N3, N1> VISION_STDS = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.5, .5, 1);
 
+    // private static final Vector<N3> STATE_STDS = VecBuilder.fill(.4, .4, .9);
+    // private static final Vector<N1> LOCAL_STDS = VecBuilder.fill(Units.degreesToRadians(.3));
+    // private static final Vector<N3> VISION_STDS = VecBuilder.fill(.5, .5, 1.);
+
     private final SwerveDriveKinematics kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field2d = new Field2d();
@@ -99,7 +106,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
         poseEstimator = new SwerveDrivePoseEstimator(gyro.getRotation2dClockwise(),
                                 new Pose2d(), kinematics, STATE_STDS,
-                                LOCAL_STDS, VISION_STDS);
+                                LOCAL_STDS, VISION_STDS, Robot.PERIOD);
 
         reset();
     }
@@ -125,9 +132,9 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        if (shooter.getCamera().getNumberOfTargets() >= 3) {
+        if (shooter.getCamera().getNumberOfTargets() >= 3)
             updateWithVision();
-        }
+
         if (state == DrivebaseState.X_FACTOR)
             for (int i = 0; i < swerveModuleStates.length; i++)
                 swerveModuleStates[i] = new SwerveModuleState(0, new Rotation2d((i == 0 || i == 3) ? 135 : 45));
@@ -202,7 +209,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     public final void updateWithVision() {
         try {
-            Pose2d pose = shooter.getCamera().getRobotPose(shooter.getCamera(), getGyro().getRotation2dCounterClockwise(), Rotation2d.fromDegrees(shooter.getCamera().getTargetPitch()), Rotation2d.fromDegrees(shooter.getCamera().getTargetYaw()), Shooter.TARGET_HEIGHT,
+            final Pose2d pose = shooter.getCamera().getRobotPose(shooter.getCamera(), getGyro().getRotation2dCounterClockwise(), Rotation2d.fromDegrees(shooter.getCamera().getTargetPitch()), Rotation2d.fromDegrees(shooter.getCamera().getTargetYaw()), Shooter.TARGET_HEIGHT,
                     Shooter.CAMERA_HEIGHT, Shooter.CAMERA_ANGLE, Shooter.TURRET_RADIUS, turret.getDegrees(), Shooter.HUB_RADIUS, Shooter.HUB_CENTER_POSITION.getX(),
                     Shooter.HUB_CENTER_POSITION.getY());
             SmartDashboard.putString("VisionPos", String.format("(%02.3f, %02.3f)", pose.getX(), pose.getY()));

@@ -14,12 +14,15 @@ import org.texastorque.torquelib.base.*;
 
 public final class Robot extends TimedRobot implements Subsystems {
 
+    private static final double HERTZ = 50;
+    public static final double PERIOD = 1. / HERTZ;
+
     private final Input input = Input.getInstance();
     private final AutoManager autoManager = AutoManager.getInstance();
 
     private final ArrayList<TorqueSubsystem> subsystems = new ArrayList<TorqueSubsystem>();
 
-    public Robot() { super(1 / 50.); }
+    public Robot() { super(PERIOD); }
 
     @Override
     public final void robotInit() {

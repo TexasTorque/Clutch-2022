@@ -23,6 +23,7 @@ import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
+import org.texastorque.torquelib.control.TorqueCondition;
 import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.control.TorqueSlewLimiter;
 import org.texastorque.torquelib.control.TorqueTraversableRange;
@@ -94,6 +95,18 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
                 rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
                                 rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
+
+        if (!operator.getAButton()) return;
+
+        drivebase.setState(DrivebaseState.ALIGN);
+
+        // We convert 0, 90, 180, and 270 to 0, 1, 2, and 3 by dividing by 90.
+        // If hotdog index is not 0, 1, 2, or 3, nothing happens.
+        // getPOV returns -1 if nothing pressed. 
+        // -1 / 90 is not 0, 1, 2, or 3.
+        drivebase.setHotdogIndex(operator.getPOV() / 90);
+
+
     }
 
     private final void updateIntake() {

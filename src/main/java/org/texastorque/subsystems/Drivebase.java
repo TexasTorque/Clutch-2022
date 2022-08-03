@@ -47,7 +47,7 @@ import org.texastorque.torquelib.util.TorqueUtil;
 public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static volatile Drivebase instance;
 
-    public enum DrivebaseState implements TorqueSubsystemState { ROBOT_RELATIVE, FIELD_RELATIVE, X_FACTOR }
+    public enum DrivebaseState implements TorqueSubsystemState { ROBOT_RELATIVE, FIELD_RELATIVE, X_FACTOR, ALIGN }
 
     public static final double DRIVE_MAX_TRANSLATIONAL_SPEED = 4, DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2,
                                DRIVE_MAX_ROTATIONAL_SPEED = 6;
@@ -82,6 +82,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     private final TorqueSwerveModule2021 backLeft, backRight, frontLeft, frontRight;
     private SwerveModuleState[] swerveModuleStates; // This can be made better
+    private int hotdogIndex = -1;
+
+    public final void setHotdogIndex(final int index) {
+        hotdogIndex = index;
+    }
 
     private DrivebaseState state = DrivebaseState.FIELD_RELATIVE;
     private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
@@ -135,7 +140,12 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         if (shooter.getCamera().getNumberOfTargets() >= 3)
             updateWithVision();
 
-        if (state == DrivebaseState.X_FACTOR)
+
+        if (state == DrivebaseState.ALIGN)
+            for (int i = 0; i < swerveModuleStates.length; i++)                
+                swerveModuleStates[i] = new SwerveModuleState(0, Rotation2d.fromDegrees(0));
+
+        else if (state == DrivebaseState.X_FACTOR)
             for (int i = 0; i < swerveModuleStates.length; i++)
                 swerveModuleStates[i] = new SwerveModuleState(0, new Rotation2d((i == 0 || i == 3) ? 135 : 45));
 
@@ -157,10 +167,10 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         // TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
 
-        frontLeft.setDesiredState(swerveModuleStates[2]);
-        frontRight.setDesiredState(swerveModuleStates[1]);
-        backLeft.setDesiredState(swerveModuleStates[0]);
-        backRight.setDesiredState(swerveModuleStates[3]);
+        setDesiredState(frontLeft, 2);
+        setDesiredState(frontRight, 1);
+        setDesiredState(backLeft, 0);
+        setDesiredState(backRight, 3);
 
         // odometry.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(), frontRight.getState(),
                         // backLeft.getState(), backRight.getState());
@@ -171,6 +181,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         field2d.setRobotPose(poseEstimator.getEstimatedPosition());
                         
         log();
+    }
+
+    private final void setDesiredState(TorqueSwerveModule2021 module, final int index) {
+        if (index == hotdogIndex) module.hotdog();
+        else module.setDesiredState(swerveModuleStates[index]);
     }
 
     public final SwerveDriveKinematics getKinematics() { return kinematics; }

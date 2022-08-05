@@ -31,6 +31,7 @@ import org.texastorque.torquelib.control.TorqueTraversableSelection;
 import org.texastorque.torquelib.sensors.TorqueController;
 import org.texastorque.torquelib.sensors.TorqueController.ControllerPort;
 import org.texastorque.torquelib.util.GenericController;
+import org.texastorque.torquelib.util.TorqueMath;
 
 @SuppressWarnings("deprecation")
 public final class Input extends TorqueInput<GenericController> implements Subsystems {
@@ -89,23 +90,16 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putNumber("PID O", rotationRequested);
         SmartDashboard.putNumber("Rot Delta", rotationReal - lastRotation);
 
+        // if (TorqueMath.toleranced(driver.getLeftYAxis(), .1) && TorqueMath.toleranced(driver.getLeftXAxis(), .1) 
+        //         && TorqueMath.toleranced(driver.getRightXAxis(), .1)) 
+        //     drivebase.setSpeeds(new ChassisSpeeds(0, 0, 0));
+        // else 
         drivebase.setSpeeds(new ChassisSpeeds(
                 xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
                 yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
                 rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
                                 rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
-
-        if (!operator.getAButton()) return;
-
-        drivebase.setState(DrivebaseState.ALIGN);
-
-        // We convert 0, 90, 180, and 270 to 0, 1, 2, and 3 by dividing by 90.
-        // If hotdog index is not 0, 1, 2, or 3, nothing happens.
-        // getPOV returns -1 if nothing pressed. 
-        // -1 / 90 is not 0, 1, 2, or 3.
-        drivebase.setHotdogIndex(operator.getPOV() / 90);
-
 
     }
 

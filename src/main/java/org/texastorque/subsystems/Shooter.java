@@ -33,7 +33,7 @@ import org.texastorque.torquelib.util.TorqueUtil;
 public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
-    public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 60, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
+    public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 150, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
                                FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(33),
             TARGET_HEIGHT = 2.6416;
 

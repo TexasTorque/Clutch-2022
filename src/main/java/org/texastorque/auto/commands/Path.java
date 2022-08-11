@@ -69,7 +69,7 @@ public final class Path extends TorqueCommand implements Subsystems {
     protected final void continuous() {
         final PathPlannerState current = (PathPlannerState)trajectory.sample(timer.get());
         ChassisSpeeds speeds =
-                controller.calculate(drivebase.getOdometry().getEstimatedPosition(), current, current.holonomicRotation);
+                controller.calculate(drivebase.getOdometry().getPoseMeters(), current, current.holonomicRotation);
         speeds = new ChassisSpeeds(-speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
         drivebase.setSpeeds(speeds);
     }

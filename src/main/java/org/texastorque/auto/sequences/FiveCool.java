@@ -62,7 +62,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
             shooter.setHoodPosition(hood3);
         })));
 
-        addBlock(new TorqueBlock(new Path("Five3", true, 4, 2)));
+        addBlock(new TorqueBlock(new Path("Five2", true, 4, 2)));
         addBlock(new TorqueBlock(new Shoot(rpm3, hood3, turret3, true, 1.8)));
 
         // Turn off subsystems

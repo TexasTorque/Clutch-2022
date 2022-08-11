@@ -101,12 +101,13 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         flywheel = new TorqueFalcon(Ports.SHOOTER.FLYWHEEL.LEFT);
         flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
 
-        flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
-        // flywheel.configurePID(new KPID(0.0999999046, 0, 0,  0.0603409074, -1, 1, 1000));
+        // flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
+        flywheel.configurePID(new KPID(0.0999999046, 0, 0,  0.0603409074, -1, 1, 1000));
 
-        // flywheel.configurePID(TorquePID.create(0.0999999046)
+        flywheel.configurePID(TorquePID.create(0.0999999046)
                 // .addFeedForward(0.0603409074)
-                // .addIntegralZone(1000).build());
+                .addFeedForward(0.07)
+                .addIntegralZone(1000).build());
                                         
 
         flywheel.setNeutralMode(NeutralMode.Coast);
@@ -195,7 +196,10 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) { return clampRPM(26.83 * distance + 1350); }
+    private final double regressionRPM(final double distance) { 
+        return clampRPM(26.83 * distance * 3 + 1350); 
+        // return clampRPM(285.7 * distance + 893); 
+    }
 
     /**
      * @param distance Distance (m)
@@ -203,7 +207,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      */
     private final double regressionHood(final double distance) {
         // if (distance > 3.5) return HOOD_MAX;
-        return clampHood(1.84 * distance + 19.29 - 5);
+        return clampHood(1.84 * distance * 3 + 19.29 - 5);
+        // return clampHood(14.29 * distance - 3);
     }
 
     private final double clampRPM(final double rpm) {

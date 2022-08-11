@@ -69,13 +69,14 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
     private double lastRotation = drivebase.getGyro().getRotation2d().getDegrees();
 
-    final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10),
+    private final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10),
                             yLimiter = new TorqueSlewLimiter(5, 10);
+
+    private final static double DEADBAND = .1;
 
     private final void updateDrivebase() {
         SmartDashboard.putNumber("Speed Shifter", (rotationalSpeeds.get() - .5) *  2.); 
 
-        // drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
         drivebase.setState(driver.getRightCenterButton() ? DrivebaseState.X_FACTOR : DrivebaseState.FIELD_RELATIVE);
 
         final double rotationReal = drivebase.getGyro().getRotation2d().getDegrees();
@@ -90,17 +91,23 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putNumber("PID O", rotationRequested);
         SmartDashboard.putNumber("Rot Delta", rotationReal - lastRotation);
 
-        // if (TorqueMath.toleranced(driver.getLeftYAxis(), .1) && TorqueMath.toleranced(driver.getLeftXAxis(), .1) 
-        //         && TorqueMath.toleranced(driver.getRightXAxis(), .1)) 
-        //     drivebase.setSpeeds(new ChassisSpeeds(0, 0, 0));
-        // else 
-        drivebase.setSpeeds(new ChassisSpeeds(
-                xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
-                yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
-                rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
-                                rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
+                rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
 
+        final boolean noInput = TorqueMath.toleranced(driver.getLeftYAxis(), DEADBAND) 
+                && TorqueMath.toleranced(driver.getLeftXAxis(), DEADBAND) 
+                && TorqueMath.toleranced(driver.getRightXAxis(), DEADBAND);
+
+        if (noInput) {
+            drivebase.setSpeeds(new ChassisSpeeds(0, 0, 0));
+            return;
+        }
+
+        final double xVelo = xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
+        final double yVelo = yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
+        final double rVelo = rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient;
+
+        drivebase.setSpeeds(new ChassisSpeeds(xVelo, yVelo, rVelo));
     }
 
     private final void updateIntake() {

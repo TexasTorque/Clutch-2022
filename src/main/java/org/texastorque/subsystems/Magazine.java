@@ -32,7 +32,6 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
     public static enum BeltDirection implements TorqueSubsystemState {
         UP(-1),
-        INTAKING(-.5),
         DOWN(1),
         OFF(0);
 
@@ -71,7 +70,7 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
     private boolean shootingStarted = false;
     private double shootingStartedTime = 0;
-    private final double DROP_TIME = 0;
+    private final double DROP_TIME = .05;
 
     @Override
     public final void update(final TorqueMode mode) {

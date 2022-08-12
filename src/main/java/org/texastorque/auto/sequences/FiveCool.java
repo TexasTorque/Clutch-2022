@@ -3,6 +3,7 @@ package org.texastorque.auto.sequences;
 import org.texastorque.Subsystems;
 import org.texastorque.auto.commands.Path;
 import org.texastorque.auto.commands.Shoot;
+import org.texastorque.auto.commands.Target;
 import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.subsystems.Magazine.GateDirection;
@@ -24,9 +25,6 @@ public class FiveCool extends TorqueSequence implements Subsystems {
             intake.setState(IntakeState.INTAKE);
             turret.setState(TurretState.POSITIONAL);
             turret.setPosition(turret1);
-            // shooter.setState(ShooterState.WARMUP);
-            // shooter.setFlywheelSpeed(rpm1 - warmupDelta);
-            // shooter.setHoodPosition(hood1);
         })));
 
         addBlock(new TorqueBlock(new Shoot(rpm1, hood1, turret1, true, 1)));
@@ -47,6 +45,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         addBlock(new TorqueBlock(new Path("Five1", true, 4, 2)));
         addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 1.8)));
+        // addBlock(new TorqueBlock(new Target(true, 1.8)));
 
         // Pick up balls at human player
 
@@ -64,7 +63,8 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
         addBlock(new TorqueBlock(new Shoot(rpm3, hood3, turret3, true, 1.8)));
-
+        // addBlock(new TorqueBlock(new Target(true, 1.8)));
+            
         // Turn off subsystems
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {

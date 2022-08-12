@@ -17,10 +17,10 @@ import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.subsystems.Intake.IntakeState;
-import org.texastorque.subsystems.Magazine.BeltDirection;
-import org.texastorque.subsystems.Magazine.GateDirection;
+import org.texastorque.subsystems.Magazine;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
+import org.texastorque.torquelib.base.TorqueDirection;
 import org.texastorque.torquelib.base.TorqueInput;
 import org.texastorque.torquelib.control.TorqueClick;
 import org.texastorque.torquelib.control.TorqueCondition;
@@ -128,21 +128,21 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     // private final void updateManualMagazineBeltControls(final TorqueController controller) {
     private final void updateManualMagazineBeltControls(final GenericController controller) {
         if (controller.getRightBumper())
-            magazine.setBeltDirection(BeltDirection.UP);
+            magazine.setBeltDirection(Magazine.MAG_UP);
         else if (controller.getRightTrigger())
-            magazine.setBeltDirection(BeltDirection.DOWN);
+            magazine.setBeltDirection(Magazine.MAG_DOWN);
         else 
-            magazine.setBeltDirection(BeltDirection.OFF);
+            magazine.setBeltDirection(TorqueDirection.OFF);
     }
 
     // private final void updateManualMagazineGateControls(final TorqueController controller) {
     private final void updateManualMagazineGateControls(final GenericController controller) {
         if (controller.getLeftBumper())
-            magazine.setGateDirection(GateDirection.FORWARD);
+            magazine.setGateDirection(TorqueDirection.FORWARD);
         else if (controller.getLeftTrigger())
-            magazine.setGateDirection(GateDirection.REVERSE);
+            magazine.setGateDirection(TorqueDirection.REVERSE);
         else 
-            magazine.setGateDirection(GateDirection.OFF);
+            magazine.setGateDirection(TorqueDirection.OFF);
     }
 
 

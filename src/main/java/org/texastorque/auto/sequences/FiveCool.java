@@ -5,8 +5,7 @@ import org.texastorque.auto.commands.Path;
 import org.texastorque.auto.commands.Shoot;
 import org.texastorque.auto.commands.Target;
 import org.texastorque.subsystems.Intake.IntakeState;
-import org.texastorque.subsystems.Magazine.BeltDirection;
-import org.texastorque.subsystems.Magazine.GateDirection;
+import org.texastorque.torquelib.base.TorqueDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
@@ -34,7 +33,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         final double rpm2 = 1600, hood2 = 30, turret2 = -105;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
-            magazine.setGateDirection(GateDirection.OFF);
+            magazine.setGateDirection(TorqueDirection.NEUTRAL);
             intake.setState(IntakeState.INTAKE);
             turret.setState(TurretState.POSITIONAL);
             turret.setPosition(turret2);
@@ -52,7 +51,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         final double rpm3 = 1600, hood3 = 20, turret3 = 180;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
-            magazine.setGateDirection(GateDirection.OFF);
+            magazine.setGateDirection(TorqueDirection.NEUTRAL);
             intake.setState(IntakeState.INTAKE);
             turret.setState(TurretState.POSITIONAL);
             turret.setPosition(turret3);
@@ -69,7 +68,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             turret.setOffset(0);
-            magazine.setBeltDirection(BeltDirection.OFF);
+            magazine.setBeltDirection(TorqueDirection.NEUTRAL);
             intake.setState(IntakeState.PRIMED);
             turret.setState(TurretState.CENTER);
         })));

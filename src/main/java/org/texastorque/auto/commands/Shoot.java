@@ -8,7 +8,7 @@ package org.texastorque.auto.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
-import org.texastorque.subsystems.Magazine.GateDirection;
+import org.texastorque.torquelib.base.TorqueDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueCommand;
@@ -55,6 +55,6 @@ public final class Shoot extends TorqueCommand implements Subsystems {
         }
 
         turret.setState(TurretState.CENTER);
-        magazine.setGateDirection(GateDirection.OFF);
+        magazine.setGateDirection(TorqueDirection.OFF);
     }
 }

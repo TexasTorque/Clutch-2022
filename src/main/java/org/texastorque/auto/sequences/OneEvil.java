@@ -11,10 +11,10 @@ import org.texastorque.Subsystems;
 import org.texastorque.auto.commands.Path;
 import org.texastorque.auto.commands.Shoot;
 import org.texastorque.subsystems.Intake.IntakeState;
-import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.TorqueExecute;
+import org.texastorque.torquelib.base.TorqueDirection;
 
 public class OneEvil extends TorqueSequence implements Subsystems {
     public OneEvil() {
@@ -24,7 +24,7 @@ public class OneEvil extends TorqueSequence implements Subsystems {
         addBlock(new TorqueBlock(new Path("One2", false, 1, .5)));
         addBlock(new TorqueBlock(new Shoot(1200, 30, -135, true, 1)));
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
-            magazine.setBeltDirection(BeltDirection.OFF);
+            magazine.setBeltDirection(TorqueDirection.OFF);
             intake.setState(IntakeState.PRIMED);
             Input.getInstance().invertDrivebaseControls();
         })));

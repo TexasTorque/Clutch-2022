@@ -10,35 +10,34 @@ import org.texastorque.Subsystems;
 import org.texastorque.auto.commands.Path;
 import org.texastorque.auto.commands.Shoot;
 import org.texastorque.subsystems.Intake.IntakeState;
-import org.texastorque.subsystems.Magazine.BeltDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.TorqueExecute;
 import org.texastorque.torquelib.auto.commands.TorqueWait;
+import org.texastorque.torquelib.base.TorqueDirection;
 
 public class TwoEvil extends TorqueSequence implements Subsystems {
     public TwoEvil() {
         final double firstTurret = -165.15;
         
         addBlock(new TorqueBlock(new TorqueWait(2), new TorqueExecute(() -> {
-                                     // magazine.setBeltDirection(BeltDirection.INTAKING);
-                                     intake.setState(IntakeState.INTAKE);
+            intake.setState(IntakeState.INTAKE);
 
-                                     turret.setState(TurretState.POSITIONAL);
-                                     turret.setPosition(firstTurret);
+            turret.setState(TurretState.POSITIONAL);
+            turret.setPosition(firstTurret);
 
-                                     shooter.setState(ShooterState.WARMUP);
-                                     shooter.setFlywheelSpeed(1000);
-                                     shooter.setHoodPosition(26);
-                                 })));
+            shooter.setState(ShooterState.WARMUP);
+            shooter.setFlywheelSpeed(1000);
+            shooter.setHoodPosition(26);
+        })));
         addBlock(new TorqueBlock(new Path("Two1", true, 2, 1)));
         addBlock(new TorqueBlock(new Shoot(1500, 20, firstTurret, true, 2)));
         addBlock(new TorqueBlock(new Path("Two2", false, 1, .5)));
         addBlock(new TorqueBlock(new Shoot(800, 30, 160, true, 1)));
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
-            magazine.setBeltDirection(BeltDirection.OFF);
+            magazine.setBeltDirection(TorqueDirection.OFF);
             intake.setState(IntakeState.PRIMED);
             turret.setState(TurretState.CENTER);
         })));

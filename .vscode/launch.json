@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch TorquePersistentBoolean",
+      "request": "launch",
+      "mainClass": "org.texastorque.torquelib.control.TorquePersistentBoolean",
+      "projectName": "Clutch-2022"
+    },
+    {
+      "type": "java",
       "name": "Launch Test",
       "request": "launch",
       "mainClass": "org.texastorque.torquelib.control.test.Test",

@@ -13,6 +13,7 @@ import org.texastorque.Subsystems;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
+import org.texastorque.torquelib.control.TorquePersistentBoolean;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.base.TorqueDirection;
 
@@ -50,6 +51,8 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
     private double shootingStartedTime = 0;
     private final double DROP_TIME = .05;
 
+    private TorquePersistentBoolean shooterReady = new TorquePersistentBoolean(5), turretLocked = new TorquePersistentBoolean(5);
+
     @Override
     public final void update(final TorqueMode mode) {
         if (intake.isOutaking()) { beltDirection = MAG_DOWN; }
@@ -68,7 +71,11 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
             shootingStarted = false;
         }
 
-        if (shooter.isReady() && turret.isLocked()) {
+        shooterReady.add(shooter.isReady());
+        turretLocked.add(turret.isLocked());
+
+        // if (shooter.isReady() && turret.isLocked()) {
+        if (shooterReady.any() && turretLocked.any()) {
             beltDirection = MAG_UP;
             gateDirection = TorqueDirection.FORWARD;
         }

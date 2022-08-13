@@ -81,6 +81,7 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
         }
 
         belt.setPercent(beltDirection.get());
+        SmartDashboard.putNumber("Gate", gateDirection.get());
         gate.setPercent(gateDirection.get());
 
         TorqueSubsystemState.logState(beltDirection);

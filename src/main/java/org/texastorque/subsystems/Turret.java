@@ -28,7 +28,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
                                 TOLERANCE = 4, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5,
                                 // KS = .2;
                                 KS = 0.14066;
-    private static final boolean SHOOT_WITH_ODOMETRY = true;
+    private static final boolean SHOOT_WITH_ODOMETRY = false;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
     public enum TurretState implements TorqueSubsystemState {

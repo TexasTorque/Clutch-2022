@@ -54,14 +54,15 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     }
 
     private final TorqueTraversableSelection<Double> 
-            translationalSpeeds = new TorqueTraversableSelection<Double>(1, .35, .45, .55),
+            // translationalSpeeds = new TorqueTraversableSelection<Double>(1, .35, .45, .55),
+            translationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .6, .7),
             rotationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .75, 1.);
 
     // Incredibly basic solution for inverting the driver controls after an auto routine.
     private double invertCoefficient = 1;
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
-    private final PIDController rotationPID = TorquePID.create(.02).addDerivative(.001)
+    private final PIDController rotationPID = TorquePID.create(.02 / 4).addDerivative(.001)
             .build().createPIDController((pid) -> {
                 pid.enableContinuousInput(0, 360);
                 return pid;

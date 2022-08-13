@@ -63,29 +63,6 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         public final boolean isShooting() { return this != OFF && this != WARMUP; }
     }
 
-    public static final class ShooterConfiguration {
-        public static final ShooterConfiguration TARGET = new ShooterConfiguration(ShooterState.REGRESSION);
-
-        public final ShooterState state;
-        public final double hood, rpm, distance, turret;
-
-        public ShooterConfiguration(final ShooterState state) {
-            this(state, 0.0, 0.0, 0.0, 0.0);
-        }
-
-        public ShooterConfiguration(final ShooterState state, final double rpm, final double hood, final double turret) {
-            this(state, rpm, hood, 0, turret);
-        }
-
-        public ShooterConfiguration(final ShooterState state, final double rpm, final double hood, final double distance, final double turret) {
-            this.state = state;
-            this.hood = hood;
-            this.rpm = rpm;
-            this.distance = distance;
-            this.turret = turret;
-        }
-    }
-
     private final TorqueLight camera;
 
     private final TorqueSparkMax hood;
@@ -124,16 +101,6 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         hood.configurePositionalCANFrame();
         hood.burnFlash();
-    }
-
-    // Using shooter configuration, we have a quick way to set shooter parameters.
-    public final void setConfiguration(final ShooterConfiguration config) {
-        setState(config.state);
-        setFlywheelSpeed(config.rpm);
-        setHoodPosition(config.hood);
-        setDistance(config.distance);
-        turret.setState(config.state == ShooterState.REGRESSION ? TurretState.TRACK : TurretState.POSITIONAL);
-        turret.setPosition(config.turret);
     }
 
     public final void setState(final ShooterState state) { this.state = state; }

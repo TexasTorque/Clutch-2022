@@ -36,8 +36,6 @@ import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static volatile Drivebase instance;
 
-    public enum DrivebaseState implements TorqueSubsystemState { ROBOT_RELATIVE, FIELD_RELATIVE, X_FACTOR }
-
     public static final double DRIVE_MAX_TRANSLATIONAL_SPEED = 4, DRIVE_MAX_TRANSLATIONAL_ACCELERATION = 2,
                                DRIVE_MAX_ROTATIONAL_SPEED = 6;
 
@@ -63,7 +61,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private final TorqueSwerveModule2021 backLeft, backRight, frontLeft, frontRight;
     private SwerveModuleState[] swerveModuleStates; // This can be made better
 
-    private DrivebaseState state = DrivebaseState.FIELD_RELATIVE;
     private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
 
     private final TorqueNavXGyro gyro = TorqueNavXGyro.getInstance();
@@ -94,10 +91,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         this.rotationalSpeedCoef = rotational;
     }
 
-    public final void setState(final DrivebaseState state) { this.state = state; }
-
-    public final DrivebaseState getState() { return state; }
-
     public final void setSpeeds(final ChassisSpeeds speeds) { this.speeds = speeds; }
 
     public final ChassisSpeeds getSpeeds() { return speeds; }
@@ -105,28 +98,19 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     @Override
     public final void initialize(final TorqueMode mode) {
         reset();
-        state = mode.isTeleop() ? DrivebaseState.FIELD_RELATIVE : DrivebaseState.ROBOT_RELATIVE;
     }
 
     @Override
     public final void update(final TorqueMode mode) {
-        if (state == DrivebaseState.X_FACTOR)
-            for (int i = 0; i < swerveModuleStates.length; i++)
-                swerveModuleStates[i] = new SwerveModuleState(0, new Rotation2d((i == 0 || i == 3) ? 135 : 45));
-
-        else if (state == DrivebaseState.FIELD_RELATIVE) {
-            final double translatingSpeed = shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
-            final double rotaitonalSpeed = shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef;
-                
-            final ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        final double translatingSpeed = shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
+        final double rotaitonalSpeed = shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef;
+        
+        if (mode.isTeleop())
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     speeds.vxMetersPerSecond * translatingSpeed, speeds.vyMetersPerSecond * translatingSpeed,
                     speeds.omegaRadiansPerSecond * rotaitonalSpeed, gyro.getRotation2dClockwise());
 
-            swerveModuleStates = kinematics.toSwerveModuleStates(fieldRelativeSpeeds);
-        } 
-        
-        else if (state == DrivebaseState.ROBOT_RELATIVE)
-            swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
+        swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 
         // Literaly does the same thing LMFAO, my implementaiton is actually better 0:
         // TorqueSwerveModule2021.equalizedDriveRatio(swerveModuleStates, DRIVE_MAX_TRANSLATIONAL_SPEED);
@@ -160,8 +144,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", speeds.vxMetersPerSecond,
                                                          speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
-
-        SmartDashboard.putString("Drive State", state.toString());
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }

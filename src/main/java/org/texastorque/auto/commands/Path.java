@@ -17,7 +17,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Drivebase;
-import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.torquelib.auto.TorqueCommand;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 
@@ -62,7 +61,6 @@ public final class Path extends TorqueCommand implements Subsystems {
         TorqueNavXGyro.getInstance().setAngleOffset(360 - trajectory.getInitialPose().getRotation().getDegrees());
         drivebase.getOdometry().resetPosition(trajectory.getInitialState().poseMeters,
                                               trajectory.getInitialState().holonomicRotation);
-        drivebase.setState(DrivebaseState.ROBOT_RELATIVE);
     }
 
     @Override

@@ -9,7 +9,6 @@ package org.texastorque.auto.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
-import org.texastorque.subsystems.Drivebase.DrivebaseState;
 import org.texastorque.torquelib.auto.TorqueCommand;
 
 public final class Creep extends TorqueCommand implements Subsystems {
@@ -25,7 +24,6 @@ public final class Creep extends TorqueCommand implements Subsystems {
     @Override
     protected final void init() {
         start = Timer.getFPGATimestamp();
-        drivebase.setState(DrivebaseState.ROBOT_RELATIVE);
         drivebase.setSpeeds(speeds);
     }
 

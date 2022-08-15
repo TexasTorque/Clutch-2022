@@ -23,6 +23,7 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
+import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
@@ -102,6 +103,9 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
+        if (mode.isTeleop())
+            updatePositionWithVision();
+
         final double translatingSpeed = shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
         final double rotaitonalSpeed = shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef;
         
@@ -144,6 +148,23 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
         SmartDashboard.putString("Speeds", String.format("(%02.3f, %02.3f, %02.3f)", speeds.vxMetersPerSecond,
                                                          speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond));
+    }
+
+    public final void updatePositionWithVision() {
+        if (shooter.getCamera().getNumberOfTargets() < 3) return;
+
+        try {
+            final Pose2d pose = TorqueLight.getRobotPose(getGyro().getRotation2dCounterClockwise(), 
+                    Rotation2d.fromDegrees(shooter.getCamera().getAveragePitch()), Rotation2d.fromDegrees(shooter.getCamera().getAverageYaw()), Shooter.TARGET_HEIGHT,
+                    Shooter.CAMERA_HEIGHT, Shooter.CAMERA_ANGLE, Shooter.TURRET_RADIUS, turret.getDegrees(), Shooter.HUB_RADIUS, Shooter.HUB_CENTER_POSITION.getX(),
+                    Shooter.HUB_CENTER_POSITION.getY());
+            SmartDashboard.putString("VisionPos", String.format("(%02.3f, %02.3f)", pose.getX(), pose.getY()));
+            odometry.resetPosition(pose, gyro.getRotation2d());
+        } catch (final Exception e) {
+            System.out.println("Failed to add vision measurement to pose estimator."
+                    + "Likely due to Cholesky decomposition failing due to it not being the sqrt method."
+                    + "Full details on the error: \n" + e.getMessage());
+        }
     }
 
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }

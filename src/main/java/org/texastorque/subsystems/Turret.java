@@ -50,8 +50,6 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private TurretState state = TurretState.OFF;
     private double position = 0;
 
-    private double offset = 0;
-
     private Turret() {
         rotator = new TorqueSparkMax(Ports.TURRET);
         camera = shooter.getCamera();
@@ -66,8 +64,6 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     public final void initialize(final TorqueMode mode) {
         state = TurretState.OFF;
     }
-
-    private final TorqueRollingMedian yawFilter = new TorqueRollingMedian(3);
 
     @Override
     public final void update(final TorqueMode mode) {
@@ -131,11 +127,8 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         // return TurretState.POSITIONAL && Math.abs(getDegrees() - position) < TOLERANCE;
     }
 
-    public void setOffset(double offset) {
-        this.offset = offset;
-    }
-
     /**
+     * WIP
      * 
      * @return
      */
@@ -152,10 +145,6 @@ public class Turret extends TorqueSubsystem implements Subsystems {
         r2 = r2.times(-1);
         SmartDashboard.putNumber("_r2-1", r2.getDegrees());
         return r2.getDegrees();
-    }
-
-    public static void main(String[] args) {
-        Rotation2d g = new Rotation2d(3);
     }
 
     public static final synchronized Turret getInstance() {

@@ -67,7 +67,6 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         // Turn off subsystems
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
-            turret.setOffset(0);
             magazine.setBeltDirection(TorqueDirection.NEUTRAL);
             intake.setState(IntakeState.PRIMED);
             turret.setState(TurretState.CENTER);

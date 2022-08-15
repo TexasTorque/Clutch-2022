@@ -114,17 +114,17 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
             for (int i = 0; i < swerveModuleStates.length; i++)
                 swerveModuleStates[i] = new SwerveModuleState(0, new Rotation2d((i == 0 || i == 3) ? 135 : 45));
 
-        else if (state == DrivebaseState.FIELD_RELATIVE)
-            swerveModuleStates = kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    speeds.vxMetersPerSecond *
-                            (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
-                    speeds.vyMetersPerSecond *
-                            (shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef),
-                    speeds.omegaRadiansPerSecond *
-                            (shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef),
-                    gyro.getRotation2dClockwise()));
+        else if (state == DrivebaseState.FIELD_RELATIVE) {
+            final double translatingSpeed = shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
+            final double rotaitonalSpeed = shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef;
+                
+            final ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    speeds.vxMetersPerSecond * translatingSpeed, speeds.vyMetersPerSecond * translatingSpeed,
+                    speeds.omegaRadiansPerSecond * rotaitonalSpeed, gyro.getRotation2dClockwise());
 
-
+            swerveModuleStates = kinematics.toSwerveModuleStates(fieldRelativeSpeeds);
+        } 
+        
         else if (state == DrivebaseState.ROBOT_RELATIVE)
             swerveModuleStates = kinematics.toSwerveModuleStates(speeds);
 

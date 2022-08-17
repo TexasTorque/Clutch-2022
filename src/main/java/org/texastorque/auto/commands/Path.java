@@ -10,7 +10,6 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -18,11 +17,12 @@ import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.torquelib.auto.TorqueCommand;
+import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 
 public final class Path extends TorqueCommand implements Subsystems {
-    private final PIDController xController = new PIDController(1, 0, 0);
-    private final PIDController yController = new PIDController(1, 0, 0);
+    private final TorquePID xController = TorquePID.create(1).build();
+    private final TorquePID yController = TorquePID.create(1).build();
     private final ProfiledPIDController thetaController =
             new ProfiledPIDController(4, 0, 0, new TrapezoidProfile.Constraints(6 * Math.PI, 6 * Math.PI));
     private final HolonomicDriveController controller =

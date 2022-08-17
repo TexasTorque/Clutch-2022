@@ -6,7 +6,6 @@
  */
 package org.texastorque.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,14 +40,10 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     private final TorqueLight camera;
     private final TorqueSparkMax rotator;
 
-    // Needs to be played with
-    // private final PIDController pidController = new PIDController(0.15, 0, 0);
-    // private final PIDController pidController = new PIDController(.1039, 0, 0);
-    private final PIDController pidController = TorquePID.create(.1039).build().createPIDController();
+    private final TorquePID pid = TorquePID.create(.1039).build();
 
-    private double requested = 0;
+    private double requested = 0, position = 0;
     private TurretState state = TurretState.OFF;
-    private double position = 0;
 
     private Turret() {
         rotator = new TorqueSparkMax(Ports.TURRET);
@@ -114,7 +109,7 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     }
 
     private final double calculateRequested(final double real, final double requested) {
-        return formatRequested(pidController.calculate(real, requested));
+        return formatRequested(pid.calculate(real, requested));
     }
 
     private final double formatRequested(final double requested) { return KS * Math.signum(requested) + requested; }

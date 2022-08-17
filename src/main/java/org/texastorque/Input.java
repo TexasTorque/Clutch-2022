@@ -33,14 +33,15 @@ import org.texastorque.torquelib.util.GenericController;
 import org.texastorque.torquelib.util.TorqueMath;
 
 @SuppressWarnings("deprecation")
-public final class Input extends TorqueInput<GenericController> implements Subsystems {
+// public final class Input extends TorqueInput<GenericController> implements Subsystems {
+public final class Input extends TorqueInput<TorqueController> implements Subsystems {
     private static volatile Input instance;
 
     private Input() {
-        // driver = new TorqueController(ControllerPort.DRIVER);
-        // operator = new TorqueController(ControllerPort.OPERATOR);
-        driver = new GenericController(0, .1);
-        operator = new GenericController(1, .1);
+        // driver = new GenericController(0, .1);
+        // operator = new GenericController(1, .1);
+        driver = new TorqueController(ControllerPort.DRIVER);
+        operator = new TorqueController(ControllerPort.OPERATOR);
     }
 
     @Override
@@ -123,8 +124,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         // magazine.setState(BeltDirection.OFF, GateDirection.OFF); 
     }
 
-    // private final void updateManualMagazineBeltControls(final TorqueController controller) {
-    private final void updateManualMagazineBeltControls(final GenericController controller) {
+    // private final void updateManualMagazineBeltControls(final GenericController controller) {
+    private final void updateManualMagazineBeltControls(final TorqueController controller) {
         if (controller.getRightBumper())
             magazine.setBeltDirection(Magazine.MAG_UP);
         else if (controller.getRightTrigger())
@@ -133,8 +134,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             magazine.setBeltDirection(TorqueDirection.OFF);
     }
 
-    // private final void updateManualMagazineGateControls(final TorqueController controller) {
-    private final void updateManualMagazineGateControls(final GenericController controller) {
+    // private final void updateManualMagazineGateControls(final GenericController controller) {
+    private final void updateManualMagazineGateControls(final TorqueController controller) {
         if (controller.getLeftBumper())
             magazine.setGateDirection(TorqueDirection.FORWARD);
         else if (controller.getLeftTrigger())
@@ -193,8 +194,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
-    // private final void updateManualArmControls(final TorqueController controller) {
-    private final void updateManualArmControls(final GenericController controller) {
+    // private final void updateManualArmControls(final GenericController controller) {
+    private final void updateManualArmControls(final TorqueController controller) {
         if (controller.getDPADDown())
             climber.setManual(ManualClimbState.BOTH_DOWN);
         else if (controller.getDPADUp())
@@ -207,8 +208,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             climber.setManual(ManualClimbState.OFF);
     }
 
-    // private final void updateManualWinchControls(final TorqueController controller) {
-    private final void updateManualWinchControls(final GenericController controller) {
+    // private final void updateManualWinchControls(final GenericController controller) {
+    private final void updateManualWinchControls(final TorqueController controller) {
         if (controller.getBButton() && controller.getDPADUp())
             climber.setWinch(ManualWinchState.OUT);
         else if (controller.getBButton() && controller.getDPADDown())
@@ -216,7 +217,6 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         else
             climber.setWinch(ManualWinchState.OFF);
     }
-
 
     public static final synchronized Input getInstance() {
         return instance == null ? instance = new Input() : instance;

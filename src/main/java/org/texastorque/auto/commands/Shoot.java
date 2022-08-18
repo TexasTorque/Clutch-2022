@@ -18,6 +18,14 @@ public final class Shoot extends TorqueCommand implements Subsystems {
     private double start = -1;
     private final boolean stop;
 
+    public Shoot(final double rpm, final double hood, final boolean stop, final double time) {
+        this.rpm = rpm;
+        this.hood = hood;
+        this.tur = Double.NaN; 
+        this.time = time;
+        this.stop = stop;
+    }
+
     public Shoot(final double rpm, final double hood, final double tur, final boolean stop, final double time) {
         this.rpm = rpm;
         this.hood = hood;
@@ -32,6 +40,7 @@ public final class Shoot extends TorqueCommand implements Subsystems {
         shooter.setFlywheelSpeed(rpm);
         shooter.setHoodPosition(hood);
         turret.setState(TurretState.POSITIONAL);
+        turret.setPosition(Double.isNaN(tur) ? turret.calculateAngleWithOdometry() : tur);
         turret.setPosition(tur);
     }
 

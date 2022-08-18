@@ -6,6 +6,7 @@
  */
 package org.texastorque.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,7 +21,7 @@ import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.TorqueMath;
 
-public class Turret extends TorqueSubsystem implements Subsystems {
+public final class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
     private static final double MAX_VOLTS = 12, RATIO = 128.4722, ROT_CENTER = 0, ROT_BACK = 180,
@@ -123,23 +124,18 @@ public class Turret extends TorqueSubsystem implements Subsystems {
     }
 
     /**
-     * WIP
+     * Calculates the angle of the turret to the hub based on the
+     * current robot odometry position.
      * 
-     * @return
+     * @return Degrees to hub.
      */
-    private final double calculateAngleWithOdometry() {
-        //          v  This might want to be raw gyro angle??
-        SmartDashboard.putNumber("_gcw", drivebase.getGyro().getRotation2dClockwise().getDegrees());
-        SmartDashboard.putNumber("_gccw", drivebase.getGyro().getRotation2dCounterClockwise().getDegrees());
-        final Rotation2d r = new Rotation2d(Math.atan2(HUB_CENTER_POSITION.getX() - drivebase.getPose().getX(),
-                                                  HUB_CENTER_POSITION.getY() - drivebase.getPose().getY()));
-        SmartDashboard.putNumber("_r", r.getDegrees());
-        Rotation2d r2 = r.times(-1).minus(drivebase.getGyro().getRotation2d());
-        //  drivebase.getGyro().getRotation2d()
-        SmartDashboard.putNumber("_r2", r2.getDegrees());
-        r2 = r2.times(-1);
-        SmartDashboard.putNumber("_r2-1", r2.getDegrees());
-        return r2.getDegrees();
+    public final double calculateAngleWithOdometry() {
+        final Pose2d pose = drivebase.getPose();
+        final double x = Shooter.HUB_CENTER_POSITION.getX() - pose.getX();
+        final double y = Shooter.HUB_CENTER_POSITION.getY() - pose.getY();
+        final Rotation2d angle = new Rotation2d(Math.atan2(y, x));
+        final Rotation2d combined = pose.getRotation().minus(angle).times(-1);
+        return combined.getDegrees();
     }
 
     public static final synchronized Turret getInstance() {

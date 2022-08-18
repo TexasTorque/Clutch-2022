@@ -103,8 +103,8 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        if (mode.isTeleop())
-            updatePositionWithVision();
+        // if (mode.isTeleop())
+            // updatePositionWithVision();
 
         final double translatingSpeed = shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
         final double rotaitonalSpeed = shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef;

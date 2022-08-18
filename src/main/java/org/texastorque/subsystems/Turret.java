@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -24,10 +24,10 @@ import org.texastorque.torquelib.util.TorqueMath;
 public final class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
-    private static final double MAX_VOLTS = 12, RATIO = 128.4722, ROT_CENTER = 0, ROT_BACK = 180,
-                                TOLERANCE = 4, MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5,
+    private static final double MAX_VOLTS = 12, RATIO = 128.4722, ROT_CENTER = 0, ROT_BACK = 180, TOLERANCE = 4,
+                                MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5,
                                 // KS = .2;
-                                KS = 0.14066;
+            KS = 0.14066;
     private static final boolean SHOOT_WITH_ODOMETRY = false;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
@@ -63,6 +63,7 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
+        calculateAngleWithOdometry();
         // These should be inside tracking logic
         // if (getDegrees() > MAX_LEFT) state = TurretState.CENTER;
         // requested = formatRequested(-DIRECTIONAL);
@@ -79,13 +80,13 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);
         } else if (state == TurretState.POSITIONAL) {
-            requested = calculateRequested(mode.isAuto() ? position
-                                                         : TorqueMath.constrain(position, MAX_RIGHT, MAX_LEFT));
+            requested =
+                    calculateRequested(mode.isAuto() ? position : TorqueMath.constrain(position, MAX_RIGHT, MAX_LEFT));
         } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
                 // is this good, idk?
                 requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
-                // requested = isLocked() ? 0 : calculateRequested(yawFilter.calculate(camera.getTargetYaw()), 0);
+            // requested = isLocked() ? 0 : calculateRequested(yawFilter.calculate(camera.getTargetYaw()), 0);
             else
                 requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
         } else
@@ -101,9 +102,7 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Turret Locked", isLocked());
     }
 
-    public final double getDegrees() {
-        return (rotator.getPosition() / RATIO * 360.) % 360;
-    }
+    public final double getDegrees() { return (rotator.getPosition() / RATIO * 360.) % 360; }
 
     private final double calculateRequested(final double requested) {
         return calculateRequested(getDegrees(), requested);
@@ -126,15 +125,18 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
     /**
      * Calculates the angle of the turret to the hub based on the
      * current robot odometry position.
-     * 
+     *
      * @return Degrees to hub.
      */
     public final double calculateAngleWithOdometry() {
         final Pose2d pose = drivebase.getPose();
+        SmartDashboard.putString("_P", pose.toString());
         final double x = Shooter.HUB_CENTER_POSITION.getX() - pose.getX();
         final double y = Shooter.HUB_CENTER_POSITION.getY() - pose.getY();
         final Rotation2d angle = new Rotation2d(Math.atan2(y, x));
-        final Rotation2d combined = pose.getRotation().minus(angle).times(-1);
+        final Rotation2d combined = pose.getRotation().minus(angle);
+        SmartDashboard.putNumber("_A", combined.getDegrees());
+        SmartDashboard.putNumber("_B", combined.times(-1).getDegrees());
         return combined.getDegrees();
     }
 

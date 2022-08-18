@@ -41,6 +41,11 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
     public final void setGateDirection(final TorqueDirection direction) { this.gateDirection = direction; }
 
+    public final void setManualState(final boolean up, final boolean down) {
+        setBeltDirection(up ? MAG_UP : down ? MAG_DOWN : TorqueDirection.NEUTRAL);
+        setBeltDirection(up ? TorqueDirection.FORWARD : down ? TorqueDirection.REVERSE : TorqueDirection.NEUTRAL);
+    }
+
     @Override
     public final void initialize(final TorqueMode mode) {
         this.beltDirection = TorqueDirection.OFF;

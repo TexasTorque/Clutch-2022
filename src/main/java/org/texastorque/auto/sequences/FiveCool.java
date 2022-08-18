@@ -5,12 +5,12 @@ import org.texastorque.auto.commands.Path;
 import org.texastorque.auto.commands.Shoot;
 import org.texastorque.auto.commands.Target;
 import org.texastorque.subsystems.Intake.IntakeState;
-import org.texastorque.torquelib.base.TorqueDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 import org.texastorque.torquelib.auto.commands.TorqueExecute;
+import org.texastorque.torquelib.base.TorqueDirection;
 
 public class FiveCool extends TorqueSequence implements Subsystems {
     public FiveCool() {
@@ -19,7 +19,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         // Turn on subsystems and shoot the first ball
 
         final double rpm1 = 1500, hood1 = 10, turret1 = 165;
-     
+
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             intake.setState(IntakeState.INTAKE);
             turret.setState(TurretState.POSITIONAL);
@@ -44,12 +44,13 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         addBlock(new TorqueBlock(new Path("Five1", true, 4, 4)));
         // addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 1.8)));
-        addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 2)));
+        // addBlock(new TorqueBlock(new Shoot(rpm2, hood2, false, 2)));
+        addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 3)));
         // addBlock(new TorqueBlock(new Target(true, 1.8)));
 
         // Pick up balls at human player
 
-        final double rpm3 = 1700, hood3 = 30, turret3 = 182;
+        final double rpm3 = 1700, hood3 = 30, turret3 = 175;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             magazine.setGateDirection(TorqueDirection.NEUTRAL);
@@ -61,11 +62,11 @@ public class FiveCool extends TorqueSequence implements Subsystems {
             shooter.setHoodPosition(hood3);
         })));
 
-        addBlock(new TorqueBlock(new Path("Five2", false, 4, 6)));
+        addBlock(new TorqueBlock(new Path("Five2", false, 4, 4)));
         // addBlock(new TorqueBlock(new Shoot(rpm3, hood3, true, 4)));
         addBlock(new TorqueBlock(new Shoot(rpm3, hood3, turret3, true, 4)));
         // addBlock(new TorqueBlock(new Target(true, 1.8)));
-            
+
         // Turn off subsystems
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {

@@ -39,8 +39,10 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
 
     public static enum ManualClimbState implements TorqueSubsystemState {
         OFF(0, 0),
-        ZERO_LEFT(-.3, 0),
-        ZERO_RIGHT(0, -.3),
+        DOWN_LEFT(-.5, 0),
+        DOWN_RIGHT(0, -.5),
+        UP_LEFT(.5, 0),
+        UP_RIGHT(0, .5),
         BOTH_UP(1, 1),
         BOTH_DOWN(-1, -1);
 
@@ -305,9 +307,11 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         //     winch.setPercent(winch.getPosition() >= toWinch ? -.3 : 0);
         // else
         //     winch.setPercent(0);
-        var x = true;
-        winch.setPercent(x ? (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset
-                ? (-winch.getPosition() >= toWinch ? WINCH_PWR : 0) : 0) : 0);
+        // var x = true;
+        // winch.setPercent(x ? (left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset
+                // ? (-winch.getPosition() >= toWinch ? WINCH_PWR : 0) : 0) : 0);
+        winch.setPercent(left.getPosition() >= toLeft - offset && -right.getPosition() >= toRight - offset
+                ? (-winch.getPosition() >= toWinch ? WINCH_PWR : 0) : 0);
 
         if (TorqueMath.toleranced(left.getPosition(), toLeft, 5) &&
             TorqueMath.toleranced(-right.getPosition(), toRight, 5) && approved &&

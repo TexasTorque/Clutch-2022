@@ -9,8 +9,6 @@ package org.texastorque;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.texastorque.subsystems.Climber.ManualClimbState;
-import org.texastorque.subsystems.Climber.ManualWinchState;
 import org.texastorque.subsystems.Drivebase;
 import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Intake.IntakeState;
@@ -126,14 +124,6 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putNumber("IRPM", flywheelRPM.getSpeed());
         SmartDashboard.putNumber("IHOOD", hoodSetpoint.getSpeed());
 
-        // This is debugging for the regression
-        // if (operator.getXButton()) {
-        //     shooter.setState(ShooterState.SETPOINT);
-        //     shooter.setFlywheelSpeed(flywheelRPM.getSpeed());
-        //     shooter.setHoodPosition(hoodSetpoint.getSpeed());
-        //     // turret.setState(TurretState.CENTER);
-        // } else 
-        
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(TurretState.TRACK);
@@ -155,41 +145,40 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         if (driver.getLeftCenterButton()) climber.reset();
 
         updateManualArmControls();
-        updateManualWinchControls(operator);
+        updateManualWinchControls();
 
         climber.setAuto(driver.getYButton());
 
-        if (toggleClimberHooks.calculate(driver.getBButton())) 
+        if (toggleClimberHooks.calculate(driver.getBButton() || operator.getBButton())) 
             climber.setServos(servoEnabled = !servoEnabled);
 
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
     private final void updateManualArmControls() {       
-        if (driver.getDPADRight())
-            climber.setManual(ManualClimbState.DOWN_RIGHT);
-        else if (driver.getDPADLeft())
-            climber.setManual(ManualClimbState.DOWN_LEFT);
-        else if (operator.getRightTrigger())
-            climber.setManual(ManualClimbState.DOWN_RIGHT);
-        else if (operator.getLeftTrigger())
-            climber.setManual(ManualClimbState.DOWN_LEFT);
+        if (operator.getRightTrigger())
+            climber.setManualRight(TorqueDirection.FORWARD);
         else if (operator.getRightBumper())
-            climber.setManual(ManualClimbState.UP_RIGHT);
-        else if (operator.getLeftBumper())
-            climber.setManual(ManualClimbState.UP_LEFT);
+            climber.setManualRight(TorqueDirection.REVERSE);
         else
-            climber.setManual(ManualClimbState.OFF);
+            climber.setManualRight(TorqueDirection.OFF);
+
+        if (operator.getLeftTrigger())
+            climber.setManualLeft(TorqueDirection.FORWARD);
+        else if (operator.getLeftBumper())
+            climber.setManualLeft(TorqueDirection.REVERSE);
+        else
+            climber.setManualLeft(TorqueDirection.OFF);
     }
 
-    private final void updateManualWinchControls(final GenericController controller) {
+    private final void updateManualWinchControls() {
     // private final void updateManualWinchControls(final TorqueController controller) {
-        if (controller.getDPADUp())
-            climber.setWinch(ManualWinchState.OUT);
-        else if (controller.getDPADDown())
-            climber.setWinch(ManualWinchState.IN);
+        if (operator.getDPADUp())
+            climber.setManualWinch(TorqueDirection.FORWARD);
+        else if (operator.getDPADDown())
+            climber.setManualWinch(TorqueDirection.REVERSE);
         else
-            climber.setWinch(ManualWinchState.OFF);
+            climber.setManualWinch(TorqueDirection.OFF);
     }
 
     public static final synchronized Input getInstance() {

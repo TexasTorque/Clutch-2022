@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueDirection;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
@@ -37,29 +38,6 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         public final AutoClimbState next() { return values()[(this.ordinal() + 1) % values().length]; }
     }
 
-    public static enum ManualClimbState implements TorqueSubsystemState {
-        OFF(0, 0),
-        DOWN_LEFT(-.5, 0),
-        DOWN_RIGHT(0, -.5),
-        UP_LEFT(.5, 0),
-        UP_RIGHT(0, .5),
-        BOTH_UP(1, 1),
-        BOTH_DOWN(-1, -1);
-
-        public final double left, right;
-
-        ManualClimbState(final double left, final double right) {
-            this.left = left;
-            this.right = right;
-        }
-    }
-
-    public static enum ManualWinchState implements TorqueSubsystemState {
-        IN, OFF, OUT;
-        public final double getDirection() { return this.ordinal() - 1; }
-        public final boolean isOn() { return this != OFF; }
-    }
-
     private final TorqueSparkMax left, right, winch;
     private final Servo leftServo, rightServo;
     private final DigitalInput leftSwitch, rightSwitch;
@@ -73,8 +51,15 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         if (approvalReset.calculate(running)) approved = true;
     }
 
-    public final void setManual(final ManualClimbState manual) { this.manualState = manual; }
-    public final void setWinch(final ManualWinchState winch) { this.winchState = winch; }
+    public final void setManualRight(final TorqueDirection right) { 
+        this.rightMan = right;
+    }
+
+    public final void setManualLeft(final TorqueDirection left) { 
+        this.leftMan = left; 
+    }
+
+    public final void setManualWinch(final TorqueDirection winch) { this.winchMan = winch; }
 
     public final boolean hasStarted() { return started; }
 
@@ -83,10 +68,11 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         approved = false;
         running = false;
         climbState = AutoClimbState.OFF;
-        manualState = ManualClimbState.OFF;
-        winchState = ManualWinchState.OFF;
         tooLowRight = false;
         tooLowLeft = false;
+        leftMan = TorqueDirection.OFF;
+        rightMan = TorqueDirection.OFF;
+        winchMan = TorqueDirection.OFF;
     }
 
     private final void advance() {
@@ -104,8 +90,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private AutoClimbState climbState = AutoClimbState.OFF;
-    private ManualClimbState manualState = ManualClimbState.OFF;
-    private ManualWinchState winchState = ManualWinchState.OFF;
+    private TorqueDirection leftMan = TorqueDirection.OFF, rightMan = TorqueDirection.OFF, winchMan = TorqueDirection.OFF;
 
     private final TorqueSparkMax setupArmMotors(final int port) {
         final TorqueSparkMax motor = new TorqueSparkMax(port);
@@ -181,10 +166,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putNumber("Gyro Pitch", drivebase.getGyro().getPitch());
         SmartDashboard.putNumber("Gyro Roll", drivebase.getGyro().getRoll());
         SmartDashboard.putNumber("Gyro Yaw", drivebase.getGyro().getYaw());
-
-        if (winchState.isOn()) 
-            winch.setPercent(winchState.getDirection() * WINCH_PWR);
-        else if (running)
+           
+        if (running)
             handleAutoClimb();
         else
             handleManualState();
@@ -209,36 +192,40 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleManualState() {
-        if (manualState != ManualClimbState.OFF)
-            started = true;
+        left.setPercent(leftMan.get());
+        right.setPercent(-rightMan.get());
 
-        // Horribly ugly code bc we at a competition (;
-        // Very sorry, will refactor later
-        if (manualState == ManualClimbState.BOTH_UP) {
-            if (left.getPosition() >= MAX_LEFT)
-                left.setPercent(0);
-            else
-                left.setPercent(1);
+        // if (manualState != ManualClimbState.OFF)
+        //     started = true;
 
-            if (-right.getPosition() >= MAX_RIGHT)
-                right.setPercent(0);
-            else
-                right.setPercent(-1);
-        } else if (manualState == ManualClimbState.BOTH_DOWN) {
-            if (left.getPosition() <= 0)
-                left.setPercent(0);
-            else
-                left.setPercent(-1);
+        // // Horribly ugly code bc we at a competition (;
+        // // Very sorry, will refactor later
+        // if (manualState == ManualClimbState.BOTH_UP) {
+        //     if (left.getPosition() >= MAX_LEFT)
+        //         left.setPercent(0);
+        //     else
+        //         left.setPercent(1);
 
-             if (-right.getPosition() <= 0)
-                right.setPercent(0);
-            else
-                right.setPercent(1);
-        } else {
-            left.setPercent(manualState.left);
-            right.setPercent(-manualState.right);
-        }
-        winch.setPercent(0);
+        //     if (-right.getPosition() >= MAX_RIGHT)
+        //         right.setPercent(0);
+        //     else
+        //         right.setPercent(-1);
+        // } else if (manualState == ManualClimbState.BOTH_DOWN) {
+        //     if (left.getPosition() <= 0)
+        //         left.setPercent(0);
+        //     else
+        //         left.setPercent(-1);
+
+        //      if (-right.getPosition() <= 0)
+        //         right.setPercent(0);
+        //     else
+        //         right.setPercent(1);
+        // } else {
+        //     left.setPercent(manualState.left);
+        //     right.setPercent(-manualState.right);
+        // }
+        SmartDashboard.putNumber("Winch setpoint", winchMan.get() * WINCH_PWR);
+        winch.setPercent(winchMan.get() * WINCH_PWR);
     }
 
     private final void killMotors() {

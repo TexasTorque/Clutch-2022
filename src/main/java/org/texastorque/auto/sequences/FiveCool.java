@@ -18,7 +18,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         // Turn on subsystems and shoot the first ball
 
-        final double rpm1 = 1500, hood1 = 10, turret1 = 165;
+        final double rpm1 = 1550, hood1 = 20, turret1 = 165;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             intake.setState(IntakeState.INTAKE);
@@ -45,12 +45,12 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         addBlock(new TorqueBlock(new Path("Five1", true, 4, 4)));
         // addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 1.8)));
         // addBlock(new TorqueBlock(new Shoot(rpm2, hood2, false, 2)));
-        addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 3)));
+        addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, true, 1.5)));
         // addBlock(new TorqueBlock(new Target(true, 1.8)));
 
         // Pick up balls at human player
 
-        final double rpm3 = 1700, hood3 = 30, turret3 = 175;
+        final double rpm3 = 1600, hood3 = 30, turret3 = 175;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             magazine.setGateDirection(TorqueDirection.NEUTRAL);
@@ -58,11 +58,11 @@ public class FiveCool extends TorqueSequence implements Subsystems {
             turret.setState(TurretState.POSITIONAL);
             turret.setPosition(turret3);
             shooter.setState(ShooterState.WARMUP);
-            shooter.setFlywheelSpeed(rpm3 - warmupDelta);
+            shooter.setFlywheelSpeed(rpm3 - warmupDelta - 100);
             shooter.setHoodPosition(hood3);
         })));
 
-        addBlock(new TorqueBlock(new Path("Five2", false, 4, 4)));
+        addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
         // addBlock(new TorqueBlock(new Shoot(rpm3, hood3, true, 4)));
         addBlock(new TorqueBlock(new Shoot(rpm3, hood3, turret3, true, 4)));
         // addBlock(new TorqueBlock(new Target(true, 1.8)));

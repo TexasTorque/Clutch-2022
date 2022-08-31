@@ -93,6 +93,11 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
         TorqueSubsystemState.logState(gateDirection);
 
         SmartDashboard.putNumber("Belt Amps", belt.getCurrent());
+
+        // Should fix the shooting early bug that was introduced by the used of
+        //       if (shooterReady.any() && turretLocked.any())
+        if (mode.isAuto())
+            gateDirection = TorqueDirection.OFF;
     }
 
     public static final synchronized Magazine getInstance() {

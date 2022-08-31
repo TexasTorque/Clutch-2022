@@ -19,11 +19,7 @@ public final class Shoot extends TorqueCommand implements Subsystems {
     private final boolean stop;
 
     public Shoot(final double rpm, final double hood, final boolean stop, final double time) {
-        this.rpm = rpm;
-        this.hood = hood;
-        this.tur = Double.NaN; 
-        this.time = time;
-        this.stop = stop;
+        this(rpm, hood, Double.NaN, stop, time);
     }
 
     public Shoot(final double rpm, final double hood, final double tur, final boolean stop, final double time) {

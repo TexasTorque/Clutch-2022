@@ -81,7 +81,7 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
         shooterReady.add(shooter.isReady());
         turretLocked.add(turret.isLocked());
-        shouldShoot.add(shooter.isReady() && (turret.isLocked());
+        shouldShoot.add(shooter.isReady() && turret.isLocked());
 
         // if (shooter.isReady() && turret.isLocked()) {
         // if (shouldShoot.any()) {

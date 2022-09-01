@@ -25,8 +25,8 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
     private static volatile Turret instance;
 
     private static final double MAX_VOLTS = 12, RATIO = 128.4722, ROT_CENTER = 0, ROT_BACK = 180, TOLERANCE = 4,
-                                MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5,
-                                // KS = .2;
+            MAX_LEFT = 93, MAX_RIGHT = -93, DIRECTIONAL = 5,
+            // KS = .2;
             KS = 0.14066;
     private static final boolean SHOOT_WITH_ODOMETRY = false;
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
@@ -52,9 +52,13 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         rotator.setEncoderZero(RATIO * -90 / 360);
     }
 
-    public final void setState(final TurretState state) { this.state = state; }
+    public final void setState(final TurretState state) {
+        this.state = state;
+    }
 
-    public final void setPosition(final double position) { this.position = position; }
+    public final void setPosition(final double position) {
+        this.position = position;
+    }
 
     @Override
     public final void initialize(final TorqueMode mode) {
@@ -80,13 +84,15 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         } else if (state == TurretState.CENTER) {
             requested = calculateRequested(ROT_CENTER);
         } else if (state == TurretState.POSITIONAL) {
-            requested =
-                    calculateRequested(mode.isAuto() ? position : TorqueMath.constrain(position, MAX_RIGHT, MAX_LEFT));
+            requested = calculateRequested(
+                    mode.isAuto() ? position : TorqueMath.constrain(position, MAX_RIGHT, MAX_LEFT));
         } else if (state == TurretState.TRACK) {
             if (camera.hasTargets())
                 // is this good, idk?
                 requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
             // requested = isLocked() ? 0 : calculateRequested(yawFilter.calculate(camera.getTargetYaw()), 0);
+            // else if (mode.isAuto())
+            //     requested = 0;
             else
                 requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
         } else
@@ -102,7 +108,9 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Turret Locked", isLocked());
     }
 
-    public final double getDegrees() { return (rotator.getPosition() / RATIO * 360.) % 360; }
+    public final double getDegrees() {
+        return (rotator.getPosition() / RATIO * 360.) % 360;
+    }
 
     private final double calculateRequested(final double requested) {
         return calculateRequested(getDegrees(), requested);
@@ -112,7 +120,9 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         return formatRequested(pid.calculate(real, requested));
     }
 
-    private final double formatRequested(final double requested) { return KS * Math.signum(requested) + requested; }
+    private final double formatRequested(final double requested) {
+        return KS * Math.signum(requested) + requested;
+    }
 
     public final boolean isLocked() {
         SmartDashboard.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));

@@ -42,12 +42,14 @@ public final class Target extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void continuous() {
-        if (shooter.isReady() && start == -1) start = Timer.getFPGATimestamp();
+        if (shooter.isReady() && start == -1)
+            start = Timer.getFPGATimestamp();
     }
 
     @Override
     protected final boolean endCondition() {
-        return start != -1 && (Timer.getFPGATimestamp() - start) > time;
+        //return start != -1 && (Timer.getFPGATimestamp() - start) > time;
+        return false;
     }
 
     @Override

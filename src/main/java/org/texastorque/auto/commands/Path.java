@@ -23,10 +23,10 @@ import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 public final class Path extends TorqueCommand implements Subsystems {
     private final TorquePID xController = TorquePID.create(1).build();
     private final TorquePID yController = TorquePID.create(1).build();
-    private final ProfiledPIDController thetaController =
-            new ProfiledPIDController(4, 0, 0, new TrapezoidProfile.Constraints(6 * Math.PI, 6 * Math.PI));
-    private final HolonomicDriveController controller =
-            new HolonomicDriveController(xController, yController, thetaController);
+    private final ProfiledPIDController thetaController = new ProfiledPIDController(4, 0, 0,
+            new TrapezoidProfile.Constraints(6 * Math.PI, 6 * Math.PI));
+    private final HolonomicDriveController controller = new HolonomicDriveController(xController, yController,
+            thetaController);
 
     private final PathPlannerTrajectory trajectory;
     private final Timer timer = new Timer();
@@ -35,14 +35,14 @@ public final class Path extends TorqueCommand implements Subsystems {
     public Path(final String name) {
         thetaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
         trajectory = PathPlanner.loadPath(name, Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
-                                          Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED);
+                Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED);
         resetOdometry = false;
     }
 
     public Path(final String name, final boolean reset) {
         thetaController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
         trajectory = PathPlanner.loadPath(name, Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED,
-                                          Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED);
+                Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED);
         this.resetOdometry = reset;
     }
 
@@ -56,18 +56,19 @@ public final class Path extends TorqueCommand implements Subsystems {
     protected final void init() {
         timer.reset();
         timer.start();
-        if (!resetOdometry) return;
+        if (!resetOdometry)
+            return;
 
         TorqueNavXGyro.getInstance().setAngleOffset(360 - trajectory.getInitialPose().getRotation().getDegrees());
         drivebase.getOdometry().resetPosition(trajectory.getInitialState().poseMeters,
-                                              trajectory.getInitialState().holonomicRotation);
+                trajectory.getInitialState().holonomicRotation);
     }
 
     @Override
     protected final void continuous() {
-        final PathPlannerState current = (PathPlannerState)trajectory.sample(timer.get());
-        ChassisSpeeds speeds =
-                controller.calculate(drivebase.getOdometry().getPoseMeters(), current, current.holonomicRotation);
+        final PathPlannerState current = (PathPlannerState) trajectory.sample(timer.get());
+        ChassisSpeeds speeds = controller.calculate(drivebase.getOdometry().getPoseMeters(), current,
+                current.holonomicRotation);
         speeds = new ChassisSpeeds(-speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
         drivebase.setSpeeds(speeds);
     }

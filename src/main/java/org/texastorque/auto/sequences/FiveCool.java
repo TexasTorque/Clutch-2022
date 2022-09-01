@@ -18,7 +18,9 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         // Turn on subsystems and shoot the first ball
 
-        final double rpm1 = 1550, hood1 = 20, turret1 = 165;
+        final double rpmAdj = 0;
+
+        final double rpm1 = 1550 + rpmAdj, hood1 = 20, turret1 = 165;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             intake.setState(IntakeState.INTAKE);
@@ -30,7 +32,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         // Pick up and shoot the second and third balls
 
-        final double rpm2 = 1600, hood2 = 25, turret2 = -100;
+        final double rpm2 = 1625 + rpmAdj, hood2 = 30, turret2 = -100;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             magazine.setGateDirection(TorqueDirection.NEUTRAL);
@@ -43,14 +45,14 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         })));
 
         addBlock(new TorqueBlock(new Path("Five1", true, 4, 4)));
-        // addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 1.8)));
+        addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, false, 1.8)));
         // addBlock(new TorqueBlock(new Shoot(rpm2, hood2, false, 2)));
-        addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, true, 1.5)));
+        // addBlock(new TorqueBlock(new Shoot(rpm2, hood2, turret2, true, 1.5)));
         // addBlock(new TorqueBlock(new Target(true, 1.8)));
 
         // Pick up balls at human player
 
-        final double rpm3 = 1600, hood3 = 30, turret3 = 175;
+        final double rpm3 = 1700 + rpmAdj, hood3 = 30, turret3 = 175;
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             magazine.setGateDirection(TorqueDirection.NEUTRAL);
@@ -58,14 +60,15 @@ public class FiveCool extends TorqueSequence implements Subsystems {
             turret.setState(TurretState.POSITIONAL);
             turret.setPosition(turret3);
             shooter.setState(ShooterState.WARMUP);
-            shooter.setFlywheelSpeed(rpm3 - warmupDelta - 100);
+            shooter.setFlywheelSpeed(rpm3 - warmupDelta);
             shooter.setHoodPosition(hood3);
         })));
 
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
-        // addBlock(new TorqueBlock(new Shoot(rpm3, hood3, true, 4)));
+        //addBlock(new TorqueBlock(new Shoot(rpm3, hood3, true, 4)));
         addBlock(new TorqueBlock(new Shoot(rpm3, hood3, turret3, true, 4)));
-        // addBlock(new TorqueBlock(new Target(true, 1.8)));
+        //addBlock(new TorqueBlock(new Target(true, 4)));
+        //addBlock(new TorqueBlock(new Target(false, 4, rpm3, turret3)));
 
         // Turn off subsystems
 

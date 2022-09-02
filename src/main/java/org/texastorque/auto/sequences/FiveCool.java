@@ -63,10 +63,8 @@ public class FiveCool extends TorqueSequence implements Subsystems {
         })));
 
         addBlock(new TorqueBlock(new Path("Five2", false, 4, 2)));
-        //addBlock(new TorqueBlock(new Shoot(rpm3, hood3, true, 4)));
-        addBlock(new TorqueBlock(new Shoot(rpm3, hood3, turret3, true, 4)));
-        //addBlock(new TorqueBlock(new Target(true, 4)));
-        // addBlock(new TorqueBlock(new Target(false, 4, rpm3, hood3, turret3)));
+        // addBlock(new TorqueBlock(new Shoot(rpm3, hood3, turret3, true, 4)));
+        addBlock(new TorqueBlock(new Target(false, 4, rpm3, hood3, turret3)));
 
         // Turn off subsystems
 

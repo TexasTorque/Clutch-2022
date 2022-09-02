@@ -14,23 +14,30 @@ import org.texastorque.torquelib.auto.TorqueCommand;
 import org.texastorque.torquelib.base.TorqueDirection;
 
 public final class Target extends TorqueCommand implements Subsystems {
-    private final double time, rpm, hood;
+    private final double time, rpm, hood, tur;
     private double start = -1;
     private final boolean stop;
 
     public Target(final boolean stop, final double time) {
-        this(stop, time, -1, -1);
+        this(stop, time, -1);
     }
 
-    public Target(final boolean stop, final double time, final double rpm, final double hood) {
+    public Target(final boolean stop, final double time, final double tur) {
+        this(stop, time, -1, -1, tur);
+    }
+
+    public Target(final boolean stop, final double time, final double rpm, final double hood, final double tur) {
         this.time = time;
         this.stop = stop;
         this.rpm = rpm;
         this.hood = hood;
+        this.tur = tur;
     }
 
     @Override
     protected final void init() {
+        if (tur != -1)
+            turret.setPosition(tur);
         turret.setState(TurretState.TRACK);
         if (rpm == -1)
             shooter.setState(ShooterState.REGRESSION);

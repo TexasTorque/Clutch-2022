@@ -94,7 +94,11 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
             // else if (mode.isAuto())
             //     requested = 0;
             else
-                requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
+                if (mode.isAuto())
+                    requested = 0;
+                    // requested = calculateRequested(position); // center at the last told position
+                else
+                    requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
         } else
             requested = 0;
 

@@ -36,8 +36,8 @@ public final class Target extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void init() {
-        if (tur != -1)
-            turret.setPosition(tur);
+        // if (tur != -1)
+            // turret.setPosition(tur);
         turret.setState(TurretState.TRACK);
         if (rpm == -1)
             shooter.setState(ShooterState.REGRESSION);
@@ -49,13 +49,17 @@ public final class Target extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void continuous() {
+        // I want to die
+        if ((Timer.getFPGATimestamp() - start) > .5)
+            magazine.setManualState(true, false);
+
         if (shooter.isReady() && start == -1)
             start = Timer.getFPGATimestamp();
     }
 
     @Override
     protected final boolean endCondition() {
-        //return start != -1 && (Timer.getFPGATimestamp() - start) > time;
+        // return start != -1 && (Timer.getFPGATimestamp() - start) > time;
         return false;
     }
 

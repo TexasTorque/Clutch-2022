@@ -313,7 +313,7 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleTiltToTraverse() {
-        final double toLeft = 166, toRight = 166, toWinch = 50;
+        final double toLeft = 160, toRight = 160, toWinch = 50;
 
         winch.setPercent(-winch.getPosition() <= toWinch ? -.1 : 0);
         right.setPercent(-right.getPosition() <= toRight ? -ARM_PWR : 0);
@@ -338,11 +338,11 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     private final void handleAdvanceToTraverse() {
         final double leftRelease = 170, rightRelease = 170, hardStop = 100;
 
-        if (TorqueMath.toleranced(left.getPosition(), leftRelease, 0, 10))
-            setLeftServo(false);
-            // SmartDashboard.putBoolean("REL_L", true);
-        if (TorqueMath.toleranced(-right.getPosition(), rightRelease, 0, 10))
-            setRightServo(false);
+        // if (TorqueMath.toleranced(left.getPosition(), leftRelease, 0, 10))
+        //     setLeftServo(false);
+        //     // SmartDashboard.putBoolean("REL_L", true);
+        // if (TorqueMath.toleranced(-right.getPosition(), rightRelease, 0, 10))
+        //     setRightServo(false);
             // SmartDashboard.putBoolean("REL_R", true);
 
         pullToLatch(ARM_PWR);

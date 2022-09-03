@@ -65,8 +65,11 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         state = TurretState.OFF;
     }
 
+    private boolean isAuto = false;
+
     @Override
     public final void update(final TorqueMode mode) {
+        isAuto = mode.isAuto();
         calculateAngleWithOdometry();
         // These should be inside tracking logic
         // if (getDegrees() > MAX_LEFT) state = TurretState.CENTER;
@@ -91,11 +94,10 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
                 // is this good, idk?
                 requested = isLocked() ? 0 : calculateRequested(camera.getTargetYaw(), 0);
             // requested = isLocked() ? 0 : calculateRequested(yawFilter.calculate(camera.getTargetYaw()), 0);
-            // else if (mode.isAuto())
-            //     requested = 0;
-            else
+            else 
                 if (mode.isAuto())
                     requested = 0;
+                    // requested = 0;
                     // requested = calculateRequested(position); // center at the last told position
                 else
                     requested = calculateRequested(SHOOT_WITH_ODOMETRY ? calculateAngleWithOdometry() : ROT_CENTER);
@@ -130,6 +132,8 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
 
     public final boolean isLocked() {
         SmartDashboard.putNumber("Turret Abs Yaw", Math.abs(camera.getTargetYaw()));
+        if (state == TurretState.TRACK && isAuto)
+            return true;
         return state == TurretState.POSITIONAL || state == TurretState.CENTER ||
                 (camera.hasTargets() && Math.abs(camera.getTargetYaw()) < TOLERANCE);
         // For Positional:

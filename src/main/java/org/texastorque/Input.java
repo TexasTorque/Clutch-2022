@@ -32,6 +32,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 // public final class Input extends TorqueInput<TorqueController> implements Subsystems {
     private static volatile Input instance;
 
+    private boolean autoClimbFailed = false;
+
     private Input() {
         driver = new GenericController(0, .1);
         operator = new GenericController(1, .1);
@@ -41,11 +43,13 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
     @Override
     public final void update() {
+        updateClimber();
+        if (autoClimbFailed) return;
+
         updateDrivebase();
         updateIntake();
         updateMagazine();
         updateShooter();
-        updateClimber();
     }
 
     private final TorqueTraversableSelection<Double> 
@@ -73,10 +77,10 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         final double rotationReal = drivebase.getGyro().getRotation2d().getDegrees();
         double rotationRequested = -driver.getRightXAxis();
 
-        if (rotationRequested == 0) 
-            rotationRequested = -rotationPID.calculate(rotationReal, lastRotation);
-        else
-            lastRotation = rotationReal;
+        // if (rotationRequested == 0) 
+        //     rotationRequested = -rotationPID.calculate(rotationReal, lastRotation);
+        // else
+        //     lastRotation = rotationReal;
 
 
         SmartDashboard.putNumber("PID O", rotationRequested);
@@ -142,10 +146,18 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private boolean servoEnabled = true;
 
     private final void updateClimber() {
+        if (driver.getRightCenterButton())
+            autoClimbFailed = true;
+
         if (driver.getLeftCenterButton()) climber.reset();
 
-        updateManualArmControls();
-        updateManualWinchControls();
+        if (autoClimbFailed) {
+            updateManualArmControls(driver);
+            updateManualWinchControls(driver);
+        }
+
+        updateManualArmControls(operator);
+        updateManualWinchControls(operator);
 
         climber.setAuto(driver.getYButton());
 
@@ -155,27 +167,27 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
-    private final void updateManualArmControls() {       
-        if (operator.getRightTrigger())
+    private final void updateManualArmControls(final GenericController ctrl) {       
+        if (ctrl.getRightTrigger())
             climber.setManualRight(TorqueDirection.FORWARD);
-        else if (operator.getRightBumper())
+        else if (ctrl.getRightBumper())
             climber.setManualRight(TorqueDirection.REVERSE);
         else
             climber.setManualRight(TorqueDirection.OFF);
 
-        if (operator.getLeftTrigger())
+        if (ctrl.getLeftTrigger())
             climber.setManualLeft(TorqueDirection.FORWARD);
-        else if (operator.getLeftBumper())
+        else if (ctrl.getLeftBumper())
             climber.setManualLeft(TorqueDirection.REVERSE);
         else
             climber.setManualLeft(TorqueDirection.OFF);
     }
 
-    private final void updateManualWinchControls() {
+    private final void updateManualWinchControls(final GenericController ctrl) {
     // private final void updateManualWinchControls(final TorqueController controller) {
-        if (operator.getDPADUp())
+        if (ctrl.getDPADUp())
             climber.setManualWinch(TorqueDirection.FORWARD);
-        else if (operator.getDPADDown())
+        else if (ctrl.getDPADDown())
             climber.setManualWinch(TorqueDirection.REVERSE);
         else
             climber.setManualWinch(TorqueDirection.OFF);

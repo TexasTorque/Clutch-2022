@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.photonvision.PhotonUtils;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
@@ -36,18 +35,18 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 100, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
                                FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(33),
-            TARGET_HEIGHT = 2.6416;
+                               TARGET_HEIGHT = 2.6416;
 
-    public static final double HUB_RADIUS = .6778625; // 
-    
+    public static final double HUB_RADIUS = .6778625; //
+
     public static final double TURRET_RADIUS = Units.inchesToMeters(7.2);
-                               
+
     public static final Rotation2d CAMERA_ANGLE = Rotation2d.fromDegrees(30);
 
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
-    public static final Pose2d HUB_ORIGIN = new Pose2d(HUB_CENTER_POSITION.getX(),
-            HUB_CENTER_POSITION.getY(), new Rotation2d());
+    public static final Pose2d HUB_ORIGIN =
+            new Pose2d(HUB_CENTER_POSITION.getX(), HUB_CENTER_POSITION.getY(), new Rotation2d());
 
     public static final Translation2d CAMERA_TO_ROBOT = new Translation2d(Units.inchesToMeters(2), CAMERA_HEIGHT);
 
@@ -90,7 +89,6 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         //         // .addFeedForward(0.0603409074)
         //         .addFeedForward(0.08)
         //         .addIntegralZone(1000).build());
-                                        
 
         flywheel.setNeutralMode(NeutralMode.Coast);
         flywheel.setStatorLimit(new StatorCurrentLimitConfiguration(true, 80, 1, .001));
@@ -98,11 +96,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
         hood = new TorqueSparkMax(Ports.SHOOTER.HOOD);
         // hood.configurePID(new KPID(.1, .001, 0, 0, -.70, .70, .3));
-        hood.configurePID(TorquePID.create(.1)
-                .addIntegral(.001)
-                .addOutputRange(-.7, .7)
-                .addIntegralZone(.3)
-                .build());
+        hood.configurePID(TorquePID.create(.1).addIntegral(.001).addOutputRange(-.7, .7).addIntegralZone(.3).build());
 
         hood.configurePositionalCANFrame();
         hood.burnFlash();
@@ -169,11 +163,11 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
      * @param distance Distance (m)
      * @return RPM the shooter should go at
      */
-    private final double regressionRPM(final double distance) { 
-        // return clampRPM(26.83 * distance * 24 + 1350); 
-        // return clampRPM(285.7 * distance + 893); 
-        return clampRPM(450 * distance + 500); 
-        // return clampRPM(500 * distance + 300); 
+    private final double regressionRPM(final double distance) {
+        // return clampRPM(26.83 * distance * 24 + 1350);
+        // return clampRPM(285.7 * distance + 893);
+        return clampRPM(450 * distance + 500);
+        // return clampRPM(500 * distance + 300);
     }
 
     /**
@@ -184,12 +178,10 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         // if (distance > 3.5) return HOOD_MAX;
         // return clampHood(1.84 * distance * 24 + 19.29 - 5);
         // return clampHood(14.29 * distance - 3);
-        return clampRPM(12.5 * distance - 10); 
+        return clampRPM(12.5 * distance - 10);
     }
 
-    private final double clampRPM(final double rpm) {
-        return TorqueMath.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX);
-    }
+    private final double clampRPM(final double rpm) { return TorqueMath.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX); }
 
     private final double clampHood(final double hood) { return TorqueMath.constrain(hood, HOOD_MIN, HOOD_MAX); }
 
@@ -207,20 +199,21 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         return new Pose2d();
     }
 
-    public final double calculateDistance() { 
+    public final double calculateDistance() {
         return TorqueLight.getDistanceToElevatedTarget(camera, CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);
     }
 
-    public final Pose2d getEstimatedPositionRelativeToRobot() { 
+    public final Pose2d getEstimatedPositionRelativeToRobot() {
         final Transform2d targetRelativeToCamera = camera.getCameraToTarget();
         final Transform2d targetRelativeToCenterOfHub = targetRelativeToCamera.plus(TRANSFORM_ADJUSTMENT);
 
-        final Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(targetRelativeToCenterOfHub,
-                HUB_ORIGIN, new Transform2d(CAMERA_TO_ROBOT, Rotation2d.fromDegrees(-turret.getDegrees())));
+        final Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(
+                targetRelativeToCenterOfHub, HUB_ORIGIN,
+                new Transform2d(CAMERA_TO_ROBOT, Rotation2d.fromDegrees(-turret.getDegrees())));
 
         return estimatedPositionOfRobot;
     }
-    
+
     public static final synchronized Shooter getInstance() {
         return instance == null ? instance = new Shooter() : instance;
     }

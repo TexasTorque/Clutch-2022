@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.texastorque.Ports;
 import org.texastorque.Subsystems;
+import org.texastorque.torquelib.base.TorqueDirection;
 import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorquePersistentBoolean;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
-import org.texastorque.torquelib.base.TorqueDirection;
 
 public final class Magazine extends TorqueSubsystem implements Subsystems {
     private static volatile Magazine instance;
@@ -56,10 +56,9 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
     private double shootingStartedTime = 0;
     private final double DROP_TIME = .05;
 
-    private final TorquePersistentBoolean 
-            shooterReady = new TorquePersistentBoolean(5), 
-            turretLocked = new TorquePersistentBoolean(5),
-            shouldShoot = new TorquePersistentBoolean(5);
+    private final TorquePersistentBoolean shooterReady = new TorquePersistentBoolean(5),
+                                          turretLocked = new TorquePersistentBoolean(5),
+                                          shouldShoot = new TorquePersistentBoolean(5);
 
     @Override
     public final void update(final TorqueMode mode) {
@@ -85,7 +84,7 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
         // if (shooter.isReady() && turret.isLocked()) {
         if (shouldShoot.any()) {
-        // if (shooterReady.any() && turretLocked.all()) {
+            // if (shooterReady.any() && turretLocked.all()) {
             beltDirection = MAG_UP;
             gateDirection = TorqueDirection.FORWARD;
         }
@@ -101,8 +100,7 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
         // Should fix the shooting early bug that was introduced by the used of
         //       if (shooterReady.any() && turretLocked.any())
-        if (mode.isAuto())
-            gateDirection = TorqueDirection.OFF;
+        if (mode.isAuto()) gateDirection = TorqueDirection.OFF;
     }
 
     public static final synchronized Magazine getInstance() {

@@ -1,9 +1,14 @@
+/**
+ * Copyright 2022 Texas Torque.
+ *
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque;
-
-import org.texastorque.subsystems.Shooter;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.texastorque.subsystems.Shooter;
 
 public final class Tests {
 
@@ -26,6 +31,5 @@ public final class Tests {
         final Pose2d pose = new Pose2d(x, y, Rotation2d.fromDegrees(r));
         final double angle = calculateAngleWithOdometry(pose);
         System.out.println(angle);
-
     }
 }

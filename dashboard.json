@@ -12,10 +12,7 @@
         "titleType": 1,
         "tiles": {
           "2,0": {
-            "size": [
-              2,
-              2
-            ],
+            "size": [2, 2],
             "content": {
               "_type": "Simple Dial",
               "_source0": "network_table:///SmartDashboard/Flywheel Real",
@@ -26,10 +23,7 @@
             }
           },
           "8,1": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Climb Started",
@@ -39,10 +33,7 @@
             }
           },
           "0,0": {
-            "size": [
-              2,
-              2
-            ],
+            "size": [2, 2],
             "content": {
               "_type": "Simple Dial",
               "_source0": "network_table:///SmartDashboard/Speed Shifter",
@@ -53,10 +44,7 @@
             }
           },
           "4,2": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Left Switch",
@@ -66,10 +54,7 @@
             }
           },
           "6,2": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Right Switch",
@@ -79,10 +64,7 @@
             }
           },
           "8,0": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Servos",
@@ -92,10 +74,7 @@
             }
           },
           "8,2": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Auto List",
@@ -103,10 +82,7 @@
             }
           },
           "0,2": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Number Bar",
               "_source0": "network_table:///SmartDashboard/IDIST",
@@ -119,10 +95,7 @@
             }
           },
           "6,1": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Turret Locked",
@@ -132,10 +105,7 @@
             }
           },
           "4,1": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Is Ready",
@@ -145,10 +115,7 @@
             }
           },
           "2,2": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Number Bar",
               "_source0": "network_table:///SmartDashboard/Flywheel Req",
@@ -161,10 +128,7 @@
             }
           },
           "4,0": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Number Bar",
               "_source0": "network_table:///SmartDashboard/Flywheel Delta",
@@ -177,10 +141,7 @@
             }
           },
           "6,0": {
-            "size": [
-              2,
-              1
-            ],
+            "size": [2, 1],
             "content": {
               "_type": "Number Bar",
               "_source0": "network_table:///SmartDashboard/Turret Delta",

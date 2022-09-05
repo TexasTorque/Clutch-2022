@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -8,11 +8,10 @@ package org.texastorque;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.texastorque.subsystems.Drivebase;
-import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Intake.IntakeState;
 import org.texastorque.subsystems.Magazine;
+import org.texastorque.subsystems.Shooter;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.base.TorqueDirection;
@@ -29,7 +28,7 @@ import org.texastorque.torquelib.util.TorqueMath;
 
 @SuppressWarnings("deprecation")
 public final class Input extends TorqueInput<GenericController> implements Subsystems {
-// public final class Input extends TorqueInput<TorqueController> implements Subsystems {
+    // public final class Input extends TorqueInput<TorqueController> implements Subsystems {
     private static volatile Input instance;
 
     private boolean autoClimbFailed = false;
@@ -52,7 +51,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         updateShooter();
     }
 
-    private final TorqueTraversableSelection<Double> 
+    private final TorqueTraversableSelection<Double>
             // translationalSpeeds = new TorqueTraversableSelection<Double>(1, .35, .45, .55),
             translationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .6, .7),
             rotationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .75, 1.);
@@ -61,45 +60,45 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private double invertCoefficient = 1;
     public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
-    private static final TorquePID rotationPID = TorquePID.create(.02 / 4).addDerivative(.001)
-            .addContinuousInputRange(0, 360).build();
-    
+    private static final TorquePID rotationPID =
+            TorquePID.create(.02 / 4).addDerivative(.001).addContinuousInputRange(0, 360).build();
+
     private double lastRotation = drivebase.getGyro().getRotation2d().getDegrees();
 
-    private final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10),
-                            yLimiter = new TorqueSlewLimiter(5, 10);
+    private final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10), yLimiter = new TorqueSlewLimiter(5, 10);
 
     private final static double DEADBAND = .1;
 
     private final void updateDrivebase() {
-        SmartDashboard.putNumber("Speed Shifter", (rotationalSpeeds.get() - .5) *  2.); 
+        SmartDashboard.putNumber("Speed Shifter", (rotationalSpeeds.get() - .5) * 2.);
 
         final double rotationReal = drivebase.getGyro().getRotation2d().getDegrees();
         double rotationRequested = -driver.getRightXAxis();
 
-        // if (rotationRequested == 0) 
+        // if (rotationRequested == 0)
         //     rotationRequested = -rotationPID.calculate(rotationReal, lastRotation);
         // else
         //     lastRotation = rotationReal;
-
 
         SmartDashboard.putNumber("PID O", rotationRequested);
         SmartDashboard.putNumber("Rot Delta", rotationReal - lastRotation);
 
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
-                rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
+                                rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
 
-        final boolean noInput = TorqueMath.toleranced(driver.getLeftYAxis(), DEADBAND) 
-                && TorqueMath.toleranced(driver.getLeftXAxis(), DEADBAND) 
-                && TorqueMath.toleranced(driver.getRightXAxis(), DEADBAND);
+        final boolean noInput = TorqueMath.toleranced(driver.getLeftYAxis(), DEADBAND) &&
+                                TorqueMath.toleranced(driver.getLeftXAxis(), DEADBAND) &&
+                                TorqueMath.toleranced(driver.getRightXAxis(), DEADBAND);
 
         if (noInput) {
             drivebase.setSpeeds(new ChassisSpeeds(0, 0, 0));
             return;
         }
 
-        final double xVelo = xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
-        final double yVelo = yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
+        final double xVelo =
+                xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
+        final double yVelo = yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
+                                                invertCoefficient);
         final double rVelo = rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient;
 
         drivebase.setSpeeds(new ChassisSpeeds(xVelo, yVelo, rVelo));
@@ -114,12 +113,11 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             intake.setState(IntakeState.PRIMED);
     }
 
-    private final void updateMagazine() { 
-        magazine.setManualState(driver.getDPADUp(), driver.getDPADDown());
-    }
+    private final void updateMagazine() { magazine.setManualState(driver.getDPADUp(), driver.getDPADDown()); }
 
     private final TorqueTraversableRange flywheelRPM = new TorqueTraversableRange(1000, 1000, 3000, 100);
-    private final TorqueTraversableRange hoodSetpoint = new TorqueTraversableRange(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
+    private final TorqueTraversableRange hoodSetpoint =
+            new TorqueTraversableRange(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
 
     private final void updateShooter() {
         flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
@@ -146,8 +144,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private boolean servoEnabled = true;
 
     private final void updateClimber() {
-        if (driver.getRightCenterButton())
-            autoClimbFailed = true;
+        if (driver.getRightCenterButton()) autoClimbFailed = true;
 
         if (driver.getLeftCenterButton()) climber.reset();
 
@@ -161,13 +158,13 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
         climber.setAuto(driver.getYButton());
 
-        if (toggleClimberHooks.calculate(driver.getBButton() || operator.getBButton())) 
+        if (toggleClimberHooks.calculate(driver.getBButton() || operator.getBButton()))
             climber.setServos(servoEnabled = !servoEnabled);
 
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
-    private final void updateManualArmControls(final GenericController ctrl) {       
+    private final void updateManualArmControls(final GenericController ctrl) {
         if (ctrl.getRightTrigger())
             climber.setManualRight(TorqueDirection.FORWARD);
         else if (ctrl.getRightBumper())
@@ -184,7 +181,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     }
 
     private final void updateManualWinchControls(final GenericController ctrl) {
-    // private final void updateManualWinchControls(final TorqueController controller) {
+        // private final void updateManualWinchControls(final TorqueController controller) {
         if (ctrl.getDPADUp())
             climber.setManualWinch(TorqueDirection.FORWARD);
         else if (ctrl.getDPADDown())

@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -43,9 +43,9 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private static final double DRIVE_GEARING = .1875, // Drive rotations per motor rotations
             DRIVE_WHEEL_RADIUS = Units.inchesToMeters(1.788), DISTANCE_TO_CENTER_X = Units.inchesToMeters(10.875),
                                 DISTANCE_TO_CENTER_Y = Units.inchesToMeters(10.875);
-// 
-//     public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2), 
-                        // ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
+    //
+    //     public static final KPID DRIVE_PID = new KPID(.00048464, 0, 0, 0, -1, 1, .2),
+    // ROTATE_PID = new KPID(.3, 0, 0, 0, -1, 1);
     public static final TorquePID DRIVE_PID = TorquePID.create(.00048464).addIntegralZone(.2).build();
     public static final TorquePID ROTATE_PID = TorquePID.create(.3).build();
 
@@ -104,11 +104,12 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     @Override
     public final void update(final TorqueMode mode) {
         // if (mode.isTeleop())
-            // updatePositionWithVision();
+        // updatePositionWithVision();
 
-        final double translatingSpeed = shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
+        final double translatingSpeed =
+                shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
         final double rotaitonalSpeed = shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef;
-        
+
         if (mode.isTeleop())
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     speeds.vxMetersPerSecond * translatingSpeed, speeds.vyMetersPerSecond * translatingSpeed,
@@ -154,16 +155,18 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         if (shooter.getCamera().getNumberOfTargets() < 3) return;
 
         try {
-            final Pose2d pose = TorqueLight.getRobotPose(getGyro().getRotation2dCounterClockwise(), 
-                    Rotation2d.fromDegrees(shooter.getCamera().getAveragePitch()), Rotation2d.fromDegrees(shooter.getCamera().getAverageYaw()), Shooter.TARGET_HEIGHT,
-                    Shooter.CAMERA_HEIGHT, Shooter.CAMERA_ANGLE, Shooter.TURRET_RADIUS, turret.getDegrees(), Shooter.HUB_RADIUS, Shooter.HUB_CENTER_POSITION.getX(),
-                    Shooter.HUB_CENTER_POSITION.getY());
+            final Pose2d pose = TorqueLight.getRobotPose(
+                    getGyro().getRotation2dCounterClockwise(),
+                    Rotation2d.fromDegrees(shooter.getCamera().getAveragePitch()),
+                    Rotation2d.fromDegrees(shooter.getCamera().getAverageYaw()), Shooter.TARGET_HEIGHT,
+                    Shooter.CAMERA_HEIGHT, Shooter.CAMERA_ANGLE, Shooter.TURRET_RADIUS, turret.getDegrees(),
+                    Shooter.HUB_RADIUS, Shooter.HUB_CENTER_POSITION.getX(), Shooter.HUB_CENTER_POSITION.getY());
             SmartDashboard.putString("VisionPos", String.format("(%02.3f, %02.3f)", pose.getX(), pose.getY()));
             odometry.resetPosition(pose, gyro.getRotation2d());
         } catch (final Exception e) {
             System.out.println("Failed to add vision measurement to pose estimator."
-                    + "Likely due to Cholesky decomposition failing due to it not being the sqrt method."
-                    + "Full details on the error: \n" + e.getMessage());
+                               + "Likely due to Cholesky decomposition failing due to it not being the sqrt method."
+                               + "Full details on the error: \n" + e.getMessage());
         }
     }
 

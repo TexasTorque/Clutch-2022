@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -8,10 +8,10 @@ package org.texastorque.auto.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
-import org.texastorque.torquelib.base.TorqueDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueCommand;
+import org.texastorque.torquelib.base.TorqueDirection;
 
 public final class Shoot extends TorqueCommand implements Subsystems {
     private final double rpm, hood, tur, time;
@@ -42,8 +42,7 @@ public final class Shoot extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void continuous() {
-        if (shooter.isReady() && start == -1)
-            start = Timer.getFPGATimestamp();
+        if (shooter.isReady() && start == -1) start = Timer.getFPGATimestamp();
     }
 
     @Override

@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -18,13 +18,9 @@ public final class Target extends TorqueCommand implements Subsystems {
     private double start = -1;
     private final boolean stop;
 
-    public Target(final boolean stop, final double time) {
-        this(stop, time, -1);
-    }
+    public Target(final boolean stop, final double time) { this(stop, time, -1); }
 
-    public Target(final boolean stop, final double time, final double tur) {
-        this(stop, time, -1, -1, tur);
-    }
+    public Target(final boolean stop, final double time, final double tur) { this(stop, time, -1, -1, tur); }
 
     public Target(final boolean stop, final double time, final double rpm, final double hood, final double tur) {
         this.time = time;
@@ -37,7 +33,7 @@ public final class Target extends TorqueCommand implements Subsystems {
     @Override
     protected final void init() {
         // if (tur != -1)
-            // turret.setPosition(tur);
+        // turret.setPosition(tur);
         turret.setState(TurretState.TRACK);
         if (rpm == -1)
             shooter.setState(ShooterState.REGRESSION);
@@ -50,11 +46,9 @@ public final class Target extends TorqueCommand implements Subsystems {
     @Override
     protected final void continuous() {
         // I want to die
-        if ((Timer.getFPGATimestamp() - start) > .5)
-            magazine.setManualState(true, false);
+        if ((Timer.getFPGATimestamp() - start) > .5) magazine.setManualState(true, false);
 
-        if (shooter.isReady() && start == -1)
-            start = Timer.getFPGATimestamp();
+        if (shooter.isReady() && start == -1) start = Timer.getFPGATimestamp();
     }
 
     @Override

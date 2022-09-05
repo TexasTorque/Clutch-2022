@@ -1,6 +1,6 @@
 /**
  * Copyright 2022 Texas Torque.
- * 
+ *
  * This file is part of Clutch-2022, which is not licensed for distribution.
  * For more details, see ./license.txt or write <jus@gtsbr.org>.
  */
@@ -21,17 +21,17 @@ import org.texastorque.torquelib.base.TorqueDirection;
 public class TwoEvil extends TorqueSequence implements Subsystems {
     public TwoEvil() {
         final double firstTurret = -165.15;
-        
+
         addBlock(new TorqueBlock(new TorqueWait(2), new TorqueExecute(() -> {
-            intake.setState(IntakeState.INTAKE);
+                                     intake.setState(IntakeState.INTAKE);
 
-            turret.setState(TurretState.POSITIONAL);
-            turret.setPosition(firstTurret);
+                                     turret.setState(TurretState.POSITIONAL);
+                                     turret.setPosition(firstTurret);
 
-            shooter.setState(ShooterState.WARMUP);
-            shooter.setFlywheelSpeed(1000);
-            shooter.setHoodPosition(26);
-        })));
+                                     shooter.setState(ShooterState.WARMUP);
+                                     shooter.setFlywheelSpeed(1000);
+                                     shooter.setHoodPosition(26);
+                                 })));
         addBlock(new TorqueBlock(new Path("Two1", true, 2, 1)));
         addBlock(new TorqueBlock(new Shoot(1500, 20, firstTurret, true, 2)));
         addBlock(new TorqueBlock(new Path("Two2", false, 1, .5)));

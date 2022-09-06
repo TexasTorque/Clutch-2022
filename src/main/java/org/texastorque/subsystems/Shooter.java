@@ -34,8 +34,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private static volatile Shooter instance;
 
     public static final double HOOD_MIN = 0, HOOD_MAX = 40, ERROR = 100, FLYWHEEEL_MAX = 3000, FLYWHEEEL_IDLE = 0,
-                               FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(33),
-                               TARGET_HEIGHT = 2.6416;
+            FLYWHEEEL_REDUCTION = 5 / 3., CAMERA_HEIGHT = Units.inchesToMeters(33),
+            TARGET_HEIGHT = 2.6416;
 
     public static final double HUB_RADIUS = .6778625; //
 
@@ -45,8 +45,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
 
     public static final Translation2d HUB_CENTER_POSITION = new Translation2d(8.2, 4.1);
 
-    public static final Pose2d HUB_ORIGIN =
-            new Pose2d(HUB_CENTER_POSITION.getX(), HUB_CENTER_POSITION.getY(), new Rotation2d());
+    public static final Pose2d HUB_ORIGIN = new Pose2d(HUB_CENTER_POSITION.getX(), HUB_CENTER_POSITION.getY(),
+            new Rotation2d());
 
     public static final Translation2d CAMERA_TO_ROBOT = new Translation2d(Units.inchesToMeters(2), CAMERA_HEIGHT);
 
@@ -59,7 +59,9 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         DISTANCE,
         WARMUP;
 
-        public final boolean isShooting() { return this != OFF && this != WARMUP; }
+        public final boolean isShooting() {
+            return this != OFF && this != WARMUP;
+        }
     }
 
     private final TorqueLight camera;
@@ -102,15 +104,25 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         hood.burnFlash();
     }
 
-    public final void setState(final ShooterState state) { this.state = state; }
+    public final void setState(final ShooterState state) {
+        this.state = state;
+    }
 
-    public final void setHoodPosition(final double hoodSetpoint) { this.hoodSetpoint = hoodSetpoint; }
+    public final void setHoodPosition(final double hoodSetpoint) {
+        this.hoodSetpoint = hoodSetpoint;
+    }
 
-    public final void setFlywheelSpeed(final double flywheelSpeed) { this.flywheelSpeed = flywheelSpeed; }
+    public final void setFlywheelSpeed(final double flywheelSpeed) {
+        this.flywheelSpeed = flywheelSpeed;
+    }
 
-    public final void setDistance(final double distance) { this.distance = distance; }
+    public final void setDistance(final double distance) {
+        this.distance = distance;
+    }
 
-    public final void setAutoOffset(final double autoOffset) { this.autoOffset = autoOffset; }
+    public final void setAutoOffset(final double autoOffset) {
+        this.autoOffset = autoOffset;
+    }
 
     @Override
     public final void initialize(final TorqueMode mode) {
@@ -139,7 +151,9 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
             flywheel.setPercent(FLYWHEEEL_IDLE);
         }
 
-        if (state != ShooterState.OFF) { flywheel.setVelocityRPM(clampRPM(flywheelSpeed)); }
+        if (state != ShooterState.OFF) {
+            flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
+        }
         hood.setPosition(clampHood(hoodSetpoint));
 
         TorqueSubsystemState.logState(state);
@@ -153,7 +167,9 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         SmartDashboard.putBoolean("Is Ready", isReady());
     }
 
-    public final boolean isShooting() { return state.isShooting(); }
+    public final boolean isShooting() {
+        return state.isShooting();
+    }
 
     public final boolean isReady() {
         return isShooting() && Math.abs(flywheelSpeed - flywheel.getVelocityRPM()) < ERROR;
@@ -166,7 +182,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private final double regressionRPM(final double distance) {
         // return clampRPM(26.83 * distance * 24 + 1350);
         // return clampRPM(285.7 * distance + 893);
-        return clampRPM(450 * distance + 500);
+        return clampRPM(520 * distance + 500); // 450 => 470
         // return clampRPM(500 * distance + 300);
     }
 
@@ -181,13 +197,21 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         return clampRPM(12.5 * distance - 10);
     }
 
-    private final double clampRPM(final double rpm) { return TorqueMath.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX); }
+    private final double clampRPM(final double rpm) {
+        return TorqueMath.constrain(rpm, FLYWHEEEL_IDLE, FLYWHEEEL_MAX);
+    }
 
-    private final double clampHood(final double hood) { return TorqueMath.constrain(hood, HOOD_MIN, HOOD_MAX); }
+    private final double clampHood(final double hood) {
+        return TorqueMath.constrain(hood, HOOD_MIN, HOOD_MAX);
+    }
 
-    public final TorqueLight getCamera() { return camera; }
+    public final TorqueLight getCamera() {
+        return camera;
+    }
 
-    public final ShooterState getState() { return state; }
+    public final ShooterState getState() {
+        return state;
+    }
 
     public final double getDistance() {
         return TorqueLight.getDistanceToElevatedTarget(camera, CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_ANGLE);

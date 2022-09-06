@@ -43,6 +43,7 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
 
     private final TorquePID pid = TorquePID.create(.1039).build();
 
+
     private double requested = 0, position = 0;
     private TurretState state = TurretState.OFF;
 

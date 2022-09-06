@@ -36,7 +36,7 @@ public class FiveCool extends TorqueSequence implements Subsystems {
 
         // Pick up and shoot the second and third balls
 
-        final double rpm2 = 1550, hood2 = 30, turret2 = -95;
+        final double rpm2 = 1575, hood2 = 30, turret2 = -95; // 1550 - 1575
 
         addBlock(new TorqueBlock(new TorqueExecute(() -> {
             magazine.setGateDirection(TorqueDirection.NEUTRAL);

@@ -25,6 +25,7 @@ import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
+import org.texastorque.torquelib.util.TorqueMath;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 
 /**
@@ -69,6 +70,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private double translationalSpeedCoef, rotationalSpeedCoef;
     private final double SHOOTING_TRANSLATIONAL_SPEED_COEF = .4, SHOOTING_ROTATIONAL_SPEED_COEF = .5;
 
+    private boolean shouldTarget = false;
+    public final void setShouldTarget(final boolean shouldTarget) { this.shouldTarget = shouldTarget; }
+
+    private final TorquePID targetPID = TorquePID.create(.375).build();
+
     private Drivebase() {
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
         backLeft.setLogging(true);
@@ -109,6 +115,16 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         final double translatingSpeed =
                 shooter.isShooting() ? SHOOTING_TRANSLATIONAL_SPEED_COEF : translationalSpeedCoef;
         final double rotaitonalSpeed = shooter.isShooting() ? SHOOTING_ROTATIONAL_SPEED_COEF : rotationalSpeedCoef;
+
+        if (shooter.isShooting() && shouldTarget) {
+            SmartDashboard.putNumber("Targeting Y Speed", speeds.vyMetersPerSecond);
+            final double offset = TorqueMath.deadband(speeds.vyMetersPerSecond, -.5, .5) * 1.;
+            final double yaw = shooter.getCamera().getTargetYaw();
+            SmartDashboard.putNumber("Targeting Yaw", yaw);
+            final double output = -targetPID.calculate(-yaw, offset);
+            SmartDashboard.putNumber("Locking PID output", output);
+            speeds.omegaRadiansPerSecond = output;
+        }
 
         if (mode.isTeleop())
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(

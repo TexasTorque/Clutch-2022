@@ -70,6 +70,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private final static double DEADBAND = .1;
 
     private final void updateDrivebase() {
+        drivebase.setShouldTarget(!useTurret);
+
         SmartDashboard.putNumber("Speed Shifter", (rotationalSpeeds.get() - .5) * 2.);
 
         final double rotationReal = drivebase.getGyro().getRotation2d().getDegrees();
@@ -119,6 +121,9 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private final TorqueTraversableRange hoodSetpoint =
             new TorqueTraversableRange(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
 
+    private boolean useTurret = true;
+    private final TorqueClick useTurretClick = new TorqueClick();
+
     private final void updateShooter() {
         flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
         hoodSetpoint.update(operator.getDPADUp(), operator.getDPADDown(), false, false);
@@ -126,9 +131,14 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putNumber("IRPM", flywheelRPM.getSpeed());
         SmartDashboard.putNumber("IHOOD", hoodSetpoint.getSpeed());
 
+        if (useTurretClick.calculate(operator.getAButton()))
+            useTurret = !useTurret;
+
+        SmartDashboard.putBoolean("Using Turret", useTurret);
+
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
-            turret.setState(TurretState.TRACK);
+            turret.setState(useTurret ? TurretState.TRACK : TurretState.CENTER);
         } else if (driver.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(1600);

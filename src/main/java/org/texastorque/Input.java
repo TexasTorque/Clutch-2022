@@ -138,7 +138,9 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
-            turret.setState(useTurret ? TurretState.TRACK : TurretState.CENTER);
+            turret.setState(useTurret ? TurretState.TRACK : TurretState.POSITIONAL);
+            if (useTurret)
+                turret.setPosition(180);
         } else if (driver.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(1600);

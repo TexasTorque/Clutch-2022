@@ -73,7 +73,7 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     private boolean shouldTarget = false;
     public final void setShouldTarget(final boolean shouldTarget) { this.shouldTarget = shouldTarget; }
 
-    private final TorquePID targetPID = TorquePID.create(.375).build();
+    private final TorquePID targetPID = TorquePID.create(.25).build();
 
     private Drivebase() {
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);

@@ -82,8 +82,8 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
         turretLocked.add(turret.isLocked());
         shouldShoot.add(shooter.isReady() && turret.isLocked());
 
-        // if (shooter.isReady() && turret.isLocked()) {
-        if (shouldShoot.any()) {
+        if (shooter.isReady() && turret.isLocked()) {
+        // if (shouldShoot.any()) {
             // if (shooterReady.any() && turretLocked.all()) {
             beltDirection = MAG_UP;
             gateDirection = TorqueDirection.FORWARD;

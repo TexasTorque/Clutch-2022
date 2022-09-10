@@ -194,7 +194,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
         // if (distance > 3.5) return HOOD_MAX;
         // return clampHood(1.84 * distance * 24 + 19.29 - 5);
         // return clampHood(14.29 * distance - 3);
-        return clampRPM(12.5 * distance);
+        return clampRPM(12 * distance - 2);
     }
 
     private final double clampRPM(final double rpm) {

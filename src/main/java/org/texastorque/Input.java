@@ -34,8 +34,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private boolean autoClimbFailed = false;
 
     private Input() {
-        driver = new GenericController(0, .1);
-        operator = new GenericController(1, .1);
+        driver = new GenericController(0, .01);
+        operator = new GenericController(1, .01);
         // driver = new TorqueController(ControllerPort.DRIVER);
         // operator = new TorqueController(ControllerPort.OPERATOR);
     }
@@ -135,6 +135,11 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             useTurret = !useTurret;
 
         SmartDashboard.putBoolean("Using Turret", useTurret);
+
+
+        final double opInitAngle = Math.atan2(operator.getRightYAxis(),  operator.getRightXAxis());
+        SmartDashboard.putNumber("opInitAngle", opInitAngle);
+        turret.setAngleToHub(opInitAngle);
 
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);

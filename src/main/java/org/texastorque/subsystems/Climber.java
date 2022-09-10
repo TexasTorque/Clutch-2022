@@ -296,8 +296,8 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
             }
         }
 
-        if (TorqueMath.toleranced(left.getPosition(), leftRelease, 0, 10)) setLeftServo(false);
-        if (TorqueMath.toleranced(-right.getPosition(), rightRelease, 0, 10)) setRightServo(false);
+        // if (TorqueMath.toleranced(left.getPosition(), leftRelease, 0, 10)) setLeftServo(false);
+        // if (TorqueMath.toleranced(-right.getPosition(), rightRelease, 0, 10)) setRightServo(false);
 
         pullToLatch(ARM_PWR);
 

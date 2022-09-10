@@ -43,9 +43,12 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
 
     private final TorquePID pid = TorquePID.create(.1039).build();
 
-
-    private double requested = 0, position = 0;
+    private double requested = 0, position = 0, angleToHub = 0;
     private TurretState state = TurretState.OFF;
+
+    public final void setAngleToHub(final double angleToHub) {
+        this.angleToHub = angleToHub;
+    }
 
     private Turret() {
         rotator = new TorqueSparkMax(Ports.TURRET);
@@ -75,6 +78,7 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         // state = TurretState.CENTER;
         // requested = formatRequested(DIRECTIONAL);
 
+        // final double angleDifference = drivebase.getPose().getRotation()
         SmartDashboard.putBoolean("Has Targets", camera.hasTargets());
 
         if (climber.hasStarted()) {

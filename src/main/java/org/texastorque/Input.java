@@ -32,6 +32,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private static volatile Input instance;
 
     private boolean autoClimbFailed = false;
+    private final TorqueClick autoClimbFailedClick = new TorqueClick();
 
     private Input() {
         driver = new GenericController(0, .01);
@@ -161,17 +162,18 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private boolean servoEnabled = true;
 
     private final void updateClimber() {
-        if (driver.getRightCenterButton()) autoClimbFailed = true;
+        if (autoClimbFailedClick.calculate(driver.getRightCenterButton()))
+            autoClimbFailed = !autoClimbFailed;
 
         if (driver.getLeftCenterButton()) climber.reset();
 
         if (autoClimbFailed) {
             updateManualArmControls(driver);
             updateManualWinchControls(driver);
+        } else {
+            updateManualArmControls(operator);
+            updateManualWinchControls(operator);
         }
-
-        updateManualArmControls(operator);
-        updateManualWinchControls(operator);
 
         climber.setAuto(driver.getYButton());
 

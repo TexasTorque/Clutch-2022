@@ -21,6 +21,7 @@ public final class AutoManager extends TorqueAutoManager {
         addSequence("One (evil)", new OneEvil());
         addSequence("Two (evil)", new TwoEvil());
         addSequence("Five (cool)", new FiveCool());
+        addSequence("Five (evil)", new FiveCool());
     }
 
     /**

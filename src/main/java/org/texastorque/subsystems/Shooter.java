@@ -128,7 +128,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     public final void initialize(final TorqueMode mode) {
         state = ShooterState.OFF;
     }
-    double hoodSetpoint = 
+
     @Override
     public final void update(final TorqueMode mode) {
         camera.update();

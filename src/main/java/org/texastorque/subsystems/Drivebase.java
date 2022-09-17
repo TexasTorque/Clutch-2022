@@ -77,7 +77,6 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     private Drivebase() {
         backLeft = buildSwerveModule(0, Ports.DRIVEBASE.TRANSLATIONAL.LEFT.BACK, Ports.DRIVEBASE.ROTATIONAL.LEFT.BACK);
-        backLeft.setLogging(true);
         backRight =
                 buildSwerveModule(1, Ports.DRIVEBASE.TRANSLATIONAL.RIGHT.BACK, Ports.DRIVEBASE.ROTATIONAL.RIGHT.BACK);
         frontLeft =
@@ -189,9 +188,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
     public final void reset() { speeds = new ChassisSpeeds(0, 0, 0); }
 
     private final TorqueSwerveModule2021 buildSwerveModule(final int id, final int drivePort, final int rotatePort) {
-        return new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
+        final TorqueSwerveModule2021 m = new TorqueSwerveModule2021(id, drivePort, rotatePort, DRIVE_GEARING, DRIVE_WHEEL_RADIUS, DRIVE_PID,
                                           ROTATE_PID, DRIVE_MAX_TRANSLATIONAL_SPEED,
                                           DRIVE_MAX_TRANSLATIONAL_ACCELERATION, DRIVE_FEED_FORWARD);
+        m.setLogging(true);
+        return m;
     }
 
     public static final synchronized Drivebase getInstance() {

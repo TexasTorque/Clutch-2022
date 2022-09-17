@@ -30,23 +30,24 @@ import org.texastorque.torquelib.util.TorqueMath;
 public final class Input extends TorqueInput<GenericController> implements Subsystems {
     // public final class Input extends TorqueInput<TorqueController> implements Subsystems {
     private static volatile Input instance;
+    private final static double DEADBAND = .01;
 
     private boolean autoClimbFailed = false;
     private final TorqueClick autoClimbFailedClick = new TorqueClick();
 
     private Input() {
-        driver = new GenericController(0, .01);
-        operator = new GenericController(1, .01);
+        driver = new GenericController(0, DEADBAND);
+        operator = new GenericController(1, DEADBAND);
         // driver = new TorqueController(ControllerPort.DRIVER);
         // operator = new TorqueController(ControllerPort.OPERATOR);
     }
 
     @Override
     public final void update() {
+        updateDrivebase();
         updateClimber();
         if (autoClimbFailed) return;
 
-        updateDrivebase();
         updateIntake();
         updateMagazine();
         updateShooter();
@@ -68,7 +69,6 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
     private final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10), yLimiter = new TorqueSlewLimiter(5, 10);
 
-    private final static double DEADBAND = .1;
 
     private final void updateDrivebase() {
         drivebase.setShouldTarget(!useTurret);

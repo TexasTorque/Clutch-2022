@@ -11,5 +11,10 @@ import org.texastorque.torquelib.auto.TorqueBlock;
 import org.texastorque.torquelib.auto.TorqueSequence;
 
 public final class Omar extends TorqueSequence {
-    public Omar() { addBlock(new TorqueBlock(new Path("Omar", true, 1.5, .75))); }
+    public Omar() { 
+        final int paths = 30;
+
+        for (int i = 0; i < paths; i++)
+            addBlock(new TorqueBlock(new Path("Omar", i == 0, 2, 1))); 
+    }
 }

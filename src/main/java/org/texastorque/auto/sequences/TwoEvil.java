@@ -20,7 +20,7 @@ import org.texastorque.torquelib.base.TorqueDirection;
 
 public class TwoEvil extends TorqueSequence implements Subsystems {
     public TwoEvil() {
-        final double firstTurret = -165.15;
+        final double firstTurret = -163;
 
         addBlock(new TorqueBlock(new TorqueWait(2), new TorqueExecute(() -> {
                                      intake.setState(IntakeState.INTAKE);
@@ -33,7 +33,7 @@ public class TwoEvil extends TorqueSequence implements Subsystems {
                                      shooter.setHoodPosition(26);
                                  })));
         addBlock(new TorqueBlock(new Path("Two1", true, 2, 1)));
-        addBlock(new TorqueBlock(new Shoot(1500, 20, firstTurret, true, 2)));
+        addBlock(new TorqueBlock(new Shoot(1600, 20, firstTurret, true, 2)));
         addBlock(new TorqueBlock(new Path("Two2", false, 1, .5)));
         addBlock(new TorqueBlock(new Shoot(800, 30, 160, true, 1)));
         addBlock(new TorqueBlock(new TorqueExecute(() -> {

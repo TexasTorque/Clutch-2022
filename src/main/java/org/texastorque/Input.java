@@ -116,7 +116,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             intake.setState(IntakeState.PRIMED);
     }
 
-    private final void updateMagazine() { magazine.setManualState(driver.getDPADUp(), driver.getDPADDown()); }
+    private final void updateMagazine() { magazine.setManualState(operator.getDPADRight(), operator.getDPADLeft()); }
 
     private final TorqueTraversableRange flywheelRPM = new TorqueTraversableRange(1000, 1000, 3000, 100);
     private final TorqueTraversableRange hoodSetpoint =
@@ -162,8 +162,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private boolean servoEnabled = true;
 
     private final void updateClimber() {
-        if (autoClimbFailedClick.calculate(driver.getRightCenterButton()))
-            autoClimbFailed = !autoClimbFailed;
+        // if (autoClimbFailedClick.calculate(driver.getRightCenterButton()))
+        //     autoClimbFailed = !autoClimbFailed;
 
         if (driver.getLeftCenterButton()) climber.reset();
 
@@ -171,32 +171,68 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             updateManualArmControls(driver);
             updateManualWinchControls(driver);
         } else {
-            updateManualArmControls(operator);
-            updateManualWinchControls(operator);
+          
         }
 
+        climber.coef = 5;
         climber.setAuto(driver.getYButton());
+
+        if (driver.getDPADUp())
+            climber.setManualRight(TorqueDirection.FORWARD);
+        else if (driver.getDPADDown())
+            climber.setManualRight(TorqueDirection.REVERSE);
+        else
+            climber.setManualRight(TorqueDirection.OFF);
+
+        if (driver.getDPADUp())
+            climber.setManualLeft(TorqueDirection.FORWARD);
+        else if (driver.getDPADDown())
+            climber.setManualLeft(TorqueDirection.REVERSE);
+        else
+            climber.setManualLeft(TorqueDirection.OFF);
+        
+        if (driver.getDPADRight())
+            climber.setManualWinch(TorqueDirection.FORWARD);
+        else if (driver.getDPADLeft())
+            climber.setManualWinch(TorqueDirection.REVERSE);
+        else
+            climber.setManualWinch(TorqueDirection.OFF);
 
         if (toggleClimberHooks.calculate(driver.getBButton() || operator.getBButton()))
             climber.setServos(servoEnabled = !servoEnabled);
+
+        updateManualArmControls(operator);
+        updateManualWinchControls(operator);
 
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
     private final void updateManualArmControls(final GenericController ctrl) {
-        if (ctrl.getRightTrigger())
-            climber.setManualRight(TorqueDirection.FORWARD);
-        else if (ctrl.getRightBumper())
-            climber.setManualRight(TorqueDirection.REVERSE);
-        else
-            climber.setManualRight(TorqueDirection.OFF);
+        if (ctrl.getRightTrigger()) {
 
-        if (ctrl.getLeftTrigger())
-            climber.setManualLeft(TorqueDirection.FORWARD);
-        else if (ctrl.getLeftBumper())
-            climber.setManualLeft(TorqueDirection.REVERSE);
+        climber.coef = 1;
+            climber.setManualRight(TorqueDirection.FORWARD);
+        }
+        else if (ctrl.getRightBumper()) {
+
+        climber.coef = 1;
+            climber.setManualRight(TorqueDirection.REVERSE);
+        }
         else
-            climber.setManualLeft(TorqueDirection.OFF);
+            ;//climber.setManualRight(TorqueDirection.OFF);
+
+        if (ctrl.getLeftTrigger()){
+
+        climber.coef = 1;
+            climber.setManualLeft(TorqueDirection.FORWARD);
+        }
+        else if (ctrl.getLeftBumper()){
+
+        climber.coef = 1;
+            climber.setManualLeft(TorqueDirection.REVERSE);
+        }
+        else
+            ;//climber.setManualLeft(TorqueDirection.OFF);
     }
 
     private final void updateManualWinchControls(final GenericController ctrl) {
@@ -206,7 +242,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         else if (ctrl.getDPADDown())
             climber.setManualWinch(TorqueDirection.REVERSE);
         else
-            climber.setManualWinch(TorqueDirection.OFF);
+            ;//climber.setManualWinch(TorqueDirection.OFF);
     }
 
     public static final synchronized Input getInstance() {

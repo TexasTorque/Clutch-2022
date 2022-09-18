@@ -24,6 +24,8 @@ import org.texastorque.torquelib.util.TorqueMath;
 public final class Climber extends TorqueSubsystem implements Subsystems {
     private static volatile Climber instance;
 
+public int coef = 1;
+
     private static final double MAX_LEFT = 180, MAX_RIGHT = 177, LEFT_SERVO_ENGAGED = .6, LEFT_SERVO_DISENGAGED = 1.0,
                                 RIGHT_SERVO_ENGAGED = .5, RIGHT_SERVO_DISENGAGED = .1, ARM_PWR = .75, WINCH_PWR = .2;
 
@@ -200,8 +202,9 @@ public final class Climber extends TorqueSubsystem implements Subsystems {
     }
 
     private final void handleManualState() {
-        left.setPercent(leftMan.get() / 4);
-        right.setPercent(-rightMan.get() / 4);
+        
+        left.setPercent(leftMan.get() / 4 * coef);
+        right.setPercent(-rightMan.get() / 4 * coef);
 
         winch.setPercent(winchMan.get() * WINCH_PWR);
     }

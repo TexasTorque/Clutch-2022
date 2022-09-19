@@ -238,8 +238,8 @@ public int coef = 1;
         left.setPercent(tooLowLeft ? (leftSwitch.get() ? 0 : .1) : -speed);
         right.setPercent(tooLowRight ? (rightSwitch.get() ? 0 : -.1) : speed);
 
-        if (left.getPosition() <= 0) tooLowLeft = true;
-        if (-right.getPosition() <= 0) tooLowRight = true;
+        if (left.getPosition() <= -1) tooLowLeft = true;
+        if (-right.getPosition() <= -1) tooLowRight = true;
     }
 
     private final void handleInitPull() {
@@ -308,7 +308,7 @@ public int coef = 1;
     }
 
     private final void handleTiltToTraverse() {
-        final double toLeft = 160, toRight = 160, toWinch = 50;
+        final double toLeft = 145, toRight = 145, toWinch = 50;
 
         winch.setPercent(-winch.getPosition() <= toWinch ? -.1 : 0);
         right.setPercent(-right.getPosition() <= toRight ? -ARM_PWR : 0);
@@ -323,7 +323,7 @@ public int coef = 1;
     private final void handleTiltToTraverse2() {
         final double toWinch = 75;
 
-        winch.setPercent(-winch.getPosition() <= toWinch ? (traversing ? -.2 : -.5) : 0);
+        winch.setPercent(-winch.getPosition() <= toWinch ? -.1 : 0);
 
         if (TorqueMath.toleranced(-winch.getPosition(), toWinch, 10) && approved) advance();
     }

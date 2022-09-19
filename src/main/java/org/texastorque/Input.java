@@ -110,8 +110,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private final void updateIntake() {
         if (driver.getRightTrigger())
             intake.setState(IntakeState.INTAKE);
-        else if (driver.getAButton())
-            intake.setState(IntakeState.OUTAKE);
+        // else if (driver.getBButton())
+            // intake.setState(IntakeState.OUTAKE);
         else
             intake.setState(IntakeState.PRIMED);
     }
@@ -177,13 +177,15 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         climber.coef = 5;
         climber.setAuto(driver.getYButton());
 
+        if (!driver.getBButton())
         if (driver.getDPADUp())
             climber.setManualRight(TorqueDirection.FORWARD);
         else if (driver.getDPADDown())
             climber.setManualRight(TorqueDirection.REVERSE);
         else
             climber.setManualRight(TorqueDirection.OFF);
-
+        
+        if (!driver.getBButton())
         if (driver.getDPADUp())
             climber.setManualLeft(TorqueDirection.FORWARD);
         else if (driver.getDPADDown())
@@ -191,14 +193,15 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         else
             climber.setManualLeft(TorqueDirection.OFF);
         
-        if (driver.getDPADRight())
+        if (driver.getBButton())
+        if (driver.getDPADUp())
             climber.setManualWinch(TorqueDirection.FORWARD);
-        else if (driver.getDPADLeft())
+        else if (driver.getDPADDown())
             climber.setManualWinch(TorqueDirection.REVERSE);
         else
             climber.setManualWinch(TorqueDirection.OFF);
 
-        if (toggleClimberHooks.calculate(driver.getBButton() || operator.getBButton()))
+        if (toggleClimberHooks.calculate(driver.getAButton() || operator.getBButton()))
             climber.setServos(servoEnabled = !servoEnabled);
 
         updateManualArmControls(operator);
@@ -207,8 +210,15 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
+
+    // Im sorry, shreyas has a gun to my head making change do the controls -justus
     private final void updateManualArmControls(final GenericController ctrl) {
-        if (ctrl.getRightTrigger()) {
+        if (ctrl.getDPADRight()) {
+
+            climber.coef = 1;
+            climber.setManualRight(TorqueDirection.FORWARD);
+        }
+        else if (ctrl.getRightTrigger()) {
 
         climber.coef = 1;
             climber.setManualRight(TorqueDirection.FORWARD);
@@ -221,7 +231,11 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         else
             ;//climber.setManualRight(TorqueDirection.OFF);
 
-        if (ctrl.getLeftTrigger()){
+        if (ctrl.getDPADLeft()){
+            climber.coef = 1;
+            climber.setManualLeft(TorqueDirection.FORWARD);
+        }
+        else if (ctrl.getLeftTrigger()){
 
         climber.coef = 1;
             climber.setManualLeft(TorqueDirection.FORWARD);
@@ -233,6 +247,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         }
         else
             ;//climber.setManualLeft(TorqueDirection.OFF);
+
     }
 
     private final void updateManualWinchControls(final GenericController ctrl) {

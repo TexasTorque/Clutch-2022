@@ -69,7 +69,6 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
     private final TorqueSlewLimiter xLimiter = new TorqueSlewLimiter(5, 10), yLimiter = new TorqueSlewLimiter(5, 10);
 
-
     private final void updateDrivebase() {
         drivebase.setShouldTarget(!useTurret);
 
@@ -108,10 +107,9 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     }
 
     private final void updateIntake() {
-        if (driver.getRightTrigger())
-            intake.setState(IntakeState.INTAKE);
+        if (driver.getRightTrigger()) intake.setState(IntakeState.INTAKE);
         // else if (driver.getBButton())
-            // intake.setState(IntakeState.OUTAKE);
+        // intake.setState(IntakeState.OUTAKE);
         else
             intake.setState(IntakeState.PRIMED);
     }
@@ -132,21 +130,18 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putNumber("IRPM", flywheelRPM.getSpeed());
         SmartDashboard.putNumber("IHOOD", hoodSetpoint.getSpeed());
 
-        if (useTurretClick.calculate(operator.getAButton()))
-            useTurret = !useTurret;
+        if (useTurretClick.calculate(operator.getAButton())) useTurret = !useTurret;
 
         SmartDashboard.putBoolean("Using Turret", useTurret);
 
-
-        final double opInitAngle = Math.atan2(operator.getRightYAxis(),  operator.getRightXAxis());
+        final double opInitAngle = Math.atan2(operator.getRightYAxis(), operator.getRightXAxis());
         SmartDashboard.putNumber("opInitAngle", opInitAngle);
         turret.setAngleToHub(opInitAngle);
 
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(useTurret ? TurretState.TRACK : TurretState.POSITIONAL);
-            if (useTurret)
-                turret.setPosition(180);
+            if (useTurret) turret.setPosition(180);
         } else if (driver.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(1600);
@@ -171,35 +166,34 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             updateManualArmControls(driver);
             updateManualWinchControls(driver);
         } else {
-          
         }
 
         climber.coef = 5;
         climber.setAuto(driver.getYButton());
 
         if (!driver.getBButton())
-        if (driver.getDPADUp())
-            climber.setManualRight(TorqueDirection.FORWARD);
-        else if (driver.getDPADDown())
-            climber.setManualRight(TorqueDirection.REVERSE);
-        else
-            climber.setManualRight(TorqueDirection.OFF);
-        
+            if (driver.getDPADUp())
+                climber.setManualRight(TorqueDirection.FORWARD);
+            else if (driver.getDPADDown())
+                climber.setManualRight(TorqueDirection.REVERSE);
+            else
+                climber.setManualRight(TorqueDirection.OFF);
+
         if (!driver.getBButton())
-        if (driver.getDPADUp())
-            climber.setManualLeft(TorqueDirection.FORWARD);
-        else if (driver.getDPADDown())
-            climber.setManualLeft(TorqueDirection.REVERSE);
-        else
-            climber.setManualLeft(TorqueDirection.OFF);
-        
+            if (driver.getDPADUp())
+                climber.setManualLeft(TorqueDirection.FORWARD);
+            else if (driver.getDPADDown())
+                climber.setManualLeft(TorqueDirection.REVERSE);
+            else
+                climber.setManualLeft(TorqueDirection.OFF);
+
         if (driver.getBButton())
-        if (driver.getDPADUp())
-            climber.setManualWinch(TorqueDirection.FORWARD);
-        else if (driver.getDPADDown())
-            climber.setManualWinch(TorqueDirection.REVERSE);
-        else
-            climber.setManualWinch(TorqueDirection.OFF);
+            if (driver.getDPADUp())
+                climber.setManualWinch(TorqueDirection.FORWARD);
+            else if (driver.getDPADDown())
+                climber.setManualWinch(TorqueDirection.REVERSE);
+            else
+                climber.setManualWinch(TorqueDirection.OFF);
 
         if (toggleClimberHooks.calculate(driver.getAButton() || operator.getBButton()))
             climber.setServos(servoEnabled = !servoEnabled);
@@ -210,44 +204,36 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }
 
-
     // Im sorry, shreyas has a gun to my head making change do the controls -justus
     private final void updateManualArmControls(final GenericController ctrl) {
         if (ctrl.getDPADRight()) {
 
             climber.coef = 1;
             climber.setManualRight(TorqueDirection.FORWARD);
-        }
-        else if (ctrl.getRightTrigger()) {
+        } else if (ctrl.getRightTrigger()) {
 
-        climber.coef = 1;
+            climber.coef = 1;
             climber.setManualRight(TorqueDirection.FORWARD);
-        }
-        else if (ctrl.getRightBumper()) {
+        } else if (ctrl.getRightBumper()) {
 
-        climber.coef = 1;
+            climber.coef = 1;
             climber.setManualRight(TorqueDirection.REVERSE);
-        }
-        else
-            ;//climber.setManualRight(TorqueDirection.OFF);
+        } else
+            ; // climber.setManualRight(TorqueDirection.OFF);
 
-        if (ctrl.getDPADLeft()){
+        if (ctrl.getDPADLeft()) {
             climber.coef = 1;
             climber.setManualLeft(TorqueDirection.FORWARD);
-        }
-        else if (ctrl.getLeftTrigger()){
+        } else if (ctrl.getLeftTrigger()) {
 
-        climber.coef = 1;
+            climber.coef = 1;
             climber.setManualLeft(TorqueDirection.FORWARD);
-        }
-        else if (ctrl.getLeftBumper()){
+        } else if (ctrl.getLeftBumper()) {
 
-        climber.coef = 1;
+            climber.coef = 1;
             climber.setManualLeft(TorqueDirection.REVERSE);
-        }
-        else
-            ;//climber.setManualLeft(TorqueDirection.OFF);
-
+        } else
+            ; // climber.setManualLeft(TorqueDirection.OFF);
     }
 
     private final void updateManualWinchControls(final GenericController ctrl) {
@@ -257,7 +243,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         else if (ctrl.getDPADDown())
             climber.setManualWinch(TorqueDirection.REVERSE);
         else
-            ;//climber.setManualWinch(TorqueDirection.OFF);
+            ; // climber.setManualWinch(TorqueDirection.OFF);
     }
 
     public static final synchronized Input getInstance() {

@@ -17,6 +17,9 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.control.TorqueRollingMedian;
+import org.texastorque.torquelib.meta.Init;
+import org.texastorque.torquelib.meta.Log;
+import org.texastorque.torquelib.meta.Update;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.util.TorqueMath;
@@ -40,17 +43,16 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
 
     private final TorqueLight camera;
     private final TorqueSparkMax rotator;
-
     private final TorquePID pid = TorquePID.create(.1039).build();
 
-    private double requested = 0, position = 0, angleToHub = 0;
+    private @Log double requested = 0, position = 0, angleToHub = 0;
     private TurretState state = TurretState.OFF;
 
     public final void setAngleToHub(final double angleToHub) {
         this.angleToHub = angleToHub;
     }
 
-    private Turret() {
+    private @Init Turret() {
         rotator = new TorqueSparkMax(Ports.TURRET);
         camera = shooter.getCamera();
         rotator.setEncoderZero(RATIO * -90 / 360);
@@ -65,10 +67,10 @@ public final class Turret extends TorqueSubsystem implements Subsystems {
         state = TurretState.OFF;
     }
 
-    private boolean isAuto = false;
+    private @Log boolean isAuto = false;
 
     @Override
-    public final void update(final TorqueMode mode) {
+    public final @Update void update(final TorqueMode mode) {
         isAuto = mode.isAuto();
         calculateAngleWithOdometry();
         // These should be inside tracking logic

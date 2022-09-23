@@ -206,7 +206,7 @@ public int coef = 1;
         left.setPercent(leftMan.get() / 4 * coef);
         right.setPercent(-rightMan.get() / 4 * coef);
 
-        winch.setPercent(winchMan.get() * WINCH_PWR);
+        winch.setPercent(winchMan.get() * WINCH_PWR* 2);
     }
 
     private final void killMotors() {

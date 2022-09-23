@@ -101,7 +101,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
                 xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
         final double yVelo = yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
                                                 invertCoefficient);
-        final double rVelo = rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient;
+        final double rVelo = .75*rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient;
 
         drivebase.setSpeeds(new ChassisSpeeds(xVelo, yVelo, rVelo));
     }
@@ -171,7 +171,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         climber.coef = 5;
         climber.setAuto(driver.getYButton());
 
-        if (!driver.getBButton())
+        //if (!driver.getBButton())
             if (driver.getDPADUp())
                 climber.setManualRight(TorqueDirection.FORWARD);
             else if (driver.getDPADDown())
@@ -179,7 +179,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             else
                 climber.setManualRight(TorqueDirection.OFF);
 
-        if (!driver.getBButton())
+        //if (!driver.getBButton())
             if (driver.getDPADUp())
                 climber.setManualLeft(TorqueDirection.FORWARD);
             else if (driver.getDPADDown())
@@ -188,12 +188,18 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
                 climber.setManualLeft(TorqueDirection.OFF);
 
         if (driver.getBButton())
-            if (driver.getDPADUp())
+            if (driver.getDPADDown())
                 climber.setManualWinch(TorqueDirection.FORWARD);
-            else if (driver.getDPADDown())
+            else if (driver.getDPADUp())
+                climber.setManualWinch(TorqueDirection.REVERSE);
+            else if (driver.getDPADRight())
+                climber.setManualWinch(TorqueDirection.FORWARD);
+            else if (driver.getDPADLeft())
                 climber.setManualWinch(TorqueDirection.REVERSE);
             else
                 climber.setManualWinch(TorqueDirection.OFF);
+        else
+            climber.setManualWinch(TorqueDirection.OFF);
 
         if (toggleClimberHooks.calculate(driver.getAButton() || operator.getBButton()))
             climber.setServos(servoEnabled = !servoEnabled);

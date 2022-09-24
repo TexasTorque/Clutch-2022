@@ -116,7 +116,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
             intake.setState(IntakeState.PRIMED);
     }
 
-    private final void updateMagazine() { magazine.setManualState(driver.getDPADUp(), driver.getDPADDown()); }
+    private final void updateMagazine() { magazine.setManualState(false, false); }
 
     private final TorqueTraversableRange flywheelRPM = new TorqueTraversableRange(1000, 1000, 3000, 100);
     private final TorqueTraversableRange hoodSetpoint =
@@ -126,8 +126,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private final TorqueClick useTurretClick = new TorqueClick();
 
     private final void updateShooter() {
-        flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
-        hoodSetpoint.update(operator.getDPADUp(), operator.getDPADDown(), false, false);
+        flywheelRPM.update(driver.getDPADRight(), driver.getDPADLeft(), false, false);
+        hoodSetpoint.update(driver.getDPADUp(), driver.getDPADDown(), false, false);
 
         SmartDashboard.putNumber("IRPM", flywheelRPM.getSpeed());
         SmartDashboard.putNumber("IHOOD", hoodSetpoint.getSpeed());
@@ -149,8 +149,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
                 turret.setPosition(180);
         } else if (driver.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
-            shooter.setFlywheelSpeed(1600);
-            shooter.setHoodPosition(30);
+            shooter.setFlywheelSpeed(flywheelRPM.getSpeed());
+            shooter.setHoodPosition(hoodSetpoint.getSpeed());
             turret.setState(TurretState.CENTER);
         } else {
             shooter.setState(ShooterState.OFF);
@@ -201,12 +201,12 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
     private final void updateManualWinchControls(final GenericController ctrl) {
         // private final void updateManualWinchControls(final TorqueController controller) {
-        if (ctrl.getDPADUp())
-            climber.setManualWinch(TorqueDirection.FORWARD);
-        else if (ctrl.getDPADDown())
-            climber.setManualWinch(TorqueDirection.REVERSE);
-        else
-            climber.setManualWinch(TorqueDirection.OFF);
+        // if (ctrl.getDPADUp())
+            // climber.setManualWinch(TorqueDirection.FORWARD);
+        // else if (ctrl.getDPADDown())
+            // climber.setManualWinch(TorqueDirection.REVERSE);
+        // else
+            // climber.setManualWinch(TorqueDirection.OFF);
     }
 
     public static final synchronized Input getInstance() {

@@ -24,7 +24,7 @@ public final class Robot extends TimedRobot implements Subsystems {
     @Override
     public final void robotInit() {
         subsystems.add(drivebase);
-        subsystems.add(intake);
+        // subsystems.add(intake);
         subsystems.add(magazine);
         subsystems.add(shooter);
         subsystems.add(turret);

@@ -35,8 +35,8 @@ public final class Input extends TorqueInput<TorqueController> implements Subsys
     private static volatile Input instance;
 
     private Input() {
-        driver = new TorqueController(ControllerPort.DRIVER);
-        operator = new TorqueController(ControllerPort.OPERATOR);
+        driver = new TorqueController(ControllerPort.DRIVER, .2);
+        operator = new TorqueController(ControllerPort.OPERATOR, .2);
     }
 
     @Override
@@ -76,18 +76,19 @@ public final class Input extends TorqueInput<TorqueController> implements Subsys
         final double rotationReal = drivebase.getGyro().getRotation2d().getDegrees();
         double rotationRequested = -driver.getRightXAxis();
 
-        if (rotationRequested == 0) 
-            rotationRequested = -rotationPID.calculate(rotationReal, lastRotation);
-        else
-            lastRotation = rotationReal;
+        // if (rotationRequested == 0) 
+        //     rotationRequested = -rotationPID.calculate(rotationReal, lastRotation);
+        // else
+        //     lastRotation = rotationReal;
 
 
-        SmartDashboard.putNumber("PID O", rotationRequested);
-        SmartDashboard.putNumber("Rot Delta", rotationReal - lastRotation);
+        // SmartDashboard.putNumber("PID O", rotationRequested);
+        // SmartDashboard.putNumber("Rot Delta", rotationReal - lastRotation);
+        SmartDashboard.putNumber("Driver Left Axis", driver.getLeftYAxis());
 
         drivebase.setSpeeds(new ChassisSpeeds(
                 xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
-                yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
+                yLimiter.calculate(driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient),
                 rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient));
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
                                 rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));

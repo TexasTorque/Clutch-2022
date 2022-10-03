@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -30,6 +31,7 @@ import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorquePID;
 import org.texastorque.torquelib.modules.TorqueSwerveModule2021;
+import org.texastorque.torquelib.sensors.TorqueLight;
 import org.texastorque.torquelib.sensors.TorqueNavXGyro;
 import org.texastorque.torquelib.util.TorqueSwerveOdometry;
 import org.texastorque.torquelib.util.TorqueUtil;
@@ -65,11 +67,12 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
                                 locationFrontLeft = new Translation2d(-DISTANCE_TO_CENTER_X, -DISTANCE_TO_CENTER_Y),
                                 locationFrontRight = new Translation2d(-DISTANCE_TO_CENTER_X, DISTANCE_TO_CENTER_Y);
 
-    private static final Matrix<N3, N1> STATE_STDS = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.4, 0.4, .9);
-    private static final Matrix<N1, N1> LOCAL_STDS = new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.3);
-    private static final Matrix<N3, N1> VISION_STDS = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.5, .5, 1);
+    private static final Matrix<N3, N1> STATE_STDS = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.05, 0.05, .02);
+    private static final Matrix<N1, N1> LOCAL_STDS = new MatBuilder<>(Nat.N1(), Nat.N1()).fill(.01);
+    private static final Matrix<N3, N1> VISION_STDS = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(.025, .025, .025);
 
     private final SwerveDriveKinematics kinematics;
+    private final SwerveDriveOdometry odometry;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field2d = new Field2d();
 
@@ -97,9 +100,15 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         kinematics =
                 new SwerveDriveKinematics(locationBackLeft, locationBackRight, locationFrontLeft, locationFrontRight);
 
-        poseEstimator = new SwerveDrivePoseEstimator(gyro.getRotation2dClockwise(),
+        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2dClockwise().times(-1));
+
+        poseEstimator = new SwerveDrivePoseEstimator(gyro.getRotation2dClockwise().times(-1),
                                 new Pose2d(), kinematics, STATE_STDS,
-                                LOCAL_STDS, VISION_STDS);
+                LOCAL_STDS, VISION_STDS);
+
+        odometry.resetPosition(new Pose2d(4.3,1, gyro.getRotation2dClockwise().times(-1)), gyro.getRotation2dClockwise().times(-1));
+        poseEstimator.resetPosition(new Pose2d(4.3,1, gyro.getRotation2dClockwise().times(-1)), gyro.getRotation2dClockwise().times(-1));
+        SmartDashboard.putData("vision field", field2d);
 
         reset();
     }
@@ -155,10 +164,10 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
         backLeft.setDesiredState(swerveModuleStates[0]);
         backRight.setDesiredState(swerveModuleStates[3]);
 
-        // odometry.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(), frontRight.getState(),
-                        // backLeft.getState(), backRight.getState());
+        odometry.update(gyro.getRotation2dClockwise().times(-1), frontLeft.getState(), frontRight.getState(),
+                        backLeft.getState(), backRight.getState());
 
-        poseEstimator.update(gyro.getRotation2d().times(-1),
+        poseEstimator.update(gyro.getRotation2dClockwise().times(-1),
                 frontLeft.getState(), frontRight.getState(),
                 backLeft.getState(), backRight.getState());
         field2d.setRobotPose(poseEstimator.getEstimatedPosition());
@@ -172,9 +181,16 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     public final SwerveDrivePoseEstimator getPoseEstimator() { return poseEstimator; }
 
-    public final Pose2d getPose() { return poseEstimator.getEstimatedPosition(); }
+    // public final Pose2d getPose() { return poseEstimator.getEstimatedPosition(); }
+    public final Pose2d getPose() {
+        return odometry.getPoseMeters(); }
 
-    public final Pose2d getPoseEstimated() { return poseEstimator.getEstimatedPosition(); }
+    public final Pose2d getPoseEstimated() {
+        return poseEstimator.getEstimatedPosition();
+    }
+    
+    // public final Pose2d getPoseEstimated() {
+    //     return odometry.getPoseMeters(); }
 
     public final TorqueNavXGyro getGyro() { return gyro; }
 
@@ -202,11 +218,11 @@ public final class Drivebase extends TorqueSubsystem implements Subsystems {
 
     public final void updateWithVision() {
         try {
-            Pose2d pose = shooter.getCamera().getRobotPose(shooter.getCamera(), getGyro().getRotation2dCounterClockwise(), Rotation2d.fromDegrees(shooter.getCamera().getTargetPitch()), Rotation2d.fromDegrees(shooter.getCamera().getTargetYaw()), Shooter.TARGET_HEIGHT,
+            Pose2d pose = TorqueLight.getRobotPose(getGyro().getRotation2dCounterClockwise(), Rotation2d.fromDegrees(shooter.getCamera().getTargetPitch()), Rotation2d.fromDegrees(shooter.getCamera().getTargetYaw()), Shooter.TARGET_HEIGHT,
                     Shooter.CAMERA_HEIGHT, Shooter.CAMERA_ANGLE, Shooter.TURRET_RADIUS, turret.getDegrees(), Shooter.HUB_RADIUS, Shooter.HUB_CENTER_POSITION.getX(),
                     Shooter.HUB_CENTER_POSITION.getY());
             SmartDashboard.putString("VisionPos", String.format("(%02.3f, %02.3f)", pose.getX(), pose.getY()));
-            poseEstimator.addVisionMeasurement(pose, TorqueUtil.time() - shooter.getCamera().getLatency() - .0011);
+            poseEstimator.addVisionMeasurement(pose, TorqueUtil.time() - shooter.getCamera().getLatency() / 1000. - .0011);
         } catch (final Exception e) {
             System.out.println("Failed to add vision measurement to pose estimator."
                     + "Likely due to Cholesky decomposition failing due to it not being the sqrt method."

@@ -205,15 +205,15 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     //     return estimatedPositionOfRobot;
     // }
 
-    public final Pose2d getEstimatedPositionRelativeToRobot() { 
-        final Transform2d targetRelativeToCamera = camera.getCameraToTarget();
-        final Transform2d targetRelativeToCenterOfHub = targetRelativeToCamera.plus(TRANSFORM_ADJUSTMENT);
+    // public final Pose2d getEstimatedPositionRelativeToRobot() { 
+    //     final Transform2d targetRelativeToCamera = camera.getCameraToTarget();
+    //     final Transform2d targetRelativeToCenterOfHub = targetRelativeToCamera.plus(TRANSFORM_ADJUSTMENT);
 
-        final Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(targetRelativeToCenterOfHub,
-                HUB_ORIGIN, new Transform2d(CAMERA_TO_ROBOT, Rotation2d.fromDegrees(-turret.getDegrees())));
+    //     final Pose2d estimatedPositionOfRobot = PhotonUtils.estimateFieldToRobot(targetRelativeToCenterOfHub,
+    //             HUB_ORIGIN, new Transform2d(CAMERA_TO_ROBOT, Rotation2d.fromDegrees(-turret.getDegrees())));
 
-        return estimatedPositionOfRobot;
-    }
+    //     return estimatedPositionOfRobot;
+    // }
 
     
     public static final synchronized Shooter getInstance() {

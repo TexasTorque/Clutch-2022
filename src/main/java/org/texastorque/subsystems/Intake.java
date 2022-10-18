@@ -13,11 +13,12 @@ import org.texastorque.torquelib.base.TorqueMode;
 import org.texastorque.torquelib.base.TorqueSubsystem;
 import org.texastorque.torquelib.base.TorqueSubsystemState;
 import org.texastorque.torquelib.control.TorquePID;
-import org.texastorque.torquelib.control.TorqueRamp;
-import org.texastorque.torquelib.control.TorqueTimeout;
 import org.texastorque.torquelib.motors.TorqueFalcon;
 import org.texastorque.torquelib.motors.TorqueSparkMax;
 import org.texastorque.torquelib.util.KPID;
+
+import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 /**
  * The intake subsystem.
@@ -54,7 +55,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     private IntakeState state = IntakeState.PRIMED;
 
-    private final TorqueFalcon rollers;
+    private final VictorSPX rollers;
     private final TorqueSparkMax rotary;
 
     private Intake() {
@@ -63,9 +64,9 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         // rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
         rotary.configurePID(TorquePID.create(.1).addOutputRange(ROTARY_MIN_SPEED, ROTARY_MAX_SPEED).build());
 
-        rollers = new TorqueFalcon(Ports.INTAKE.ROLLER);
+        rollers = new VictorSPX(Ports.INTAKE.ROLLER);
         // rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
-        rollers.configurePID(TorquePID.create().build());
+        //rollers.configurePID(TorquePID.create().build());
     }
 
     public final void setState(final IntakeState state) { this.state = state; }
@@ -78,14 +79,14 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        rollers.setPercent(-state.getDirection());
+        rollers.set(VictorSPXControlMode.PercentOutput, -state.getDirection());
         rotary.setPosition(state.getPosition());
 
         TorqueSubsystemState.logState(state);
 
         SmartDashboard.putNumber("Rotary Position", rotary.getPosition());
         SmartDashboard.putNumber("Rotary Current", rotary.getCurrent());
-        SmartDashboard.putNumber("Rollers Current", rollers.getCurrent());
+        //SmartDashboard.putNumber("Rollers Current", rollers.getCurrent());
     }
 
     public static final synchronized Intake getInstance() {

@@ -46,7 +46,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     public final void update() {
         updateDrivebase();
         updateClimber();
-        if (autoClimbFailed) return;
+        if (autoClimbFailed)
+            return;
 
         updateIntake();
         updateMagazine();
@@ -54,16 +55,19 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     }
 
     private final TorqueTraversableSelection<Double>
-            // translationalSpeeds = new TorqueTraversableSelection<Double>(1, .35, .45, .55),
-            translationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .6, .7),
+    // translationalSpeeds = new TorqueTraversableSelection<Double>(1, .35, .45, .55),
+    translationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .6, .7),
             rotationalSpeeds = new TorqueTraversableSelection<Double>(1, .5, .75, 1.);
 
     // Incredibly basic solution for inverting the driver controls after an auto routine.
     private double invertCoefficient = 1;
-    public final void invertDrivebaseControls() { invertCoefficient = -1; }
 
-    private static final TorquePID rotationPID =
-            TorquePID.create(.02 / 4).addDerivative(.001).addContinuousInputRange(0, 360).build();
+    public final void invertDrivebaseControls() {
+        invertCoefficient = -1;
+    }
+
+    private static final TorquePID rotationPID = TorquePID.create(.02 / 4).addDerivative(.001)
+            .addContinuousInputRange(0, 360).build();
 
     private double lastRotation = drivebase.getGyro().getRotation2d().getDegrees();
 
@@ -86,39 +90,44 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         SmartDashboard.putNumber("Rot Delta", rotationReal - lastRotation);
 
         drivebase.setSpeedCoefs(translationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()),
-                                rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
+                rotationalSpeeds.calculate(driver.getLeftBumper(), driver.getRightBumper()));
 
         final boolean noInput = TorqueMath.toleranced(driver.getLeftYAxis(), DEADBAND) &&
-                                TorqueMath.toleranced(driver.getLeftXAxis(), DEADBAND) &&
-                                TorqueMath.toleranced(driver.getRightXAxis(), DEADBAND);
+                TorqueMath.toleranced(driver.getLeftXAxis(), DEADBAND) &&
+                TorqueMath.toleranced(driver.getRightXAxis(), DEADBAND);
 
-        if (noInput) {
+        drivebase.setZeroWheels(driver.getLeftCenterButton());
+
+        if (noInput && !driver.getLeftCenterButton()) {
             drivebase.setSpeeds(new ChassisSpeeds(0, 0, 0));
             return;
         }
 
-        final double xVelo =
-                xLimiter.calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
+        final double xVelo = xLimiter
+                .calculate(driver.getLeftYAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED * invertCoefficient);
         final double yVelo = yLimiter.calculate(-driver.getLeftXAxis() * Drivebase.DRIVE_MAX_TRANSLATIONAL_SPEED *
-                                                invertCoefficient);
-        final double rVelo = .75*rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient;
+                invertCoefficient);
+        final double rVelo = .75 * rotationRequested * Drivebase.DRIVE_MAX_ROTATIONAL_SPEED * invertCoefficient;
 
         drivebase.setSpeeds(new ChassisSpeeds(xVelo, yVelo, rVelo));
     }
 
     private final void updateIntake() {
-        if (driver.getRightTrigger()) intake.setState(IntakeState.INTAKE);
-        // else if (driver.getBButton())
-        // intake.setState(IntakeState.OUTAKE);
+        if (driver.getRightTrigger())
+            intake.setState(IntakeState.OUTAKE); // idk why they're reversed. but they are
+        else if (driver.getBButton())
+            intake.setState(IntakeState.INTAKE);
         else
             intake.setState(IntakeState.PRIMED);
     }
 
-    private final void updateMagazine() { magazine.setManualState(operator.getDPADRight(), operator.getDPADLeft()); }
+    private final void updateMagazine() {
+        magazine.setManualState(operator.getDPADRight(), operator.getDPADLeft());
+    }
 
     private final TorqueTraversableRange flywheelRPM = new TorqueTraversableRange(1000, 1000, 3000, 100);
-    private final TorqueTraversableRange hoodSetpoint =
-            new TorqueTraversableRange(Shooter.HOOD_MIN, Shooter.HOOD_MIN, Shooter.HOOD_MAX, 5);
+    private final TorqueTraversableRange hoodSetpoint = new TorqueTraversableRange(Shooter.HOOD_MIN, Shooter.HOOD_MIN,
+            Shooter.HOOD_MAX, 5);
 
     private boolean useTurret = true;
     private final TorqueClick useTurretClick = new TorqueClick();
@@ -127,10 +136,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
         hoodSetpoint.update(operator.getDPADUp(), operator.getDPADDown(), false, false);
 
-        SmartDashboard.putNumber("IRPM", flywheelRPM.getSpeed());
-        SmartDashboard.putNumber("IHOOD", hoodSetpoint.getSpeed());
-
-        if (useTurretClick.calculate(operator.getAButton())) useTurret = !useTurret;
+        if (useTurretClick.calculate(operator.getAButton()))
+            useTurret = !useTurret;
 
         SmartDashboard.putBoolean("Using Turret", useTurret);
 
@@ -141,7 +148,8 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         if (driver.getLeftTrigger()) {
             shooter.setState(ShooterState.REGRESSION);
             turret.setState(useTurret ? TurretState.TRACK : TurretState.POSITIONAL);
-            if (useTurret) turret.setPosition(180);
+            if (useTurret)
+                turret.setPosition(180);
         } else if (driver.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(1600);
@@ -160,7 +168,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         // if (autoClimbFailedClick.calculate(driver.getRightCenterButton()))
         //     autoClimbFailed = !autoClimbFailed;
 
-        if (driver.getLeftCenterButton()) climber.reset();
+        //if (driver.getLeftCenterButton()) climber.reset();
 
         if (autoClimbFailed) {
             updateManualArmControls(driver);
@@ -172,20 +180,20 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
         climber.setAuto(driver.getYButton());
 
         //if (!driver.getBButton())
-            if (driver.getDPADUp())
-                climber.setManualRight(TorqueDirection.FORWARD);
-            else if (driver.getDPADDown())
-                climber.setManualRight(TorqueDirection.REVERSE);
-            else
-                climber.setManualRight(TorqueDirection.OFF);
+        if (driver.getDPADUp())
+            climber.setManualRight(TorqueDirection.FORWARD);
+        else if (driver.getDPADDown())
+            climber.setManualRight(TorqueDirection.REVERSE);
+        else
+            climber.setManualRight(TorqueDirection.OFF);
 
         //if (!driver.getBButton())
-            if (driver.getDPADUp())
-                climber.setManualLeft(TorqueDirection.FORWARD);
-            else if (driver.getDPADDown())
-                climber.setManualLeft(TorqueDirection.REVERSE);
-            else
-                climber.setManualLeft(TorqueDirection.OFF);
+        if (driver.getDPADUp())
+            climber.setManualLeft(TorqueDirection.FORWARD);
+        else if (driver.getDPADDown())
+            climber.setManualLeft(TorqueDirection.REVERSE);
+        else
+            climber.setManualLeft(TorqueDirection.OFF);
 
         if (driver.getBButton())
             if (driver.getDPADDown())

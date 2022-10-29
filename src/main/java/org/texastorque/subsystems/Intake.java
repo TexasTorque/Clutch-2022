@@ -30,12 +30,12 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
     private static volatile Intake instance;
 
     private static final double ROTARY_UP_POSITION = 0, ROTARY_DOWN_POSITION = -5.64, ROTARY_MIN_SPEED = -.35,
-                                ROTARY_MAX_SPEED = .35, ROLLER_MAX_SPEED = 1;
+            ROTARY_MAX_SPEED = .35, ROLLER_MAX_SPEED = 1;
 
     public enum IntakeState implements TorqueSubsystemState {
-        INTAKE(-ROLLER_MAX_SPEED, ROTARY_DOWN_POSITION),
+        INTAKE(ROLLER_MAX_SPEED, ROTARY_DOWN_POSITION),
         PRIMED(0, ROTARY_UP_POSITION),
-        OUTAKE(ROLLER_MAX_SPEED, ROTARY_DOWN_POSITION);
+        OUTAKE(-ROLLER_MAX_SPEED, ROTARY_DOWN_POSITION);
 
         private final double direction, position;
 
@@ -44,8 +44,13 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
             this.position = position;
         }
 
-        public final double getDirection() { return direction; }
-        public final double getPosition() { return position; }
+        public final double getDirection() {
+            return direction;
+        }
+
+        public final double getPosition() {
+            return position;
+        }
 
         @Override
         public final String toString() {
@@ -69,21 +74,30 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         //rollers.configurePID(TorquePID.create().build());
     }
 
-    public final void setState(final IntakeState state) { this.state = state; }
+    public final void setState(final IntakeState state) {
+        this.state = state;
+    }
 
-    public final boolean isIntaking() { return state == IntakeState.INTAKE; }
-    public final boolean isOutaking() { return state == IntakeState.OUTAKE; }
+    public final boolean isIntaking() {
+        return state == IntakeState.INTAKE;
+    }
+
+    public final boolean isOutaking() {
+        return state == IntakeState.OUTAKE;
+    }
 
     @Override
-    public final void initialize(final TorqueMode mode) {}
+    public final void initialize(final TorqueMode mode) {
+    }
 
     @Override
     public final void update(final TorqueMode mode) {
-        rollers.setPercent( -state.getDirection());
+        rollers.setPercent(state.getDirection());
         rotary.setPosition(state.getPosition());
 
         TorqueSubsystemState.logState(state);
 
+        SmartDashboard.putNumber("Rollers Percent", state.getDirection());
         SmartDashboard.putNumber("Rotary Position", rotary.getPosition());
         SmartDashboard.putNumber("Rotary Current", rotary.getCurrent());
         //SmartDashboard.putNumber("Rollers Current", rollers.getCurrent());

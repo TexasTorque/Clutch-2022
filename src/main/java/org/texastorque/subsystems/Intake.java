@@ -55,7 +55,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     private IntakeState state = IntakeState.PRIMED;
 
-    private final VictorSPX rollers;
+    private final TorqueSparkMax rollers;
     private final TorqueSparkMax rotary;
 
     private Intake() {
@@ -64,7 +64,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
         // rotary.configurePID(new KPID(0.1, 0, 0, 0, ROTARY_MIN_SPEED, ROTARY_MAX_SPEED));
         rotary.configurePID(TorquePID.create(.1).addOutputRange(ROTARY_MIN_SPEED, ROTARY_MAX_SPEED).build());
 
-        rollers = new VictorSPX(Ports.INTAKE.ROLLER);
+        rollers = new TorqueSparkMax(Ports.INTAKE.ROLLER);
         // rollers.configurePID(new KPID(1, 0, 0, 0, -1, 1));
         //rollers.configurePID(TorquePID.create().build());
     }
@@ -79,7 +79,7 @@ public final class Intake extends TorqueSubsystem implements Subsystems {
 
     @Override
     public final void update(final TorqueMode mode) {
-        rollers.set(VictorSPXControlMode.PercentOutput, -state.getDirection());
+        rollers.setPercent( -state.getDirection());
         rotary.setPosition(state.getPosition());
 
         TorqueSubsystemState.logState(state);

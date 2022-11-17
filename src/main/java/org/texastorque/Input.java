@@ -113,16 +113,19 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     }
 
     private final void updateIntake() {
-        if (driver.getRightTrigger())
-            intake.setState(IntakeState.OUTAKE); // idk why they're reversed. but they are
-        else if (driver.getBButton())
+        if (operator.getAButton())
             intake.setState(IntakeState.INTAKE);
+        else if (operator.getBButton())
+            intake.setState(IntakeState.OUTAKE);
         else
             intake.setState(IntakeState.PRIMED);
     }
 
     private final void updateMagazine() {
-        magazine.setManualState(operator.getDPADRight(), operator.getDPADLeft());
+        //magazine.setManualState(operator.getRightTrigger(), operator.getRightBumper());
+        magazine.setManualBeltDirection(operator.getRightTrigger(), operator.getRightBumper());
+        magazine.setManualGateDirection(operator.getLeftTrigger(), operator.getLeftBumper());
+
     }
 
     private final TorqueTraversableRange flywheelRPM = new TorqueTraversableRange(1000, 1000, 3000, 100);
@@ -135,9 +138,6 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
     private final void updateShooter() {
         flywheelRPM.update(operator.getDPADRight(), operator.getDPADLeft(), false, false);
         hoodSetpoint.update(operator.getDPADUp(), operator.getDPADDown(), false, false);
-
-        if (useTurretClick.calculate(operator.getAButton()))
-            useTurret = !useTurret;
 
         SmartDashboard.putBoolean("Using Turret", useTurret);
 
@@ -152,6 +152,7 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
                 turret.setPosition(180);
         } else if (driver.getXButton()) {
             shooter.setState(ShooterState.SETPOINT);
+            System.out.println("Shooting");
             shooter.setFlywheelSpeed(1600);
             shooter.setHoodPosition(30);
             turret.setState(TurretState.CENTER);
@@ -211,9 +212,6 @@ public final class Input extends TorqueInput<GenericController> implements Subsy
 
         if (toggleClimberHooks.calculate(driver.getAButton() || operator.getBButton()))
             climber.setServos(servoEnabled = !servoEnabled);
-
-        updateManualArmControls(operator);
-        updateManualWinchControls(operator);
 
         SmartDashboard.putBoolean("Servos", servoEnabled);
     }

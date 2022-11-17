@@ -37,13 +37,35 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
         this.gateDirection = direction;
     }
 
-    public final void setBeltDirection(final TorqueDirection direction) { this.beltDirection = direction; }
+    public final void setBeltDirection(final TorqueDirection direction) {
+        this.beltDirection = direction;
+    }
 
-    public final void setGateDirection(final TorqueDirection direction) { this.gateDirection = direction; }
+    public final void setGateDirection(final TorqueDirection direction) {
+        this.gateDirection = direction;
+    }
 
     public final void setManualState(final boolean up, final boolean down) {
         setBeltDirection(up ? MAG_UP : down ? MAG_DOWN : TorqueDirection.NEUTRAL);
         setGateDirection(up ? TorqueDirection.FORWARD : down ? TorqueDirection.REVERSE : TorqueDirection.NEUTRAL);
+    }
+
+    public void setManualBeltDirection(boolean up, boolean down) {
+        if (up)
+            setBeltDirection(MAG_UP);
+        else if (down)
+            setBeltDirection(MAG_DOWN);
+        else
+            setBeltDirection(TorqueDirection.NEUTRAL);
+    }
+
+    public void setManualGateDirection(boolean up, boolean down) {
+        if (up)
+            setGateDirection(TorqueDirection.FORWARD);
+        else if (down)
+            setGateDirection(TorqueDirection.REVERSE);
+        else
+            setGateDirection(TorqueDirection.NEUTRAL);
     }
 
     @Override
@@ -57,13 +79,17 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
     private final double DROP_TIME = .05;
 
     private final TorquePersistentBoolean shooterReady = new TorquePersistentBoolean(5),
-                                          turretLocked = new TorquePersistentBoolean(5),
-                                          shouldShoot = new TorquePersistentBoolean(5);
+            turretLocked = new TorquePersistentBoolean(5),
+            shouldShoot = new TorquePersistentBoolean(5);
 
     @Override
     public final void update(final TorqueMode mode) {
-        if (intake.isOutaking()) { beltDirection = MAG_DOWN; }
-        if (intake.isIntaking()) { beltDirection = MAG_UP; }
+        if (intake.isOutaking()) {
+            beltDirection = MAG_DOWN;
+        }
+        if (intake.isIntaking()) {
+            beltDirection = MAG_UP;
+        }
 
         if (shooter.isShooting()) {
             if (!shootingStarted) {
@@ -100,7 +126,8 @@ public final class Magazine extends TorqueSubsystem implements Subsystems {
 
         // Should fix the shooting early bug that was introduced by the used of
         //       if (shooterReady.any() && turretLocked.any())
-        if (mode.isAuto()) gateDirection = TorqueDirection.OFF;
+        if (mode.isAuto())
+            gateDirection = TorqueDirection.OFF;
     }
 
     public static final synchronized Magazine getInstance() {

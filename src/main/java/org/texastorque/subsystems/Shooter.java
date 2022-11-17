@@ -67,7 +67,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private final TorqueLight camera;
 
     private final TorqueSparkMax hood;
-    private final TorqueSparkMax flywheel;
+    private final TorqueSparkMax flywheel1;
 
     private double hoodSetpoint, flywheelSpeed, distance, autoOffset = 0;
 
@@ -76,10 +76,8 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     private Shooter() {
         camera = new TorqueLight();
 
-        flywheel = new TorqueSparkMax(Ports.SHOOTER.FLYWHEEL.LEFT);
-        flywheel.addFollower(Ports.SHOOTER.FLYWHEEL.RIGHT, true);
+        flywheel1 = new TorqueSparkMax(Ports.SHOOTER.FLYWHEEL.RIGHT);
 
-        flywheel.configurePID(new KPID(0.5, 5e-05, 0, 0.0603409074, -1, 1, 1000));
         // flywheel.configurePID(new KPID(0.0999999046, 0, 0,  0.0603409074, -1, 1, 1000));
 
         // flywheel.configurePID(TorquePID.create(0.0999999046)
@@ -144,21 +142,22 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
             // LMFAO
         } else {
             flywheelSpeed = 0;
-            flywheel.setPercent(FLYWHEEEL_IDLE);
         }
 
-        if (state != ShooterState.OFF) {
-            flywheel.setVelocityRPM(clampRPM(flywheelSpeed));
+        if (state == ShooterState.SETPOINT) {
+            flywheel1.setPercent(-.9);
+            //flywheel1.setVoltage(-flywheel.getVoltage());
+
+        } else {
+            flywheel1.setPercent(0);
         }
         hood.setPosition(clampHood(hoodSetpoint));
 
         TorqueSubsystemState.logState(state);
 
-        SmartDashboard.putNumber("Flywheel Real", flywheel.getVelocityRPM());
         SmartDashboard.putNumber("Flywheel Req", flywheelSpeed);
         SmartDashboard.putNumber("IDIST", getDistance());
 
-        SmartDashboard.putNumber("Flywheel Delta", flywheelSpeed - flywheel.getVelocityRPM());
         SmartDashboard.putBoolean("Is Shooting", isShooting());
         SmartDashboard.putBoolean("Is Ready", isReady());
     }
@@ -168,7 +167,7 @@ public final class Shooter extends TorqueSubsystem implements Subsystems {
     }
 
     public final boolean isReady() {
-        return isShooting() && Math.abs(flywheelSpeed - flywheel.getVelocityRPM()) < ERROR;
+        return isShooting() && Math.abs(flywheelSpeed - 0) < ERROR;
     }
 
     /**

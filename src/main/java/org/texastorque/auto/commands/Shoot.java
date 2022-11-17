@@ -1,16 +1,26 @@
+/**
+ * Copyright 2022 Texas Torque.
+ *
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque.auto.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import org.texastorque.Subsystems;
-import org.texastorque.subsystems.Magazine.GateDirection;
 import org.texastorque.subsystems.Shooter.ShooterState;
 import org.texastorque.subsystems.Turret.TurretState;
 import org.texastorque.torquelib.auto.TorqueCommand;
+import org.texastorque.torquelib.base.TorqueDirection;
 
 public final class Shoot extends TorqueCommand implements Subsystems {
     private final double rpm, hood, tur, time;
     private double start = -1;
     private final boolean stop;
+
+    public Shoot(final double rpm, final double hood, final boolean stop, final double time) {
+        this(rpm, hood, Double.NaN, stop, time);
+    }
 
     public Shoot(final double rpm, final double hood, final double tur, final boolean stop, final double time) {
         this.rpm = rpm;
@@ -26,6 +36,7 @@ public final class Shoot extends TorqueCommand implements Subsystems {
         shooter.setFlywheelSpeed(rpm);
         shooter.setHoodPosition(hood);
         turret.setState(TurretState.POSITIONAL);
+        turret.setPosition(Double.isNaN(tur) ? turret.calculateAngleWithOdometry() : tur);
         turret.setPosition(tur);
     }
 
@@ -41,14 +52,12 @@ public final class Shoot extends TorqueCommand implements Subsystems {
 
     @Override
     protected final void end() {
-        if (stop)
-            shooter.setState(ShooterState.OFF);
-        else {
+      
             shooter.setState(ShooterState.SETPOINT);
             shooter.setFlywheelSpeed(1000);
-        }
+        
 
-        turret.setState(TurretState.CENTER);
-        magazine.setGateDirection(GateDirection.OFF);
+        // turret.setState(TurretState.CENTER);
+        magazine.setGateDirection(TorqueDirection.OFF);
     }
 }

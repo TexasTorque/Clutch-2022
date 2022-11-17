@@ -1,10 +1,15 @@
+/**
+ * Copyright 2022 Texas Torque.
+ *
+ * This file is part of Clutch-2022, which is not licensed for distribution.
+ * For more details, see ./license.txt or write <jus@gtsbr.org>.
+ */
 package org.texastorque.auto;
 
-import org.texastorque.auto.sequences.Five;
+import org.texastorque.auto.sequences.FiveCool;
+import org.texastorque.auto.sequences.FiveLame;
 import org.texastorque.auto.sequences.Omar;
-import org.texastorque.auto.sequences.One;
 import org.texastorque.auto.sequences.OneEvil;
-import org.texastorque.auto.sequences.Two;
 import org.texastorque.auto.sequences.TwoEvil;
 import org.texastorque.torquelib.auto.TorqueAutoManager;
 
@@ -12,13 +17,12 @@ public final class AutoManager extends TorqueAutoManager {
     private static volatile AutoManager instance;
 
     @Override
-    public final void init() {
+    protected final void init() {
         addSequence("Omar", new Omar());
-        addSequence("One", new One());
         addSequence("One (evil)", new OneEvil());
-        addSequence("Two", new Two());
         addSequence("Two (evil)", new TwoEvil());
-        addSequence("Five", new Five());
+        addSequence("Five (cool)", new FiveCool());
+        addSequence("Five (lame)", new FiveLame());
     }
 
     /**
